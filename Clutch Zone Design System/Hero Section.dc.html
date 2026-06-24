@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  @keyframes cz-scroll-pulse {
+    0%   { transform: scaleY(0); transform-origin: top; opacity: 0; }
+    40%  { transform: scaleY(1); transform-origin: top; opacity: 1; }
+    60%  { transform: scaleY(1); transform-origin: bottom; opacity: 1; }
+    100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+  }
+  @keyframes cz-ring-spin { to { transform: rotate(360deg); } }
+  @keyframes cz-flicker { 0%,100%{opacity:1;} 50%{opacity:.55;} }
+</style>
+</helmet>
+<div style="width:100%; background:#0A0A0A;">
+<div style="position:relative; width:100%; min-height:100vh; background:#0A0A0A; overflow:hidden; font-family:'Inter',system-ui,sans-serif;">
+
+  <!-- grid overlay -->
+  <div style="position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,0.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.045) 1px,transparent 1px); background-size:48px 48px; mask-image:radial-gradient(ellipse 90% 80% at 70% 35%, #000 30%, transparent 85%); -webkit-mask-image:radial-gradient(ellipse 90% 80% at 70% 35%, #000 30%, transparent 85%);"></div>
+  <!-- orange glow -->
+  <div style="position:absolute; top:-12%; right:-6%; width:760px; height:760px; background:radial-gradient(circle, rgba(232,74,26,0.15), transparent 62%); pointer-events:none;"></div>
+  <!-- bottom fade -->
+  <div style="position:absolute; bottom:0; left:0; right:0; height:200px; background:linear-gradient(transparent, #0A0A0A);"></div>
+
+  <!-- NAV -->
+  <nav style="position:relative; z-index:5; display:flex; align-items:center; justify-content:space-between; padding:28px 64px; border-bottom:1px solid rgba(255,255,255,0.06);">
+    <div style="display:flex; align-items:center; gap:14px;">
+      <div style="width:44px; height:44px;">{{ logo }}</div>
+      <div style="display:flex; flex-direction:column; line-height:1;">
+        <span style="font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:2px; color:#fff;">CLUTCH ZONE</span>
+        <span style="font-family:'Space Mono',monospace; font-size:9px; letter-spacing:3px; color:#E84A1A; margin-top:3px;">ESPORT CLUB · ČB</span>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:40px;">
+      <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="4">
+        <a href="#" style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#888; text-decoration:none; transition:color .15s;" style-hover="color:#fff;">{{ item }}</a>
+      </sc-for>
+      <button style="background:#E84A1A; color:#fff; font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:2px; padding:11px 26px; border:none; border-radius:2px; cursor:pointer; transition:background .15s;" style-hover="background:#B83A12;">REZERVOVAT</button>
+    </div>
+  </nav>
+
+  <!-- HERO BODY -->
+  <div style="position:relative; z-index:4; display:grid; grid-template-columns:1.15fr 0.85fr; gap:48px; align-items:center; padding:72px 64px 120px; max-width:1440px; margin:0 auto;">
+
+    <!-- LEFT -->
+    <div>
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:28px;">
+        <span style="width:40px; height:1.5px; background:#E84A1A;"></span>
+        <span style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:4px; color:#E84A1A; text-transform:uppercase;">České Budějovice</span>
+      </div>
+
+      <h1 style="font-family:'Bebas Neue',sans-serif; font-size:104px; line-height:0.92; letter-spacing:2px; color:#fff; text-transform:uppercase;">
+        TVOJE NOVÁ<br>E-SPORTOVÁ<br><span style="position:relative; display:inline-block;">ZÁKLADNA<span style="position:absolute; left:0; bottom:6px; width:100%; height:5px; background:#E84A1A;"></span></span>
+      </h1>
+
+      <p style="font-family:'Inter',sans-serif; font-weight:300; font-size:19px; line-height:1.7; color:#E8E8E8; max-width:480px; margin-top:32px;">
+        Špičkové herní PC, PS5 a turnaje na jednom místě. Přijď hrát, trénovat a vyhrávat — ve městě, kde se rodí nová generace hráčů.
+      </p>
+
+      <div style="display:flex; gap:20px; margin-top:40px;">
+        <button style="background:#E84A1A; color:#fff; font-family:'Bebas Neue',sans-serif; font-size:19px; letter-spacing:2px; padding:16px 40px; border:none; border-radius:2px; cursor:pointer; transition:background .15s,transform .1s;" style-hover="background:#B83A12;" style-active="transform:scale(0.98);">REZERVOVAT MÍSTO</button>
+        <button style="background:transparent; color:#fff; font-family:'Bebas Neue',sans-serif; font-size:19px; letter-spacing:2px; padding:15px 40px; border:1.5px solid #2A2A2A; border-radius:2px; cursor:pointer; transition:border-color .15s,color .15s;" style-hover="border-color:#E84A1A; color:#E84A1A;">ZOBRAZIT CENÍK</button>
+      </div>
+
+      <!-- stats row -->
+      <div style="display:flex; gap:48px; margin-top:64px; padding-top:32px; border-top:1px solid rgba(255,255,255,0.07);">
+        <sc-for list="{{ stats }}" as="stat" hint-placeholder-count="3">
+          <div>
+            <div style="font-family:'Bebas Neue',sans-serif; font-size:44px; color:#fff; line-height:1;">{{ stat.value }}</div>
+            <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:2px; color:#888; text-transform:uppercase; margin-top:6px;">{{ stat.label }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- RIGHT graphic -->
+    <div style="position:relative; display:flex; align-items:center; justify-content:center; min-height:480px;">
+      <!-- corner brackets -->
+      <span style="position:absolute; top:0; left:8%; width:40px; height:40px; border-top:1.5px solid #E84A1A; border-left:1.5px solid #E84A1A;"></span>
+      <span style="position:absolute; bottom:0; right:8%; width:40px; height:40px; border-bottom:1.5px solid #E84A1A; border-right:1.5px solid #E84A1A;"></span>
+
+      <!-- rotating ring + logo -->
+      <div style="position:relative; width:380px; height:380px; display:flex; align-items:center; justify-content:center;">
+        <svg viewBox="0 0 100 100" style="position:absolute; inset:0; width:100%; height:100%; animation:cz-ring-spin 28s linear infinite;">
+          <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="0.4"/>
+          <circle cx="50" cy="50" r="48" fill="none" stroke="#E84A1A" stroke-width="0.6" stroke-dasharray="24 10 6 60" stroke-linecap="round"/>
+          <circle cx="50" cy="2.3" r="1.4" fill="#E84A1A"/>
+        </svg>
+        <div style="width:230px; height:230px;">{{ logoBig }}</div>
+      </div>
+
+      <!-- floating status chip -->
+      <div style="position:absolute; bottom:6%; left:0; background:#111; border:1px solid #2A2A2A; border-radius:2px; padding:12px 16px; display:flex; align-items:center; gap:10px;">
+        <span style="width:8px; height:8px; border-radius:50%; background:#E84A1A; animation:cz-flicker 1.6s ease-in-out infinite;"></span>
+        <span style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:1.5px; color:#E8E8E8; text-transform:uppercase;">24 / 32 stanic volných</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- scroll indicator -->
+  <div style="position:absolute; bottom:36px; left:50%; transform:translateX(-50%); z-index:5; display:flex; flex-direction:column; align-items:center; gap:12px;">
+    <span style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:3px; color:#555; text-transform:uppercase;">SCROLL</span>
+    <span style="width:1.5px; height:48px; background:#E84A1A; animation:cz-scroll-pulse 2.2s ease-in-out infinite;"></span>
+  </div>
+</div>
+
+
+<!-- ============ FEATURES ============ -->
+<section style="position:relative; background:#0A0A0A; padding:120px 64px; font-family:'Inter',system-ui,sans-serif; border-top:1px solid rgba(255,255,255,0.06);">
+  <div style="max-width:1440px; margin:0 auto;">
+    <div style="margin-bottom:64px;">
+      <span style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:4px; color:#E84A1A; text-transform:uppercase; display:block; margin-bottom:10px;">// CO TĚ ČEKÁ</span>
+      <h2 style="font-family:'Bebas Neue',sans-serif; font-size:60px; letter-spacing:1.5px; color:#fff; text-transform:uppercase; line-height:0.95;">VYBAVENÍ NA ŠPIČKOVÉ ÚROVNI</h2>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:24px;">
+      <sc-for list="{{ features }}" as="f" hint-placeholder-count="4">
+        <div style="background:#111; border:1px solid #2A2A2A; border-radius:4px; padding:32px 28px; min-height:240px; display:flex; flex-direction:column; transition:border-color .2s,transform .2s;" style-hover="border-color:#E84A1A; transform:translateY(-4px);">
+          <span style="font-family:'Space Mono',monospace; font-size:13px; letter-spacing:2px; color:#E84A1A;">{{ f.no }}</span>
+          <h3 style="font-family:'Bebas Neue',sans-serif; font-size:30px; letter-spacing:1px; color:#fff; text-transform:uppercase; margin-top:auto; padding-top:48px;">{{ f.title }}</h3>
+          <p style="font-family:'Inter',sans-serif; font-weight:300; font-size:15px; line-height:1.65; color:#888; margin-top:12px;">{{ f.desc }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CENÍK ============ -->
+<section style="position:relative; background:#0A0A0A; padding:120px 64px; font-family:'Inter',system-ui,sans-serif;">
+  <div style="position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.04) 1px,transparent 1px); background-size:48px 48px; mask-image:radial-gradient(ellipse 70% 60% at 50% 0%, #000, transparent 80%); -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 0%, #000, transparent 80%);"></div>
+  <div style="position:relative; max-width:1440px; margin:0 auto;">
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:64px; flex-wrap:wrap; gap:24px;">
+      <div>
+        <span style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:4px; color:#E84A1A; text-transform:uppercase; display:block; margin-bottom:10px;">// CENÍK</span>
+        <h2 style="font-family:'Bebas Neue',sans-serif; font-size:60px; letter-spacing:1.5px; color:#fff; text-transform:uppercase; line-height:0.95; padding-bottom:14px; border-bottom:2px solid #E84A1A; display:inline-block;">ZVÝHODNĚNÉ BALÍČKY</h2>
+      </div>
+      <p style="font-family:'Inter',sans-serif; font-weight:300; font-size:15px; color:#888; max-width:320px; line-height:1.6;">Ceny za jednu stanici. Slevy pro studenty a stálé hráče na recepci.</p>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:24px; align-items:stretch;">
+      <sc-for list="{{ pricing }}" as="p" hint-placeholder-count="4">
+        <div style="position:relative; background:{{ p.bg }}; border:1px solid #2A2A2A; border-radius:4px; padding:32px 26px; display:flex; flex-direction:column;">
+          <span style="position:absolute; top:0; left:0; right:0; height:2px; background:{{ p.tick }};"></span>
+          <sc-if value="{{ p.feat }}" hint-placeholder-val="{{ false }}">
+            <span style="position:absolute; top:16px; right:16px; font-family:'Space Mono',monospace; font-size:9px; letter-spacing:2px; color:#E84A1A; border:1px solid #E84A1A; border-radius:100px; padding:3px 10px; text-transform:uppercase;">TOP</span>
+          </sc-if>
+          <span style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:2px; color:#E84A1A; text-transform:uppercase;">{{ p.label }}</span>
+          <div style="font-family:'Bebas Neue',sans-serif; font-size:64px; color:#fff; line-height:1; margin:14px 0 4px;">{{ p.amount }} <span style="font-family:'Inter',sans-serif; font-size:18px; font-weight:500; color:#888;">{{ p.unit }}</span></div>
+          <p style="font-family:'Inter',sans-serif; font-size:14px; color:#555; margin-bottom:28px;">{{ p.desc }}</p>
+          <button style="margin-top:auto; width:100%; background:#E84A1A; color:#fff; font-family:'Bebas Neue',sans-serif; font-size:17px; letter-spacing:2px; padding:13px; border:none; border-radius:2px; cursor:pointer; transition:background .15s;" style-hover="background:#B83A12;">{{ p.cta }}</button>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TURNAJE ============ -->
+<section style="position:relative; background:#0A0A0A; padding:120px 64px; font-family:'Inter',system-ui,sans-serif; border-top:1px solid rgba(255,255,255,0.06);">
+  <div style="max-width:1440px; margin:0 auto;">
+    <div style="margin-bottom:56px;">
+      <span style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:4px; color:#E84A1A; text-transform:uppercase; display:block; margin-bottom:10px;">// NADCHÁZEJÍCÍ TURNAJE</span>
+      <h2 style="font-family:'Bebas Neue',sans-serif; font-size:60px; letter-spacing:1.5px; color:#fff; text-transform:uppercase; line-height:0.95;">PŘIHLAŠ SVŮJ TÝM</h2>
+    </div>
+    <div style="display:flex; flex-direction:column;">
+      <sc-for list="{{ tournaments }}" as="t" hint-placeholder-count="3">
+        <div style="display:grid; grid-template-columns:140px 130px 1fr 160px 180px; align-items:center; gap:24px; padding:28px 8px; border-top:1px solid #2A2A2A; transition:background .15s;" style-hover="background:#111;">
+          <div style="font-family:'Bebas Neue',sans-serif; font-size:40px; color:#E84A1A; line-height:1;">{{ t.date }}<span style="font-family:'Space Mono',monospace; font-size:11px; color:#555; display:block; letter-spacing:2px; margin-top:2px;">2026</span></div>
+          <span style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:2px; color:#888; text-transform:uppercase; border:1px solid #2A2A2A; border-radius:2px; padding:6px 10px; justify-self:start;">{{ t.game }}</span>
+          <h3 style="font-family:'Bebas Neue',sans-serif; font-size:32px; letter-spacing:1px; color:#fff; text-transform:uppercase;">{{ t.title }}</h3>
+          <div><span style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:2px; color:#555; text-transform:uppercase; display:block;">PRIZE POOL</span><span style="font-family:'Bebas Neue',sans-serif; font-size:28px; color:#fff;">{{ t.prize }}</span></div>
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
+            <span style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:1px; color:#888;">{{ t.slots }}</span>
+            <button style="background:transparent; color:#fff; font-family:'Bebas Neue',sans-serif; font-size:15px; letter-spacing:2px; padding:9px 22px; border:1.5px solid #2A2A2A; border-radius:2px; cursor:pointer; transition:border-color .15s,color .15s;" style-hover="border-color:#E84A1A; color:#E84A1A;">PŘIHLÁSIT</button>
+          </div>
+        </div>
+      </sc-for>
+      <div style="border-top:1px solid #2A2A2A;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA BAND ============ -->
+<section style="position:relative; background:#0A0A0A; padding:0 64px 120px; font-family:'Inter',system-ui,sans-serif;">
+  <div style="position:relative; max-width:1440px; margin:0 auto; background:#111; border:1px solid #2A2A2A; border-radius:4px; overflow:hidden; padding:80px 64px; text-align:center;">
+    <div style="position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,0.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.045) 1px,transparent 1px); background-size:40px 40px; mask-image:radial-gradient(ellipse 80% 100% at 50% 50%, #000, transparent 75%); -webkit-mask-image:radial-gradient(ellipse 80% 100% at 50% 50%, #000, transparent 75%);"></div>
+    <div style="position:absolute; top:-40%; left:50%; transform:translateX(-50%); width:600px; height:600px; background:radial-gradient(circle, rgba(232,74,26,0.13), transparent 60%); pointer-events:none;"></div>
+    <div style="position:relative;">
+      <span style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:4px; color:#E84A1A; text-transform:uppercase;">PŘIPRAVEN HRÁT?</span>
+      <h2 style="font-family:'Bebas Neue',sans-serif; font-size:72px; letter-spacing:2px; color:#fff; text-transform:uppercase; line-height:0.95; margin:18px 0 32px;">REZERVUJ SVOJI STANICI ještě dnes</h2>
+      <div style="display:flex; gap:20px; justify-content:center;">
+        <button style="background:#E84A1A; color:#fff; font-family:'Bebas Neue',sans-serif; font-size:19px; letter-spacing:2px; padding:16px 44px; border:none; border-radius:2px; cursor:pointer; transition:background .15s;" style-hover="background:#B83A12;">REZERVOVAT MÍSTO</button>
+        <button style="background:transparent; color:#fff; font-family:'Bebas Neue',sans-serif; font-size:19px; letter-spacing:2px; padding:15px 44px; border:1.5px solid #2A2A2A; border-radius:2px; cursor:pointer; transition:border-color .15s,color .15s;" style-hover="border-color:#E84A1A; color:#E84A1A;">NAPSAT NÁM</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer style="position:relative; background:#0A0A0A; padding:56px 64px; border-top:1px solid rgba(255,255,255,0.06); font-family:'Inter',system-ui,sans-serif;">
+  <div style="max-width:1440px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:24px;">
+    <div style="display:flex; align-items:center; gap:14px;">
+      <div style="width:40px; height:40px;">{{ logo }}</div>
+      <div style="display:flex; flex-direction:column; line-height:1;">
+        <span style="font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:2px; color:#fff;">CLUTCH ZONE</span>
+        <span style="font-family:'Space Mono',monospace; font-size:9px; letter-spacing:3px; color:#888; margin-top:3px;">ESPORT CLUB · ČESKÉ BUDĚJOVICE</span>
+      </div>
+    </div>
+    <div style="display:flex; gap:32px;">
+      <a href="#" style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:2px; color:#888; text-decoration:none; text-transform:uppercase;" style-hover="color:#fff;">Instagram</a>
+      <a href="#" style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:2px; color:#888; text-decoration:none; text-transform:uppercase;" style-hover="color:#fff;">Discord</a>
+      <a href="#" style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:2px; color:#888; text-decoration:none; text-transform:uppercase;" style-hover="color:#fff;">Kontakt</a>
+    </div>
+    <span style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:1px; color:#555;">© 2026 CLUTCH ZONE</span>
+  </div>
+</footer>
+</div></x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  renderVals() {
+    const tile = (size) => React.createElement('svg', { viewBox: '0 0 100 100', style:{ width:'100%', height:'100%', display:'block' } }, [
+      React.createElement('rect', { key:'t', x:0, y:0, width:100, height:100, rx:14, fill:'#0A0A0A' }),
+      React.createElement('rect', { key:'b', x:1, y:1, width:98, height:98, rx:13, fill:'none', stroke:'rgba(255,255,255,0.08)', strokeWidth:0.6 }),
+      React.createElement('circle', { key:'r1', cx:50, cy:50, r:40, fill:'#E8E5DC' }),
+      React.createElement('circle', { key:'r2', cx:50, cy:50, r:32, fill:'#141414' }),
+      React.createElement('circle', { key:'r3', cx:50, cy:50, r:24, fill:'#E8E5DC' }),
+      React.createElement('circle', { key:'r4', cx:50, cy:50, r:16, fill:'#141414' }),
+      React.createElement('circle', { key:'dot', cx:50, cy:50, r:9, fill:'#E84A1A' }),
+    ]);
+    return {
+      logo: tile(),
+      logoBig: tile(),
+      navItems: ['Herna', 'Ceník', 'Turnaje', 'Kontakt'],
+      stats: [
+        { value: '32', label: 'Herních stanic' },
+        { value: '89 Kč', label: 'Od / hodina' },
+        { value: '24/7', label: 'Otevřeno o víkendu' },
+      ],
+      features: [
+        { no: '01', title: 'GAMING PC', desc: 'RTX 4070, 240Hz monitory, mechanické klávesnice. Žádné kompromisy.' },
+        { no: '02', title: 'PS5 LOUNGE', desc: 'Pohodlné zóny s velkými TV pro konzolové hraní ve dvou i v partě.' },
+        { no: '03', title: 'TURNAJE', desc: 'Pravidelné CS2, Valorant a FIFA turnaje s reálnými cenami.' },
+        { no: '04', title: 'KOMUNITA', desc: 'Místo, kde najdeš spoluhráče, tým i lidi se stejnou vášní.' },
+      ],
+      pricing: [
+        { label: 'HAPPY HOUR', amount: '89', unit: 'Kč/hod', desc: 'Po–Pá · 10:00–14:00', feat: false, bg: '#111', tick: '#2A2A2A', cta: 'REZERVOVAT' },
+        { label: 'STANDARD', amount: '129', unit: 'Kč/hod', desc: 'Kdykoliv · bez omezení', feat: true, bg: '#1A1A1A', tick: '#E84A1A', cta: 'REZERVOVAT' },
+        { label: 'EVENING PASS', amount: '249', unit: 'Kč', desc: '18:00 – zavírací doba', feat: false, bg: '#111', tick: '#2A2A2A', cta: 'REZERVOVAT' },
+        { label: 'WEEKEND PASS', amount: '599', unit: 'Kč', desc: 'Celý víkend · So + Ne', feat: false, bg: '#111', tick: '#2A2A2A', cta: 'REZERVOVAT' },
+      ],
+      tournaments: [
+        { date: '15.07', game: 'CS2', title: '5v5 SUMMER CLASH', prize: '5 000 Kč', slots: '8 / 16 týmů' },
+        { date: '22.07', game: 'VALORANT', title: 'NIGHT SERIES #4', prize: '3 000 Kč', slots: '5 / 12 týmů' },
+        { date: '29.07', game: 'EA FC 25', title: '1v1 KING OF ČB', prize: '2 000 Kč', slots: '11 / 32 hráčů' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>
