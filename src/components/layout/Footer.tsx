@@ -12,13 +12,12 @@ export default function Footer() {
 
   return (
     <footer
-      id="kontakt"
-      className="bg-cz-black"
-      style={{ padding: '56px 64px', borderTop: '1px solid rgba(255,255,255,0.06)' }}
+      className="bg-cz-black px-6 py-14 md:px-16 md:py-[56px]"
+      style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
     >
       <div
         className="max-w-[1440px] mx-auto flex flex-wrap justify-between"
-        style={{ gap: 48 }}
+        style={{ gap: 40 }}
       >
         {/* Logo + lockup */}
         <LogoLockup size={40} subtitle={t('lockup')} />

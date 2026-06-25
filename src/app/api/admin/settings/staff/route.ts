@@ -14,8 +14,9 @@ export async function POST(request: NextRequest) {
   const admin = createAdminClient();
 
   // Send Supabase Auth invite email
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
   const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/callback`,
+    redirectTo: `${siteUrl}/cs/admin/accept-invite`,
   });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

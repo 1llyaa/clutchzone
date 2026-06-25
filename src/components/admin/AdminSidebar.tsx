@@ -10,6 +10,8 @@ const NAV = [
   { href: '/admin',             label: 'DASHBOARD',  exact: true },
   { href: '/admin/bookings',    label: 'REZERVACE' },
   { href: '/admin/tournaments', label: 'TURNAJE' },
+  { href: '/admin/gallery',     label: 'GALERIE' },
+  { href: '/admin/games',       label: 'HRY' },
   { href: '/admin/pricing',     label: 'CENÍK',      ownerOnly: true },
   { href: '/admin/messages',    label: 'ZPRÁVY' },
   { href: '/admin/settings',    label: 'NASTAVENÍ',  ownerOnly: true },

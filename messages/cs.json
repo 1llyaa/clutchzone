@@ -79,6 +79,54 @@
     "t3prize": "2 000 Kč",
     "t3slots": "11 / 32 hráčů"
   },
+  "tournamentReg": {
+    "title": "REGISTRACE NA TURNAJ",
+    "teamName": "NÁZEV TÝMU / HRÁČE",
+    "captainName": "JMÉNO KAPITÁNA",
+    "email": "E-MAIL",
+    "discord": "DISCORD",
+    "players": "HRÁČI",
+    "playersHint": "Každý hráč na nový řádek (volitelné)",
+    "submit": "REGISTROVAT",
+    "close": "ZAVŘÍT",
+    "success": "Registrace odeslána! Potvrzení přijde na e-mail.",
+    "errorFull": "Turnaj je plný.",
+    "errorGeneral": "Něco se pokazilo. Zkuste to znovu.",
+    "teamPlaceholder": "Team Clutch",
+    "captainPlaceholder": "Jan Novák",
+    "emailPlaceholder": "jan@email.cz",
+    "discordPlaceholder": "username",
+    "playersPlaceholder": "Jan Novák\nPetr Svoboda\n..."
+  },
+  "games": {
+    "eyebrow": "// HERNÍ KNIHOVNA",
+    "heading": "CO U NÁS HRAJEŠ"
+  },
+  "gallery": {
+    "eyebrow": "// GALERIE",
+    "heading": "NAŠE HERNA"
+  },
+  "contact": {
+    "eyebrow": "// KONTAKT",
+    "heading": "NAPIŠ NÁM",
+    "subtext": "Máš otázku, zájem o skupinovou rezervaci nebo chceš vědět víc o turnajích? Ozvi se nám — odpovídáme do 24 hodin.",
+    "locationLabel": "ADRESA",
+    "locationValue": "České Budějovice",
+    "hoursLabel": "OTEVÍRACÍ DOBA",
+    "hoursValue": "Út–Čt, Ne: 14:00–00:00 · Pá–So: 14:00–04:00",
+    "emailLabel": "E-MAIL",
+    "emailValue": "info@clutchzone.cz",
+    "name": "JMÉNO A PŘÍJMENÍ",
+    "email": "E-MAIL",
+    "message": "ZPRÁVA",
+    "namePlaceholder": "Jan Novák",
+    "emailPlaceholder": "jan@email.cz",
+    "messagePlaceholder": "Tvoje zpráva...",
+    "submit": "ODESLAT ZPRÁVU",
+    "success": "Zpráva odeslána! Ozve se ti brzy.",
+    "sendAnother": "NAPSAT DALŠÍ ZPRÁVU",
+    "errorGeneral": "Něco se pokazilo. Zkuste to znovu."
+  },
   "ctaBand": {
     "eyebrow": "PŘIPRAVEN HRÁT?",
     "heading": "REZERVUJ SVOJI STANICI JEŠTĚ DNES",

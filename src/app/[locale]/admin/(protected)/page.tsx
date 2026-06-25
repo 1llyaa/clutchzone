@@ -1,4 +1,5 @@
 import { createAdminClient } from '@/lib/supabase/admin';
+import { getLocale } from 'next-intl/server';
 
 interface StatCard {
   label: string;
@@ -50,7 +51,7 @@ const STATUS_COLOR: Record<string, string> = {
 };
 
 export default async function AdminDashboard() {
-  const stats = await fetchStats();
+  const [stats, locale] = await Promise.all([fetchStats(), getLocale()]);
 
   const cards: StatCard[] = [
     { label: 'REZERVACE DNES',   value: stats.todayCount,              sub: `${stats.todayRevenue} Kč` },
@@ -103,7 +104,7 @@ export default async function AdminDashboard() {
             POSLEDNÍ REZERVACE
           </h2>
           <a
-            href="bookings"
+            href={`/${locale}/admin/bookings`}
             className="font-mono text-cz-orange uppercase hover:underline"
             style={{ fontSize: 10, letterSpacing: 2 }}
           >

@@ -27,10 +27,10 @@ export default function Navbar() {
 
   return (
     <nav
-      className="sticky top-0 z-50 flex items-center justify-between bg-cz-black"
-      style={{ padding: '28px 64px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+      className="sticky top-0 z-50 flex items-center justify-between bg-cz-black px-6 py-5 md:px-16 md:py-7"
+      style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
     >
-      <LogoLockup size={44} />
+      <LogoLockup size={36} />
 
       {/* Desktop nav */}
       <div className="hidden md:flex items-center gap-10">
@@ -45,7 +45,6 @@ export default function Navbar() {
           </a>
         ))}
 
-        {/* Language switcher */}
         <div className="flex items-center gap-2 ml-2">
           {(['cs', 'en'] as const).map((l, i) => (
             <span key={l} className="flex items-center gap-2">
@@ -53,11 +52,7 @@ export default function Navbar() {
               <button
                 onClick={() => switchLocale(l)}
                 className="font-mono uppercase transition-colors duration-150 bg-transparent border-none cursor-pointer"
-                style={{
-                  fontSize: 11,
-                  letterSpacing: 2,
-                  color: locale === l ? '#E84A1A' : '#555',
-                }}
+                style={{ fontSize: 11, letterSpacing: 2, color: locale === l ? '#E84A1A' : '#555' }}
               >
                 {l.toUpperCase()}
               </button>
@@ -89,7 +84,7 @@ export default function Navbar() {
       {menuOpen && (
         <div
           className="absolute top-full left-0 right-0 bg-cz-black-mid md:hidden flex flex-col"
-          style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '24px 32px' }}
+          style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '20px 24px' }}
         >
           {links.map((link) => (
             <a
@@ -97,12 +92,12 @@ export default function Navbar() {
               href={link.href}
               onClick={() => setMenuOpen(false)}
               className="font-mono text-cz-gray-light uppercase hover:text-white transition-colors py-3"
-              style={{ fontSize: 12, letterSpacing: 2 }}
+              style={{ fontSize: 13, letterSpacing: 2, borderBottom: '1px solid rgba(255,255,255,0.05)' }}
             >
               {link.label}
             </a>
           ))}
-          <div className="flex items-center gap-3 mt-4">
+          <div className="flex items-center gap-3 mt-4 mb-4">
             {(['cs', 'en'] as const).map((l) => (
               <button
                 key={l}
@@ -115,8 +110,9 @@ export default function Navbar() {
             ))}
           </div>
           <button
-            className="mt-4 bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors rounded-[2px] border-none cursor-pointer"
-            style={{ fontSize: 16, letterSpacing: 2, padding: '11px 26px', alignSelf: 'flex-start' }}
+            onClick={() => { open(); setMenuOpen(false); }}
+            className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors rounded-[2px] border-none cursor-pointer"
+            style={{ fontSize: 15, letterSpacing: 2, padding: '13px 0' }}
           >
             {t('cta')}
           </button>

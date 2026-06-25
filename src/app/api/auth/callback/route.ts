@@ -26,6 +26,6 @@ export async function GET(request: NextRequest) {
     await supabase.auth.exchangeCodeForSession(code);
   }
 
-  // Redirect to admin panel after email confirmation / invite acceptance
-  return NextResponse.redirect(`${origin}/cs/admin`);
+  // After invite acceptance, send user to set-password page so they can log in next time
+  return NextResponse.redirect(`${origin}/cs/admin/set-password`);
 }

@@ -9,12 +9,11 @@ export default function CtaBand() {
 
   return (
     <section
-      className="relative bg-cz-black"
-      style={{ padding: '0 64px 120px' }}
+      className="relative bg-cz-black px-6 pb-20 md:px-16 md:pb-[120px]"
     >
       <div
         className="relative max-w-[1440px] mx-auto rounded-cz overflow-hidden text-center bg-cz-black-mid border border-cz-gray-dark"
-        style={{ padding: '80px 64px' }}
+        style={{ padding: 'clamp(48px, 8vw, 80px) clamp(24px, 6vw, 64px)' }}
       >
         {/* Grid overlay */}
         <div
@@ -49,21 +48,22 @@ export default function CtaBand() {
           </span>
           <h2
             className="font-display text-white uppercase"
-            style={{ fontSize: 72, letterSpacing: 2, lineHeight: 0.95, margin: '18px 0 32px' }}
+            style={{ fontSize: 'clamp(40px, 7vw, 72px)', letterSpacing: 2, lineHeight: 0.95, margin: '18px 0 32px' }}
           >
             {t('heading')}
           </h2>
-          <div className="flex gap-5 justify-center flex-wrap">
+          <div className="flex gap-4 md:gap-5 justify-center flex-wrap">
             <button
               onClick={open}
               className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors duration-150 rounded-[2px] border-none cursor-pointer"
-              style={{ fontSize: 19, letterSpacing: 2, padding: '16px 44px' }}
+              style={{ fontSize: 'clamp(15px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(12px, 2vw, 16px) clamp(28px, 4vw, 44px)' }}
             >
               {t('primary')}
             </button>
             <button
+              onClick={() => document.getElementById('kontakt')?.scrollIntoView({ behavior: 'smooth' })}
               className="bg-transparent text-white font-display uppercase hover:text-cz-orange hover:border-cz-orange transition-all duration-150 rounded-[2px] cursor-pointer"
-              style={{ fontSize: 19, letterSpacing: 2, padding: '15px 44px', border: '1.5px solid #2A2A2A' }}
+              style={{ fontSize: 'clamp(15px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(11px, 2vw, 15px) clamp(28px, 4vw, 44px)', border: '1.5px solid #2A2A2A' }}
             >
               {t('secondary')}
             </button>

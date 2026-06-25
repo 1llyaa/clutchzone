@@ -1,14 +1,16 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import BookingsClient from './BookingsClient';
 
-async function fetchBookingsData(date: string) {
+async function fetchBookingsData(from: string, to: string) {
   const admin = createAdminClient();
 
   const [bookingsRes, stationsRes] = await Promise.all([
     admin
       .from('bookings')
       .select('id, reference, customer_name, customer_email, customer_phone, customer_discord, date, start_time, duration_minutes, total_price, status, station_id, stations(label, type)')
-      .eq('date', date)
+      .gte('date', from)
+      .lte('date', to)
+      .order('date')
       .order('start_time'),
     admin
       .from('stations')
@@ -25,19 +27,21 @@ async function fetchBookingsData(date: string) {
 export default async function BookingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ date?: string }>;
+  searchParams: Promise<{ from?: string; to?: string }>;
 }) {
-  const { date } = await searchParams;
+  const params = await searchParams;
   const today = new Date().toISOString().split('T')[0];
-  const selectedDate = date || today;
+  const from = params.from || today;
+  const to   = params.to   || from;
 
-  const { bookings, stations } = await fetchBookingsData(selectedDate);
+  const { bookings, stations } = await fetchBookingsData(from, to);
 
   return (
     <BookingsClient
       bookings={bookings}
       stations={stations}
-      selectedDate={selectedDate}
+      from={from}
+      to={to}
     />
   );
 }

@@ -22,16 +22,16 @@ export default function Pricing() {
   const { open } = useReservation();
 
   const packages = [
-    { name: t('happyName'), time: t('happyTime'), amount: 55,  unit: t('happyUnit'),   featured: true  },
-    { name: t('eveningName'), time: t('eveningTime'), amount: 285, unit: t('eveningUnit'), featured: false },
-    { name: t('weekendName'), time: t('weekendTime'), amount: 340, unit: t('weekendUnit'), featured: false },
+    { name: t('happyName'),   time: t('happyTime'),   amount: 55,  unit: t('happyUnit'),   featured: true  },
+    { name: t('eveningName'), time: t('eveningTime'),  amount: 285, unit: t('eveningUnit'), featured: false },
+    { name: t('weekendName'), time: t('weekendTime'),  amount: 340, unit: t('weekendUnit'), featured: false },
   ];
 
   return (
     <section
       id="cenik"
-      className="relative bg-cz-black"
-      style={{ padding: '120px 64px', borderTop: '1px solid rgba(255,255,255,0.06)' }}
+      className="relative bg-cz-black px-6 py-20 md:px-16 md:py-[120px]"
+      style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
     >
       {/* Grid overlay */}
       <div
@@ -47,16 +47,13 @@ export default function Pricing() {
 
       <div className="relative max-w-[1440px] mx-auto">
         {/* Section header */}
-        <div style={{ marginBottom: 64 }}>
-          <span
-            className="font-mono text-cz-orange uppercase block"
-            style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}
-          >
+        <div style={{ marginBottom: 48 }}>
+          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}>
             {t('eyebrow')}
           </span>
           <h2
             className="font-display text-white uppercase inline-block"
-            style={{ fontSize: 60, letterSpacing: 1.5, lineHeight: 0.95, paddingBottom: 14, borderBottom: '2px solid #E84A1A' }}
+            style={{ fontSize: 'clamp(36px, 5vw, 60px)', letterSpacing: 1.5, lineHeight: 0.95, paddingBottom: 14, borderBottom: '2px solid #E84A1A' }}
           >
             {t('heading')}
           </h2>
@@ -65,32 +62,23 @@ export default function Pricing() {
         {/* PC pricing table */}
         <div
           className="relative bg-cz-black-mid border border-cz-gray-dark rounded-cz overflow-hidden"
-          style={{ padding: '32px 40px', marginBottom: 24 }}
+          style={{ padding: 'clamp(20px, 4vw, 32px) clamp(20px, 4vw, 40px)', marginBottom: 20 }}
         >
           <span className="absolute top-0 left-0 right-0 bg-cz-orange" style={{ height: 2 }} />
-          <span
-            className="font-mono text-cz-orange uppercase block"
-            style={{ fontSize: 11, letterSpacing: 3, marginBottom: 28 }}
-          >
+          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 3, marginBottom: 24 }}>
             {t('pcLabel')}
           </span>
-          <div className="grid" style={{ gridTemplateColumns: `repeat(${PC_PRICES.length}, 1fr)`, gap: 8 }}>
+          {/* Mobile: 3+2, Desktop: 5 in a row */}
+          <div className="grid grid-cols-3 md:grid-cols-5 gap-4 md:gap-2">
             {PC_PRICES.map(({ duration, amount }) => (
-              <div key={duration} className="flex flex-col items-center gap-2 text-center">
-                <span
-                  className="font-mono text-cz-gray-light uppercase"
-                  style={{ fontSize: 12, letterSpacing: 2 }}
-                >
+              <div key={duration} className="flex flex-col items-center gap-1 text-center">
+                <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 2 }}>
                   {duration}
                 </span>
-                <div className="flex items-baseline gap-1">
-                  <span className="font-display text-white" style={{ fontSize: 56, lineHeight: 1 }}>
-                    {amount}
-                  </span>
-                </div>
-                <span className="font-mono text-cz-gray-mid" style={{ fontSize: 10, letterSpacing: 1 }}>
-                  KČ
+                <span className="font-display text-white" style={{ fontSize: 'clamp(36px, 5vw, 56px)', lineHeight: 1 }}>
+                  {amount}
                 </span>
+                <span className="font-mono text-cz-gray-mid" style={{ fontSize: 10, letterSpacing: 1 }}>KČ</span>
               </div>
             ))}
           </div>
@@ -99,86 +87,54 @@ export default function Pricing() {
         {/* PS5 pricing table */}
         <div
           className="relative bg-cz-black-mid border border-cz-gray-dark rounded-cz overflow-hidden"
-          style={{ padding: '32px 40px', marginBottom: 48 }}
+          style={{ padding: 'clamp(20px, 4vw, 32px) clamp(20px, 4vw, 40px)', marginBottom: 40 }}
         >
           <span className="absolute top-0 left-0 right-0 bg-cz-gray-dark" style={{ height: 2 }} />
-          <span
-            className="font-mono text-cz-orange uppercase block"
-            style={{ fontSize: 11, letterSpacing: 3, marginBottom: 28 }}
-          >
+          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 3, marginBottom: 24 }}>
             {t('ps5Label')}
           </span>
-          <div
-            className="grid"
-            style={{
-              gridTemplateColumns: `repeat(${PS5_PRICES.length}, minmax(0, 160px))`,
-              gap: 8,
-              marginBottom: 28,
-            }}
-          >
+          <div className="grid grid-cols-3 gap-4 md:gap-2" style={{ maxWidth: 480, marginBottom: 24 }}>
             {PS5_PRICES.map(({ duration, amount }) => (
-              <div key={duration} className="flex flex-col items-center gap-2 text-center">
-                <span
-                  className="font-mono text-cz-gray-light uppercase"
-                  style={{ fontSize: 12, letterSpacing: 2 }}
-                >
+              <div key={duration} className="flex flex-col items-center gap-1 text-center">
+                <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 2 }}>
                   {duration}
                 </span>
-                <div className="flex items-baseline gap-1">
-                  <span className="font-display text-white" style={{ fontSize: 56, lineHeight: 1 }}>
-                    {amount}
-                  </span>
-                </div>
-                <span className="font-mono text-cz-gray-mid" style={{ fontSize: 10, letterSpacing: 1 }}>
-                  KČ
+                <span className="font-display text-white" style={{ fontSize: 'clamp(36px, 5vw, 56px)', lineHeight: 1 }}>
+                  {amount}
                 </span>
+                <span className="font-mono text-cz-gray-mid" style={{ fontSize: 10, letterSpacing: 1 }}>KČ</span>
               </div>
             ))}
           </div>
-          <span
-            className="font-mono text-cz-gray-mid uppercase block"
-            style={{ fontSize: 10, letterSpacing: 2, borderTop: '1px solid #2A2A2A', paddingTop: 20 }}
-          >
+          <span className="font-mono text-cz-gray-mid uppercase block" style={{ fontSize: 10, letterSpacing: 2, borderTop: '1px solid #2A2A2A', paddingTop: 20 }}>
             {t('ps5Note')}
           </span>
         </div>
 
-        {/* Special packages heading */}
-        <div style={{ marginBottom: 24 }}>
-          <span
-            className="font-mono text-cz-gray-light uppercase"
-            style={{ fontSize: 11, letterSpacing: 3 }}
-          >
+        {/* Packages heading */}
+        <div style={{ marginBottom: 20 }}>
+          <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 3 }}>
             {t('packagesHeading')}
           </span>
         </div>
 
         {/* Package cards */}
-        <div className="grid gap-6" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {packages.map((pkg) => (
             <div
               key={pkg.name}
               className="relative flex flex-col border border-cz-gray-dark rounded-cz"
-              style={{ background: pkg.featured ? '#1A1A1A' : '#111111', padding: '32px 28px' }}
+              style={{ background: pkg.featured ? '#1A1A1A' : '#111111', padding: 'clamp(24px, 4vw, 32px) clamp(20px, 3vw, 28px)' }}
             >
-              <span
-                className="absolute top-0 left-0 right-0 rounded-t-cz"
-                style={{ height: 2, background: pkg.featured ? '#E84A1A' : '#2A2A2A' }}
-              />
-              <span
-                className="font-mono text-cz-orange uppercase"
-                style={{ fontSize: 11, letterSpacing: 2, marginBottom: 8 }}
-              >
+              <span className="absolute top-0 left-0 right-0 rounded-t-cz" style={{ height: 2, background: pkg.featured ? '#E84A1A' : '#2A2A2A' }} />
+              <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 11, letterSpacing: 2, marginBottom: 8 }}>
                 {pkg.name}
               </span>
-              <span
-                className="font-mono text-cz-gray-mid uppercase"
-                style={{ fontSize: 10, letterSpacing: 2, marginBottom: 24 }}
-              >
+              <span className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 2, marginBottom: 20 }}>
                 {pkg.time}
               </span>
-              <div className="flex items-baseline gap-2" style={{ marginTop: 'auto', marginBottom: 28 }}>
-                <span className="font-display text-white" style={{ fontSize: 64, lineHeight: 1 }}>
+              <div className="flex items-baseline gap-2" style={{ marginTop: 'auto', marginBottom: 24 }}>
+                <span className="font-display text-white" style={{ fontSize: 'clamp(48px, 6vw, 64px)', lineHeight: 1 }}>
                   {pkg.amount}
                 </span>
                 <span className="font-body text-cz-gray-light" style={{ fontSize: 18, fontWeight: 500 }}>

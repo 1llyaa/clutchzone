@@ -79,6 +79,54 @@
     "t3prize": "2 000 Kč",
     "t3slots": "11 / 32 players"
   },
+  "tournamentReg": {
+    "title": "TOURNAMENT REGISTRATION",
+    "teamName": "TEAM / PLAYER NAME",
+    "captainName": "CAPTAIN NAME",
+    "email": "E-MAIL",
+    "discord": "DISCORD",
+    "players": "PLAYERS",
+    "playersHint": "One player per line (optional)",
+    "submit": "REGISTER",
+    "close": "CLOSE",
+    "success": "Registration submitted! Confirmation will be sent to your email.",
+    "errorFull": "This tournament is full.",
+    "errorGeneral": "Something went wrong. Please try again.",
+    "teamPlaceholder": "Team Clutch",
+    "captainPlaceholder": "John Smith",
+    "emailPlaceholder": "john@email.com",
+    "discordPlaceholder": "username",
+    "playersPlaceholder": "John Smith\nJane Doe\n..."
+  },
+  "games": {
+    "eyebrow": "// GAME LIBRARY",
+    "heading": "WHAT WE PLAY"
+  },
+  "gallery": {
+    "eyebrow": "// GALLERY",
+    "heading": "OUR VENUE"
+  },
+  "contact": {
+    "eyebrow": "// CONTACT",
+    "heading": "GET IN TOUCH",
+    "subtext": "Have a question, interested in a group booking or want to know more about tournaments? Reach out — we reply within 24 hours.",
+    "locationLabel": "ADDRESS",
+    "locationValue": "České Budějovice",
+    "hoursLabel": "OPENING HOURS",
+    "hoursValue": "Tue–Thu, Sun: 14:00–00:00 · Fri–Sat: 14:00–04:00",
+    "emailLabel": "E-MAIL",
+    "emailValue": "info@clutchzone.cz",
+    "name": "FULL NAME",
+    "email": "E-MAIL",
+    "message": "MESSAGE",
+    "namePlaceholder": "John Smith",
+    "emailPlaceholder": "john@email.com",
+    "messagePlaceholder": "Your message...",
+    "submit": "SEND MESSAGE",
+    "success": "Message sent! We'll get back to you soon.",
+    "sendAnother": "SEND ANOTHER MESSAGE",
+    "errorGeneral": "Something went wrong. Please try again."
+  },
   "ctaBand": {
     "eyebrow": "READY TO PLAY?",
     "heading": "BOOK YOUR STATION TODAY",
