@@ -74,13 +74,13 @@ export default function Hero() {
           <div className="flex flex-wrap gap-4" style={{ marginTop: 36 }}>
             <button
               onClick={open}
-              className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.98] transition-all duration-150 rounded-[2px] border-none cursor-pointer"
+              className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer"
               style={{ fontSize: 'clamp(15px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(12px, 2vw, 16px) clamp(24px, 4vw, 40px)' }}
             >
               {t('ctaPrimary')}
             </button>
             <button
-              className="bg-transparent text-white font-display uppercase hover:text-cz-orange hover:border-cz-orange transition-all duration-150 rounded-[2px] cursor-pointer"
+              className="bg-transparent text-white font-display uppercase hover:text-cz-orange hover:border-cz-orange active:scale-[0.96] transition-[color,border-color,scale] duration-150 ease-out rounded-[2px] cursor-pointer"
               style={{ fontSize: 'clamp(15px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(11px, 2vw, 15px) clamp(24px, 4vw, 40px)', border: '1.5px solid #2A2A2A' }}
             >
               {t('ctaSecondary')}

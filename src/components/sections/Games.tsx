@@ -35,7 +35,7 @@ function GameCard({ game }: { game: Game }) {
           src={game.cover_url}
           alt={game.title}
           className="w-full h-full object-cover"
-          style={{ transform: hovered ? 'scale(1.06)' : 'scale(1)', transition: 'transform 0.5s ease' }}
+          style={{ transform: hovered ? 'scale(1.06)' : 'scale(1)', transition: 'transform 0.5s ease', willChange: 'transform' }}
         />
       ) : (
         <div

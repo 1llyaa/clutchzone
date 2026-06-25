@@ -62,7 +62,7 @@ export default function Navbar() {
 
         <button
           onClick={open}
-          className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors duration-150 rounded-[2px] cursor-pointer border-none"
+          className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] cursor-pointer border-none"
           style={{ fontSize: 16, letterSpacing: 2, padding: '11px 26px' }}
         >
           {t('cta')}
@@ -75,9 +75,9 @@ export default function Navbar() {
         onClick={() => setMenuOpen((o) => !o)}
         aria-label="Toggle menu"
       >
-        <span className="block w-6 h-[1.5px] bg-white transition-all" style={{ opacity: menuOpen ? 0 : 1 }} />
+        <span className="block w-6 h-[1.5px] bg-white transition-[opacity] duration-150" style={{ opacity: menuOpen ? 0 : 1 }} />
         <span className="block w-6 h-[1.5px] bg-white" />
-        <span className="block w-6 h-[1.5px] bg-white transition-all" style={{ opacity: menuOpen ? 0 : 1 }} />
+        <span className="block w-6 h-[1.5px] bg-white transition-[opacity] duration-150" style={{ opacity: menuOpen ? 0 : 1 }} />
       </button>
 
       {/* Mobile menu */}
@@ -111,7 +111,7 @@ export default function Navbar() {
           </div>
           <button
             onClick={() => { open(); setMenuOpen(false); }}
-            className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors rounded-[2px] border-none cursor-pointer"
+            className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer"
             style={{ fontSize: 15, letterSpacing: 2, padding: '13px 0' }}
           >
             {t('cta')}

@@ -252,7 +252,7 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex-1 bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors rounded-[2px] border-none cursor-pointer disabled:opacity-50"
+                className="flex-1 bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:not-disabled:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer disabled:opacity-50"
                 style={{ fontSize: 15, letterSpacing: 2, padding: 13 }}
               >
                 {submitting ? '...' : t('submit')}

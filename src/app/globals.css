@@ -45,11 +45,26 @@
   html {
     scroll-behavior: smooth;
     background-color: #0A0A0A;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  img {
+    outline: 1px solid rgba(255, 255, 255, 0.1);
+    outline-offset: -1px;
   }
 }

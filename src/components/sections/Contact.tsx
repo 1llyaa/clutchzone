@@ -145,7 +145,7 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors rounded-[2px] border-none cursor-pointer disabled:opacity-50"
+                className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:not-disabled:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer disabled:opacity-50"
                 style={{ fontSize: 15, letterSpacing: 2, padding: '14px 0', marginTop: 4 }}
               >
                 {submitting ? '...' : t('submit')}

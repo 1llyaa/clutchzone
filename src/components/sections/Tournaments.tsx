@@ -76,11 +76,11 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
                       </span>
                     </div>
                     <div className="flex flex-col items-end gap-2">
-                      <span className="font-mono text-cz-gray-light" style={{ fontSize: 11, letterSpacing: 1 }}>{row.filled_slots} / {row.max_slots}</span>
+                      <span className="font-mono text-cz-gray-light tabular-nums" style={{ fontSize: 11, letterSpacing: 1 }}>{row.filled_slots} / {row.max_slots}</span>
                       <button
                         onClick={() => !isFull && setSelected(row)}
                         disabled={isFull}
-                        className="font-display uppercase transition-all duration-150 rounded-[2px] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="font-display uppercase transition-[color,border-color,scale] duration-150 ease-out rounded-[2px] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed active:not-disabled:scale-[0.96]"
                         style={{ fontSize: 15, letterSpacing: 2, padding: '9px 22px', background: 'transparent', color: isFull ? '#555' : '#fff', border: '1.5px solid #2A2A2A' }}
                         onMouseEnter={(e) => { if (!isFull) { (e.currentTarget as HTMLButtonElement).style.color = '#E84A1A'; (e.currentTarget as HTMLButtonElement).style.borderColor = '#E84A1A'; } }}
                         onMouseLeave={(e) => { if (!isFull) { (e.currentTarget as HTMLButtonElement).style.color = '#fff'; (e.currentTarget as HTMLButtonElement).style.borderColor = '#2A2A2A'; } }}
@@ -102,7 +102,7 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
                           {row.game}
                         </span>
                       </div>
-                      <span className="font-mono text-cz-gray-light" style={{ fontSize: 11, letterSpacing: 1, flexShrink: 0 }}>
+                      <span className="font-mono text-cz-gray-light tabular-nums" style={{ fontSize: 11, letterSpacing: 1, flexShrink: 0 }}>
                         {row.filled_slots}/{row.max_slots}
                       </span>
                     </div>

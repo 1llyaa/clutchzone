@@ -143,7 +143,7 @@ export default function Pricing() {
               </div>
               <button
                 onClick={open}
-                className="w-full bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors duration-150 rounded-[2px] border-none cursor-pointer"
+                className="w-full bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer"
                 style={{ fontSize: 17, letterSpacing: 2, padding: 13 }}
               >
                 {t('cta')}

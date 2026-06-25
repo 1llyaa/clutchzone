@@ -36,7 +36,7 @@ export default function Features() {
           {cards.map((card) => (
             <div
               key={card.no}
-              className="group flex flex-col bg-cz-black-mid border border-cz-gray-dark rounded-cz transition-all duration-200 hover:border-cz-orange"
+              className="group flex flex-col bg-cz-black-mid border border-cz-gray-dark rounded-cz transition-[border-color] duration-200 hover:border-cz-orange"
               style={{ padding: 'clamp(20px, 4vw, 32px) clamp(18px, 3vw, 28px)' }}
             >
               <span className="font-mono text-cz-orange" style={{ fontSize: 13, letterSpacing: 2 }}>
