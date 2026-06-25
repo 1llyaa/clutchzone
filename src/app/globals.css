@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cz-orange: #E84A1A;
+  --color-cz-orange-dark: #B83A12;
+  --color-cz-orange-glow: #FF6B35;
+  --color-cz-black: #0A0A0A;
+  --color-cz-black-mid: #111111;
+  --color-cz-black-light: #1A1A1A;
+  --color-cz-gray-dark: #2A2A2A;
+  --color-cz-gray-mid: #555555;
+  --color-cz-gray-light: #888888;
+  --color-cz-white: #FFFFFF;
+  --color-cz-white-soft: #E8E8E8;
+
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+
+  --radius-cz: 4px;
+  --radius-pill: 100px;
+
+  --animate-ring-spin: cz-ring-spin 28s linear infinite;
+  --animate-flicker: cz-flicker 1.6s ease-in-out infinite;
+  --animate-scroll-pulse: cz-scroll-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes cz-ring-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes cz-flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+@keyframes cz-scroll-pulse {
+  0%   { transform: scaleY(0); transform-origin: top; opacity: 0; }
+  40%  { transform: scaleY(1); transform-origin: top; opacity: 1; }
+  60%  { transform: scaleY(1); transform-origin: bottom; opacity: 1; }
+  100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: #0A0A0A;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
