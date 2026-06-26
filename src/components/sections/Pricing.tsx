@@ -3,28 +3,20 @@
 import { useTranslations } from 'next-intl';
 import { useReservation } from '@/components/reservation/ReservationContext';
 
-const PC_PRICES = [
-  { duration: '1H', amount: 75 },
-  { duration: '3H', amount: 215 },
-  { duration: '5H', amount: 345 },
-  { duration: '7H', amount: 475 },
-  { duration: '10H', amount: 660 },
-];
+interface Props {
+  pcPrices:       { duration_h: number; amount: number }[];
+  ps5Prices:      { duration_h: number; amount: number }[];
+  packageAmounts: Record<string, number>;
+}
 
-const PS5_PRICES = [
-  { duration: '1H', amount: 120 },
-  { duration: '3H', amount: 330 },
-  { duration: '5H', amount: 560 },
-];
-
-export default function Pricing() {
+export default function Pricing({ pcPrices, ps5Prices, packageAmounts }: Props) {
   const t = useTranslations('pricing');
   const { open } = useReservation();
 
   const packages = [
-    { name: t('happyName'),   time: t('happyTime'),   amount: 55,  unit: t('happyUnit'),   featured: true  },
-    { name: t('eveningName'), time: t('eveningTime'),  amount: 285, unit: t('eveningUnit'), featured: false },
-    { name: t('weekendName'), time: t('weekendTime'),  amount: 340, unit: t('weekendUnit'), featured: false },
+    { name: t('happyName'),   time: t('happyTime'),   amount: packageAmounts.happy_hour   ?? 55,  unit: t('happyUnit'),   featured: true  },
+    { name: t('eveningName'), time: t('eveningTime'),  amount: packageAmounts.evening_pass ?? 285, unit: t('eveningUnit'), featured: false },
+    { name: t('weekendName'), time: t('weekendTime'),  amount: packageAmounts.weekend_pass ?? 340, unit: t('weekendUnit'), featured: false },
   ];
 
   return (
@@ -70,10 +62,10 @@ export default function Pricing() {
           </span>
           {/* Mobile: 3+2, Desktop: 5 in a row */}
           <div className="grid grid-cols-3 md:grid-cols-5 gap-4 md:gap-2">
-            {PC_PRICES.map(({ duration, amount }) => (
-              <div key={duration} className="flex flex-col items-center gap-1 text-center">
+            {pcPrices.map(({ duration_h, amount }) => (
+              <div key={duration_h} className="flex flex-col items-center gap-1 text-center">
                 <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 2 }}>
-                  {duration}
+                  {duration_h}H
                 </span>
                 <span className="font-display text-white" style={{ fontSize: 'clamp(36px, 5vw, 56px)', lineHeight: 1 }}>
                   {amount}
@@ -94,10 +86,10 @@ export default function Pricing() {
             {t('ps5Label')}
           </span>
           <div className="grid grid-cols-3 gap-4 md:gap-2" style={{ maxWidth: 480, marginBottom: 24 }}>
-            {PS5_PRICES.map(({ duration, amount }) => (
-              <div key={duration} className="flex flex-col items-center gap-1 text-center">
+            {ps5Prices.map(({ duration_h, amount }) => (
+              <div key={duration_h} className="flex flex-col items-center gap-1 text-center">
                 <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 2 }}>
-                  {duration}
+                  {duration_h}H
                 </span>
                 <span className="font-display text-white" style={{ fontSize: 'clamp(36px, 5vw, 56px)', lineHeight: 1 }}>
                   {amount}

@@ -1,7 +1,7 @@
 import type { StationType, DurationOption } from '@/types';
 
-const PC_PRICES: Record<number, number> = { 1: 75, 3: 215, 5: 345, 7: 475, 10: 660 };
-const PS5_PRICES: Record<number, number> = { 1: 120, 3: 330, 5: 560 };
+export const PC_PRICES: Record<number, number> = { 1: 75, 3: 215, 5: 345, 7: 475, 10: 660 };
+export const PS5_PRICES: Record<number, number> = { 1: 120, 3: 330, 5: 560 };
 const HAPPY_HOUR_RATE = 55;
 
 // Returns { open, close } in hours-since-midnight (close can be >24 for after-midnight)

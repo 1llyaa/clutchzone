@@ -51,6 +51,20 @@ export async function POST(
     }
   }
 
+  // Atomically claim a slot using optimistic locking: only succeeds if filled_slots
+  // hasn't changed since we read it, preventing double-registration under concurrency.
+  const { data: claimed } = await admin
+    .from('tournaments')
+    .update({ filled_slots: tournament.filled_slots + 1 })
+    .eq('id', id)
+    .eq('filled_slots', tournament.filled_slots)
+    .select('id')
+    .maybeSingle();
+
+  if (!claimed) {
+    return NextResponse.json({ error: 'full' }, { status: 409 });
+  }
+
   const { error: insErr } = await admin.from('tournament_registrations').insert({
     tournament_id:   id,
     team_name:       parsed.data.team_name,
@@ -61,13 +75,15 @@ export async function POST(
     status:          'pending',
   });
 
-  if (insErr) return NextResponse.json({ error: insErr.message }, { status: 500 });
-
-  // Increment filled_slots
-  await admin
-    .from('tournaments')
-    .update({ filled_slots: tournament.filled_slots + 1 })
-    .eq('id', id);
+  if (insErr) {
+    // Roll back the slot claim
+    await admin
+      .from('tournaments')
+      .update({ filled_slots: tournament.filled_slots })
+      .eq('id', id)
+      .eq('filled_slots', tournament.filled_slots + 1);
+    return NextResponse.json({ error: insErr.message }, { status: 500 });
+  }
 
   return NextResponse.json({ ok: true }, { status: 201 });
 }

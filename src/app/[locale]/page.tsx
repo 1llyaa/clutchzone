@@ -46,11 +46,26 @@ async function fetchGames() {
   return data ?? [];
 }
 
+async function fetchPricing() {
+  const admin = createAdminClient();
+  const [pc, ps5, tiers] = await Promise.all([
+    admin.from('pc_duration_prices').select('duration_h, amount').order('duration_h'),
+    admin.from('ps5_duration_prices').select('duration_h, amount').order('duration_h'),
+    admin.from('pricing_tiers').select('tier, amount').in('tier', ['happy_hour', 'evening_pass', 'weekend_pass']),
+  ]);
+  return {
+    pcPrices:       pc.data ?? [],
+    ps5Prices:      ps5.data ?? [],
+    packageAmounts: Object.fromEntries((tiers.data ?? []).map((t) => [t.tier, t.amount])) as Record<string, number>,
+  };
+}
+
 export default async function HomePage() {
-  const [tournaments, gallery, games] = await Promise.all([
+  const [tournaments, gallery, games, pricing] = await Promise.all([
     fetchTournaments(),
     fetchGallery(),
     fetchGames(),
+    fetchPricing(),
   ]);
 
   return (
@@ -60,7 +75,7 @@ export default async function HomePage() {
         <Hero />
         <Features />
         <Games games={games} />
-        <Pricing />
+        <Pricing pcPrices={pricing.pcPrices} ps5Prices={pricing.ps5Prices} packageAmounts={pricing.packageAmounts} />
         <Tournaments tournaments={tournaments} />
         <Gallery images={gallery.images} displayType={gallery.displayType} />
         <Contact />

@@ -52,14 +52,14 @@ export async function POST(req: NextRequest) {
     .neq('status', 'cancelled')
     .eq('date', data.date);
 
-  const [sh] = data.startTime.split(':').map(Number);
-  const ourStart = sh * 60;
+  const [sh, sm] = data.startTime.split(':').map(Number);
+  const ourStart = sh * 60 + sm;
   const ourEnd = ourStart + data.durationMinutes;
 
   const occupiedIds = new Set<string>();
   for (const b of bookings ?? []) {
-    const [bh] = (b.start_time as string).split(':').map(Number);
-    const bStart = bh * 60;
+    const [bh, bm] = (b.start_time as string).split(':').map(Number);
+    const bStart = bh * 60 + bm;
     const bEnd = bStart + b.duration_minutes;
     if (bStart < ourEnd && bEnd > ourStart) {
       occupiedIds.add(b.station_id);
@@ -97,7 +97,7 @@ export async function POST(req: NextRequest) {
 
   if (insertErr) {
     // Could be a race-condition constraint violation
-    if (insertErr.code === '23P01') {
+    if (insertErr.code === '23505') {
       return NextResponse.json({ error: 'Všechny stanice jsou obsazeny v tomto čase' }, { status: 409 });
     }
     return NextResponse.json({ error: 'Chyba při vytváření rezervace' }, { status: 500 });

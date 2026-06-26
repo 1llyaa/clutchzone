@@ -61,19 +61,21 @@ export async function DELETE(
 
   const admin = createAdminClient();
 
-  // Remove the registration
-  const { error } = await admin
+  // Remove the registration, requesting an exact count of deleted rows
+  const { error, count } = await admin
     .from('tournament_registrations')
-    .delete()
+    .delete({ count: 'exact' })
     .eq('id', registrationId)
     .eq('tournament_id', id);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  // Decrement filled_slots without going below 0
-  const { data: t } = await admin.from('tournaments').select('filled_slots').eq('id', id).single();
-  if (t && t.filled_slots > 0) {
-    await admin.from('tournaments').update({ filled_slots: t.filled_slots - 1 }).eq('id', id);
+  // Only decrement if a row was actually deleted (guard against double-delete)
+  if (count && count > 0) {
+    const { data: t } = await admin.from('tournaments').select('filled_slots').eq('id', id).single();
+    if (t && t.filled_slots > 0) {
+      await admin.from('tournaments').update({ filled_slots: t.filled_slots - 1 }).eq('id', id);
+    }
   }
 
   return NextResponse.json({ ok: true });

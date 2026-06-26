@@ -16,6 +16,11 @@ export async function PATCH(
     Object.entries(body).filter(([k]) => allowed.includes(k))
   );
 
+  const VALID_STATUSES = ['pending', 'confirmed', 'cancelled'];
+  if ('status' in updates && !VALID_STATUSES.includes(updates.status as string)) {
+    return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
+  }
+
   const admin = createAdminClient();
   const { error } = await admin.from('bookings').update(updates).eq('id', id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
