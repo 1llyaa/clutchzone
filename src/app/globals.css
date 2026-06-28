@@ -23,6 +23,9 @@
   --animate-ring-spin: cz-ring-spin 28s linear infinite;
   --animate-flicker: cz-flicker 1.6s ease-in-out infinite;
   --animate-scroll-pulse: cz-scroll-pulse 2.2s ease-in-out infinite;
+  --animate-hero-char: cz-hero-char 1s cubic-bezier(0.2, 0, 0, 1) forwards;
+  --animate-hero-float: cz-hero-float 6s ease-in-out infinite;
+  --animate-hero-glow-pulse: cz-hero-glow-pulse 4s ease-in-out infinite;
 }
 
 @keyframes cz-ring-spin {
@@ -39,6 +42,21 @@
   40%  { transform: scaleY(1); transform-origin: top; opacity: 1; }
   60%  { transform: scaleY(1); transform-origin: bottom; opacity: 1; }
   100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+}
+
+@keyframes cz-hero-char {
+  0%   { opacity: 0; transform: translateY(40px) scale(0.95); filter: blur(8px); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+@keyframes cz-hero-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
+@keyframes cz-hero-glow-pulse {
+  0%, 100% { opacity: 0.15; transform: scale(1); }
+  50%      { opacity: 0.25; transform: scale(1.05); }
 }
 
 @layer base {

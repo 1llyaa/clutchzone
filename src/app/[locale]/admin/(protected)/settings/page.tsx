@@ -6,14 +6,16 @@ import SettingsClient from './SettingsClient';
 async function fetchData() {
   const admin = createAdminClient();
 
-  const [profiles, stations] = await Promise.all([
+  const [profiles, stations, settings] = await Promise.all([
     admin.from('profiles').select('id, email, display_name, role, created_at').order('created_at'),
     admin.from('stations').select('id, label, type, is_active').order('label'),
+    admin.from('site_settings').select('key, value'),
   ]);
 
   return {
     profiles: profiles.data ?? [],
     stations: stations.data ?? [],
+    siteSettings: Object.fromEntries((settings.data ?? []).map((r) => [r.key, r.value])) as Record<string, string>,
   };
 }
 
@@ -29,6 +31,6 @@ export default async function SettingsPage({
     redirect(`/${locale}/admin`);
   }
 
-  const { profiles, stations } = await fetchData();
-  return <SettingsClient profiles={profiles} stations={stations} currentUserId={me.id} />;
+  const { profiles, stations, siteSettings } = await fetchData();
+  return <SettingsClient profiles={profiles} stations={stations} currentUserId={me.id} siteSettings={siteSettings} />;
 }

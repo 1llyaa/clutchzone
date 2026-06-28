@@ -20,7 +20,7 @@
     "stat2Label": "FROM / HOUR",
     "stat3Value": "TUE–SUN",
     "stat3Label": "OPEN",
-    "counter": "8 / 12 stations free",
+    "stationsFree": "stations free",
     "scroll": "SCROLL"
   },
   "features": {
@@ -56,6 +56,10 @@
     "weekendName": "WEEKEND PASS",
     "weekendTime": "22:00 – 04:00",
     "weekendUnit": "Kč"
+  },
+  "stream": {
+    "eyebrow": "// LIVE STREAM",
+    "heading": "WATCH US LIVE"
   },
   "tournaments": {
     "eyebrow": "// UPCOMING TOURNAMENTS",

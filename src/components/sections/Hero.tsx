@@ -1,10 +1,15 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import Logo from '@/components/ui/Logo';
 import { useReservation } from '@/components/reservation/ReservationContext';
 
-export default function Hero() {
+interface Props {
+  heroImage?: string;
+  stationsFree?: number;
+  stationsTotal?: number;
+}
+
+export default function Hero({ heroImage, stationsFree, stationsTotal }: Props) {
   const t = useTranslations('hero');
   const { open } = useReservation();
 
@@ -108,29 +113,57 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Right — ring graphic (desktop only) */}
-        <div className="relative hidden lg:flex items-center justify-center" style={{ minHeight: 480 }}>
+        {/* Right — character graphic (desktop only) */}
+        <div className="relative hidden lg:flex items-center justify-center" style={{ minHeight: 520 }}>
+          {/* Corner accents */}
           <span className="absolute" style={{ top: 0, left: '8%', width: 40, height: 40, borderTop: '1.5px solid #E84A1A', borderLeft: '1.5px solid #E84A1A' }} />
           <span className="absolute" style={{ bottom: 0, right: '8%', width: 40, height: 40, borderBottom: '1.5px solid #E84A1A', borderRight: '1.5px solid #E84A1A' }} />
 
-          <div className="relative flex items-center justify-center" style={{ width: 380, height: 380 }}>
-            <svg viewBox="0 0 100 100" className="absolute inset-0 animate-ring-spin" style={{ width: '100%', height: '100%' }}>
-              <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth="0.4" />
-              <circle cx="50" cy="50" r="48" fill="none" stroke="#E84A1A" strokeWidth="0.6" strokeDasharray="24 10 6 60" strokeLinecap="round" />
-              <circle cx="50" cy="2.3" r="1.4" fill="#E84A1A" />
-            </svg>
-            <Logo size={230} />
+          {/* Glow behind character */}
+          <div
+            className="absolute animate-hero-glow-pulse"
+            style={{
+              width: 420, height: 420,
+              background: 'radial-gradient(circle, rgba(232,74,26,0.2) 0%, rgba(232,74,26,0.05) 50%, transparent 70%)',
+              borderRadius: '50%',
+            }}
+          />
+
+          {/* Character */}
+          <div className="relative animate-hero-char" style={{ animationDelay: '0.2s', opacity: 0 }}>
+            <div className="animate-hero-float">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={heroImage || '/terrorist_cs2.png'}
+                alt="Hero Character"
+                width={420}
+                height={560}
+                style={{
+                  objectFit: 'contain',
+                  maxHeight: 560,
+                  width: 'auto',
+                  filter: 'drop-shadow(0 0 40px rgba(232,74,26,0.3)) drop-shadow(0 20px 60px rgba(0,0,0,0.6))',
+                  outline: 'none',
+                }}
+              />
+            </div>
           </div>
 
-          <div
-            className="absolute flex items-center bg-cz-black-mid rounded-[2px]"
-            style={{ bottom: '6%', left: 0, border: '1px solid #2A2A2A', padding: '12px 16px', gap: 10 }}
-          >
-            <span className="rounded-full bg-cz-orange animate-flicker flex-shrink-0" style={{ width: 8, height: 8 }} />
-            <span className="font-mono text-cz-white-soft uppercase" style={{ fontSize: 11, letterSpacing: 1.5 }}>
-              {t('counter')}
-            </span>
-          </div>
+          {/* Status badge */}
+          {stationsFree != null && stationsTotal != null && (
+            <div
+              className="absolute flex items-center bg-cz-black-mid rounded-[2px]"
+              style={{ bottom: '6%', left: 0, border: '1px solid #2A2A2A', padding: '12px 16px', gap: 10 }}
+            >
+              <span
+                className="rounded-full animate-flicker flex-shrink-0"
+                style={{ width: 8, height: 8, background: stationsFree > 0 ? '#22c55e' : '#ef4444' }}
+              />
+              <span className="font-mono text-cz-white-soft uppercase tabular-nums" style={{ fontSize: 11, letterSpacing: 1.5 }}>
+                {stationsFree} / {stationsTotal} {t('stationsFree')}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 

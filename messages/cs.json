@@ -20,7 +20,7 @@
     "stat2Label": "OD / HODINA",
     "stat3Value": "ÚT–NE",
     "stat3Label": "OTEVŘENO",
-    "counter": "8 / 12 stanic volných",
+    "stationsFree": "stanic volných",
     "scroll": "SCROLL"
   },
   "features": {
@@ -56,6 +56,10 @@
     "weekendName": "WEEKEND PASS",
     "weekendTime": "22:00 – 04:00",
     "weekendUnit": "Kč"
+  },
+  "stream": {
+    "eyebrow": "// ŽIVÝ PŘENOS",
+    "heading": "SLEDUJ NÁS LIVE"
   },
   "tournaments": {
     "eyebrow": "// NADCHÁZEJÍCÍ TURNAJE",

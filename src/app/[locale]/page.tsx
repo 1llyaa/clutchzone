@@ -4,6 +4,7 @@ import Footer from '@/components/layout/Footer';
 import Hero from '@/components/sections/Hero';
 import Features from '@/components/sections/Features';
 import Pricing from '@/components/sections/Pricing';
+import Stream from '@/components/sections/Stream';
 import Tournaments from '@/components/sections/Tournaments';
 import Games from '@/components/sections/Games';
 import Gallery from '@/components/sections/Gallery';
@@ -46,6 +47,37 @@ async function fetchGames() {
   return data ?? [];
 }
 
+async function fetchStationAvailability() {
+  const admin = createAdminClient();
+  const now = new Date();
+  const today = now.toISOString().split('T')[0];
+  const currentTime = now.toTimeString().slice(0, 5);
+
+  const [stationsRes, bookingsRes] = await Promise.all([
+    admin.from('stations').select('id').eq('is_active', true),
+    admin
+      .from('bookings')
+      .select('station_id')
+      .eq('date', today)
+      .neq('status', 'cancelled')
+      .lte('start_time', currentTime)
+      .gt('end_time', currentTime),
+  ]);
+
+  const total = stationsRes.data?.length ?? 0;
+  const occupied = new Set((bookingsRes.data ?? []).map((b) => b.station_id)).size;
+  return { total, free: total - occupied };
+}
+
+async function fetchSiteSettings() {
+  const admin = createAdminClient();
+  const { data } = await admin
+    .from('site_settings')
+    .select('key, value')
+    .in('key', ['hero_image', 'stream_url', 'stream_visible']);
+  return Object.fromEntries((data ?? []).map((r) => [r.key, r.value])) as Record<string, string>;
+}
+
 async function fetchPricing() {
   const admin = createAdminClient();
   const [pc, ps5, tiers] = await Promise.all([
@@ -61,21 +93,26 @@ async function fetchPricing() {
 }
 
 export default async function HomePage() {
-  const [tournaments, gallery, games, pricing] = await Promise.all([
+  const [tournaments, gallery, games, pricing, siteSettings, availability] = await Promise.all([
     fetchTournaments(),
     fetchGallery(),
     fetchGames(),
     fetchPricing(),
+    fetchSiteSettings(),
+    fetchStationAvailability(),
   ]);
 
   return (
     <>
       <Navbar />
       <main>
-        <Hero />
+        <Hero heroImage={siteSettings.hero_image} stationsFree={availability.free} stationsTotal={availability.total} />
         <Features />
         <Games games={games} />
         <Pricing pcPrices={pricing.pcPrices} ps5Prices={pricing.ps5Prices} packageAmounts={pricing.packageAmounts} />
+        {siteSettings.stream_visible === 'true' && siteSettings.stream_url && (
+          <Stream streamUrl={siteSettings.stream_url} />
+        )}
         <Tournaments tournaments={tournaments} />
         <Gallery images={gallery.images} displayType={gallery.displayType} />
         <Contact />

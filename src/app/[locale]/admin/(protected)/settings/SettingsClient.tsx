@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { createBrowserClient } from '@supabase/ssr';
 
 interface Profile {
   id: string;
@@ -22,19 +23,101 @@ export default function SettingsClient({
   profiles,
   stations,
   currentUserId,
+  siteSettings,
 }: {
   profiles: Profile[];
   stations: Station[];
   currentUserId: string;
+  siteSettings: Record<string, string>;
 }) {
   const router = useRouter();
   const [, startTransition] = useTransition();
+
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviting, setInviting]       = useState(false);
   const [inviteMsg, setInviteMsg]     = useState('');
   const [removing, setRemoving]       = useState<string | null>(null);
   const [toggling, setToggling]       = useState<string | null>(null);
+
+  const [heroImage, setHeroImage]       = useState(siteSettings.hero_image ?? '');
+  const [uploadingHero, setUploadingHero] = useState(false);
+  const [heroMsg, setHeroMsg]           = useState('');
+  const heroInputRef = useRef<HTMLInputElement>(null);
+
+  const [streamUrl, setStreamUrl]         = useState(siteSettings.stream_url ?? '');
+  const [streamVisible, setStreamVisible] = useState(siteSettings.stream_visible === 'true');
+  const [savingStream, setSavingStream]   = useState(false);
+  const [streamMsg, setStreamMsg]         = useState('');
+
+  async function handleHeroUpload(file: File) {
+    if (!file.type.startsWith('image/')) return;
+    setUploadingHero(true);
+    setHeroMsg('');
+
+    const ext = file.name.split('.').pop() ?? 'png';
+    const path = `hero_${Date.now()}.${ext}`;
+
+    const { error: upErr } = await supabase.storage.from('hero').upload(path, file);
+    if (upErr) {
+      setHeroMsg(`Chyba: ${upErr.message}`);
+      setUploadingHero(false);
+      return;
+    }
+
+    const { data: { publicUrl } } = supabase.storage.from('hero').getPublicUrl(path);
+
+    const res = await fetch('/api/admin/settings/site', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: 'hero_image', value: publicUrl }),
+    });
+
+    if (res.ok) {
+      setHeroImage(publicUrl);
+      setHeroMsg('Obrázek uložen');
+    } else {
+      const data = await res.json();
+      setHeroMsg(`Chyba: ${data.error ?? 'Neznámá chyba'}`);
+    }
+
+    setUploadingHero(false);
+    startTransition(() => router.refresh());
+  }
+
+  async function updateSetting(key: string, value: string) {
+    const res = await fetch('/api/admin/settings/site', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key, value }),
+    });
+    return res.ok;
+  }
+
+  async function handleStreamSave() {
+    setSavingStream(true);
+    setStreamMsg('');
+
+    const [urlOk, visOk] = await Promise.all([
+      updateSetting('stream_url', streamUrl),
+      updateSetting('stream_visible', String(streamVisible)),
+    ]);
+
+    setSavingStream(false);
+    setStreamMsg(urlOk && visOk ? 'Uloženo' : 'Chyba při ukládání');
+    startTransition(() => router.refresh());
+  }
+
+  async function toggleStreamVisible() {
+    const next = !streamVisible;
+    setStreamVisible(next);
+    await updateSetting('stream_visible', String(next));
+    startTransition(() => router.refresh());
+  }
 
   async function handleInvite(e: React.FormEvent) {
     e.preventDefault();
@@ -87,6 +170,134 @@ export default function SettingsClient({
         <p className="font-mono text-cz-gray-mid" style={{ fontSize: 11, letterSpacing: 2, marginTop: 4 }}>
           SPRÁVA UŽIVATELŮ A STANIC
         </p>
+      </div>
+
+      {/* Hero image */}
+      <div style={{ marginBottom: 48 }}>
+        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 3, marginBottom: 20 }}>
+          HERO OBRÁZEK
+        </div>
+
+        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A', padding: 24 }}>
+          <div className="flex items-start gap-6">
+            {heroImage && (
+              <div
+                className="relative flex-shrink-0 rounded-[2px] overflow-hidden"
+                style={{ width: 120, height: 160, background: '#0A0A0A', border: '1px solid #2A2A2A' }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={heroImage}
+                  alt="Hero"
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', outline: 'none' }}
+                />
+              </div>
+            )}
+
+            <div className="flex flex-col gap-3">
+              <p className="font-body text-cz-gray-light" style={{ fontSize: 13, lineHeight: 1.5 }}>
+                Obrázek postavy zobrazený v hero sekci na hlavní stránce. Doporučený formát: PNG s průhledným pozadím.
+              </p>
+
+              <input
+                ref={heroInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) handleHeroUpload(f);
+                }}
+              />
+
+              <button
+                onClick={() => heroInputRef.current?.click()}
+                disabled={uploadingHero}
+                className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 rounded-[2px] disabled:opacity-50 self-start"
+                style={{ fontSize: 12, letterSpacing: 2, padding: '10px 24px' }}
+              >
+                {uploadingHero ? 'NAHRÁVÁM...' : 'NAHRÁT NOVÝ OBRÁZEK'}
+              </button>
+
+              {heroMsg && (
+                <p
+                  className="font-mono"
+                  style={{ fontSize: 11, color: heroMsg.startsWith('Chyba') ? '#ef4444' : '#22c55e' }}
+                >
+                  {heroMsg}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Stream settings */}
+      <div style={{ marginBottom: 48 }}>
+        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 3, marginBottom: 20 }}>
+          ŽIVÝ PŘENOS
+        </div>
+
+        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A', padding: 24 }}>
+          <div className="flex flex-col gap-5">
+            {/* Toggle */}
+            <div className="flex items-center justify-between">
+              <span className="font-body text-cz-gray-light" style={{ fontSize: 13 }}>
+                Zobrazit stream na hlavní stránce
+              </span>
+              <button
+                onClick={toggleStreamVisible}
+                className="font-mono uppercase rounded-[2px] transition-colors"
+                style={{
+                  fontSize: 9,
+                  letterSpacing: 1,
+                  padding: '4px 12px',
+                  color: streamVisible ? '#22c55e' : '#ef4444',
+                  background: streamVisible ? '#22c55e20' : '#ef444420',
+                }}
+              >
+                {streamVisible ? 'AKTIVNÍ' : 'SKRYTÝ'}
+              </button>
+            </div>
+
+            {/* URL input */}
+            <div className="flex flex-col gap-2">
+              <label className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+                TWITCH URL NEBO NÁZEV KANÁLU
+              </label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="text"
+                  value={streamUrl}
+                  onChange={(e) => setStreamUrl(e.target.value)}
+                  placeholder="https://twitch.tv/channelname"
+                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange flex-1"
+                  style={{ padding: '10px 14px', fontSize: 13, border: '1px solid #2A2A2A' }}
+                />
+                <button
+                  onClick={handleStreamSave}
+                  disabled={savingStream}
+                  className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 rounded-[2px] disabled:opacity-50 flex-shrink-0"
+                  style={{ fontSize: 12, letterSpacing: 2, padding: '10px 24px' }}
+                >
+                  {savingStream ? '...' : 'ULOŽIT'}
+                </button>
+              </div>
+              <p className="font-mono text-cz-gray-mid" style={{ fontSize: 10, letterSpacing: 1 }}>
+                Zadejte celý odkaz (https://twitch.tv/nazev) nebo jen název kanálu
+              </p>
+            </div>
+
+            {streamMsg && (
+              <p
+                className="font-mono"
+                style={{ fontSize: 11, color: streamMsg.startsWith('Chyba') ? '#ef4444' : '#22c55e' }}
+              >
+                {streamMsg}
+              </p>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Staff accounts */}
