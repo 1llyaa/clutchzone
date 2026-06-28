@@ -66,6 +66,10 @@ export default function StepContact({ form, setForm, onBack, onSubmit, error }: 
         </span>
       </div>
 
+      <p className="font-mono text-cz-gray-mid" style={{ fontSize: 10, letterSpacing: 1, marginTop: -4 }}>
+        {t('priceApprox')}
+      </p>
+
       <Field label={t('name')} value={form.customerName} onChange={(v) => setForm({ ...form, customerName: v })} placeholder={t('namePlaceholder')} />
       <Field label={t('email')} value={form.customerEmail} onChange={(v) => setForm({ ...form, customerEmail: v })} placeholder={t('emailPlaceholder')} type="email" />
       <Field label={t('phone')} value={form.customerPhone} onChange={(v) => setForm({ ...form, customerPhone: v })} placeholder={t('phonePlaceholder')} type="tel" />

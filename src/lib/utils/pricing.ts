@@ -17,7 +17,21 @@ export function getStartTimeSlots(date: string): string[] {
   const hours = getOpeningHours(date);
   if (!hours) return [];
   const slots: string[] = [];
-  // Last slot must leave at least 1h before closing
+  // Generate slots every 15 minutes, last slot must leave at least 1h before closing
+  const startMin = hours.open * 60;
+  const endMin = (hours.close - 1) * 60;
+  for (let m = startMin; m <= endMin; m += 15) {
+    const h = Math.floor(m / 60) % 24;
+    const min = m % 60;
+    slots.push(`${String(h).padStart(2, '0')}:${String(min).padStart(2, '0')}`);
+  }
+  return slots;
+}
+
+export function getHourSlots(date: string): string[] {
+  const hours = getOpeningHours(date);
+  if (!hours) return [];
+  const slots: string[] = [];
   for (let h = hours.open; h < hours.close - 1; h++) {
     slots.push(`${String(h % 24).padStart(2, '0')}:00`);
   }
@@ -32,9 +46,9 @@ export function getDurationOptions(
   const hours = getOpeningHours(date);
   if (!hours) return [];
 
-  const rawH = parseInt(startTime.split(':')[0]);
+  const [rawH, rawM] = startTime.split(':').map(Number);
   // Slots after midnight (00, 01, 02, 03) are represented as 24, 25, 26, 27
-  const startH = rawH < 14 ? rawH + 24 : rawH;
+  const startH = (rawH < 14 ? rawH + 24 : rawH) + rawM / 60;
 
   const durations = type === 'pc' ? [1, 3, 5, 7, 10] : [1, 3, 5];
   const options: DurationOption[] = [];
@@ -104,6 +118,9 @@ export function formatTime(hhmm: string): string {
 }
 
 export function addHours(startTime: string, hours: number): string {
-  const h = parseInt(startTime.split(':')[0]);
-  return `${String((h + hours) % 24).padStart(2, '0')}:00`;
+  const [h, m] = startTime.split(':').map(Number);
+  const totalMin = h * 60 + m + hours * 60;
+  const rh = Math.floor(totalMin / 60) % 24;
+  const rm = totalMin % 60;
+  return `${String(rh).padStart(2, '0')}:${String(rm).padStart(2, '0')}`;
 }

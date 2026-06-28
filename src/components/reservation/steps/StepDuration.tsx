@@ -90,6 +90,11 @@ export default function StepDuration({ form, setForm, onNext, onBack }: Props) {
         })}
       </div>
 
+      {/* Approximate price note */}
+      <p className="font-mono text-cz-gray-mid" style={{ fontSize: 10, letterSpacing: 1 }}>
+        {t('priceApprox')}
+      </p>
+
       {/* Availability */}
       {available !== null && (
         <p className="font-mono" style={{ fontSize: 11, letterSpacing: 1, color: available > 0 ? '#888' : '#E84A1A' }}>

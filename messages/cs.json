@@ -55,7 +55,11 @@
     "eveningUnit": "Kč",
     "weekendName": "WEEKEND PASS",
     "weekendTime": "22:00 – 04:00",
-    "weekendUnit": "Kč"
+    "weekendUnit": "Kč",
+    "noteSession": "Hodiny je nutné využít v rámci jedné návštěvy",
+    "notePcOnly": "Balíčky platí pouze pro PC stanice",
+    "noteHappyWeekdays": "Happy Hours platí pouze v pracovní dny (ÚT–PÁ)",
+    "noteNoRefund": "Balíčky jsou nevratné a nepřenosné"
   },
   "stream": {
     "eyebrow": "// ŽIVÝ PŘENOS",
@@ -188,6 +192,7 @@
     "close": "ZAVŘÍT",
     "monday": "Pondělí je zavřeno. Vyberte jiný den.",
     "errorUnavailable": "Všechny stanice jsou obsazeny v tomto čase. Zkuste jiný čas.",
-    "errorGeneral": "Něco se pokazilo. Zkuste to znovu."
+    "errorGeneral": "Něco se pokazilo. Zkuste to znovu.",
+    "priceApprox": "Uvedená cena je orientační. Platba probíhá na místě při příchodu do klubu."
   }
 }

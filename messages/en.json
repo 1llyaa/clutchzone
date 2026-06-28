@@ -55,7 +55,11 @@
     "eveningUnit": "Kč",
     "weekendName": "WEEKEND PASS",
     "weekendTime": "22:00 – 04:00",
-    "weekendUnit": "Kč"
+    "weekendUnit": "Kč",
+    "noteSession": "Hours must be used in a single session",
+    "notePcOnly": "Packages are valid for PC stations only",
+    "noteHappyWeekdays": "Happy Hours available weekdays only (TUE–FRI)",
+    "noteNoRefund": "Packages are non-refundable and non-transferable"
   },
   "stream": {
     "eyebrow": "// LIVE STREAM",
@@ -188,6 +192,7 @@
     "close": "CLOSE",
     "monday": "Monday is closed. Please choose another day.",
     "errorUnavailable": "All stations are taken at this time. Please try a different time.",
-    "errorGeneral": "Something went wrong. Please try again."
+    "errorGeneral": "Something went wrong. Please try again.",
+    "priceApprox": "The displayed price is approximate. Payment is made on-site upon arrival at the club."
   }
 }

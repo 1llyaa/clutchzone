@@ -143,6 +143,16 @@ export default function Pricing({ pcPrices, ps5Prices, packageAmounts }: Props) 
             </div>
           ))}
         </div>
+
+        {/* Info notes */}
+        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2" style={{ marginTop: 24 }}>
+          {[t('noteSession'), t('notePcOnly'), t('noteHappyWeekdays'), t('noteNoRefund')].map((note, i) => (
+            <span key={note} className="font-mono text-cz-gray-mid flex items-center gap-2" style={{ fontSize: 10, letterSpacing: 1 }}>
+              {i > 0 && <span className="hidden md:inline text-cz-gray-dark">·</span>}
+              {note}
+            </span>
+          ))}
+        </div>
       </div>
     </section>
   );

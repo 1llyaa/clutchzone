@@ -111,9 +111,53 @@ export default function Hero({ heroImage, stationsFree, stationsTotal }: Props) 
               </div>
             ))}
           </div>
+
+          {/* Mobile: station counter */}
+          {stationsFree != null && stationsTotal != null && (
+            <div
+              className="flex lg:hidden items-center bg-cz-black-mid rounded-[2px] self-start"
+              style={{ border: '1px solid #2A2A2A', padding: '10px 16px', gap: 10, marginTop: 24 }}
+            >
+              <span
+                className="rounded-full animate-flicker flex-shrink-0"
+                style={{ width: 8, height: 8, background: stationsFree > 0 ? '#22c55e' : '#ef4444' }}
+              />
+              <span className="font-mono text-cz-white-soft uppercase tabular-nums" style={{ fontSize: 11, letterSpacing: 1.5 }}>
+                {stationsFree} / {stationsTotal} {t('stationsFree')}
+              </span>
+            </div>
+          )}
         </div>
 
-        {/* Right — character graphic (desktop only) */}
+        {/* Mobile: character image */}
+        <div className="relative flex lg:hidden items-center justify-center" style={{ marginTop: -16 }}>
+          <div
+            className="absolute animate-hero-glow-pulse"
+            style={{
+              width: 280, height: 280,
+              background: 'radial-gradient(circle, rgba(232,74,26,0.2) 0%, rgba(232,74,26,0.05) 50%, transparent 70%)',
+              borderRadius: '50%',
+            }}
+          />
+          <div className="relative animate-hero-char" style={{ animationDelay: '0.2s', opacity: 0 }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={heroImage || '/terrorist_cs2.png'}
+              alt="Hero Character"
+              width={260}
+              height={347}
+              style={{
+                objectFit: 'contain',
+                maxHeight: 347,
+                width: 'auto',
+                filter: 'drop-shadow(0 0 30px rgba(232,74,26,0.3)) drop-shadow(0 16px 40px rgba(0,0,0,0.6))',
+                outline: 'none',
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Desktop: character graphic */}
         <div className="relative hidden lg:flex items-center justify-center" style={{ minHeight: 520 }}>
           {/* Corner accents */}
           <span className="absolute" style={{ top: 0, left: '8%', width: 40, height: 40, borderTop: '1.5px solid #E84A1A', borderLeft: '1.5px solid #E84A1A' }} />
