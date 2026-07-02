@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useReservation } from '@/components/reservation/ReservationContext';
+import Reveal from '@/components/ui/Reveal';
 
 export default function CtaBand() {
   const t = useTranslations('ctaBand');
@@ -11,6 +12,7 @@ export default function CtaBand() {
     <section
       className="relative bg-cz-black px-6 pb-20 md:px-16 md:pb-[120px]"
     >
+      <Reveal>
       <div
         className="relative max-w-[1440px] mx-auto rounded-cz overflow-hidden text-center bg-cz-black-mid border border-cz-gray-dark"
         style={{ padding: 'clamp(48px, 8vw, 80px) clamp(24px, 6vw, 64px)' }}
@@ -76,7 +78,7 @@ export default function CtaBand() {
           <div className="flex gap-4 md:gap-5 justify-center flex-wrap">
             <button
               onClick={open}
-              className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer"
+              className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark hover:shadow-[0_0_18px_rgba(232,74,26,0.35)] active:scale-[0.96] transition-[background-color,scale,box-shadow] duration-150 ease-out rounded-[2px] border-none cursor-pointer"
               style={{ fontSize: 'clamp(15px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(12px, 2vw, 16px) clamp(28px, 4vw, 44px)' }}
             >
               {t('primary')}
@@ -91,6 +93,7 @@ export default function CtaBand() {
           </div>
         </div>
       </div>
+      </Reveal>
     </section>
   );
 }

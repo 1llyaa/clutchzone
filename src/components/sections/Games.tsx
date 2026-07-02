@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
+import Reveal from '@/components/ui/Reveal';
 
 interface Game {
   id: string;
@@ -116,7 +117,7 @@ export default function Games({ games }: { games: Game[] }) {
       style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
     >
       {/* Heading */}
-      <div className="max-w-[1440px] mx-auto flex items-end justify-between px-6 pb-10 md:px-16 md:pb-12">
+      <Reveal className="max-w-[1440px] mx-auto flex items-end justify-between px-6 pb-10 md:px-16 md:pb-12">
         <div>
           <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}>
             {t('eyebrow')}
@@ -145,28 +146,30 @@ export default function Games({ games }: { games: Game[] }) {
             →
           </button>
         </div>
-      </div>
+      </Reveal>
 
       {/* Scrollable row */}
-      <div
-        ref={scrollRef}
-        onScroll={onScroll}
-        className="px-6 md:px-16"
-        style={{
-          display: 'flex',
-          gap: 12,
-          overflowX: 'auto',
-          scrollSnapType: 'x mandatory',
-          scrollbarWidth: 'none',
-          paddingBottom: 4,
-        }}
-      >
-        {games.map((game) => (
-          <div key={game.id} style={{ scrollSnapAlign: 'start' }}>
-            <GameCard game={game} />
-          </div>
-        ))}
-      </div>
+      <Reveal delay={100}>
+        <div
+          ref={scrollRef}
+          onScroll={onScroll}
+          className="px-6 md:px-16"
+          style={{
+            display: 'flex',
+            gap: 12,
+            overflowX: 'auto',
+            scrollSnapType: 'x mandatory',
+            scrollbarWidth: 'none',
+            paddingBottom: 4,
+          }}
+        >
+          {games.map((game) => (
+            <div key={game.id} style={{ scrollSnapAlign: 'start' }}>
+              <GameCard game={game} />
+            </div>
+          ))}
+        </div>
+      </Reveal>
     </section>
   );
 }

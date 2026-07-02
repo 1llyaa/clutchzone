@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
+import Reveal from '@/components/ui/Reveal';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
@@ -184,26 +185,28 @@ export default function Gallery({ images, displayType }: Props) {
       style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
     >
       {/* Heading */}
-      <div className="max-w-[1440px] mx-auto px-6 mb-8 md:px-16 md:mb-12">
+      <Reveal className="max-w-[1440px] mx-auto px-6 mb-8 md:px-16 md:mb-12">
         <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}>
           {t('eyebrow')}
         </span>
         <h2 className="font-display text-white uppercase" style={{ fontSize: 'clamp(32px, 5vw, 60px)', letterSpacing: 1.5, lineHeight: 0.95 }}>
           {t('heading')}
         </h2>
-      </div>
+      </Reveal>
 
-      {/* Mobile: Swiper (all modes) */}
-      <div className="md:hidden">
-        <MobileGallery images={images} />
-      </div>
+      <Reveal delay={100}>
+        {/* Mobile: Swiper (all modes) */}
+        <div className="md:hidden">
+          <MobileGallery images={images} />
+        </div>
 
-      {/* Desktop: configured layout */}
-      <div className={`hidden md:block ${displayType === 'carousel' ? '' : 'px-16'}`}>
-        {displayType === 'carousel' && <Carousel images={images} />}
-        {displayType === 'masonry'  && <Masonry  images={images} />}
-        {displayType === 'mosaic'   && <Mosaic   images={images} />}
-      </div>
+        {/* Desktop: configured layout */}
+        <div className={`hidden md:block ${displayType === 'carousel' ? '' : 'px-16'}`}>
+          {displayType === 'carousel' && <Carousel images={images} />}
+          {displayType === 'masonry'  && <Masonry  images={images} />}
+          {displayType === 'mosaic'   && <Mosaic   images={images} />}
+        </div>
+      </Reveal>
     </section>
   );
 }

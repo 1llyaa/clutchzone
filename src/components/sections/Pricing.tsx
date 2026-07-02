@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useReservation } from '@/components/reservation/ReservationContext';
+import Reveal from '@/components/ui/Reveal';
 
 interface Props {
   pcPrices:       { duration_h: number; amount: number }[];
@@ -39,19 +40,22 @@ export default function Pricing({ pcPrices, ps5Prices, packageAmounts }: Props) 
 
       <div className="relative max-w-[1440px] mx-auto">
         {/* Section header */}
-        <div style={{ marginBottom: 48 }}>
-          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}>
-            {t('eyebrow')}
-          </span>
-          <h2
-            className="font-display text-white uppercase inline-block"
-            style={{ fontSize: 'clamp(36px, 5vw, 60px)', letterSpacing: 1.5, lineHeight: 0.95, paddingBottom: 14, borderBottom: '2px solid #E84A1A' }}
-          >
-            {t('heading')}
-          </h2>
-        </div>
+        <Reveal>
+          <div style={{ marginBottom: 48 }}>
+            <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}>
+              {t('eyebrow')}
+            </span>
+            <h2
+              className="font-display text-white uppercase inline-block"
+              style={{ fontSize: 'clamp(36px, 5vw, 60px)', letterSpacing: 1.5, lineHeight: 0.95, paddingBottom: 14, borderBottom: '2px solid #E84A1A' }}
+            >
+              {t('heading')}
+            </h2>
+          </div>
+        </Reveal>
 
         {/* PC pricing table */}
+        <Reveal>
         <div
           className="relative bg-cz-black-mid border border-cz-gray-dark rounded-cz overflow-hidden"
           style={{ padding: 'clamp(20px, 4vw, 32px) clamp(20px, 4vw, 40px)', marginBottom: 20 }}
@@ -75,8 +79,10 @@ export default function Pricing({ pcPrices, ps5Prices, packageAmounts }: Props) 
             ))}
           </div>
         </div>
+        </Reveal>
 
         {/* PS5 pricing table */}
+        <Reveal delay={80}>
         <div
           className="relative bg-cz-black-mid border border-cz-gray-dark rounded-cz overflow-hidden"
           style={{ padding: 'clamp(20px, 4vw, 32px) clamp(20px, 4vw, 40px)', marginBottom: 40 }}
@@ -102,20 +108,23 @@ export default function Pricing({ pcPrices, ps5Prices, packageAmounts }: Props) 
             {t('ps5Note')}
           </span>
         </div>
+        </Reveal>
 
         {/* Packages heading */}
-        <div style={{ marginBottom: 20 }}>
-          <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 3 }}>
-            {t('packagesHeading')}
-          </span>
-        </div>
+        <Reveal>
+          <div style={{ marginBottom: 20 }}>
+            <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 3 }}>
+              {t('packagesHeading')}
+            </span>
+          </div>
+        </Reveal>
 
         {/* Package cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {packages.map((pkg) => (
+          {packages.map((pkg, i) => (
+            <Reveal key={pkg.name} delay={i * 80}>
             <div
-              key={pkg.name}
-              className="relative flex flex-col border border-cz-gray-dark rounded-cz overflow-hidden"
+              className="relative flex flex-col h-full border border-cz-gray-dark rounded-cz overflow-hidden cz-card-lift hover:border-cz-orange"
               style={{ background: '#111111', padding: 'clamp(24px, 4vw, 32px) clamp(20px, 3vw, 28px)', minHeight: 340 }}
             >
               <span className="absolute top-0 left-0 right-0 rounded-t-cz" style={{ height: 2, background: pkg.featured ? '#E84A1A' : '#2A2A2A' }} />
@@ -185,24 +194,25 @@ export default function Pricing({ pcPrices, ps5Prices, packageAmounts }: Props) 
               </div>
               <button
                 onClick={open}
-                className="relative z-10 w-full bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer"
+                className="relative z-10 w-full bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark hover:shadow-[0_0_18px_rgba(232,74,26,0.35)] active:scale-[0.96] transition-[background-color,scale,box-shadow] duration-150 ease-out rounded-[2px] border-none cursor-pointer"
                 style={{ fontSize: 17, letterSpacing: 2, padding: 13 }}
               >
                 {t('cta')}
               </button>
             </div>
+            </Reveal>
           ))}
         </div>
 
         {/* Info notes */}
-        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2" style={{ marginTop: 24 }}>
+        <Reveal className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-6">
           {[t('noteSession'), t('notePcOnly'), t('noteHappyWeekdays'), t('noteNoRefund')].map((note, i) => (
             <span key={note} className="font-mono text-cz-gray-mid flex items-center gap-2" style={{ fontSize: 10, letterSpacing: 1 }}>
               {i > 0 && <span className="hidden md:inline text-cz-gray-dark">·</span>}
               {note}
             </span>
           ))}
-        </div>
+        </Reveal>
       </div>
     </section>
   );

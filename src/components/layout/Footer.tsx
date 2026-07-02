@@ -1,5 +1,6 @@
 import { useTranslations } from 'next-intl';
 import LogoLockup from '@/components/ui/LogoLockup';
+import Reveal from '@/components/ui/Reveal';
 
 export default function Footer() {
   const t = useTranslations('footer');
@@ -15,6 +16,7 @@ export default function Footer() {
       className="bg-cz-black px-6 py-14 md:px-16 md:py-[56px]"
       style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
     >
+      <Reveal>
       <div
         className="max-w-[1440px] mx-auto flex flex-wrap justify-between"
         style={{ gap: 40 }}
@@ -79,6 +81,7 @@ export default function Footer() {
           </span>
         </div>
       </div>
+      </Reveal>
     </footer>
   );
 }

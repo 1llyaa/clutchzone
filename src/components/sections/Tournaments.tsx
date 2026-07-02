@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import TournamentRegisterModal from '@/components/tournament/TournamentRegisterModal';
 import TournamentDetailModal from '@/components/tournament/TournamentDetailModal';
+import Reveal from '@/components/ui/Reveal';
 
 interface Tournament {
   id: string;
@@ -62,28 +63,33 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
         <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at top right, #0A0A0A 15%, transparent 55%)' }} />
       </div>
       <div className="relative z-10 max-w-[1440px] mx-auto">
-        <div style={{ marginBottom: 40 }}>
-          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}>
-            {t('eyebrow')}
-          </span>
-          <h2 className="font-display text-white uppercase" style={{ fontSize: 'clamp(36px, 5vw, 60px)', letterSpacing: 1.5, lineHeight: 0.95 }}>
-            {t('heading')}
-          </h2>
-        </div>
+        <Reveal>
+          <div style={{ marginBottom: 40 }}>
+            <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}>
+              {t('eyebrow')}
+            </span>
+            <h2 className="font-display text-white uppercase" style={{ fontSize: 'clamp(36px, 5vw, 60px)', letterSpacing: 1.5, lineHeight: 0.95 }}>
+              {t('heading')}
+            </h2>
+          </div>
+        </Reveal>
 
         {tournaments.length === 0 ? (
-          <div className="font-mono text-cz-gray-mid uppercase text-center" style={{ padding: '40px 0', borderTop: '1px solid #2A2A2A', fontSize: 12, letterSpacing: 3 }}>
-            ŽÁDNÉ NADCHÁZEJÍCÍ TURNAJE
-          </div>
+          <Reveal>
+            <div className="font-mono text-cz-gray-mid uppercase text-center" style={{ padding: '40px 0', borderTop: '1px solid #2A2A2A', fontSize: 12, letterSpacing: 3 }}>
+              ŽÁDNÉ NADCHÁZEJÍCÍ TURNAJE
+            </div>
+          </Reveal>
         ) : (
           <div className="flex flex-col">
-            {tournaments.map((row) => {
+            {tournaments.map((row, i) => {
               const isFull = row.filled_slots >= row.max_slots;
               return (
-                <div key={row.id} style={{ borderTop: '1px solid #2A2A2A' }}>
+                <Reveal key={row.id} delay={Math.min(i, 4) * 60}>
+                <div style={{ borderTop: '1px solid #2A2A2A' }}>
                   {/* ── Desktop row (md+) ── */}
                   <div
-                    className="hidden md:grid"
+                    className="hidden md:grid transition-colors duration-200 hover:bg-white/[0.02]"
                     style={{
                       gridTemplateColumns: '140px 130px 1fr 160px 140px 160px',
                       alignItems: 'center',
@@ -177,6 +183,7 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
                     </div>
                   </div>
                 </div>
+                </Reveal>
               );
             })}
             <div style={{ borderTop: '1px solid #2A2A2A' }} />

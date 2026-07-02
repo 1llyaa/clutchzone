@@ -20,7 +20,6 @@
   --radius-cz: 4px;
   --radius-pill: 100px;
 
-  --animate-ring-spin: cz-ring-spin 28s linear infinite;
   --animate-flicker: cz-flicker 1.6s ease-in-out infinite;
   --animate-scroll-pulse: cz-scroll-pulse 2.2s ease-in-out infinite;
   --animate-hero-char: cz-hero-char 1s cubic-bezier(0.2, 0, 0, 1) forwards;
@@ -28,10 +27,9 @@
   --animate-hero-glow-pulse: cz-hero-glow-pulse 4s ease-in-out infinite;
   --animate-menu-in: cz-menu-in 200ms cubic-bezier(0.2, 0, 0, 1) both;
   --animate-underline-in: cz-underline-in 700ms cubic-bezier(0.2, 0, 0, 1) both;
-}
-
-@keyframes cz-ring-spin {
-  to { transform: rotate(360deg); }
+  --animate-backdrop-in: cz-backdrop-in 200ms ease-out both;
+  --animate-modal-in: cz-modal-in 280ms cubic-bezier(0.2, 0, 0, 1) both;
+  --animate-step-in: cz-step-in 220ms cubic-bezier(0.2, 0, 0, 1) both;
 }
 
 @keyframes cz-flicker {
@@ -71,6 +69,21 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes cz-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes cz-modal-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes cz-step-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -96,5 +109,80 @@
   img {
     outline: 1px solid rgba(255, 255, 255, 0.1);
     outline-offset: -1px;
+  }
+}
+
+@layer components {
+  /* Scroll reveal: SSR renders content visible; client JS adds
+     .cz-reveal-hidden only for offscreen elements, then removes it on
+     first intersection. No-JS users always see everything. */
+  .cz-reveal {
+    transition:
+      opacity 600ms cubic-bezier(0.2, 0, 0, 1),
+      transform 600ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .cz-reveal-hidden {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  .cz-card-lift {
+    transition:
+      transform 250ms cubic-bezier(0.2, 0, 0, 1),
+      border-color 200ms ease-out,
+      box-shadow 250ms ease-out;
+  }
+  .cz-card-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  }
+
+  .cz-link-underline {
+    position: relative;
+  }
+  .cz-link-underline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -4px;
+    height: 1px;
+    background: var(--color-cz-orange);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 250ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .cz-link-underline:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-flicker,
+  .animate-scroll-pulse,
+  .animate-hero-char,
+  .animate-hero-float,
+  .animate-hero-glow-pulse,
+  .animate-menu-in,
+  .animate-underline-in,
+  .animate-backdrop-in,
+  .animate-modal-in,
+  .animate-step-in {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  .cz-reveal {
+    transition: none !important;
+  }
+  .cz-reveal-hidden {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .cz-card-lift,
+  .cz-link-underline::after {
+    transition: none !important;
   }
 }

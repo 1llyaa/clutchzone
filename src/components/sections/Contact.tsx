@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import Reveal from '@/components/ui/Reveal';
 
 const EMPTY = { name: '', email: '', message: '' };
 
@@ -49,17 +50,19 @@ export default function Contact() {
 
         {/* Left — heading + info */}
         <div>
-          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}>
-            {t('eyebrow')}
-          </span>
-          <h2 className="font-display text-white uppercase" style={{ fontSize: 'clamp(32px, 5vw, 60px)', letterSpacing: 1.5, lineHeight: 0.95, marginBottom: 20 }}>
-            {t('heading')}
-          </h2>
-          <p className="font-body text-cz-gray-light" style={{ fontSize: 15, lineHeight: 1.8, maxWidth: 420, marginBottom: 36 }}>
-            {t('subtext')}
-          </p>
+          <Reveal>
+            <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}>
+              {t('eyebrow')}
+            </span>
+            <h2 className="font-display text-white uppercase" style={{ fontSize: 'clamp(32px, 5vw, 60px)', letterSpacing: 1.5, lineHeight: 0.95, marginBottom: 20 }}>
+              {t('heading')}
+            </h2>
+            <p className="font-body text-cz-gray-light" style={{ fontSize: 15, lineHeight: 1.8, maxWidth: 420, marginBottom: 36 }}>
+              {t('subtext')}
+            </p>
+          </Reveal>
 
-          <div className="flex flex-col gap-5">
+          <Reveal delay={70} className="flex flex-col gap-5">
             {[
               { label: t('locationLabel'), value: t('locationValue') },
               { label: t('hoursLabel'),    value: t('hoursValue') },
@@ -70,10 +73,11 @@ export default function Contact() {
                 <div className="font-body text-white" style={{ fontSize: 15 }}>{value}</div>
               </div>
             ))}
-          </div>
+          </Reveal>
         </div>
 
         {/* Right — form */}
+        <Reveal delay={100}>
         <div className="bg-cz-black-mid rounded-cz" style={{ padding: 'clamp(24px, 4vw, 40px)', border: '1px solid #2A2A2A' }}>
           {done ? (
             <div className="flex flex-col items-center text-center" style={{ padding: '40px 0' }}>
@@ -153,6 +157,7 @@ export default function Contact() {
             </form>
           )}
         </div>
+        </Reveal>
       </div>
     </section>
   );

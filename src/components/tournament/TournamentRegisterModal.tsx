@@ -97,12 +97,12 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
+      className="fixed inset-0 z-50 flex items-center justify-center animate-backdrop-in"
       style={{ background: 'rgba(0,0,0,0.75)', padding: 24 }}
       onClick={onClose}
     >
       <div
-        className="relative bg-cz-black-mid rounded-cz w-full max-w-lg overflow-y-auto"
+        className="relative bg-cz-black-mid rounded-cz w-full max-w-lg overflow-y-auto animate-modal-in"
         style={{ border: '1px solid #2A2A2A', maxHeight: '90dvh' }}
         onClick={(e) => e.stopPropagation()}
       >

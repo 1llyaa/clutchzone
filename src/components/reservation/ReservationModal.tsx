@@ -82,12 +82,12 @@ export default function ReservationModal() {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-backdrop-in"
       style={{ background: 'rgba(0,0,0,0.85)' }}
       onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }}
     >
       <div
-        className="relative w-full bg-cz-black-mid border border-cz-gray-dark rounded-cz flex flex-col"
+        className="relative w-full bg-cz-black-mid border border-cz-gray-dark rounded-cz flex flex-col animate-modal-in"
         style={{ maxWidth: 560, maxHeight: '90vh', overflowY: 'auto' }}
       >
         {/* Orange top bar */}
@@ -135,8 +135,8 @@ export default function ReservationModal() {
           </div>
         )}
 
-        {/* Body */}
-        <div style={{ padding: '24px 32px 32px', flex: 1 }}>
+        {/* Body — key={step} remounts the wrapper per wizard step, replaying the fade/rise */}
+        <div key={step} className="animate-step-in" style={{ padding: '24px 32px 32px', flex: 1 }}>
           {step === 1 && (
             <StepType form={form} setForm={setForm} onNext={next} />
           )}

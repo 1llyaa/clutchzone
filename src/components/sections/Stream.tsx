@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import Reveal from '@/components/ui/Reveal';
 
 interface Props {
   streamUrl: string;
@@ -50,19 +51,22 @@ export default function Stream({ streamUrl }: Props) {
 
       <div className="relative max-w-[1440px] mx-auto">
         {/* Section header */}
-        <div style={{ marginBottom: 48 }}>
-          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}>
-            {t('eyebrow')}
-          </span>
-          <h2
-            className="font-display text-white uppercase inline-block"
-            style={{ fontSize: 'clamp(36px, 5vw, 60px)', letterSpacing: 1.5, lineHeight: 0.95, paddingBottom: 14, borderBottom: '2px solid #E84A1A' }}
-          >
-            {t('heading')}
-          </h2>
-        </div>
+        <Reveal>
+          <div style={{ marginBottom: 48 }}>
+            <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}>
+              {t('eyebrow')}
+            </span>
+            <h2
+              className="font-display text-white uppercase inline-block"
+              style={{ fontSize: 'clamp(36px, 5vw, 60px)', letterSpacing: 1.5, lineHeight: 0.95, paddingBottom: 14, borderBottom: '2px solid #E84A1A' }}
+            >
+              {t('heading')}
+            </h2>
+          </div>
+        </Reveal>
 
         {/* Stream embed */}
+        <Reveal delay={100}>
         <div
           className="relative bg-cz-black-mid border border-cz-gray-dark rounded-cz overflow-hidden"
           style={{ padding: 0 }}
@@ -97,6 +101,7 @@ export default function Stream({ streamUrl }: Props) {
             twitch.tv/{channel}
           </a>
         </div>
+        </Reveal>
       </div>
     </section>
   );

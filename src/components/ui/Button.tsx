@@ -16,7 +16,7 @@ export default function Button({
   className = '',
 }: ButtonProps) {
   const base =
-    'font-display uppercase cursor-pointer transition-all duration-150 rounded-[2px] border-none inline-block';
+    'font-display uppercase cursor-pointer transition-[background-color,color,border-color,scale,box-shadow] duration-150 ease-out rounded-[2px] border-none inline-block';
 
   const sizes = {
     sm: { fontSize: 15, padding: '9px 22px', letterSpacing: 2, borderWidth: '1.5px' },
@@ -29,7 +29,7 @@ export default function Button({
     return (
       <button
         onClick={onClick}
-        className={`${base} bg-cz-orange text-white hover:bg-cz-orange-dark active:scale-[0.98] ${className}`}
+        className={`${base} bg-cz-orange text-white hover:bg-cz-orange-dark hover:shadow-[0_0_18px_rgba(232,74,26,0.35)] active:scale-[0.96] ${className}`}
         style={{ fontSize: s.fontSize, padding: s.padding, letterSpacing: s.letterSpacing }}
       >
         {children}

@@ -38,7 +38,7 @@ export default function Navbar() {
           <a
             key={link.href}
             href={link.href}
-            className="font-mono text-cz-gray-light uppercase hover:text-white transition-[color] duration-200 ease-out"
+            className="font-mono text-cz-gray-light uppercase hover:text-white transition-[color] duration-200 ease-out cz-link-underline"
             style={{ fontSize: 12, letterSpacing: 2 }}
           >
             {link.label}
@@ -62,7 +62,7 @@ export default function Navbar() {
 
         <button
           onClick={open}
-          className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] cursor-pointer border-none"
+          className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark hover:shadow-[0_0_18px_rgba(232,74,26,0.35)] active:scale-[0.96] transition-[background-color,scale,box-shadow] duration-150 ease-out rounded-[2px] cursor-pointer border-none"
           style={{ fontSize: 16, letterSpacing: 2, padding: '11px 26px' }}
         >
           {t('cta')}

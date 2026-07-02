@@ -1,4 +1,5 @@
 import { useTranslations } from 'next-intl';
+import Reveal from '@/components/ui/Reveal';
 
 export default function Features() {
   const t = useTranslations('features');
@@ -17,7 +18,7 @@ export default function Features() {
       style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
     >
       <div className="max-w-[1440px] mx-auto">
-        <div className="mb-8 md:mb-16">
+        <Reveal className="mb-8 md:mb-16">
           <span
             className="font-mono text-cz-orange uppercase block"
             style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}
@@ -30,31 +31,32 @@ export default function Features() {
           >
             {t('heading')}
           </h2>
-        </div>
+        </Reveal>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
-          {cards.map((card) => (
-            <div
-              key={card.no}
-              className="group flex flex-col bg-cz-black-mid border border-cz-gray-dark rounded-cz transition-[border-color] duration-200 hover:border-cz-orange"
-              style={{ padding: 'clamp(20px, 4vw, 32px) clamp(18px, 3vw, 28px)' }}
-            >
-              <span className="font-mono text-cz-orange" style={{ fontSize: 13, letterSpacing: 2 }}>
-                {card.no}
-              </span>
-              <h3
-                className="font-display text-white uppercase mt-5 md:mt-8"
-                style={{ fontSize: 'clamp(22px, 3vw, 30px)', letterSpacing: 1 }}
+          {cards.map((card, i) => (
+            <Reveal key={card.no} delay={i * 70}>
+              <div
+                className="group flex flex-col h-full bg-cz-black-mid border border-cz-gray-dark rounded-cz cz-card-lift hover:border-cz-orange"
+                style={{ padding: 'clamp(20px, 4vw, 32px) clamp(18px, 3vw, 28px)' }}
               >
-                {card.title}
-              </h3>
-              <p
-                className="font-body text-cz-gray-light mt-3"
-                style={{ fontWeight: 300, fontSize: 'clamp(13px, 1.5vw, 15px)', lineHeight: 1.65 }}
-              >
-                {card.desc}
-              </p>
-            </div>
+                <span className="font-mono text-cz-orange" style={{ fontSize: 13, letterSpacing: 2 }}>
+                  {card.no}
+                </span>
+                <h3
+                  className="font-display text-white uppercase mt-5 md:mt-8"
+                  style={{ fontSize: 'clamp(22px, 3vw, 30px)', letterSpacing: 1 }}
+                >
+                  {card.title}
+                </h3>
+                <p
+                  className="font-body text-cz-gray-light mt-3"
+                  style={{ fontWeight: 300, fontSize: 'clamp(13px, 1.5vw, 15px)', lineHeight: 1.65 }}
+                >
+                  {card.desc}
+                </p>
+              </div>
+            </Reveal>
           ))}
         </div>
       </div>
