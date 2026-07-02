@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { getDurationOptions, addHours } from '@/lib/utils/pricing';
+import { getDurationOptions, addHours, DEFAULT_PRICES, type PriceConfig } from '@/lib/utils/pricing';
 import type { BookingForm, DurationOption } from '@/types';
 
 interface Props {
@@ -15,8 +15,16 @@ interface Props {
 export default function StepDuration({ form, setForm, onNext, onBack }: Props) {
   const t = useTranslations('booking');
   const [available, setAvailable] = useState<number | null>(null);
+  const [prices, setPrices] = useState<PriceConfig>(DEFAULT_PRICES);
 
-  const options = getDurationOptions(form.stationType!, form.startTime, form.date);
+  useEffect(() => {
+    fetch('/api/pricing')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (d) setPrices(d); })
+      .catch(() => {});
+  }, []);
+
+  const options = getDurationOptions(form.stationType!, form.startTime, form.date, prices);
 
   useEffect(() => {
     if (!form.option) return;

@@ -11,12 +11,16 @@ import Gallery from '@/components/sections/Gallery';
 import Contact from '@/components/sections/Contact';
 import CtaBand from '@/components/sections/CtaBand';
 
+// Always render fresh — prices, tournaments, and the station counter
+// come from the DB and must not be frozen at build time.
+export const dynamic = 'force-dynamic';
+
 async function fetchTournaments() {
   const admin = createAdminClient();
   const today = new Date().toISOString().split('T')[0];
   const { data } = await admin
     .from('tournaments')
-    .select('id, title, game, date, prize_pool, max_slots, filled_slots')
+    .select('id, title, game, date, prize_pool, max_slots, filled_slots, description')
     .eq('is_active', true)
     .gte('date', today)
     .order('date')
@@ -106,7 +110,12 @@ export default async function HomePage() {
     <>
       <Navbar />
       <main>
-        <Hero heroImage={siteSettings.hero_image} stationsFree={availability.free} stationsTotal={availability.total} />
+        <Hero
+          heroImage={siteSettings.hero_image}
+          stationsFree={availability.free}
+          stationsTotal={availability.total}
+          pcHourPrice={pricing.pcPrices.find((p) => p.duration_h === 1)?.amount}
+        />
         <Features />
         <Games games={games} />
         <Pricing pcPrices={pricing.pcPrices} ps5Prices={pricing.ps5Prices} packageAmounts={pricing.packageAmounts} />

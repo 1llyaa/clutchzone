@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
   if (!profile) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await request.json();
-  const { title, game, date, format, prize_pool, max_slots, registration_deadline } = body;
+  const { title, game, date, format, prize_pool, max_slots, registration_deadline, description } = body;
 
   if (!title || !game || !date || !max_slots) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
   const admin = createAdminClient();
   const { data, error } = await admin
     .from('tournaments')
-    .insert({ title, game, date, format, prize_pool, max_slots, registration_deadline })
+    .insert({ title, game, date, format, prize_pool, max_slots, registration_deadline, description })
     .select()
     .single();
 

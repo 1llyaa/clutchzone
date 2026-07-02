@@ -8,15 +8,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
-  const { email, locale = 'cs' } = await request.json();
+  const { email, locale } = await request.json();
   if (!email) return NextResponse.json({ error: 'Email required' }, { status: 400 });
 
+  const safeLocale = ['cs', 'en'].includes(locale) ? locale : 'cs';
   const admin = createAdminClient();
 
   // Send Supabase Auth invite email
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
   const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
-    redirectTo: `${siteUrl}/${locale}/admin/accept-invite`,
+    redirectTo: `${siteUrl}/${safeLocale}/admin/accept-invite`,
   });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

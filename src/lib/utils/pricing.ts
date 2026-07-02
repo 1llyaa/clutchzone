@@ -4,6 +4,24 @@ export const PC_PRICES: Record<number, number> = { 1: 75, 3: 215, 5: 345, 7: 475
 export const PS5_PRICES: Record<number, number> = { 1: 120, 3: 330, 5: 560 };
 const HAPPY_HOUR_RATE = 55;
 
+// Fallbacks only — live prices come from the DB (pc_duration_prices,
+// ps5_duration_prices, pricing_tiers) via /api/pricing or fetchPriceConfig().
+export interface PriceConfig {
+  pc: Record<number, number>;
+  ps5: Record<number, number>;
+  happyHourRate: number;
+  eveningPass: number;
+  weekendPass: number;
+}
+
+export const DEFAULT_PRICES: PriceConfig = {
+  pc: PC_PRICES,
+  ps5: PS5_PRICES,
+  happyHourRate: HAPPY_HOUR_RATE,
+  eveningPass: 285,
+  weekendPass: 340,
+};
+
 // Returns { open, close } in hours-since-midnight (close can be >24 for after-midnight)
 export function getOpeningHours(date: string): { open: number; close: number } | null {
   const d = new Date(date + 'T12:00:00');
@@ -42,6 +60,7 @@ export function getDurationOptions(
   type: StationType,
   startTime: string,
   date: string,
+  prices: PriceConfig = DEFAULT_PRICES,
 ): DurationOption[] {
   const hours = getOpeningHours(date);
   if (!hours) return [];
@@ -49,6 +68,11 @@ export function getDurationOptions(
   const [rawH, rawM] = startTime.split(':').map(Number);
   // Slots after midnight (00, 01, 02, 03) are represented as 24, 25, 26, 27
   const startH = (rawH < 14 ? rawH + 24 : rawH) + rawM / 60;
+
+  const d = new Date(date + 'T12:00:00');
+  const dow = d.getDay();
+  const isFriSat = dow === 5 || dow === 6;
+  const isWeekday = dow >= 2 && dow <= 5; // Tue–Fri (Monday is closed)
 
   const durations = type === 'pc' ? [1, 3, 5, 7, 10] : [1, 3, 5];
   const options: DurationOption[] = [];
@@ -61,14 +85,14 @@ export function getDurationOptions(
     let isHappyHour = false;
 
     if (type === 'pc') {
-      if (startH >= 14 && endH <= 17) {
-        amount = HAPPY_HOUR_RATE * dh;
+      if (startH >= 14 && endH <= 17 && isWeekday) {
+        amount = prices.happyHourRate * dh;
         isHappyHour = true;
       } else {
-        amount = PC_PRICES[dh];
+        amount = prices.pc[dh] ?? PC_PRICES[dh];
       }
     } else {
-      amount = PS5_PRICES[dh];
+      amount = prices.ps5[dh] ?? PS5_PRICES[dh];
     }
 
     options.push({
@@ -81,16 +105,12 @@ export function getDurationOptions(
   }
 
   // Evening Pass — PC only, start ≥ 19:00, on days that close at midnight
-  const d = new Date(date + 'T12:00:00');
-  const dow = d.getDay();
-  const isFriSat = dow === 5 || dow === 6;
-
   if (type === 'pc' && startH >= 19 && !isFriSat) {
     const dh = hours.close - startH;
     options.push({
       duration_h: dh,
       duration_minutes: dh * 60,
-      amount: 285,
+      amount: prices.eveningPass,
       label: 'EVENING PASS',
       timeLabel: '19:00 – 00:00',
       isPass: true,
@@ -103,7 +123,7 @@ export function getDurationOptions(
     options.push({
       duration_h: dh,
       duration_minutes: dh * 60,
-      amount: 340,
+      amount: prices.weekendPass,
       label: 'WEEKEND PASS',
       timeLabel: '22:00 – 04:00',
       isPass: true,

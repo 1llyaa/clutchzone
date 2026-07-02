@@ -14,6 +14,7 @@ interface Tournament {
   filled_slots: number;
   registration_deadline: string | null;
   is_active: boolean;
+  description: string | null;
 }
 
 interface Registration {
@@ -35,6 +36,7 @@ const EMPTY: Omit<Tournament, 'id' | 'filled_slots' | 'is_active'> = {
   prize_pool: null,
   max_slots: 16,
   registration_deadline: null,
+  description: '',
 };
 
 const REG_STATUS_COLOR: Record<string, string> = {
@@ -112,6 +114,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
       title: t.title, game: t.game, date: t.date,
       format: t.format ?? '', prize_pool: t.prize_pool,
       max_slots: t.max_slots, registration_deadline: t.registration_deadline,
+      description: t.description ?? '',
     });
     setEditing(t);
     setShowForm(true);
@@ -262,6 +265,13 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
             <button onClick={() => setDetail(null)} className="font-mono text-cz-gray-mid hover:text-white" style={{ fontSize: 20 }}>×</button>
           </div>
 
+          {detail.description && (
+            <div style={{ padding: '16px 28px', borderBottom: '1px solid #2A2A2A' }}>
+              <div className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 9, letterSpacing: 2, marginBottom: 6 }}>POPIS</div>
+              <p className="font-body text-cz-white-soft" style={{ fontSize: 13, lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{detail.description}</p>
+            </div>
+          )}
+
           {/* Registrations list */}
           {regLoading ? (
             <div className="font-mono text-cz-gray-mid text-center" style={{ padding: 40, fontSize: 12 }}>NAČÍTÁNÍ...</div>
@@ -400,6 +410,17 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                   />
                 </div>
               ))}
+              <div className="flex flex-col gap-2" style={{ gridColumn: '1 / -1' }}>
+                <label className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>POPIS</label>
+                <textarea
+                  value={form.description ?? ''}
+                  onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value || null }))}
+                  rows={4}
+                  placeholder="Pravidla, formát, harmonogram…"
+                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange resize-none"
+                  style={{ padding: '9px 12px', fontSize: 13, border: '1px solid #2A2A2A' }}
+                />
+              </div>
             </div>
             <div className="flex gap-3" style={{ marginTop: 28 }}>
               <button onClick={handleSave} disabled={saving} className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark rounded-[2px] disabled:opacity-50" style={{ fontSize: 13, letterSpacing: 2, padding: '11px 28px' }}>

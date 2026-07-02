@@ -26,8 +26,9 @@ export async function PATCH(request: NextRequest) {
   const body = await request.json();
   const { key, value } = body;
 
-  if (!key || typeof value !== 'string') {
-    return NextResponse.json({ error: 'key and value required' }, { status: 400 });
+  const ALLOWED_KEYS = ['hero_image', 'stream_url', 'stream_visible'];
+  if (!key || !ALLOWED_KEYS.includes(key) || typeof value !== 'string' || value.length > 2000) {
+    return NextResponse.json({ error: 'Invalid key or value' }, { status: 400 });
   }
 
   const admin = createAdminClient();

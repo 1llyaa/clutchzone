@@ -56,7 +56,6 @@ export default function ReservationModal() {
         date: form.date,
         startTime: form.startTime,
         durationMinutes: form.option!.duration_minutes,
-        totalPrice: form.option!.amount,
         packageLabel: form.option!.label,
         customerName: form.customerName,
         customerEmail: form.customerEmail,

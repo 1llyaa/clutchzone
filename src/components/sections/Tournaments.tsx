@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import TournamentRegisterModal from '@/components/tournament/TournamentRegisterModal';
+import TournamentDetailModal from '@/components/tournament/TournamentDetailModal';
 
 interface Tournament {
   id: string;
@@ -12,11 +13,13 @@ interface Tournament {
   prize_pool: number | null;
   max_slots: number;
   filled_slots: number;
+  description: string | null;
 }
 
 export default function Tournaments({ tournaments }: { tournaments: Tournament[] }) {
   const t = useTranslations('tournaments');
   const [selected, setSelected] = useState<Tournament | null>(null);
+  const [detail, setDetail] = useState<Tournament | null>(null);
 
   function formatDate(iso: string) {
     const d = new Date(iso);
@@ -90,12 +93,18 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
                   >
                     <div>
                       <div className="font-display text-cz-orange" style={{ fontSize: 40, lineHeight: 1 }}>{formatDate(row.date)}</div>
-                      <span className="font-mono text-cz-gray-mid block" style={{ fontSize: 11, letterSpacing: 2, marginTop: 2 }}>{t('year')}</span>
+                      <span className="font-mono text-cz-gray-mid block" style={{ fontSize: 11, letterSpacing: 2, marginTop: 2 }}>{new Date(row.date).getUTCFullYear()}</span>
                     </div>
                     <span className="font-mono text-cz-gray-light uppercase justify-self-start" style={{ fontSize: 11, letterSpacing: 2, border: '1px solid #2A2A2A', borderRadius: 2, padding: '6px 10px' }}>
                       {row.game}
                     </span>
-                    <h3 className="font-display text-white uppercase" style={{ fontSize: 32, letterSpacing: 1 }}>{row.title}</h3>
+                    <button
+                      onClick={() => setDetail(row)}
+                      className="font-display text-white uppercase text-left hover:text-cz-orange transition-colors duration-150 cursor-pointer bg-transparent border-none"
+                      style={{ fontSize: 32, letterSpacing: 1, padding: 0 }}
+                    >
+                      {row.title}
+                    </button>
                     <div>
                       <span className="font-mono text-cz-gray-mid uppercase block" style={{ fontSize: 10, letterSpacing: 2 }}>{t('prizePool')}</span>
                       <span className="font-display text-white" style={{ fontSize: 28 }}>
@@ -125,16 +134,20 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
                     <div className="flex items-center gap-4" style={{ marginBottom: 12 }}>
                       <div>
                         <div className="font-display text-cz-orange" style={{ fontSize: 32, lineHeight: 1 }}>{formatDate(row.date)}</div>
-                        <span className="font-mono text-cz-gray-mid" style={{ fontSize: 10, letterSpacing: 2 }}>{t('year')}</span>
+                        <span className="font-mono text-cz-gray-mid" style={{ fontSize: 10, letterSpacing: 2 }}>{new Date(row.date).getUTCFullYear()}</span>
                       </div>
                       <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2, border: '1px solid #2A2A2A', borderRadius: 2, padding: '4px 8px' }}>
                         {row.game}
                       </span>
                     </div>
 
-                    <h3 className="font-display text-white uppercase" style={{ fontSize: 'clamp(20px, 5vw, 28px)', letterSpacing: 1, marginBottom: 14 }}>
+                    <button
+                      onClick={() => setDetail(row)}
+                      className="font-display text-white uppercase text-left hover:text-cz-orange transition-colors duration-150 cursor-pointer bg-transparent border-none block"
+                      style={{ fontSize: 'clamp(20px, 5vw, 28px)', letterSpacing: 1, marginBottom: 14, padding: 0 }}
+                    >
                       {row.title}
-                    </h3>
+                    </button>
 
                     <div className="flex items-end justify-between flex-wrap gap-3">
                       <div className="flex gap-6">
@@ -171,6 +184,11 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
         )}
       </div>
 
+      <TournamentDetailModal
+        tournament={detail}
+        onClose={() => setDetail(null)}
+        onRegister={(row) => { setDetail(null); setSelected(row); }}
+      />
       <TournamentRegisterModal tournament={selected} onClose={() => setSelected(null)} />
     </section>
   );

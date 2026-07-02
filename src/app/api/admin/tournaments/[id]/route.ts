@@ -11,7 +11,7 @@ export async function PATCH(
 
   const { id } = await params;
   const body = await request.json();
-  const allowed = ['title', 'game', 'date', 'format', 'prize_pool', 'max_slots', 'registration_deadline', 'is_active'];
+  const allowed = ['title', 'game', 'date', 'format', 'prize_pool', 'max_slots', 'registration_deadline', 'is_active', 'description'];
   const updates = Object.fromEntries(
     Object.entries(body).filter(([k]) => allowed.includes(k))
   );

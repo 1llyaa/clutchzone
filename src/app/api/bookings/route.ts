@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { getDurationOptions } from '@/lib/utils/pricing';
+import { fetchPriceConfig } from '@/lib/utils/pricing-server';
 import { z } from 'zod';
 
 const BookingSchema = z.object({
@@ -7,7 +9,6 @@ const BookingSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   startTime: z.string().regex(/^\d{2}:\d{2}$/),
   durationMinutes: z.number().int().min(60).max(720),
-  totalPrice: z.number().int().min(1),
   packageLabel: z.string(),
   customerName: z.string().min(2),
   customerEmail: z.string().email(),
@@ -32,6 +33,19 @@ export async function POST(req: NextRequest) {
 
   const data = parsed.data;
   const supabase = createAdminClient();
+
+  // Compute the price server-side from DB prices — never trust the client.
+  // This also validates that the requested time/duration is a real offering
+  // (within opening hours, valid duration, pass eligibility).
+  const prices = await fetchPriceConfig();
+  const validOptions = getDurationOptions(data.stationType, data.startTime, data.date, prices);
+  const option = validOptions.find(
+    (o) => o.label === data.packageLabel && o.duration_minutes === data.durationMinutes,
+  );
+
+  if (!option) {
+    return NextResponse.json({ error: 'Neplatná kombinace času a délky rezervace' }, { status: 400 });
+  }
 
   // Find all active stations of the requested type
   const { data: stations, error: stErr } = await supabase
@@ -91,7 +105,7 @@ export async function POST(req: NextRequest) {
     date: data.date,
     start_time: data.startTime,
     duration_minutes: data.durationMinutes,
-    total_price: data.totalPrice,
+    total_price: option.amount,
     status: 'confirmed',
   });
 

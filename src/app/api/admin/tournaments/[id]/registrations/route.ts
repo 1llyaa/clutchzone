@@ -35,6 +35,11 @@ export async function PATCH(
     return NextResponse.json({ error: 'registrationId and status required' }, { status: 400 });
   }
 
+  const VALID_STATUSES = ['pending', 'confirmed', 'cancelled'];
+  if (!VALID_STATUSES.includes(status)) {
+    return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
+  }
+
   const admin = createAdminClient();
   const { error } = await admin
     .from('tournament_registrations')

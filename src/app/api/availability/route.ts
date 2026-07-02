@@ -27,23 +27,7 @@ export async function GET(req: NextRequest) {
 
   const stationIds = stations.map((s) => s.id);
 
-  // Find stations with conflicting bookings using raw SQL via rpc or just check manually
-  // A booking conflicts if its tsrange overlaps our desired tsrange
-  const { data: conflicts, error: bErr } = await supabase
-    .from('bookings')
-    .select('station_id')
-    .in('station_id', stationIds)
-    .neq('status', 'cancelled')
-    .eq('date', date)
-    .or(
-      // overlap: existing start < our end AND existing end > our start
-      // existing end = start_time + duration_minutes
-      // We check by time arithmetic — use a stored procedure approach:
-      // For simplicity: fetch all bookings for this date+type and filter in JS
-      `date.eq.${date}`
-    );
-
-  // Simpler: fetch all non-cancelled bookings for this date+stations, check overlap in JS
+  // Fetch all non-cancelled bookings for this date+stations, check overlap in JS
   const { data: bookings, error: bErr2 } = await supabase
     .from('bookings')
     .select('station_id, start_time, duration_minutes')
