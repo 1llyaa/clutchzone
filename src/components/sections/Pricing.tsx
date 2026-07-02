@@ -14,9 +14,9 @@ export default function Pricing({ pcPrices, ps5Prices, packageAmounts }: Props) 
   const { open } = useReservation();
 
   const packages = [
-    { name: t('happyName'),   time: t('happyTime'),   amount: packageAmounts.happy_hour   ?? 55,  unit: t('happyUnit'),   featured: true  },
-    { name: t('eveningName'), time: t('eveningTime'),  amount: packageAmounts.evening_pass ?? 285, unit: t('eveningUnit'), featured: false },
-    { name: t('weekendName'), time: t('weekendTime'),  amount: packageAmounts.weekend_pass ?? 340, unit: t('weekendUnit'), featured: false },
+    { name: t('happyName'),   time: t('happyTime'),   amount: packageAmounts.happy_hour   ?? 55,  unit: t('happyUnit'),   featured: true,  character: '/characters/phoenix.png' },
+    { name: t('eveningName'), time: t('eveningTime'),  amount: packageAmounts.evening_pass ?? 285, unit: t('eveningUnit'), featured: false, character: '/characters/jett.png'    },
+    { name: t('weekendName'), time: t('weekendTime'),  amount: packageAmounts.weekend_pass ?? 340, unit: t('weekendUnit'), featured: false, character: '/characters/neon.png'    },
   ];
 
   return (
@@ -115,10 +115,60 @@ export default function Pricing({ pcPrices, ps5Prices, packageAmounts }: Props) 
           {packages.map((pkg) => (
             <div
               key={pkg.name}
-              className="relative flex flex-col border border-cz-gray-dark rounded-cz"
-              style={{ background: pkg.featured ? '#1A1A1A' : '#111111', padding: 'clamp(24px, 4vw, 32px) clamp(20px, 3vw, 28px)' }}
+              className="relative flex flex-col border border-cz-gray-dark rounded-cz overflow-hidden"
+              style={{ background: '#111111', padding: 'clamp(24px, 4vw, 32px) clamp(20px, 3vw, 28px)', minHeight: 340 }}
             >
               <span className="absolute top-0 left-0 right-0 rounded-t-cz" style={{ height: 2, background: pkg.featured ? '#E84A1A' : '#2A2A2A' }} />
+
+              {/* Character image */}
+              <div
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  bottom: 44,
+                  right: -8,
+                  height: 230,
+                  width: 180,
+                  pointerEvents: 'none',
+                }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={pkg.character}
+                  alt=""
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    objectPosition: 'bottom right',
+                    outline: 'none',
+                  }}
+                />
+                {/* Fade character into card — left edge */}
+                <div style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: `linear-gradient(to right, #111111 0%, transparent 55%)`,
+                }} />
+                {/* Fade character into card — bottom edge */}
+                <div style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: `linear-gradient(to top, #111111 0%, transparent 40%)`,
+                }} />
+                {/* Fade white background into card color — top and right */}
+                <div style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: `linear-gradient(to bottom, #111111 0%, transparent 30%)`,
+                }} />
+                <div style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: `linear-gradient(to left, #111111 0%, transparent 30%)`,
+                }} />
+              </div>
+
               <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 11, letterSpacing: 2, marginBottom: 8 }}>
                 {pkg.name}
               </span>
@@ -135,7 +185,7 @@ export default function Pricing({ pcPrices, ps5Prices, packageAmounts }: Props) 
               </div>
               <button
                 onClick={open}
-                className="w-full bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer"
+                className="relative z-10 w-full bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer"
                 style={{ fontSize: 17, letterSpacing: 2, padding: 13 }}
               >
                 {t('cta')}
