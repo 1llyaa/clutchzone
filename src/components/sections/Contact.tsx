@@ -102,7 +102,7 @@ export default function Contact() {
                   required
                   maxLength={100}
                   placeholder={t('namePlaceholder')}
-                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors"
+                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-[border-color] duration-150 ease-out"
                   style={{ padding: '11px 14px', fontSize: 14, border: '1px solid #2A2A2A' }}
                 />
               </div>
@@ -117,7 +117,7 @@ export default function Contact() {
                   onChange={field('email')}
                   required
                   placeholder={t('emailPlaceholder')}
-                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors"
+                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-[border-color] duration-150 ease-out"
                   style={{ padding: '11px 14px', fontSize: 14, border: '1px solid #2A2A2A' }}
                 />
               </div>
@@ -133,7 +133,7 @@ export default function Contact() {
                   maxLength={2000}
                   rows={5}
                   placeholder={t('messagePlaceholder')}
-                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors resize-none"
+                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-[border-color] duration-150 ease-out resize-none"
                   style={{ padding: '11px 14px', fontSize: 14, border: '1px solid #2A2A2A' }}
                 />
               </div>

@@ -39,6 +39,27 @@ export default function CtaBand() {
           }}
         />
 
+        {/* Character peeking from right */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/characters/red_hair.png"
+          alt=""
+          aria-hidden="true"
+          className="absolute bottom-0 right-0 pointer-events-none"
+          style={{
+            height: '115%',
+            width: 'auto',
+            maxWidth: 'clamp(140px, 30vw, 260px)',
+            objectFit: 'contain',
+            objectPosition: 'bottom right',
+            outline: 'none',
+            maskImage: 'linear-gradient(to right, transparent 0%, black 40%), linear-gradient(to bottom, transparent 0%, black 20%), linear-gradient(to top, transparent 0%, black 18%)',
+            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 40%), linear-gradient(to bottom, transparent 0%, black 20%), linear-gradient(to top, transparent 0%, black 18%)',
+            maskComposite: 'intersect, intersect',
+            WebkitMaskComposite: 'source-in, source-in',
+          }}
+        />
+
         <div className="relative">
           <span
             className="font-mono text-cz-orange uppercase"
@@ -63,7 +84,7 @@ export default function CtaBand() {
             <button
               onClick={() => document.getElementById('kontakt')?.scrollIntoView({ behavior: 'smooth' })}
               className="bg-transparent text-white font-display uppercase hover:text-cz-orange hover:border-cz-orange active:scale-[0.96] transition-[color,border-color,scale] duration-150 ease-out rounded-[2px] cursor-pointer"
-              style={{ fontSize: 'clamp(15px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(11px, 2vw, 15px) clamp(28px, 4vw, 44px)', border: '1.5px solid #2A2A2A' }}
+              style={{ fontSize: 'clamp(15px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(11px, 2vw, 15px) clamp(28px, 4vw, 44px)', border: '1.5px solid rgba(255,255,255,0.15)' }}
             >
               {t('secondary')}
             </button>

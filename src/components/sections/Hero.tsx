@@ -63,9 +63,9 @@ export default function Hero({ heroImage, stationsFree, stationsTotal }: Props) 
             <br />
             {t('h1Line2')}
             <br />
-            <span className="relative inline-block">
+            <span className="relative inline-block" style={{ paddingBottom: 10 }}>
               {t('h1Line3')}
-              <span className="absolute left-0 bg-cz-orange" style={{ bottom: 6, width: '100%', height: 5 }} />
+              <span className="absolute left-0 bg-cz-orange" style={{ bottom: 0, width: '100%', height: 5 }} />
             </span>
           </h1>
 
@@ -86,7 +86,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal }: Props) 
             </button>
             <button
               className="bg-transparent text-white font-display uppercase hover:text-cz-orange hover:border-cz-orange active:scale-[0.96] transition-[color,border-color,scale] duration-150 ease-out rounded-[2px] cursor-pointer"
-              style={{ fontSize: 'clamp(15px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(11px, 2vw, 15px) clamp(24px, 4vw, 40px)', border: '1.5px solid #2A2A2A' }}
+              style={{ fontSize: 'clamp(15px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(11px, 2vw, 15px) clamp(24px, 4vw, 40px)', border: '1.5px solid rgba(255,255,255,0.15)' }}
             >
               {t('ctaSecondary')}
             </button>
@@ -134,7 +134,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal }: Props) 
           <div
             className="absolute animate-hero-glow-pulse"
             style={{
-              width: 280, height: 280,
+              width: 336, height: 336,
               background: 'radial-gradient(circle, rgba(232,74,26,0.2) 0%, rgba(232,74,26,0.05) 50%, transparent 70%)',
               borderRadius: '50%',
             }}
@@ -144,11 +144,11 @@ export default function Hero({ heroImage, stationsFree, stationsTotal }: Props) 
             <img
               src={heroImage || '/terrorist_cs2.png'}
               alt="Hero Character"
-              width={260}
-              height={347}
+              width={312}
+              height={416}
               style={{
                 objectFit: 'contain',
-                maxHeight: 347,
+                maxHeight: 416,
                 width: 'auto',
                 filter: 'drop-shadow(0 0 30px rgba(232,74,26,0.3)) drop-shadow(0 16px 40px rgba(0,0,0,0.6))',
                 outline: 'none',

@@ -85,7 +85,7 @@ export default function StepDateTime({ form, setForm, onNext, onBack }: Props) {
                 <div key={slot} className="flex flex-col gap-1">
                   <button
                     onClick={() => selectHour(hour)}
-                    className="font-mono uppercase rounded-[2px] border transition-all duration-150 cursor-pointer"
+                    className="font-mono uppercase rounded-[2px] border transition-[background-color,border-color,color] duration-150 ease-out cursor-pointer active:scale-[0.96]"
                     style={{
                       fontSize: 12,
                       letterSpacing: 1,
@@ -106,7 +106,7 @@ export default function StepDateTime({ form, setForm, onNext, onBack }: Props) {
                           <button
                             key={m}
                             onClick={() => selectQuarter(hour, m)}
-                            className="font-mono rounded-[2px] border transition-all duration-150 cursor-pointer"
+                            className="font-mono rounded-[2px] border transition-[background-color,border-color,color] duration-150 ease-out cursor-pointer active:scale-[0.96]"
                             style={{
                               fontSize: 10,
                               padding: '4px 6px',

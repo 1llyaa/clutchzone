@@ -38,7 +38,7 @@ export default function Navbar() {
           <a
             key={link.href}
             href={link.href}
-            className="font-mono text-cz-gray-light uppercase hover:text-white transition-colors duration-150"
+            className="font-mono text-cz-gray-light uppercase hover:text-white transition-[color] duration-200 ease-out"
             style={{ fontSize: 12, letterSpacing: 2 }}
           >
             {link.label}
@@ -71,19 +71,39 @@ export default function Navbar() {
 
       {/* Mobile hamburger */}
       <button
-        className="md:hidden flex flex-col gap-[5px] bg-transparent border-none cursor-pointer p-2"
+        className="md:hidden flex flex-col justify-center gap-[5px] bg-transparent border-none cursor-pointer"
+        style={{ width: 44, height: 44, padding: '10px 9px' }}
         onClick={() => setMenuOpen((o) => !o)}
         aria-label="Toggle menu"
       >
-        <span className="block w-6 h-[1.5px] bg-white transition-[opacity] duration-150" style={{ opacity: menuOpen ? 0 : 1 }} />
-        <span className="block w-6 h-[1.5px] bg-white" />
-        <span className="block w-6 h-[1.5px] bg-white transition-[opacity] duration-150" style={{ opacity: menuOpen ? 0 : 1 }} />
+        <span
+          className="block w-6 h-[1.5px] bg-white origin-center"
+          style={{
+            transition: 'transform 220ms cubic-bezier(0.2,0,0,1)',
+            transform: menuOpen ? 'translateY(6.5px) rotate(45deg)' : 'none',
+          }}
+        />
+        <span
+          className="block w-6 h-[1.5px] bg-white origin-center"
+          style={{
+            transition: 'opacity 160ms ease-out, scale 160ms ease-out',
+            opacity: menuOpen ? 0 : 1,
+            scale: menuOpen ? '0.2' : '1',
+          }}
+        />
+        <span
+          className="block w-6 h-[1.5px] bg-white origin-center"
+          style={{
+            transition: 'transform 220ms cubic-bezier(0.2,0,0,1)',
+            transform: menuOpen ? 'translateY(-6.5px) rotate(-45deg)' : 'none',
+          }}
+        />
       </button>
 
       {/* Mobile menu */}
       {menuOpen && (
         <div
-          className="absolute top-full left-0 right-0 bg-cz-black-mid md:hidden flex flex-col"
+          className="absolute top-full left-0 right-0 bg-cz-black-mid md:hidden flex flex-col animate-menu-in"
           style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '20px 24px' }}
         >
           {links.map((link) => (
@@ -91,7 +111,7 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               onClick={() => setMenuOpen(false)}
-              className="font-mono text-cz-gray-light uppercase hover:text-white transition-colors py-3"
+              className="font-mono text-cz-gray-light uppercase hover:text-white transition-[color] duration-200 ease-out py-3"
               style={{ fontSize: 13, letterSpacing: 2, borderBottom: '1px solid rgba(255,255,255,0.05)' }}
             >
               {link.label}
