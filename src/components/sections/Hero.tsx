@@ -66,7 +66,10 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
             <br />
             <span className="relative inline-block" style={{ paddingBottom: 10 }}>
               {t('h1Line3')}
-              <span className="absolute left-0 bg-cz-orange" style={{ bottom: 0, width: '100%', height: 5 }} />
+              <span
+                className="absolute left-0 bg-cz-orange animate-underline-in origin-left"
+                style={{ bottom: 0, width: '100%', height: 5, animationDelay: '0.5s' }}
+              />
             </span>
           </h1>
 

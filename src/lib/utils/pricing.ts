@@ -76,31 +76,41 @@ export function getDurationOptions(
 
   const durations = type === 'pc' ? [1, 3, 5, 7, 10] : [1, 3, 5];
   const options: DurationOption[] = [];
+  const usedDurations = new Set<number>();
+
+  // Happy Hour — PC only, weekdays, 14:00–17:00. Offer every whole hour that
+  // still fits before 17:00 (not just the fixed 1H/3H/5H/… blocks), so a
+  // booking starting anywhere in the window (e.g. 15:00) still gets more
+  // than a single 1H option.
+  if (type === 'pc' && isWeekday && startH >= 14 && startH < 17) {
+    const maxHappyHours = Math.floor(17 - startH);
+    for (let hh = 1; hh <= maxHappyHours; hh++) {
+      const endH = startH + hh;
+      if (endH > hours.close) continue;
+      options.push({
+        duration_h: hh,
+        duration_minutes: hh * 60,
+        amount: prices.happyHourRate * hh,
+        label: `${hh}H`,
+        isHappyHour: true,
+      });
+      usedDurations.add(hh);
+    }
+  }
 
   for (const dh of durations) {
+    if (usedDurations.has(dh)) continue; // already offered at happy hour rate above
     const endH = startH + dh;
     if (endH > hours.close) continue; // exceeds closing
 
-    let amount: number;
-    let isHappyHour = false;
-
-    if (type === 'pc') {
-      if (startH >= 14 && endH <= 17 && isWeekday) {
-        amount = prices.happyHourRate * dh;
-        isHappyHour = true;
-      } else {
-        amount = prices.pc[dh] ?? PC_PRICES[dh];
-      }
-    } else {
-      amount = prices.ps5[dh] ?? PS5_PRICES[dh];
-    }
+    const amount = type === 'pc' ? (prices.pc[dh] ?? PC_PRICES[dh]) : (prices.ps5[dh] ?? PS5_PRICES[dh]);
 
     options.push({
       duration_h: dh,
       duration_minutes: dh * 60,
       amount,
       label: `${dh}H`,
-      isHappyHour,
+      isHappyHour: false,
     });
   }
 
