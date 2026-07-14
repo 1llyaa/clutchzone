@@ -92,6 +92,14 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* Prevent horizontal panning on mobile from decorative elements that
+     poke past the viewport edge. `clip` (unlike `hidden`) doesn't create
+     a scroll container, so the sticky navbar keeps working. */
+  html, body {
+    overflow-x: hidden;
+    overflow-x: clip;
+  }
+
   * {
     box-sizing: border-box;
     margin: 0;

@@ -33,6 +33,8 @@ function GameCard({ game }: { game: Game }) {
       {game.cover_url ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
+          loading="lazy"
+          decoding="async"
           src={game.cover_url}
           alt={game.title}
           className="w-full h-full object-cover"

@@ -44,6 +44,8 @@ export default function CtaBand() {
         {/* Character peeking from right */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
+          loading="lazy"
+          decoding="async"
           src="/characters/red_hair.png"
           alt=""
           aria-hidden="true"

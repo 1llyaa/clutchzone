@@ -39,6 +39,8 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
       <div className="absolute right-0 top-0 bottom-0 pointer-events-none" style={{ width: 'clamp(120px, 20vw, 260px)', zIndex: 0 }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
+          loading="lazy"
+          decoding="async"
           src="/characters/apex.png"
           alt=""
           aria-hidden="true"

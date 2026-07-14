@@ -143,6 +143,8 @@ export default function Pricing({ pcPrices, ps5Prices, packageAmounts }: Props) 
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
+          loading="lazy"
+          decoding="async"
                   src={pkg.character}
                   alt=""
                   style={{

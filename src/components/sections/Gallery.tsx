@@ -38,7 +38,7 @@ function MobileGallery({ images }: { images: GalleryImage[] }) {
           <SwiperSlide key={img.id}>
             <div className="relative overflow-hidden rounded-[2px]" style={{ aspectRatio: '4/3' }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={img.url} alt={img.caption || ''} className="w-full h-full object-cover" />
+              <img loading="lazy" decoding="async" src={img.url} alt={img.caption || ''} className="w-full h-full object-cover" />
               {img.caption && (
                 <div
                   className="absolute bottom-0 left-0 right-0 font-body text-white"
@@ -80,7 +80,7 @@ function Carousel({ images }: { images: GalleryImage[] }) {
           style={{ opacity: i === idx ? 1 : 0, pointerEvents: i === idx ? 'auto' : 'none' }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={img.url} alt={img.caption || ''} className="w-full h-full object-cover" />
+          <img loading="lazy" decoding="async" src={img.url} alt={img.caption || ''} className="w-full h-full object-cover" />
           {img.caption && (
             <div
               className="absolute bottom-0 left-0 right-0 font-body text-white"
@@ -131,7 +131,7 @@ function Masonry({ images }: { images: GalleryImage[] }) {
       {images.map((img) => (
         <div key={img.id} className="relative" style={{ breakInside: 'avoid', marginBottom: 6 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={img.url} alt={img.caption || ''} className="w-full block" />
+          <img loading="lazy" decoding="async" src={img.url} alt={img.caption || ''} className="w-full block" />
           {img.caption && (
             <div
               className="absolute bottom-0 left-0 right-0 font-body text-white"
@@ -157,7 +157,7 @@ function Mosaic({ images }: { images: GalleryImage[] }) {
           style={{ gridColumn: i === 0 ? 'span 2' : 'span 1', gridRow: i === 0 ? 'span 2' : 'span 1' }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={img.url} alt={img.caption || ''} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
+          <img loading="lazy" decoding="async" src={img.url} alt={img.caption || ''} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
           {img.caption && (
             <div
               className="absolute bottom-0 left-0 right-0 font-body text-white opacity-0 hover:opacity-100 transition-opacity duration-300"

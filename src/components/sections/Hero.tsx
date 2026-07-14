@@ -146,6 +146,8 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
           <div className="relative animate-hero-char" style={{ animationDelay: '0.2s', opacity: 0 }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
+              fetchPriority="high"
+              decoding="async"
               src={heroImage || '/terrorist_cs2.png'}
               alt="Hero Character"
               width={312}
@@ -182,6 +184,8 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
             <div className="animate-hero-float">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
+                fetchPriority="high"
+                decoding="async"
                 src={heroImage || '/terrorist_cs2.png'}
                 alt="Hero Character"
                 width={420}
