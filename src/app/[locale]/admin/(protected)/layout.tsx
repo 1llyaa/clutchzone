@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { requireAdmin } from '@/lib/admin/auth';
 import AdminSidebar from '@/components/admin/AdminSidebar';
+import AdminNotifications from '@/components/admin/AdminNotifications';
 
 export default async function ProtectedAdminLayout({
   children,
@@ -31,6 +32,7 @@ export default async function ProtectedAdminLayout({
       <main className="flex-1 min-h-screen" style={{ marginLeft: 240 }}>
         {children}
       </main>
+      <AdminNotifications locale={locale} />
     </div>
   );
 }

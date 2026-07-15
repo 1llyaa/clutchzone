@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition, useEffect, useCallback } from 'react';
+import { useState, useTransition, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface Tournament {
@@ -68,6 +68,8 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
   const [regLoading, setRegLoading]     = useState(false);
   const [regActing, setRegActing]       = useState<string | null>(null);
 
+  const panelRef = useRef<HTMLDivElement>(null);
+
   const fetchRegistrations = useCallback(async (tournamentId: string) => {
     setRegLoading(true);
     const res = await fetch(`/api/admin/tournaments/${tournamentId}/registrations`);
@@ -77,7 +79,11 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
   }, []);
 
   useEffect(() => {
-    if (detail) fetchRegistrations(detail.id);
+    if (detail) {
+      fetchRegistrations(detail.id);
+      // Panel sits below the table — bring it into view so it's not missed
+      setTimeout(() => panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+    }
   }, [detail, fetchRegistrations]);
 
   async function updateRegStatus(regId: string, status: string) {
@@ -199,6 +205,8 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
             ) : tournaments.map((t) => (
               <tr
                 key={t.id}
+                onClick={() => setDetail(detail?.id === t.id ? null : t)}
+                className="cursor-pointer transition-colors duration-150 hover:bg-white/[0.03]"
                 style={{
                   borderBottom: '1px solid rgba(255,255,255,0.04)',
                   opacity: t.is_active ? 1 : 0.45,
@@ -224,7 +232,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                 </td>
                 <td style={{ padding: '12px 16px' }}>
                   <button
-                    onClick={() => toggleActive(t)}
+                    onClick={(e) => { e.stopPropagation(); toggleActive(t); }}
                     className="font-mono uppercase rounded-[2px]"
                     style={{ fontSize: 9, letterSpacing: 1, padding: '3px 8px', color: t.is_active ? '#22c55e' : '#888', background: t.is_active ? '#22c55e20' : '#88888820' }}
                   >
@@ -233,11 +241,11 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                 </td>
                 <td style={{ padding: '12px 16px' }}>
                   <div className="flex gap-3">
-                    <button onClick={() => setDetail(detail?.id === t.id ? null : t)} className="font-mono text-cz-orange uppercase hover:underline" style={{ fontSize: 10, letterSpacing: 1 }}>
+                    <button onClick={(e) => { e.stopPropagation(); setDetail(detail?.id === t.id ? null : t); }} className="font-mono text-cz-orange uppercase hover:underline" style={{ fontSize: 10, letterSpacing: 1 }}>
                       {detail?.id === t.id ? 'ZAVŘÍT' : 'DETAIL'}
                     </button>
-                    <button onClick={() => openEdit(t)} className="font-mono text-cz-gray-light uppercase hover:underline" style={{ fontSize: 10, letterSpacing: 1 }}>UPRAVIT</button>
-                    <button onClick={() => handleDelete(t.id)} disabled={deleting === t.id} className="font-mono text-red-400 uppercase hover:underline disabled:opacity-50" style={{ fontSize: 10, letterSpacing: 1 }}>SMAZAT</button>
+                    <button onClick={(e) => { e.stopPropagation(); openEdit(t); }} className="font-mono text-cz-gray-light uppercase hover:underline" style={{ fontSize: 10, letterSpacing: 1 }}>UPRAVIT</button>
+                    <button onClick={(e) => { e.stopPropagation(); handleDelete(t.id); }} disabled={deleting === t.id} className="font-mono text-red-400 uppercase hover:underline disabled:opacity-50" style={{ fontSize: 10, letterSpacing: 1 }}>SMAZAT</button>
                   </div>
                 </td>
               </tr>
@@ -248,7 +256,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
 
       {/* Detail / Registrations panel */}
       {detail && (
-        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ marginTop: 24, border: '1px solid #E84A1A' }}>
+        <div ref={panelRef} className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ marginTop: 24, border: '1px solid #E84A1A', scrollMarginTop: 24 }}>
           {/* Panel header */}
           <div className="flex items-center justify-between" style={{ padding: '20px 28px', borderBottom: '1px solid #2A2A2A' }}>
             <div>

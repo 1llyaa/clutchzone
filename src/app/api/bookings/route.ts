@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { getDurationOptions } from '@/lib/utils/pricing';
 import { fetchPriceConfig } from '@/lib/utils/pricing-server';
+import { sendBookingNotification, sendBookingConfirmation } from '@/lib/email';
 import { z } from 'zod';
 
 const BookingSchema = z.object({
@@ -116,6 +117,21 @@ export async function POST(req: NextRequest) {
     }
     return NextResponse.json({ error: 'Chyba při vytváření rezervace' }, { status: 500 });
   }
+
+  // Notify admin + confirm to customer — must never block or fail the booking
+  const emailData = {
+    reference,
+    stationLabel: freeStation.label,
+    customerName: data.customerName,
+    customerEmail: data.customerEmail,
+    customerPhone: data.customerPhone,
+    date: data.date,
+    startTime: data.startTime,
+    durationMinutes: data.durationMinutes,
+    totalPrice: option.amount,
+  };
+  sendBookingNotification(emailData).catch(() => {});
+  sendBookingConfirmation(emailData).catch(() => {});
 
   return NextResponse.json({ reference, stationLabel: freeStation.label });
 }
