@@ -12,6 +12,19 @@ interface BookingEmailData {
   totalPrice: number;
 }
 
+// Escape user-supplied values before interpolating into email HTML.
+// Booking fields come from the public POST /api/bookings endpoint and
+// are only length-validated, so raw markup would otherwise render in
+// the recipient's mail client (HTML/link injection).
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function getTransport() {
   const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env;
   if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) return null;
@@ -54,7 +67,7 @@ export async function sendBookingNotification(b: BookingEmailData): Promise<void
         ${rows.map(([k, v]) => `
           <tr>
             <td style="padding:8px 0;color:#888;border-bottom:1px solid #2a2a2a;width:110px">${k}</td>
-            <td style="padding:8px 0;color:#fff;border-bottom:1px solid #2a2a2a"><strong>${v}</strong></td>
+            <td style="padding:8px 0;color:#fff;border-bottom:1px solid #2a2a2a"><strong>${escapeHtml(v)}</strong></td>
           </tr>`).join('')}
       </table>
       <p style="margin:24px 0 0;font-size:12px">
@@ -96,7 +109,7 @@ export async function sendBookingConfirmation(b: BookingEmailData): Promise<void
   const html = `
     <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#111;color:#e8e8e8;padding:32px;border-top:3px solid #E84A1A">
       <h2 style="margin:0 0 4px;color:#fff;text-transform:uppercase;letter-spacing:2px">Rezervace potvrzena</h2>
-      <p style="margin:0 0 24px;color:#888;font-size:13px">Díky za rezervaci v Clutch Zone, ${b.customerName}!</p>
+      <p style="margin:0 0 24px;color:#888;font-size:13px">Díky za rezervaci v Clutch Zone, ${escapeHtml(b.customerName)}!</p>
       <div style="text-align:center;margin:0 0 24px">
         <span style="display:inline-block;font-size:32px;letter-spacing:4px;color:#fff;border:1px solid #E84A1A;padding:12px 32px;background:rgba(232,74,26,0.08)">${b.reference}</span>
       </div>
@@ -104,7 +117,7 @@ export async function sendBookingConfirmation(b: BookingEmailData): Promise<void
         ${rows.map(([k, v]) => `
           <tr>
             <td style="padding:8px 0;color:#888;border-bottom:1px solid #2a2a2a;width:110px">${k}</td>
-            <td style="padding:8px 0;color:#fff;border-bottom:1px solid #2a2a2a"><strong>${v}</strong></td>
+            <td style="padding:8px 0;color:#fff;border-bottom:1px solid #2a2a2a"><strong>${escapeHtml(v)}</strong></td>
           </tr>`).join('')}
       </table>
       <p style="margin:24px 0 0;color:#888;font-size:13px;line-height:1.6">
