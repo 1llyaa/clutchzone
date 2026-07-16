@@ -155,7 +155,7 @@ export default function Games({ games }: { games: Game[] }) {
         <div
           ref={scrollRef}
           onScroll={onScroll}
-          className="px-6 md:px-16"
+          className="max-w-[1440px] mx-auto px-6 md:px-16"
           style={{
             display: 'flex',
             gap: 12,
