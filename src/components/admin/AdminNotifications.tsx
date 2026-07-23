@@ -80,7 +80,20 @@ export default function AdminNotifications({ locale }: { locale: string }) {
     setLog(loadLog());
 
     const supabase = getSupabase();
-    const channel = supabase
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    let cancelled = false;
+
+    // bookings RLS is admin-only (migration 010): realtime must be
+    // authenticated with the admin session BEFORE subscribing, otherwise
+    // the channel joins as anon and receives no events.
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (cancelled) return;
+      if (session?.access_token) {
+        await supabase.realtime.setAuth(session.access_token);
+      }
+
+      channel = supabase
       .channel('admin-bookings')
       .on(
         'postgres_changes',
@@ -118,8 +131,12 @@ export default function AdminNotifications({ locale }: { locale: string }) {
         }
       )
       .subscribe();
+    })();
 
-    return () => { supabase.removeChannel(channel); };
+    return () => {
+      cancelled = true;
+      if (channel) supabase.removeChannel(channel);
+    };
   }, [addEntry, locale]);
 
   async function enableSystemNotifications() {
