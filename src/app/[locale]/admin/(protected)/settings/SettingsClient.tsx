@@ -54,6 +54,10 @@ export default function SettingsClient({
   const [savingStream, setSavingStream]   = useState(false);
   const [streamMsg, setStreamMsg]         = useState('');
 
+  const [coinsAmount, setCoinsAmount]     = useState(siteSettings.pay_now_coins_amount ?? '50');
+  const [savingCoins, setSavingCoins]     = useState(false);
+  const [coinsMsg, setCoinsMsg]           = useState('');
+
   async function handleHeroUpload(file: File) {
     if (!file.type.startsWith('image/')) return;
     setUploadingHero(true);
@@ -109,6 +113,15 @@ export default function SettingsClient({
 
     setSavingStream(false);
     setStreamMsg(urlOk && visOk ? 'Uloženo' : 'Chyba při ukládání');
+    startTransition(() => router.refresh());
+  }
+
+  async function handleCoinsSave() {
+    setSavingCoins(true);
+    setCoinsMsg('');
+    const res = await updateSetting('pay_now_coins_amount', coinsAmount);
+    setSavingCoins(false);
+    setCoinsMsg(res ? 'Uloženo' : 'Chyba při ukládání');
     startTransition(() => router.refresh());
   }
 
@@ -294,6 +307,51 @@ export default function SettingsClient({
                 style={{ fontSize: 11, color: streamMsg.startsWith('Chyba') ? '#ef4444' : '#22c55e' }}
               >
                 {streamMsg}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Coins per payment */}
+      <div style={{ marginBottom: 48 }}>
+        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 3, marginBottom: 20 }}>
+          MINCE ZA PLATBU KARTOU
+        </div>
+
+        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A', padding: 24 }}>
+          <div className="flex flex-col gap-5">
+            {/* Coins amount input */}
+            <div className="flex flex-col gap-2">
+              <label className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+                POČET MINCÍ PŘI PLATBĚ KARTOU
+              </label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="number"
+                  value={coinsAmount}
+                  onChange={(e) => setCoinsAmount(e.target.value)}
+                  min={0}
+                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange flex-1"
+                  style={{ padding: '10px 14px', fontSize: 13, border: '1px solid #2A2A2A' }}
+                />
+                <button
+                  onClick={handleCoinsSave}
+                  disabled={savingCoins}
+                  className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 rounded-[2px] disabled:opacity-50 flex-shrink-0"
+                  style={{ fontSize: 12, letterSpacing: 2, padding: '10px 24px' }}
+                >
+                  {savingCoins ? '...' : 'ULOŽIT'}
+                </button>
+              </div>
+            </div>
+
+            {coinsMsg && (
+              <p
+                className="font-mono"
+                style={{ fontSize: 11, color: coinsMsg.startsWith('Chyba') ? '#ef4444' : '#22c55e' }}
+              >
+                {coinsMsg}
               </p>
             )}
           </div>
