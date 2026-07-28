@@ -3,6 +3,7 @@
     "herna": "Gaming",
     "cenik": "Pricing",
     "turnaje": "Tournaments",
+    "akce": "Private Events",
     "kontakt": "Contact",
     "cta": "BOOK NOW"
   },
@@ -117,6 +118,14 @@
   "gallery": {
     "eyebrow": "// GALLERY",
     "heading": "OUR VENUE"
+  },
+  "privateEvents": {
+    "eyebrow": "// PRIVATE EVENTS",
+    "heading": "TEAMBUILDING & PARTIES",
+    "subtext": "Our venue is also available for company teambuilding events, birthday parties, and other private occasions. We'll tailor it to you — station count, duration, and program.",
+    "priceLabel": "PRICE",
+    "priceValue": "On request / by arrangement",
+    "cta": "GET A QUOTE"
   },
   "contact": {
     "eyebrow": "// CONTACT",
