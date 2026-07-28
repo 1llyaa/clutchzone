@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { sendTournamentRegistrationNotification, sendTournamentRegistrationReceived } from '@/lib/email';
 
 const schema = z.object({
   team_name:       z.string().min(1).max(100),
@@ -27,7 +28,7 @@ export async function POST(
 
   const { data: tournament, error: tErr } = await admin
     .from('tournaments')
-    .select('id, is_active, max_slots, filled_slots, registration_deadline')
+    .select('id, title, date, is_active, max_slots, filled_slots, registration_deadline')
     .eq('id', id)
     .single();
 
@@ -84,6 +85,17 @@ export async function POST(
       .eq('filled_slots', tournament.filled_slots + 1);
     return NextResponse.json({ error: insErr.message }, { status: 500 });
   }
+
+  const tournamentEmailData = {
+    tournamentTitle: tournament.title,
+    tournamentDate: tournament.date,
+    teamName: parsed.data.team_name,
+    captainName: parsed.data.captain_name,
+    captainEmail: parsed.data.captain_email,
+    captainDiscord: parsed.data.captain_discord,
+  };
+  sendTournamentRegistrationNotification(tournamentEmailData).catch(() => {});
+  sendTournamentRegistrationReceived(tournamentEmailData).catch(() => {});
 
   return NextResponse.json({ ok: true }, { status: 201 });
 }

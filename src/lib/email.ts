@@ -138,3 +138,113 @@ export async function sendBookingConfirmation(b: BookingEmailData): Promise<void
     console.error('Booking confirmation email failed:', err);
   }
 }
+
+interface TournamentEmailData {
+  tournamentTitle: string;
+  tournamentDate: string;
+  teamName: string;
+  captainName: string;
+  captainEmail: string;
+  captainDiscord?: string;
+}
+
+// Admin notification — a new team just registered for a tournament.
+export async function sendTournamentRegistrationNotification(t: TournamentEmailData): Promise<void> {
+  const transport = getTransport();
+  const to = process.env.ADMIN_NOTIFY_EMAIL;
+  if (!transport || !to) return;
+
+  const rows: [string, string][] = [
+    ['Turnaj', t.tournamentTitle],
+    ['Datum', t.tournamentDate],
+    ['Tým', t.teamName],
+    ['Kapitán', t.captainName],
+    ['E-mail', t.captainEmail],
+    ['Discord', t.captainDiscord || '—'],
+  ];
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#111;color:#e8e8e8;padding:32px;border-top:3px solid #E84A1A">
+      <h2 style="margin:0 0 4px;color:#fff;text-transform:uppercase;letter-spacing:2px">Nová registrace na turnaj</h2>
+      <p style="margin:0 0 24px;color:#888;font-size:13px">Clutch Zone — právě se přihlásil nový tým.</p>
+      <table style="width:100%;border-collapse:collapse;font-size:14px">
+        ${rows.map(([k, v]) => `
+          <tr>
+            <td style="padding:8px 0;color:#888;border-bottom:1px solid #2a2a2a;width:110px">${k}</td>
+            <td style="padding:8px 0;color:#fff;border-bottom:1px solid #2a2a2a"><strong>${escapeHtml(v)}</strong></td>
+          </tr>`).join('')}
+      </table>
+      <p style="margin:24px 0 0;font-size:12px">
+        <a href="${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/cs/admin/tournaments" style="color:#E84A1A">Otevřít v administraci →</a>
+      </p>
+    </div>`;
+
+  try {
+    await transport.sendMail({
+      from: process.env.SMTP_FROM ?? process.env.SMTP_USER,
+      to,
+      subject: `Nová registrace · ${t.tournamentTitle} · ${t.teamName}`,
+      html,
+      text: rows.map(([k, v]) => `${k}: ${v}`).join('\n'),
+    });
+  } catch (err) {
+    console.error('Tournament registration notification email failed:', err);
+  }
+}
+
+// Confirmation to the captain — their registration was received (pending review).
+export async function sendTournamentRegistrationReceived(t: TournamentEmailData): Promise<void> {
+  const transport = getTransport();
+  if (!transport) return;
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#111;color:#e8e8e8;padding:32px;border-top:3px solid #E84A1A">
+      <h2 style="margin:0 0 4px;color:#fff;text-transform:uppercase;letter-spacing:2px">Registrace přijata</h2>
+      <p style="margin:0 0 24px;color:#888;font-size:13px">Ahoj ${escapeHtml(t.captainName)}, tým <strong style="color:#fff">${escapeHtml(t.teamName)}</strong> je přihlášen na turnaj <strong style="color:#fff">${escapeHtml(t.tournamentTitle)}</strong> (${escapeHtml(t.tournamentDate)}).</p>
+      <p style="margin:0;color:#888;font-size:13px;line-height:1.6">
+        Registrace teď čeká na potvrzení organizátorem. Jakmile ji potvrdíme, přijde ti další e-mail.
+      </p>
+    </div>`;
+
+  try {
+    await transport.sendMail({
+      from: process.env.SMTP_FROM ?? process.env.SMTP_USER,
+      to: t.captainEmail,
+      subject: `Registrace přijata · ${t.tournamentTitle}`,
+      html,
+      text: `Tým ${t.teamName} je přihlášen na turnaj ${t.tournamentTitle} (${t.tournamentDate}). Registrace čeká na potvrzení organizátorem.`,
+    });
+  } catch (err) {
+    console.error('Tournament registration received email failed:', err);
+  }
+}
+
+// Confirmation to the captain — an admin confirmed their participation.
+export async function sendTournamentParticipationConfirmed(t: TournamentEmailData): Promise<void> {
+  const transport = getTransport();
+  if (!transport) return;
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#111;color:#e8e8e8;padding:32px;border-top:3px solid #E84A1A">
+      <h2 style="margin:0 0 4px;color:#fff;text-transform:uppercase;letter-spacing:2px">Účast potvrzena</h2>
+      <p style="margin:0 0 24px;color:#888;font-size:13px">Ahoj ${escapeHtml(t.captainName)}!</p>
+      <div style="text-align:center;margin:0 0 24px">
+        <span style="display:inline-block;font-size:20px;letter-spacing:1px;color:#fff;border:1px solid #E84A1A;padding:14px 28px;background:rgba(232,74,26,0.08);text-transform:uppercase">${escapeHtml(t.teamName)}</span>
+      </div>
+      <p style="margin:0 0 16px;color:#e8e8e8;font-size:14px;line-height:1.6">
+        Vaše účast na turnaji <strong>${escapeHtml(t.tournamentTitle)}</strong> (${escapeHtml(t.tournamentDate)}) je potvrzena. Uvidíme se na místě!
+      </p>
+    </div>`;
+
+  try {
+    await transport.sendMail({
+      from: process.env.SMTP_FROM ?? process.env.SMTP_USER,
+      to: t.captainEmail,
+      subject: `Účast potvrzena · ${t.tournamentTitle}`,
+      html,
+      text: `Účast týmu ${t.teamName} na turnaji ${t.tournamentTitle} (${t.tournamentDate}) je potvrzena.`,
+    });
+  } catch (err) {
+    console.error('Tournament participation confirmed email failed:', err);
+  }
+}

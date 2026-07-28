@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/auth';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { sendTournamentParticipationConfirmed } from '@/lib/email';
 
 export async function GET(
   _request: NextRequest,
@@ -41,13 +42,30 @@ export async function PATCH(
   }
 
   const admin = createAdminClient();
-  const { error } = await admin
+  const { data: reg, error } = await admin
     .from('tournament_registrations')
     .update({ status })
     .eq('id', registrationId)
-    .eq('tournament_id', id);
+    .eq('tournament_id', id)
+    .select('team_name, captain_name, captain_email, captain_discord')
+    .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  if (status === 'confirmed' && reg) {
+    const { data: tournament } = await admin.from('tournaments').select('title, date').eq('id', id).single();
+    if (tournament) {
+      sendTournamentParticipationConfirmed({
+        tournamentTitle: tournament.title,
+        tournamentDate: tournament.date,
+        teamName: reg.team_name,
+        captainName: reg.captain_name,
+        captainEmail: reg.captain_email,
+        captainDiscord: reg.captain_discord ?? undefined,
+      }).catch(() => {});
+    }
+  }
+
   return NextResponse.json({ ok: true });
 }
 

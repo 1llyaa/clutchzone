@@ -14,11 +14,18 @@ interface BookingRow {
   total_price: number;
 }
 
+interface RegistrationRow {
+  id: string;
+  tournament_id: string;
+  team_name: string;
+  captain_name: string;
+}
+
 interface LogEntry {
   id: string;
   title: string;
   body: string;
-  date: string;   // booking date, for navigation
+  href: string;   // where to navigate on click
   at: number;     // received timestamp
   read: boolean;
 }
@@ -52,7 +59,7 @@ export default function AdminNotifications({ locale }: { locale: string }) {
     return supabaseRef.current;
   }
 
-  const goToBooking = useCallback((entry: LogEntry) => {
+  const goToEntry = useCallback((entry: LogEntry) => {
     setLog((prev) => {
       const next = prev.map((e) => (e.id === entry.id ? { ...e, read: true } : e));
       saveLog(next);
@@ -60,8 +67,8 @@ export default function AdminNotifications({ locale }: { locale: string }) {
     });
     setToasts((prev) => prev.filter((t) => t.id !== entry.id));
     setPanelOpen(false);
-    router.push(`/${locale}/admin/bookings?from=${entry.date}&to=${entry.date}`);
-  }, [router, locale]);
+    router.push(entry.href);
+  }, [router]);
 
   const addEntry = useCallback((entry: LogEntry) => {
     setLog((prev) => {
@@ -109,11 +116,12 @@ export default function AdminNotifications({ locale }: { locale: string }) {
             .single();
           if (station) stationLabel = station.label as string;
 
+          const href = `/${locale}/admin/bookings?from=${b.date}&to=${b.date}`;
           const entry: LogEntry = {
             id: b.id,
             title: 'Nová rezervace',
             body: `${b.customer_name} · ${stationLabel || 'stanice'} · ${b.date} ${String(b.start_time).slice(0, 5)} · ${b.total_price} Kč (${b.reference})`,
-            date: b.date,
+            href,
             at: Date.now(),
             read: false,
           };
@@ -124,7 +132,43 @@ export default function AdminNotifications({ locale }: { locale: string }) {
             const n = new Notification(entry.title, { body: entry.body, icon: '/favicon.ico', tag: b.id });
             n.onclick = () => {
               window.focus();
-              window.location.href = `/${locale}/admin/bookings?from=${b.date}&to=${b.date}`;
+              window.location.href = href;
+              n.close();
+            };
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'tournament_registrations' },
+        async (payload: { new: RegistrationRow }) => {
+          const r = payload.new;
+
+          let tournamentTitle = '';
+          const { data: tournament } = await supabase
+            .from('tournaments')
+            .select('title')
+            .eq('id', r.tournament_id)
+            .single();
+          if (tournament) tournamentTitle = tournament.title as string;
+
+          const href = `/${locale}/admin/tournaments`;
+          const entry: LogEntry = {
+            id: r.id,
+            title: 'Nová registrace na turnaj',
+            body: `${r.team_name} (${r.captain_name}) · ${tournamentTitle || 'turnaj'}`,
+            href,
+            at: Date.now(),
+            read: false,
+          };
+
+          addEntry(entry);
+
+          if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+            const n = new Notification(entry.title, { body: entry.body, icon: '/favicon.ico', tag: r.id });
+            n.onclick = () => {
+              window.focus();
+              window.location.href = href;
               n.close();
             };
           }
@@ -144,7 +188,7 @@ export default function AdminNotifications({ locale }: { locale: string }) {
     const result = await Notification.requestPermission();
     setPermission(result);
     if (result === 'granted') {
-      new Notification('Notifikace zapnuty', { body: 'Budete upozorněni na nové rezervace.', icon: '/favicon.ico' });
+      new Notification('Notifikace zapnuty', { body: 'Budete upozorněni na nové rezervace i registrace na turnaje.', icon: '/favicon.ico' });
     }
   }
 
@@ -220,7 +264,7 @@ export default function AdminNotifications({ locale }: { locale: string }) {
               log.map((e) => (
                 <button
                   key={e.id + e.at}
-                  onClick={() => goToBooking(e)}
+                  onClick={() => goToEntry(e)}
                   className="w-full text-left cursor-pointer hover:bg-white/[0.03] transition-colors duration-150"
                   style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.05)', background: 'transparent', border: 'none', borderBottomStyle: 'solid', borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.05)' }}
                 >
@@ -244,7 +288,7 @@ export default function AdminNotifications({ locale }: { locale: string }) {
         {toasts.map((t) => (
           <button
             key={t.id}
-            onClick={() => goToBooking(t)}
+            onClick={() => goToEntry(t)}
             className="text-left bg-cz-black-mid rounded-cz animate-menu-in cursor-pointer hover:bg-cz-black-light transition-colors duration-150"
             style={{ border: '1px solid #E84A1A', padding: '14px 16px', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}
           >
