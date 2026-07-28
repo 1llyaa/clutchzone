@@ -101,6 +101,7 @@ export default function StepPayment({ result, form, onPayAtClub }: Props) {
           variant="primary"
           className="w-full"
           onClick={handlePayNow}
+          disabled={loading}
         >
           {loading ? t('paymentProcessing') : t('payNowCta')}
         </Button>
