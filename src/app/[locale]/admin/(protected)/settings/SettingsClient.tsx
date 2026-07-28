@@ -49,6 +49,11 @@ export default function SettingsClient({
   const [heroMsg, setHeroMsg]           = useState('');
   const heroInputRef = useRef<HTMLInputElement>(null);
 
+  const [privateEventsImage, setPrivateEventsImage]       = useState(siteSettings.private_events_image ?? '');
+  const [uploadingPrivateEvents, setUploadingPrivateEvents] = useState(false);
+  const [privateEventsMsg, setPrivateEventsMsg]           = useState('');
+  const privateEventsInputRef = useRef<HTMLInputElement>(null);
+
   const [streamUrl, setStreamUrl]         = useState(siteSettings.stream_url ?? '');
   const [streamVisible, setStreamVisible] = useState(siteSettings.stream_visible === 'true');
   const [savingStream, setSavingStream]   = useState(false);
@@ -90,6 +95,41 @@ export default function SettingsClient({
     }
 
     setUploadingHero(false);
+    startTransition(() => router.refresh());
+  }
+
+  async function handlePrivateEventsUpload(file: File) {
+    if (!file.type.startsWith('image/')) return;
+    setUploadingPrivateEvents(true);
+    setPrivateEventsMsg('');
+
+    const ext = file.name.split('.').pop() ?? 'png';
+    const path = `private_events_${Date.now()}.${ext}`;
+
+    const { error: upErr } = await supabase.storage.from('private_events').upload(path, file);
+    if (upErr) {
+      setPrivateEventsMsg(`Chyba: ${upErr.message}`);
+      setUploadingPrivateEvents(false);
+      return;
+    }
+
+    const { data: { publicUrl } } = supabase.storage.from('private_events').getPublicUrl(path);
+
+    const res = await fetch('/api/admin/settings/site', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: 'private_events_image', value: publicUrl }),
+    });
+
+    if (res.ok) {
+      setPrivateEventsImage(publicUrl);
+      setPrivateEventsMsg('Obrázek uložen');
+    } else {
+      const data = await res.json();
+      setPrivateEventsMsg(`Chyba: ${data.error ?? 'Neznámá chyba'}`);
+    }
+
+    setUploadingPrivateEvents(false);
     startTransition(() => router.refresh());
   }
 
@@ -238,6 +278,66 @@ export default function SettingsClient({
                   style={{ fontSize: 11, color: heroMsg.startsWith('Chyba') ? '#ef4444' : '#22c55e' }}
                 >
                   {heroMsg}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Private events image */}
+      <div style={{ marginBottom: 48 }}>
+        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 3, marginBottom: 20 }}>
+          OBRÁZEK PRIVÁTNÍCH AKCÍ
+        </div>
+
+        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A', padding: 24 }}>
+          <div className="flex items-start gap-6">
+            {privateEventsImage && (
+              <div
+                className="relative flex-shrink-0 rounded-[2px] overflow-hidden"
+                style={{ width: 160, height: 120, background: '#0A0A0A', border: '1px solid #2A2A2A' }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={privateEventsImage}
+                  alt="Private events"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', outline: 'none' }}
+                />
+              </div>
+            )}
+
+            <div className="flex flex-col gap-3">
+              <p className="font-body text-cz-gray-light" style={{ fontSize: 13, lineHeight: 1.5 }}>
+                Obrázek zobrazený v sekci privátních akcí (teambuilding, oslavy) na hlavní stránce.
+              </p>
+
+              <input
+                ref={privateEventsInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) handlePrivateEventsUpload(f);
+                }}
+              />
+
+              <button
+                onClick={() => privateEventsInputRef.current?.click()}
+                disabled={uploadingPrivateEvents}
+                className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 rounded-[2px] disabled:opacity-50 self-start"
+                style={{ fontSize: 12, letterSpacing: 2, padding: '10px 24px' }}
+              >
+                {uploadingPrivateEvents ? 'NAHRÁVÁM...' : 'NAHRÁT NOVÝ OBRÁZEK'}
+              </button>
+
+              {privateEventsMsg && (
+                <p
+                  className="font-mono"
+                  style={{ fontSize: 11, color: privateEventsMsg.startsWith('Chyba') ? '#ef4444' : '#22c55e' }}
+                >
+                  {privateEventsMsg}
                 </p>
               )}
             </div>

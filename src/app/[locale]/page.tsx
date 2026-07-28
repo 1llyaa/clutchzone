@@ -8,6 +8,7 @@ import Stream from '@/components/sections/Stream';
 import Tournaments from '@/components/sections/Tournaments';
 import Games from '@/components/sections/Games';
 import Gallery from '@/components/sections/Gallery';
+import PrivateEvents from '@/components/sections/PrivateEvents';
 import Contact from '@/components/sections/Contact';
 import CtaBand from '@/components/sections/CtaBand';
 
@@ -78,7 +79,7 @@ async function fetchSiteSettings() {
   const { data } = await admin
     .from('site_settings')
     .select('key, value')
-    .in('key', ['hero_image', 'stream_url', 'stream_visible']);
+    .in('key', ['hero_image', 'stream_url', 'stream_visible', 'private_events_image']);
   return Object.fromEntries((data ?? []).map((r) => [r.key, r.value])) as Record<string, string>;
 }
 
@@ -124,6 +125,7 @@ export default async function HomePage() {
         )}
         <Tournaments tournaments={tournaments} />
         <Gallery images={gallery.images} displayType={gallery.displayType} />
+        <PrivateEvents image={siteSettings.private_events_image} />
         <Contact />
         <CtaBand />
       </main>

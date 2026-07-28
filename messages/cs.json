@@ -118,6 +118,14 @@
     "eyebrow": "// GALERIE",
     "heading": "NAŠE HERNA"
   },
+  "privateEvents": {
+    "eyebrow": "// PRIVÁTNÍ AKCE",
+    "heading": "TEAMBUILDING & OSLAVY",
+    "subtext": "Naše herna je k dispozici i pro firemní teambuildingy, narozeninové oslavy a jiné privátní akce. Domluvíme se na míru — počet stanic, délku i program.",
+    "priceLabel": "CENA",
+    "priceValue": "Na poptávku / domluvu",
+    "cta": "NEZÁVAZNÁ POPTÁVKA"
+  },
   "contact": {
     "eyebrow": "// KONTAKT",
     "heading": "NAPIŠ NÁM",
