@@ -202,6 +202,8 @@
     "paymentProcessing": "Přesměrování na platbu...",
     "successTitle": "PLATBA POTVRZENA",
     "successCoinsMessage": "{amount} mincí bude připsáno na váš ggleap účet v klubu.",
+    "successUnconfirmedTitle": "STAV PLATBY SE OVĚŘUJE",
+    "successUnconfirmedMessage": "Stav vaší platby se nepodařilo potvrdit. Vaše rezervace stále platí — pokud platba proběhla, mince budou brzy připsány, jinak můžete zaplatit v klubu při příchodu.",
     "cancelledTitle": "PLATBA ZRUŠENA",
     "cancelledMessage": "Vaše rezervace stále platí. Zaplatit můžete v klubu při příchodu, nebo zkusit platbu znovu.",
     "tryAgain": "ZKUSIT PLATBU ZNOVU",

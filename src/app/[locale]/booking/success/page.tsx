@@ -85,12 +85,18 @@ export default function BookingSuccessPage() {
 
           <div className="flex flex-col items-center text-center gap-6" style={{ padding: '40px 32px' }}>
             <span className="font-display text-white uppercase" style={{ fontSize: 28, letterSpacing: 1 }}>
-              {t('successTitle')}
+              {isPaid ? t('successTitle') : t('successUnconfirmedTitle')}
             </span>
 
             {loading && (
               <p className="font-mono text-cz-gray-light" style={{ fontSize: 13, letterSpacing: 1 }}>
                 {t('paymentProcessing')}
+              </p>
+            )}
+
+            {!loading && !status && (
+              <p className="font-body text-cz-gray-light" style={{ fontSize: 14, lineHeight: 1.6, maxWidth: 380 }}>
+                {t('successUnconfirmedMessage')}
               </p>
             )}
 

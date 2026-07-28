@@ -202,6 +202,8 @@
     "paymentProcessing": "Redirecting to payment...",
     "successTitle": "PAYMENT CONFIRMED",
     "successCoinsMessage": "{amount} coins will be added to your ggleap account at the club.",
+    "successUnconfirmedTitle": "PAYMENT STATUS PENDING",
+    "successUnconfirmedMessage": "We couldn't confirm your payment status yet. Your reservation is still held — if your payment went through, coins will be added shortly; otherwise you can pay at the club on arrival.",
     "cancelledTitle": "PAYMENT CANCELLED",
     "cancelledMessage": "Your reservation is still held. You can pay at the club on arrival, or try the payment again.",
     "tryAgain": "TRY PAYMENT AGAIN",
