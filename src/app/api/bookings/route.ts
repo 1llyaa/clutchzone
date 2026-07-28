@@ -95,20 +95,24 @@ export async function POST(req: NextRequest) {
 
   const reference = generateReference();
 
-  const { error: insertErr } = await supabase.from('bookings').insert({
-    reference,
-    station_id: freeStation.id,
-    pricing_id: pricing?.id,
-    customer_name: data.customerName,
-    customer_email: data.customerEmail,
-    customer_phone: data.customerPhone,
-    customer_discord: data.customerDiscord ?? null,
-    date: data.date,
-    start_time: data.startTime,
-    duration_minutes: data.durationMinutes,
-    total_price: option.amount,
-    status: 'confirmed',
-  });
+  const { data: inserted, error: insertErr } = await supabase
+    .from('bookings')
+    .insert({
+      reference,
+      station_id: freeStation.id,
+      pricing_id: pricing?.id,
+      customer_name: data.customerName,
+      customer_email: data.customerEmail,
+      customer_phone: data.customerPhone,
+      customer_discord: data.customerDiscord ?? null,
+      date: data.date,
+      start_time: data.startTime,
+      duration_minutes: data.durationMinutes,
+      total_price: option.amount,
+      status: 'confirmed',
+    })
+    .select('id')
+    .single();
 
   if (insertErr) {
     // Could be a race-condition constraint violation
@@ -133,5 +137,5 @@ export async function POST(req: NextRequest) {
   sendBookingNotification(emailData).catch(() => {});
   sendBookingConfirmation(emailData).catch(() => {});
 
-  return NextResponse.json({ reference, stationLabel: freeStation.label });
+  return NextResponse.json({ id: inserted!.id, reference, stationLabel: freeStation.label });
 }

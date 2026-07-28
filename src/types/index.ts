@@ -22,6 +22,7 @@ export interface BookingForm {
 }
 
 export interface BookingResult {
+  id: string;
   reference: string;
   stationLabel: string;
 }
