@@ -140,7 +140,7 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
               className="flex flex-col items-center text-center"
               style={{ padding: '32px 0' }}
             >
-              <span style={{ fontSize: 40 }}>✓</span>
+              <span className="text-white" style={{ fontSize: 40 }}>✓</span>
               <p className="font-body text-white" style={{ fontSize: 15, lineHeight: 1.7, marginTop: 16, maxWidth: 340 }}>
                 {t('success')}
               </p>

@@ -165,7 +165,7 @@ export default function BookingsClient({
               value={localFrom}
               onChange={(e) => handleFromChange(e.target.value)}
               className="bg-cz-black-mid text-white font-mono rounded-[2px] focus:outline-none focus:border-cz-orange"
-              style={{ padding: '8px 12px', fontSize: 13, border: '1px solid #2A2A2A' }}
+              style={{ padding: '8px 12px', fontSize: 13, border: '1px solid #2A2A2A', colorScheme: 'dark' }}
             />
           </div>
           <div className="font-mono text-cz-gray-mid" style={{ fontSize: 16, marginTop: 16 }}>–</div>
@@ -177,7 +177,7 @@ export default function BookingsClient({
               min={localFrom}
               onChange={(e) => handleToChange(e.target.value)}
               className="bg-cz-black-mid text-white font-mono rounded-[2px] focus:outline-none focus:border-cz-orange"
-              style={{ padding: '8px 12px', fontSize: 13, border: '1px solid #2A2A2A' }}
+              style={{ padding: '8px 12px', fontSize: 13, border: '1px solid #2A2A2A', colorScheme: 'dark' }}
             />
           </div>
           {!isSingleDay && (
