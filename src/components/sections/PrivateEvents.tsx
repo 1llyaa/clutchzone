@@ -12,7 +12,7 @@ export default function PrivateEvents({ image }: Props) {
 
   return (
     <section
-      id="private-events"
+      id="akce"
       className="bg-cz-black px-6 py-14 md:px-16 md:py-[120px]"
       style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
     >

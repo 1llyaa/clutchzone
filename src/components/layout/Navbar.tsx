@@ -22,6 +22,7 @@ export default function Navbar() {
     { label: t('herna'), href: '#herna' },
     { label: t('cenik'), href: '#cenik' },
     { label: t('turnaje'), href: '#turnaje' },
+    { label: t('akce'), href: '#akce' },
     { label: t('kontakt'), href: '#kontakt' },
   ];
 
