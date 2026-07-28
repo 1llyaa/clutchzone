@@ -128,7 +128,7 @@ export default function StepPayment({ result, form, onPayAtClub }: Props) {
       </div>
 
       {/* Pay at club — secondary/ghost CTA */}
-      <Button variant="ghost" size="sm" className="w-full" onClick={onPayAtClub}>
+      <Button variant="ghost" size="sm" className="w-full" onClick={onPayAtClub} disabled={loading}>
         {t('payAtClubCta')}
       </Button>
     </div>
