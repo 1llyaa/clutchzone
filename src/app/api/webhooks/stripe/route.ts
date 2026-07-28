@@ -18,10 +18,11 @@ export async function POST(request: NextRequest) {
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object; // Stripe.Checkout.Session
     const bookingId = session.metadata?.bookingId;
-    const coins = parseInt(session.metadata?.coins ?? '0', 10);
+    const parsedCoins = parseInt(session.metadata?.coins ?? '0', 10);
+    const coins = Number.isFinite(parsedCoins) ? parsedCoins : 0;
     if (bookingId) {
       const admin = createAdminClient();
-      await admin
+      const { error } = await admin
         .from('bookings')
         .update({
           payment_status: 'paid',
@@ -32,6 +33,13 @@ export async function POST(request: NextRequest) {
               : session.payment_intent?.id,
         })
         .eq('id', bookingId);
+
+      if (error) {
+        console.error(
+          `Failed to mark booking ${bookingId} as paid (coins: ${coins}) after Stripe checkout.session.completed:`,
+          error
+        );
+      }
     }
   }
 
