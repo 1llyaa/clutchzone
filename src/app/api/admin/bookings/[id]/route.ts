@@ -16,7 +16,7 @@ export async function PATCH(
     Object.entries(body).filter(([k]) => allowed.includes(k))
   );
 
-  const VALID_STATUSES = ['pending', 'confirmed', 'cancelled'];
+  const VALID_STATUSES = ['pending', 'confirmed', 'cancelled', 'completed'];
   if ('status' in updates && !VALID_STATUSES.includes(updates.status as string)) {
     return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
   }

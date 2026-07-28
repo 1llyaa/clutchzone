@@ -6,6 +6,7 @@ interface ButtonProps {
   size?: 'sm' | 'md';
   onClick?: () => void;
   className?: string;
+  disabled?: boolean;
 }
 
 export default function Button({
@@ -14,9 +15,10 @@ export default function Button({
   size = 'md',
   onClick,
   className = '',
+  disabled = false,
 }: ButtonProps) {
   const base =
-    'font-display uppercase cursor-pointer transition-[background-color,color,border-color,scale,box-shadow] duration-150 ease-out rounded-[2px] border-none inline-block';
+    'font-display uppercase transition-[background-color,color,border-color,scale,box-shadow] duration-150 ease-out rounded-[2px] border-none inline-block';
 
   const sizes = {
     sm: { fontSize: 15, padding: '9px 22px', letterSpacing: 2, borderWidth: '1.5px' },
@@ -24,12 +26,14 @@ export default function Button({
   };
 
   const s = sizes[size];
+  const cursor = disabled ? 'cursor-not-allowed' : 'cursor-pointer';
 
   if (variant === 'primary') {
     return (
       <button
         onClick={onClick}
-        className={`${base} bg-cz-orange text-white hover:bg-cz-orange-dark hover:shadow-[0_0_18px_rgba(232,74,26,0.35)] active:scale-[0.96] ${className}`}
+        disabled={disabled}
+        className={`${base} ${cursor} bg-cz-orange text-white disabled:opacity-60 disabled:hover:shadow-none hover:bg-cz-orange-dark hover:shadow-[0_0_18px_rgba(232,74,26,0.35)] active:scale-[0.96] ${className}`}
         style={{ fontSize: s.fontSize, padding: s.padding, letterSpacing: s.letterSpacing }}
       >
         {children}
@@ -40,7 +44,8 @@ export default function Button({
   return (
     <button
       onClick={onClick}
-      className={`${base} bg-transparent text-white hover:text-cz-orange hover:border-cz-orange ${className}`}
+      disabled={disabled}
+      className={`${base} ${cursor} bg-transparent text-white disabled:opacity-60 hover:text-cz-orange hover:border-cz-orange ${className}`}
       style={{
         fontSize: s.fontSize,
         padding: s.padding,
