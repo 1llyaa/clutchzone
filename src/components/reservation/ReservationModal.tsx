@@ -8,9 +8,10 @@ import StepType from './steps/StepType';
 import StepDateTime from './steps/StepDateTime';
 import StepDuration from './steps/StepDuration';
 import StepContact from './steps/StepContact';
+import StepPayment from './steps/StepPayment';
 import StepDone from './steps/StepDone';
 
-const STEPS = 5;
+const STEPS = 6;
 
 const EMPTY_FORM: BookingForm = {
   stationType: null,
@@ -45,6 +46,7 @@ export default function ReservationModal() {
 
   function next() { setStep((s) => Math.min(s + 1, STEPS)); }
   function back() { setStep((s) => Math.max(s - 1, 1)); }
+  function payAtClub() { setStep(6); }
 
   async function submit() {
     setError('');
@@ -77,7 +79,8 @@ export default function ReservationModal() {
     2: t('step2title'),
     3: t('step3title'),
     4: t('step4title'),
-    5: t('doneTitle'),
+    5: t('step5title'),
+    6: t('doneTitle'),
   };
 
   return (
@@ -100,7 +103,7 @@ export default function ReservationModal() {
         >
           <div className="flex flex-col gap-1">
             <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 10, letterSpacing: 3 }}>
-              {t('title')} · {step < 5 ? `${step}/4` : ''}
+              {t('title')} · {step < 6 ? `${step}/5` : ''}
             </span>
             <span className="font-display text-white uppercase" style={{ fontSize: 28, letterSpacing: 1 }}>
               {stepTitles[step]}
@@ -116,9 +119,9 @@ export default function ReservationModal() {
         </div>
 
         {/* Step indicators */}
-        {step < 5 && (
+        {step < 6 && (
           <div className="flex items-center gap-2" style={{ padding: '16px 32px 0' }}>
-            {[1, 2, 3, 4].map((s) => (
+            {[1, 2, 3, 4, 5].map((s) => (
               <div key={s} className="flex items-center gap-2">
                 <span
                   className="rounded-full"
@@ -129,7 +132,7 @@ export default function ReservationModal() {
                     transition: 'background 0.2s',
                   }}
                 />
-                {s < 4 && <span style={{ width: 24, height: 1, background: s < step ? '#E84A1A' : '#2A2A2A' }} />}
+                {s < 5 && <span style={{ width: 24, height: 1, background: s < step ? '#E84A1A' : '#2A2A2A' }} />}
               </div>
             ))}
           </div>
@@ -156,6 +159,9 @@ export default function ReservationModal() {
             />
           )}
           {step === 5 && result && (
+            <StepPayment result={result} form={form} onPayAtClub={payAtClub} />
+          )}
+          {step === 6 && result && (
             <StepDone result={result} form={form} onClose={handleClose} />
           )}
         </div>
