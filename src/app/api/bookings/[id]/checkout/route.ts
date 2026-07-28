@@ -58,10 +58,17 @@ export async function POST(
       cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/${locale}/booking/cancelled?booking=${booking.id}`,
     });
 
-    await admin
+    const { error: updateErr } = await admin
       .from('bookings')
       .update({ payment_method: 'online', stripe_checkout_session_id: session.id })
       .eq('id', id);
+
+    if (updateErr) {
+      console.error(
+        `Failed to record Stripe checkout session on booking ${id} (session ${session.id}):`,
+        updateErr
+      );
+    }
 
     return NextResponse.json({ url: session.url });
   } catch {
