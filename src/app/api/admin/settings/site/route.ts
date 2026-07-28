@@ -26,7 +26,7 @@ export async function PATCH(request: NextRequest) {
   const body = await request.json();
   const { key, value } = body;
 
-  const ALLOWED_KEYS = ['hero_image', 'stream_url', 'stream_visible'];
+  const ALLOWED_KEYS = ['hero_image', 'stream_url', 'stream_visible', 'pay_now_coins_amount'];
   if (!key || !ALLOWED_KEYS.includes(key) || typeof value !== 'string' || value.length > 2000) {
     return NextResponse.json({ error: 'Invalid key or value' }, { status: 400 });
   }
