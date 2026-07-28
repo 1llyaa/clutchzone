@@ -15,6 +15,18 @@ const STATUS_COLOR: Record<string, string> = {
   cancelled: '#ef4444',
   completed: '#888888',
 };
+function PAYMENT_LABEL(b: { payment_method: string; payment_status: string }): string {
+  if (b.payment_method === 'online') {
+    return b.payment_status === 'paid' ? 'ONLINE · ZAPLACENO' : 'ONLINE · NEZAPLACENO';
+  }
+  return 'V KLUBU';
+}
+function PAYMENT_COLOR(b: { payment_method: string; payment_status: string }): string {
+  if (b.payment_method === 'online') {
+    return b.payment_status === 'paid' ? '#22c55e' : '#eab308';
+  }
+  return '#888888';
+}
 const TILE_BG: Record<string, string> = {
   free:     '#1a1a1a',
   occupied: 'rgba(232,74,26,0.15)',
@@ -39,6 +51,9 @@ interface Booking {
   total_price: number;
   status: string;
   station_id: string;
+  payment_method: string;
+  payment_status: string;
+  coins_awarded: number;
   stations: { label: string; type: string } | null;
 }
 
@@ -237,7 +252,7 @@ export default function BookingsClient({
               {[
                 'REFERENCE', 'ZÁKAZNÍK', 'KONTAKT', 'STANICE',
                 ...(!isSingleDay ? ['DATUM'] : []),
-                'ČAS', 'DÉLKA', 'CELKEM', 'STATUS', '',
+                'ČAS', 'DÉLKA', 'CELKEM', 'PLATBA', 'STATUS', '',
               ].map((h) => (
                 <th key={h} className="font-mono text-cz-gray-mid uppercase text-left" style={{ padding: '12px 14px', fontSize: 10, letterSpacing: 2 }}>
                   {h}
@@ -248,7 +263,7 @@ export default function BookingsClient({
           <tbody>
             {bookings.length === 0 ? (
               <tr>
-                <td colSpan={isSingleDay ? 9 : 10} className="font-mono text-cz-gray-mid text-center" style={{ padding: 40, fontSize: 12 }}>
+                <td colSpan={isSingleDay ? 10 : 11} className="font-mono text-cz-gray-mid text-center" style={{ padding: 40, fontSize: 12 }}>
                   Žádné rezervace pro zvolené období
                 </td>
               </tr>
@@ -275,6 +290,23 @@ export default function BookingsClient({
                   <td className="font-mono text-white" style={{ padding: '12px 14px', fontSize: 12 }}>{b.start_time?.slice(0, 5)}</td>
                   <td className="font-mono text-cz-gray-light" style={{ padding: '12px 14px', fontSize: 12 }}>{Math.round(b.duration_minutes / 60)}h</td>
                   <td className="font-body text-white" style={{ padding: '12px 14px', fontSize: 13 }}>{b.total_price} Kč</td>
+                  <td style={{ padding: '12px 14px' }}>
+                    <span
+                      className="font-mono uppercase rounded-[2px]"
+                      style={{
+                        fontSize: 9, letterSpacing: 1, padding: '3px 8px',
+                        color: PAYMENT_COLOR(b),
+                        background: PAYMENT_COLOR(b) + '20',
+                      }}
+                    >
+                      {PAYMENT_LABEL(b)}
+                    </span>
+                    {b.coins_awarded > 0 && (
+                      <div className="font-mono text-cz-gray-light" style={{ fontSize: 10, marginTop: 4 }}>
+                        🪙 {b.coins_awarded}
+                      </div>
+                    )}
+                  </td>
                   <td style={{ padding: '12px 14px' }}>
                     <span
                       className="font-mono uppercase rounded-[2px]"
@@ -318,6 +350,10 @@ export default function BookingsClient({
                 ['Čas',       selected.start_time?.slice(0, 5)],
                 ['Délka',     `${Math.round(selected.duration_minutes / 60)} hodin`],
                 ['Celkem',    `${selected.total_price} Kč`],
+                ['Platba', selected.payment_method === 'online'
+                  ? (selected.payment_status === 'paid' ? 'Online · zaplaceno' : 'Online · nezaplaceno')
+                  : 'V klubu'],
+                ['Mince k připsání', selected.coins_awarded > 0 ? `${selected.coins_awarded}` : '—'],
               ].map(([label, value]) => (
                 <div key={label} style={{ marginBottom: 16 }}>
                   <div className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 2, marginBottom: 4 }}>{label}</div>
