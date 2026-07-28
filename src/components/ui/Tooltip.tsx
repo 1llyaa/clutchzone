@@ -34,7 +34,7 @@ export default function Tooltip({ content, children }: TooltipProps) {
         <span
           id={id}
           role="tooltip"
-          className="absolute font-mono text-white rounded-[2px] pointer-events-none whitespace-nowrap"
+          className="absolute font-mono text-white rounded-[2px] pointer-events-none"
           style={{
             bottom: 'calc(100% + 8px)',
             left: '50%',
@@ -44,6 +44,9 @@ export default function Tooltip({ content, children }: TooltipProps) {
             padding: '6px 10px',
             fontSize: 11,
             letterSpacing: 0.5,
+            lineHeight: 1.4,
+            whiteSpace: 'normal',
+            maxWidth: 240,
             boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
             zIndex: 10,
           }}

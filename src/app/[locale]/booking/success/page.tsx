@@ -133,7 +133,7 @@ export default function BookingSuccessPage() {
                       {t('selectDate')}
                     </span>
                     <span className="font-mono text-white" style={{ fontSize: 12, letterSpacing: 1 }}>
-                      {status.date} {status.startTime}
+                      {status.date} {status.startTime?.slice(0, 5)}
                     </span>
                   </div>
                   <div className="flex justify-between border-b border-cz-gray-dark" style={{ paddingBottom: 12 }}>
