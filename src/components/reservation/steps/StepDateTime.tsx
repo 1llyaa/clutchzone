@@ -58,7 +58,10 @@ export default function StepDateTime({ form, setForm, onNext, onBack }: Props) {
               setExpandedHour(null);
             }}
             className="w-full bg-cz-black border border-cz-gray-dark rounded-cz font-mono text-white"
-            style={{ padding: '12px 16px', fontSize: 14, letterSpacing: 1, colorScheme: 'dark' }}
+            style={{
+              padding: '12px 44px 12px 16px', fontSize: 14, letterSpacing: 1, colorScheme: 'dark',
+              WebkitAppearance: 'none', appearance: 'none', boxSizing: 'border-box',
+            }}
           />
           <svg
             width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
