@@ -48,17 +48,28 @@ export default function StepDateTime({ form, setForm, onNext, onBack }: Props) {
         >
           {t('selectDate')}
         </label>
-        <input
-          type="date"
-          min={today}
-          value={form.date}
-          onChange={(e) => {
-            setForm({ ...form, date: e.target.value, startTime: '', option: null });
-            setExpandedHour(null);
-          }}
-          className="w-full bg-cz-black border border-cz-gray-dark rounded-cz font-mono text-white"
-          style={{ padding: '12px 16px', fontSize: 14, letterSpacing: 1, colorScheme: 'dark' }}
-        />
+        <div className="relative" style={{ maxWidth: 220 }}>
+          <input
+            type="date"
+            min={today}
+            value={form.date}
+            onChange={(e) => {
+              setForm({ ...form, date: e.target.value, startTime: '', option: null });
+              setExpandedHour(null);
+            }}
+            className="w-full bg-cz-black border border-cz-gray-dark rounded-cz font-mono text-white"
+            style={{ padding: '12px 16px', fontSize: 14, letterSpacing: 1, colorScheme: 'dark' }}
+          />
+          <svg
+            width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+            strokeLinecap="round" strokeLinejoin="round"
+            className="absolute text-cz-gray-light pointer-events-none"
+            style={{ right: 16, top: '50%', transform: 'translateY(-50%)' }}
+          >
+            <rect x="3" y="4" width="18" height="18" rx="2" />
+            <path d="M3 9h18M8 2v4M16 2v4" />
+          </svg>
+        </div>
         {isClosed && (
           <p className="font-mono text-cz-orange" style={{ fontSize: 11, letterSpacing: 1, marginTop: 8 }}>
             {t('monday')}
