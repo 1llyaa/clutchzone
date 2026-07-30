@@ -48,7 +48,7 @@ export default function StepDateTime({ form, setForm, onNext, onBack }: Props) {
         >
           {t('selectDate')}
         </label>
-        <div className="relative" style={{ maxWidth: 220 }}>
+        <div className="relative">
           <input
             type="date"
             min={today}
