@@ -37,3 +37,8 @@ next-env.d.ts
 
 #Claude plan
 createmeplanforwondrouscake.md
+
+# Claude Code — local worktrees (each is its own nested git repo) and
+# personal-machine settings; neither belongs in the outer repo's history.
+.claude/worktrees/
+.claude/settings.local.json

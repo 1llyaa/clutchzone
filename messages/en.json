@@ -8,7 +8,7 @@
     "cta": "BOOK NOW"
   },
   "hero": {
-    "eyebrow": "ČESKÉ BUDĚJOVICE",
+    "eyebrow": "ČESKÉ BUDĚJOVICE — KRAJINSKÁ 244/17, 37001",
     "h1Line1": "YOUR NEW",
     "h1Line2": "ESPORTS",
     "h1Line3": "HEADQUARTERS",
@@ -132,7 +132,7 @@
     "heading": "GET IN TOUCH",
     "subtext": "Have a question, interested in a group booking or want to know more about tournaments? Reach out — we reply within 24 hours.",
     "locationLabel": "ADDRESS",
-    "locationValue": "České Budějovice",
+    "locationValue": "Krajinská 244/17, České Budějovice 37001",
     "hoursLabel": "OPENING HOURS",
     "hoursValue": "Tue–Thu, Sun: 14:00–00:00 · Fri–Sat: 14:00–04:00",
     "emailLabel": "E-MAIL",
@@ -166,7 +166,14 @@
     "instagram": "INSTAGRAM",
     "discord": "DISCORD",
     "contact": "CONTACT",
+    "terms": "TERMS & CONDITIONS",
+    "privacy": "PRIVACY POLICY",
     "copy": "© 2026 CLUTCH ZONE"
+  },
+  "cookies": {
+    "text": "This site only uses strictly necessary cookies (language, admin login) — no tracking or marketing.",
+    "link": "Learn more",
+    "ack": "GOT IT"
   },
   "booking": {
     "title": "BOOKING",

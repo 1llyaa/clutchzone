@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useRouter, usePathname } from '@/navigation';
+import { Link, useRouter, usePathname } from '@/navigation';
 import LogoLockup from '@/components/ui/LogoLockup';
 import { useReservation } from '@/components/reservation/ReservationContext';
 
@@ -31,7 +31,9 @@ export default function Navbar() {
       className="sticky top-0 z-50 flex items-center justify-between bg-cz-black px-6 py-5 md:px-16 md:py-7"
       style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
     >
-      <LogoLockup size={36} />
+      <Link href="/" className="no-underline flex items-center" aria-label="Clutch Zone — domů">
+        <LogoLockup size={36} />
+      </Link>
 
       {/* Desktop nav */}
       <div className="hidden md:flex items-center gap-10">

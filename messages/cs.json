@@ -8,7 +8,7 @@
     "cta": "REZERVOVAT"
   },
   "hero": {
-    "eyebrow": "ČESKÉ BUDĚJOVICE",
+    "eyebrow": "ČESKÉ BUDĚJOVICE — KRAJINSKÁ 244/17, 37001",
     "h1Line1": "TVOJE NOVÁ",
     "h1Line2": "E-SPORTOVÁ",
     "h1Line3": "ZÁKLADNA",
@@ -132,7 +132,7 @@
     "heading": "NAPIŠ NÁM",
     "subtext": "Máš otázku, zájem o skupinovou rezervaci nebo chceš vědět víc o turnajích? Ozvi se nám — odpovídáme do 24 hodin.",
     "locationLabel": "ADRESA",
-    "locationValue": "České Budějovice",
+    "locationValue": "Krajinská 244/17, České Budějovice 37001",
     "hoursLabel": "OTEVÍRACÍ DOBA",
     "hoursValue": "Út–Čt, Ne: 14:00–00:00 · Pá–So: 14:00–04:00",
     "emailLabel": "E-MAIL",
@@ -166,7 +166,14 @@
     "instagram": "INSTAGRAM",
     "discord": "DISCORD",
     "contact": "KONTAKT",
+    "terms": "OBCHODNÍ PODMÍNKY",
+    "privacy": "OCHRANA OSOBNÍCH ÚDAJŮ",
     "copy": "© 2026 CLUTCH ZONE"
+  },
+  "cookies": {
+    "text": "Tento web používá pouze technicky nezbytné cookies (jazyk, přihlášení do administrace) — žádné sledovací ani marketingové.",
+    "link": "Zjistit více",
+    "ack": "ROZUMÍM"
   },
   "booking": {
     "title": "REZERVACE",

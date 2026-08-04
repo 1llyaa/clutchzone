@@ -5,18 +5,51 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/../i18n/routing';
 import { ReservationProvider } from '@/components/reservation/ReservationContext';
 import ReservationModal from '@/components/reservation/ReservationModal';
+import JsonLd from '@/components/seo/JsonLd';
+import CookieBar from '@/components/layout/CookieBar';
 import '../globals.css';
 
-export const metadata: Metadata = {
-  title: 'Clutch Zone — Esport Club České Budějovice',
-  description:
-    'Prémiový esport gaming klub v Českých Budějovicích. Herní PC, PS5, turnaje a komunita.',
-  openGraph: {
-    title: 'Clutch Zone — Esport Club České Budějovice',
-    description: 'Prémiový esport gaming klub v Českých Budějovicích.',
-    type: 'website',
-  },
-};
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://clutchzone.club';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const isCs = locale === 'cs';
+
+  const title = isCs
+    ? 'Clutch Zone — Esport Club České Budějovice'
+    : 'Clutch Zone — Esports Club in České Budějovice';
+  const description = isCs
+    ? 'Prémiový esport gaming klub v Českých Budějovicích. Herní PC, PS5, turnaje a komunita.'
+    : 'Premium esports gaming club in České Budějovice. Gaming PCs, PS5, tournaments and community.';
+
+  return {
+    metadataBase: new URL(SITE_URL),
+    title,
+    description,
+    alternates: {
+      canonical: `/${locale}`,
+      languages: { cs: '/cs', en: '/en', 'x-default': '/cs' },
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      locale: isCs ? 'cs_CZ' : 'en_US',
+      url: `/${locale}`,
+      siteName: 'Clutch Zone',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    },
+    robots: { index: true, follow: true },
+  };
+}
 
 export default async function LocaleLayout({
   children,
@@ -44,11 +77,13 @@ export default async function LocaleLayout({
         />
       </head>
       <body className="bg-cz-black">
+        <JsonLd locale={locale} />
         <NextIntlClientProvider messages={messages}>
           <ReservationProvider>
             {children}
             <ReservationModal />
           </ReservationProvider>
+          <CookieBar />
         </NextIntlClientProvider>
       </body>
     </html>

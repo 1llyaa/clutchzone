@@ -1,6 +1,8 @@
 import { useTranslations } from 'next-intl';
+import { Link } from '@/navigation';
 import LogoLockup from '@/components/ui/LogoLockup';
 import Reveal from '@/components/ui/Reveal';
+import { BUSINESS } from '@/lib/business';
 
 export default function Footer() {
   const t = useTranslations('footer');
@@ -22,7 +24,9 @@ export default function Footer() {
         style={{ gap: 40 }}
       >
         {/* Logo + lockup */}
-        <LogoLockup size={40} subtitle={t('lockup')} />
+        <Link href="/" className="no-underline flex items-center" aria-label="Clutch Zone — domů">
+          <LogoLockup size={40} subtitle={t('lockup')} />
+        </Link>
 
         {/* Opening hours */}
         <div>
@@ -59,7 +63,7 @@ export default function Footer() {
         {/* Links */}
         <div className="flex flex-col" style={{ gap: 16 }}>
           {[
-            { label: t('instagram'), href: '#' },
+            { label: t('instagram'), href: 'https://www.instagram.com/clutchzone.club/' },
             { label: t('discord'), href: '#' },
             { label: t('contact'), href: '#' },
           ].map((link) => (
@@ -81,6 +85,34 @@ export default function Footer() {
           </span>
         </div>
       </div>
+      </Reveal>
+
+      {/* Legal */}
+      <Reveal>
+        <div
+          className="max-w-[1440px] mx-auto flex flex-wrap items-center justify-between"
+          style={{ marginTop: 40, paddingTop: 24, borderTop: '1px solid rgba(255,255,255,0.06)', gap: 16 }}
+        >
+          <span className="font-mono text-cz-gray-mid" style={{ fontSize: 11, letterSpacing: 0.5 }}>
+            {BUSINESS.ownerName} · IČO: {BUSINESS.ico} · {BUSINESS.registeredAddress}
+          </span>
+          <div className="flex" style={{ gap: 24 }}>
+            <Link
+              href="/terms"
+              className="font-mono text-cz-gray-light uppercase hover:text-white transition-colors duration-150 no-underline"
+              style={{ fontSize: 11, letterSpacing: 1.5 }}
+            >
+              {t('terms')}
+            </Link>
+            <Link
+              href="/privacy"
+              className="font-mono text-cz-gray-light uppercase hover:text-white transition-colors duration-150 no-underline"
+              style={{ fontSize: 11, letterSpacing: 1.5 }}
+            >
+              {t('privacy')}
+            </Link>
+          </div>
+        </div>
       </Reveal>
     </footer>
   );
