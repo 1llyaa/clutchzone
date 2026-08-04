@@ -19,7 +19,7 @@ export async function GET(
 
   return NextResponse.json({
     reference: data.reference,
-    stationLabel: (data.stations as any)?.label ?? null,
+    stationLabel: data.stations?.[0]?.label ?? null,
     date: data.date,
     startTime: data.start_time,
     totalPrice: data.total_price,

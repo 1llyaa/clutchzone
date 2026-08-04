@@ -3,6 +3,7 @@
 // window in §4 (24h assumed, not confirmed by the business owner) since
 // payments run through Stripe.
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { BUSINESS } from '@/lib/business';
@@ -104,9 +105,9 @@ function CS() {
       <Section title="8. Ochrana osobních údajů">
         <p>
           Zpracování osobních údajů zákazníků je popsáno samostatně v{' '}
-          <a href="/cs/privacy" className="text-cz-orange hover:underline">
+          <Link href="/cs/privacy" className="text-cz-orange hover:underline">
             zásadách ochrany osobních údajů
-          </a>
+          </Link>
           .
         </p>
       </Section>
@@ -184,9 +185,9 @@ function EN() {
       <Section title="8. Personal data">
         <p>
           How customer personal data is processed is described separately in the{' '}
-          <a href="/en/privacy" className="text-cz-orange hover:underline">
+          <Link href="/en/privacy" className="text-cz-orange hover:underline">
             privacy policy
-          </a>
+          </Link>
           .
         </p>
       </Section>

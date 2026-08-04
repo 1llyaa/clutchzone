@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
+import Link from 'next/link';
 import Logo from '@/components/ui/Logo';
 
 export default function AcceptInvitePage() {
@@ -46,9 +47,9 @@ export default function AcceptInvitePage() {
             <p className="font-mono text-red-400 uppercase" style={{ fontSize: 11, letterSpacing: 2 }}>
               Neplatný nebo expirovaný odkaz.
             </p>
-            <a href="/cs/admin/login" className="font-mono text-cz-orange" style={{ fontSize: 11 }}>
+            <Link href="/cs/admin/login" className="font-mono text-cz-orange" style={{ fontSize: 11 }}>
               Přejít na přihlášení
-            </a>
+            </Link>
           </div>
         )}
       </div>

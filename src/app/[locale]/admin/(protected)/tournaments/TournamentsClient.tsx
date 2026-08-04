@@ -411,7 +411,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                   <label className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>{label}</label>
                   <input
                     type={type}
-                    value={(form as any)[key] ?? ''}
+                    value={form[key as keyof typeof form] ?? ''}
                     onChange={(e) => setForm((prev) => ({ ...prev, [key]: e.target.value || null }))}
                     className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange"
                     style={{ padding: '9px 12px', fontSize: 13, border: '1px solid #2A2A2A', colorScheme: type === 'date' ? 'dark' : undefined }}

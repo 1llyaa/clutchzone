@@ -19,7 +19,10 @@ async function fetchBookingsData(from: string, to: string) {
   ]);
 
   return {
-    bookings: (bookingsRes.data ?? []) as any[],
+    bookings: (bookingsRes.data ?? []).map((b) => ({
+      ...b,
+      stations: b.stations?.[0] ?? null,
+    })),
     stations: stationsRes.data ?? [],
   };
 }

@@ -250,7 +250,7 @@ export default function GamesClient() {
                     <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 9, letterSpacing: 2 }}>{label}</label>
                     <input
                       type={type}
-                      value={(form as any)[key]}
+                      value={form[key as keyof typeof form]}
                       onChange={(e) => setForm((p) => ({ ...p, [key]: e.target.value }))}
                       placeholder={placeholder}
                       className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange"

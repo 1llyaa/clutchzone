@@ -135,7 +135,7 @@ export default async function AdminDashboard() {
                   </td>
                 </tr>
               ) : (
-                stats.recent.map((b: any) => (
+                stats.recent.map((b) => (
                   <tr
                     key={b.id}
                     style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
@@ -147,7 +147,7 @@ export default async function AdminDashboard() {
                       {b.customer_name}
                     </td>
                     <td className="font-mono text-cz-gray-light" style={{ padding: '12px 16px', fontSize: 12 }}>
-                      {b.stations?.label ?? '—'}
+                      {b.stations?.[0]?.label ?? '—'}
                     </td>
                     <td className="font-mono text-cz-gray-light" style={{ padding: '12px 16px', fontSize: 12 }}>
                       {new Date(b.date).toLocaleDateString('cs-CZ')}
