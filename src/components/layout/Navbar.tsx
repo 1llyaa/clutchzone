@@ -51,7 +51,7 @@ export default function Navbar() {
         <div className="flex items-center gap-2 ml-2">
           {(['cs', 'en'] as const).map((l, i) => (
             <span key={l} className="flex items-center gap-2">
-              {i > 0 && <span className="text-cz-gray-dark font-mono text-xs">|</span>}
+              {i > 0 && <span className="text-cz-gray-dark font-mono text-base">|</span>}
               <button
                 onClick={() => switchLocale(l)}
                 className="font-mono uppercase transition-colors duration-150 bg-transparent border-none cursor-pointer"

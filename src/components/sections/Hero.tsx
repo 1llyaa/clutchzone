@@ -75,7 +75,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
 
           <p
             className="font-body text-cz-white-soft"
-            style={{ fontWeight: 300, fontSize: 'clamp(15px, 2vw, 19px)', lineHeight: 1.7, maxWidth: 480, marginTop: 28 }}
+            style={{ fontWeight: 300, fontSize: 'clamp(16px, 2vw, 19px)', lineHeight: 1.7, maxWidth: 480, marginTop: 28 }}
           >
             {t('subhead')}
           </p>
@@ -84,14 +84,14 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
             <button
               onClick={open}
               className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer"
-              style={{ fontSize: 'clamp(15px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(12px, 2vw, 16px) clamp(24px, 4vw, 40px)' }}
+              style={{ fontSize: 'clamp(16px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(12px, 2vw, 16px) clamp(24px, 4vw, 40px)' }}
             >
               {t('ctaPrimary')}
             </button>
             <button
               onClick={() => document.getElementById('cenik')?.scrollIntoView({ behavior: 'smooth' })}
               className="bg-transparent text-white font-display uppercase hover:text-cz-orange hover:border-cz-orange active:scale-[0.96] transition-[color,border-color,scale] duration-150 ease-out rounded-[2px] cursor-pointer"
-              style={{ fontSize: 'clamp(15px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(11px, 2vw, 15px) clamp(24px, 4vw, 40px)', border: '1.5px solid rgba(255,255,255,0.15)' }}
+              style={{ fontSize: 'clamp(16px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(11px, 2vw, 15px) clamp(24px, 4vw, 40px)', border: '1.5px solid rgba(255,255,255,0.15)' }}
             >
               {t('ctaSecondary')}
             </button>
