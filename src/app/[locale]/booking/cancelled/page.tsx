@@ -55,12 +55,12 @@ export default function BookingCancelledPage() {
               {t('cancelledTitle')}
             </span>
 
-            <p className="font-body text-cz-gray-light" style={{ fontSize: 14, lineHeight: 1.6, maxWidth: 380 }}>
+            <p className="font-body text-cz-gray-light" style={{ fontSize: 19, lineHeight: 1.6, maxWidth: 380 }}>
               {t('cancelledMessage')}
             </p>
 
             {error && (
-              <p className="font-mono text-cz-orange" style={{ fontSize: 11, letterSpacing: 1 }}>
+              <p className="font-mono text-cz-orange" style={{ fontSize: 17, letterSpacing: 1 }}>
                 {error}
               </p>
             )}
@@ -78,7 +78,7 @@ export default function BookingCancelledPage() {
               <Link
                 href={`/${locale}`}
                 className="font-mono text-cz-gray-light hover:text-white transition-colors"
-                style={{ fontSize: 12, letterSpacing: 1 }}
+                style={{ fontSize: 17, letterSpacing: 1 }}
               >
                 {t('backHome')}
               </Link>

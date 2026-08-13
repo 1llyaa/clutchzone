@@ -39,15 +39,15 @@ export default function AcceptInvitePage() {
       <div className="flex flex-col items-center gap-4">
         <Logo size={44} />
         {status === 'loading' ? (
-          <p className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 11, letterSpacing: 3 }}>
+          <p className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3 }}>
             OVĚŘOVÁNÍ...
           </p>
         ) : (
           <div className="text-center">
-            <p className="font-mono text-red-400 uppercase" style={{ fontSize: 11, letterSpacing: 2 }}>
+            <p className="font-mono text-red-400 uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
               Neplatný nebo expirovaný odkaz.
             </p>
-            <Link href="/cs/admin/login" className="font-mono text-cz-orange" style={{ fontSize: 11 }}>
+            <Link href="/cs/admin/login" className="font-mono text-cz-orange" style={{ fontSize: 17 }}>
               Přejít na přihlášení
             </Link>
           </div>

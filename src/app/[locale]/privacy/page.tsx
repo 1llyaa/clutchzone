@@ -32,7 +32,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
       >
         {title}
       </h2>
-      <div className="font-body text-cz-gray-light" style={{ fontSize: 15, lineHeight: 1.8 }}>
+      <div className="font-body text-cz-gray-light" style={{ fontSize: 19, lineHeight: 1.8 }}>
         {children}
       </div>
     </section>
@@ -186,7 +186,7 @@ export default async function PrivacyPage({
         <div className="max-w-[760px] mx-auto">
           <span
             className="font-mono text-cz-orange uppercase block"
-            style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}
+            style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}
           >
             {isCs ? '// PRÁVNÍ INFORMACE' : '// LEGAL'}
           </span>
