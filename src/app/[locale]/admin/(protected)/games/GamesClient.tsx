@@ -143,14 +143,14 @@ export default function GamesClient() {
       <div className="flex items-center justify-between" style={{ marginBottom: 40 }}>
         <div>
           <h1 className="font-display text-white uppercase" style={{ fontSize: 36, letterSpacing: 2 }}>HERNÍ KNIHOVNA</h1>
-          <p className="font-mono text-cz-gray-mid" style={{ fontSize: 11, letterSpacing: 2, marginTop: 4 }}>
+          <p className="font-mono text-cz-gray-light" style={{ fontSize: 16, letterSpacing: 2, marginTop: 4 }}>
             {games.length} HER · {games.filter((g) => g.is_active).length} AKTIVNÍCH
           </p>
         </div>
         <button
           onClick={openCreate}
           className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors rounded-[2px]"
-          style={{ fontSize: 13, letterSpacing: 2, padding: '10px 24px' }}
+          style={{ fontSize: 16, letterSpacing: 2, padding: '10px 24px' }}
         >
           + PŘIDAT HRU
         </button>
@@ -158,20 +158,20 @@ export default function GamesClient() {
 
       {/* Table */}
       {loading ? (
-        <p className="font-mono text-cz-gray-mid text-center" style={{ padding: 40, fontSize: 12 }}>NAČÍTÁNÍ...</p>
+        <p className="font-mono text-cz-gray-light text-center" style={{ padding: 40, fontSize: 17 }}>NAČÍTÁNÍ...</p>
       ) : (
         <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A' }}>
           <table className="w-full">
             <thead>
               <tr style={{ borderBottom: '1px solid #2A2A2A' }}>
                 {['', 'NÁZEV', 'ŽÁNR', 'PLATFORMA', 'STATUS', ''].map((h) => (
-                  <th key={h} className="font-mono text-cz-gray-mid uppercase text-left" style={{ padding: '12px 16px', fontSize: 10, letterSpacing: 2 }}>{h}</th>
+                  <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '12px 16px', fontSize: 16, letterSpacing: 2 }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {sorted.length === 0 ? (
-                <tr><td colSpan={6} className="font-mono text-cz-gray-mid text-center" style={{ padding: 40, fontSize: 12 }}>Žádné hry</td></tr>
+                <tr><td colSpan={6} className="font-mono text-cz-gray-light text-center" style={{ padding: 40, fontSize: 17 }}>Žádné hry</td></tr>
               ) : sorted.map((g, idx) => (
                 <tr key={g.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', opacity: g.is_active ? 1 : 0.45 }}>
                   {/* Thumbnail */}
@@ -183,26 +183,26 @@ export default function GamesClient() {
                       <div style={{ width: 36, height: 52, background: '#2A2A2A', borderRadius: 2 }} />
                     )}
                   </td>
-                  <td className="font-body text-white" style={{ padding: '12px 16px', fontSize: 14, fontWeight: 500 }}>{g.title}</td>
-                  <td className="font-mono text-cz-gray-light" style={{ padding: '12px 16px', fontSize: 11 }}>{g.genre || '—'}</td>
+                  <td className="font-body text-white" style={{ padding: '12px 16px', fontSize: 17, fontWeight: 500 }}>{g.title}</td>
+                  <td className="font-mono text-cz-gray-light" style={{ padding: '12px 16px', fontSize: 17 }}>{g.genre || '—'}</td>
                   <td style={{ padding: '12px 16px' }}>
-                    <span className="font-mono uppercase rounded-[2px]" style={{ fontSize: 9, letterSpacing: 1, padding: '3px 8px', color: g.platform === 'ps5' ? '#60a5fa' : '#E84A1A', background: g.platform === 'ps5' ? '#60a5fa20' : '#E84A1A20' }}>
+                    <span className="font-mono uppercase rounded-[2px]" style={{ fontSize: 16, letterSpacing: 1, padding: '3px 8px', color: g.platform === 'ps5' ? '#60a5fa' : '#E84A1A', background: g.platform === 'ps5' ? '#60a5fa20' : '#E84A1A20' }}>
                       {PLATFORM_LABEL[g.platform]}
                     </span>
                   </td>
                   <td style={{ padding: '12px 16px' }}>
-                    <button onClick={() => toggleActive(g)} className="font-mono uppercase rounded-[2px]" style={{ fontSize: 9, letterSpacing: 1, padding: '3px 8px', color: g.is_active ? '#22c55e' : '#888', background: g.is_active ? '#22c55e20' : '#88888820' }}>
+                    <button onClick={() => toggleActive(g)} className="font-mono uppercase rounded-[2px]" style={{ fontSize: 16, letterSpacing: 1, padding: '3px 8px', color: g.is_active ? '#22c55e' : '#888', background: g.is_active ? '#22c55e20' : '#88888820' }}>
                       {g.is_active ? 'AKTIVNÍ' : 'SKRYTÉ'}
                     </button>
                   </td>
                   <td style={{ padding: '12px 16px' }}>
                     <div className="flex items-center gap-4">
                       <div className="flex gap-1">
-                        <button onClick={() => move(g, 'up')} disabled={idx === 0} className="font-mono text-cz-gray-mid hover:text-white disabled:opacity-20" style={{ fontSize: 13 }}>↑</button>
-                        <button onClick={() => move(g, 'down')} disabled={idx === sorted.length - 1} className="font-mono text-cz-gray-mid hover:text-white disabled:opacity-20" style={{ fontSize: 13 }}>↓</button>
+                        <button onClick={() => move(g, 'up')} disabled={idx === 0} className="font-mono text-cz-gray-light hover:text-white disabled:opacity-20" style={{ fontSize: 16 }}>↑</button>
+                        <button onClick={() => move(g, 'down')} disabled={idx === sorted.length - 1} className="font-mono text-cz-gray-light hover:text-white disabled:opacity-20" style={{ fontSize: 16 }}>↓</button>
                       </div>
-                      <button onClick={() => openEdit(g)} className="font-mono text-cz-orange uppercase hover:underline" style={{ fontSize: 10, letterSpacing: 1 }}>UPRAVIT</button>
-                      <button onClick={() => deleteGame(g)} className="font-mono text-red-400 uppercase hover:underline" style={{ fontSize: 10, letterSpacing: 1 }}>SMAZAT</button>
+                      <button onClick={() => openEdit(g)} className="font-mono text-cz-orange uppercase hover:underline" style={{ fontSize: 16, letterSpacing: 1 }}>UPRAVIT</button>
+                      <button onClick={() => deleteGame(g)} className="font-mono text-red-400 uppercase hover:underline" style={{ fontSize: 16, letterSpacing: 1 }}>SMAZAT</button>
                     </div>
                   </td>
                 </tr>
@@ -233,7 +233,7 @@ export default function GamesClient() {
                 ) : (
                   <div className="flex flex-col items-center gap-2 p-3 text-center">
                     <span className="font-mono text-cz-gray-mid" style={{ fontSize: 24 }}>+</span>
-                    <span className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 8, letterSpacing: 2 }}>COVER</span>
+                    <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>COVER</span>
                   </div>
                 )}
                 <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleFileSelect(e.target.files?.[0] ?? null)} />
@@ -247,21 +247,21 @@ export default function GamesClient() {
                   { label: 'COVER URL (alternativa k uploadu)', key: 'cover_url', type: 'text', placeholder: 'https://...' },
                 ].map(({ label, key, type, placeholder }) => (
                   <div key={key} className="flex flex-col gap-2">
-                    <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 9, letterSpacing: 2 }}>{label}</label>
+                    <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>{label}</label>
                     <input
                       type={type}
                       value={form[key as keyof typeof form]}
                       onChange={(e) => setForm((p) => ({ ...p, [key]: e.target.value }))}
                       placeholder={placeholder}
                       className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange"
-                      style={{ padding: '8px 12px', fontSize: 13, border: '1px solid #2A2A2A' }}
+                      style={{ padding: '8px 12px', fontSize: 19, border: '1px solid #2A2A2A' }}
                     />
                   </div>
                 ))}
 
                 {/* Platform */}
                 <div className="flex flex-col gap-2">
-                  <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 9, letterSpacing: 2 }}>PLATFORMA</label>
+                  <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>PLATFORMA</label>
                   <div className="flex gap-2">
                     {[{ value: 'pc', label: 'PC' }, { value: 'ps5', label: 'PS5' }, { value: 'both', label: 'PC + PS5' }].map((opt) => (
                       <button
@@ -269,7 +269,7 @@ export default function GamesClient() {
                         type="button"
                         onClick={() => setForm((p) => ({ ...p, platform: opt.value }))}
                         className="font-mono uppercase rounded-[2px] transition-colors"
-                        style={{ fontSize: 10, letterSpacing: 1, padding: '6px 14px', color: form.platform === opt.value ? '#fff' : '#555', background: form.platform === opt.value ? '#E84A1A' : 'transparent', border: `1px solid ${form.platform === opt.value ? '#E84A1A' : '#2A2A2A'}` }}
+                        style={{ fontSize: 16, letterSpacing: 1, padding: '6px 14px', color: form.platform === opt.value ? '#fff' : '#888888', background: form.platform === opt.value ? '#E84A1A' : 'transparent', border: `1px solid ${form.platform === opt.value ? '#E84A1A' : '#2A2A2A'}` }}
                       >
                         {opt.label}
                       </button>
@@ -281,22 +281,22 @@ export default function GamesClient() {
 
             {/* Description */}
             <div className="flex flex-col gap-2" style={{ marginTop: 16 }}>
-              <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 9, letterSpacing: 2 }}>POPIS</label>
+              <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>POPIS</label>
               <textarea
                 value={form.description}
                 onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
                 rows={3}
                 placeholder="Krátký popis hry..."
                 className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange resize-none"
-                style={{ padding: '8px 12px', fontSize: 13, border: '1px solid #2A2A2A' }}
+                style={{ padding: '8px 12px', fontSize: 19, border: '1px solid #2A2A2A' }}
               />
             </div>
 
             <div className="flex gap-3" style={{ marginTop: 24 }}>
-              <button onClick={handleSave} disabled={saving || !form.title.trim()} className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark rounded-[2px] disabled:opacity-50" style={{ fontSize: 13, letterSpacing: 2, padding: '11px 28px' }}>
+              <button onClick={handleSave} disabled={saving || !form.title.trim()} className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark rounded-[2px] disabled:opacity-50" style={{ fontSize: 16, letterSpacing: 2, padding: '11px 28px' }}>
                 {saving ? '...' : 'ULOŽIT'}
               </button>
-              <button onClick={() => setShowForm(false)} className="font-display uppercase text-cz-gray-mid hover:text-white rounded-[2px]" style={{ fontSize: 13, letterSpacing: 2, padding: '11px 28px', border: '1px solid #2A2A2A', background: 'transparent' }}>
+              <button onClick={() => setShowForm(false)} className="font-display uppercase text-cz-gray-light hover:text-white rounded-[2px]" style={{ fontSize: 16, letterSpacing: 2, padding: '11px 28px', border: '1px solid #2A2A2A', background: 'transparent' }}>
                 ZRUŠIT
               </button>
             </div>

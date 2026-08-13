@@ -70,7 +70,7 @@ export default function PricingClient({
   }) {
     return (
       <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-        <td className="font-mono text-white" style={{ padding: '12px 16px', fontSize: 13 }}>
+        <td className="font-mono text-white" style={{ padding: '12px 16px', fontSize: 17 }}>
           {label}
         </td>
         <td style={{ padding: '8px 16px' }}>
@@ -80,14 +80,14 @@ export default function PricingClient({
               value={value}
               onChange={(e) => onChange(Number(e.target.value))}
               className="bg-cz-black text-white font-mono rounded-[2px] focus:outline-none focus:border-cz-orange"
-              style={{ padding: '7px 12px', fontSize: 14, border: '1px solid #2A2A2A', width: 100 }}
+              style={{ padding: '7px 12px', fontSize: 19, border: '1px solid #2A2A2A', width: 100 }}
             />
-            <span className="font-mono text-cz-gray-mid" style={{ fontSize: 12 }}>Kč</span>
+            <span className="font-mono text-cz-gray-light" style={{ fontSize: 16 }}>Kč</span>
             <button
               onClick={onSave}
               disabled={saving === saveKey}
               className="font-mono text-cz-orange uppercase hover:underline disabled:opacity-50"
-              style={{ fontSize: 10, letterSpacing: 1 }}
+              style={{ fontSize: 16, letterSpacing: 1 }}
             >
               {saving === saveKey ? '...' : 'ULOŽIT'}
             </button>
@@ -103,14 +103,14 @@ export default function PricingClient({
         <h1 className="font-display text-white uppercase" style={{ fontSize: 36, letterSpacing: 2 }}>
           CENÍK
         </h1>
-        <p className="font-mono text-cz-gray-mid" style={{ fontSize: 11, letterSpacing: 2, marginTop: 4 }}>
+        <p className="font-mono text-cz-gray-light" style={{ fontSize: 16, letterSpacing: 2, marginTop: 4 }}>
           ÚPRAVA PŘÍMÝCH CENOVEK
         </p>
       </div>
 
       {/* Special packages */}
       <div style={{ marginBottom: 40 }}>
-        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 3, marginBottom: 16 }}>
+        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 16 }}>
           ZVÝHODNĚNÉ BALÍČKY
         </div>
         <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A' }}>
@@ -118,7 +118,7 @@ export default function PricingClient({
             <thead>
               <tr style={{ borderBottom: '1px solid #2A2A2A' }}>
                 {['BALÍČEK', 'CENA'].map((h) => (
-                  <th key={h} className="font-mono text-cz-gray-mid uppercase text-left" style={{ padding: '12px 16px', fontSize: 10, letterSpacing: 2 }}>
+                  <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '12px 16px', fontSize: 16, letterSpacing: 2 }}>
                     {h}
                   </th>
                 ))}
@@ -142,7 +142,7 @@ export default function PricingClient({
 
       {/* PC duration prices */}
       <div style={{ marginBottom: 40 }}>
-        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 3, marginBottom: 16 }}>
+        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 16 }}>
           PC — DÉLKOVÉ CENY
         </div>
         <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A' }}>
@@ -150,7 +150,7 @@ export default function PricingClient({
             <thead>
               <tr style={{ borderBottom: '1px solid #2A2A2A' }}>
                 {['DÉLKA', 'CENA'].map((h) => (
-                  <th key={h} className="font-mono text-cz-gray-mid uppercase text-left" style={{ padding: '12px 16px', fontSize: 10, letterSpacing: 2 }}>
+                  <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '12px 16px', fontSize: 16, letterSpacing: 2 }}>
                     {h}
                   </th>
                 ))}
@@ -174,7 +174,7 @@ export default function PricingClient({
 
       {/* PS5 duration prices */}
       <div>
-        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 3, marginBottom: 16 }}>
+        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 16 }}>
           PS5 — DÉLKOVÉ CENY
         </div>
         <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A' }}>
@@ -182,7 +182,7 @@ export default function PricingClient({
             <thead>
               <tr style={{ borderBottom: '1px solid #2A2A2A' }}>
                 {['DÉLKA', 'CENA'].map((h) => (
-                  <th key={h} className="font-mono text-cz-gray-mid uppercase text-left" style={{ padding: '12px 16px', fontSize: 10, letterSpacing: 2 }}>
+                  <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '12px 16px', fontSize: 16, letterSpacing: 2 }}>
                     {h}
                   </th>
                 ))}
