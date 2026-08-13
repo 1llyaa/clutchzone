@@ -210,7 +210,7 @@ export default function AdminNotifications({ locale }: { locale: string }) {
           <button
             onClick={enableSystemNotifications}
             className="flex items-center gap-2 bg-cz-black-mid font-mono text-cz-white-soft uppercase rounded-[2px] cursor-pointer hover:border-cz-orange transition-[border-color] duration-150"
-            style={{ fontSize: 10, letterSpacing: 1.5, padding: '13px 14px', border: '1px solid #2A2A2A' }}
+            style={{ fontSize: 16, letterSpacing: 1.5, padding: '13px 14px', border: '1px solid #2A2A2A' }}
           >
             <span className="rounded-full bg-cz-orange" style={{ width: 6, height: 6 }} />
             POVOLIT NOTIFIKACE
@@ -229,7 +229,7 @@ export default function AdminNotifications({ locale }: { locale: string }) {
           {unread > 0 && (
             <span
               className="absolute font-mono text-white bg-cz-orange rounded-full flex items-center justify-center tabular-nums"
-              style={{ top: -6, right: -6, minWidth: 18, height: 18, fontSize: 10, padding: '0 4px' }}
+              style={{ top: -8, right: -8, minWidth: 24, height: 24, fontSize: 16, padding: '0 5px' }}
             >
               {unread}
             </span>
@@ -244,20 +244,20 @@ export default function AdminNotifications({ locale }: { locale: string }) {
           style={{ width: 380, maxHeight: 480, border: '1px solid #2A2A2A', boxShadow: '0 16px 48px rgba(0,0,0,0.6)' }}
         >
           <div className="flex items-center justify-between" style={{ padding: '14px 16px', borderBottom: '1px solid #2A2A2A' }}>
-            <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+            <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
               HISTORIE NOTIFIKACÍ
             </span>
             <button
               onClick={() => { setLog([]); saveLog([]); }}
-              className="font-mono text-cz-gray-mid uppercase hover:text-white transition-colors cursor-pointer"
-              style={{ fontSize: 9, letterSpacing: 1 }}
+              className="font-mono text-cz-gray-light uppercase hover:text-white transition-colors cursor-pointer"
+              style={{ fontSize: 16, letterSpacing: 1 }}
             >
               VYMAZAT
             </button>
           </div>
           <div className="overflow-y-auto flex-1">
             {log.length === 0 ? (
-              <div className="font-mono text-cz-gray-mid text-center uppercase" style={{ padding: 32, fontSize: 11, letterSpacing: 2 }}>
+              <div className="font-mono text-cz-gray-light text-center uppercase" style={{ padding: 32, fontSize: 16, letterSpacing: 2 }}>
                 Žádné notifikace
               </div>
             ) : (
@@ -270,12 +270,12 @@ export default function AdminNotifications({ locale }: { locale: string }) {
                 >
                   <div className="flex items-center gap-2" style={{ marginBottom: 3 }}>
                     {!e.read && <span className="rounded-full bg-cz-orange flex-shrink-0" style={{ width: 6, height: 6 }} />}
-                    <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 9, letterSpacing: 1.5 }}>{e.title}</span>
-                    <span className="font-mono text-cz-gray-mid" style={{ fontSize: 9, marginLeft: 'auto' }}>
+                    <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 16, letterSpacing: 1.5 }}>{e.title}</span>
+                    <span className="font-mono text-cz-gray-light" style={{ fontSize: 17, marginLeft: 'auto' }}>
                       {new Date(e.at).toLocaleString('cs-CZ', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
-                  <p className="font-body text-cz-white-soft" style={{ fontSize: 12, lineHeight: 1.5 }}>{e.body}</p>
+                  <p className="font-body text-cz-white-soft" style={{ fontSize: 19, lineHeight: 1.5 }}>{e.body}</p>
                 </button>
               ))
             )}
@@ -294,9 +294,9 @@ export default function AdminNotifications({ locale }: { locale: string }) {
           >
             <div className="flex items-center gap-2" style={{ marginBottom: 4 }}>
               <span className="rounded-full bg-cz-orange animate-flicker flex-shrink-0" style={{ width: 7, height: 7 }} />
-              <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>{t.title}</span>
+              <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>{t.title}</span>
             </div>
-            <p className="font-body text-cz-white-soft" style={{ fontSize: 13, lineHeight: 1.5 }}>{t.body}</p>
+            <p className="font-body text-cz-white-soft" style={{ fontSize: 19, lineHeight: 1.5 }}>{t.body}</p>
           </button>
         ))}
       </div>
