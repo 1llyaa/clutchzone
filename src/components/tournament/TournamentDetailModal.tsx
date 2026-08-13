@@ -110,7 +110,7 @@ export default function TournamentDetailModal({ tournament, onClose, onRegister 
             </button>
             <button
               onClick={onClose}
-              className="font-display uppercase text-cz-gray-mid hover:text-white transition-colors rounded-[2px] cursor-pointer"
+              className="font-display uppercase text-cz-gray-light hover:text-white transition-colors rounded-[2px] cursor-pointer"
               style={{ fontSize: 16, letterSpacing: 2, padding: '13px 24px', border: '1px solid #2A2A2A', background: 'transparent' }}
             >
               ×
