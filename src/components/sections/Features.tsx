@@ -51,7 +51,7 @@ export default function Features() {
                 </h3>
                 <p
                   className="font-body text-cz-gray-light mt-3"
-                  style={{ fontWeight: 300, fontSize: 'clamp(13px, 1.5vw, 15px)', lineHeight: 1.65 }}
+                  style={{ fontWeight: 300, fontSize: 'clamp(16px, 1.8vw, 17px)', lineHeight: 1.65 }}
                 >
                   {card.desc}
                 </p>
