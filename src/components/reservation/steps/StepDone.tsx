@@ -65,7 +65,7 @@ export default function StepDone({ result, form, onClose }: Props) {
       <button
         onClick={onClose}
         className="w-full bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors rounded-[2px] border-none cursor-pointer"
-        style={{ fontSize: 16, letterSpacing: 2, padding: '14px' }}
+        style={{ fontSize: 17, letterSpacing: 2, padding: '14px' }}
       >
         {t('close')}
       </button>
