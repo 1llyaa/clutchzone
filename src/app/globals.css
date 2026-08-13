@@ -14,8 +14,17 @@
   --color-cz-white-soft: #E8E8E8;
 
   --font-display: 'Bebas Neue', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --font-body: 'Space Mono', monospace;
   --font-mono: 'Space Mono', monospace;
+
+  --text-label: 16px;
+  --text-secondary: 17px;
+  --text-body: 19px;
+  --text-lead: 22px;
+  --text-display-card: 32px;
+  --text-display-subsection: 40px;
+  --text-display-section: 64px;
+  --text-display-hero: 96px;
 
   --radius-cz: 4px;
   --radius-pill: 100px;
