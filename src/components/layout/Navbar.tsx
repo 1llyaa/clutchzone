@@ -42,7 +42,7 @@ export default function Navbar() {
             key={link.href}
             href={link.href}
             className="font-mono text-cz-gray-light uppercase hover:text-white transition-[color] duration-200 ease-out cz-link-underline"
-            style={{ fontSize: 12, letterSpacing: 2 }}
+            style={{ fontSize: 16, letterSpacing: 2 }}
           >
             {link.label}
           </a>
@@ -55,7 +55,7 @@ export default function Navbar() {
               <button
                 onClick={() => switchLocale(l)}
                 className="font-mono uppercase transition-colors duration-150 bg-transparent border-none cursor-pointer"
-                style={{ fontSize: 11, letterSpacing: 2, color: locale === l ? '#E84A1A' : '#555' }}
+                style={{ fontSize: 16, letterSpacing: 2, color: locale === l ? '#E84A1A' : '#888888' }}
               >
                 {l.toUpperCase()}
               </button>
@@ -115,7 +115,7 @@ export default function Navbar() {
               href={link.href}
               onClick={() => setMenuOpen(false)}
               className="font-mono text-cz-gray-light uppercase hover:text-white transition-[color] duration-200 ease-out py-3"
-              style={{ fontSize: 13, letterSpacing: 2, borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+              style={{ fontSize: 16, letterSpacing: 2, borderBottom: '1px solid rgba(255,255,255,0.05)' }}
             >
               {link.label}
             </a>
@@ -126,7 +126,7 @@ export default function Navbar() {
                 key={l}
                 onClick={() => { switchLocale(l); setMenuOpen(false); }}
                 className="font-mono uppercase transition-colors bg-transparent border-none cursor-pointer"
-                style={{ fontSize: 11, letterSpacing: 2, color: locale === l ? '#E84A1A' : '#555' }}
+                style={{ fontSize: 16, letterSpacing: 2, color: locale === l ? '#E84A1A' : '#888888' }}
               >
                 {l.toUpperCase()}
               </button>
@@ -135,7 +135,7 @@ export default function Navbar() {
           <button
             onClick={() => { open(); setMenuOpen(false); }}
             className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer"
-            style={{ fontSize: 15, letterSpacing: 2, padding: '13px 0' }}
+            style={{ fontSize: 16, letterSpacing: 2, padding: '13px 0' }}
           >
             {t('cta')}
           </button>

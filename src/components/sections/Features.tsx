@@ -21,7 +21,7 @@ export default function Features() {
         <Reveal className="mb-8 md:mb-16">
           <span
             className="font-mono text-cz-orange uppercase block"
-            style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}
+            style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}
           >
             {t('eyebrow')}
           </span>
@@ -40,7 +40,7 @@ export default function Features() {
                 className="group flex flex-col h-full bg-cz-black-mid border border-cz-gray-dark rounded-cz cz-card-lift hover:border-cz-orange"
                 style={{ padding: 'clamp(20px, 4vw, 32px) clamp(18px, 3vw, 28px)' }}
               >
-                <span className="font-mono text-cz-orange" style={{ fontSize: 13, letterSpacing: 2 }}>
+                <span className="font-mono text-cz-orange" style={{ fontSize: 16, letterSpacing: 2 }}>
                   {card.no}
                 </span>
                 <h3

@@ -42,7 +42,7 @@ export default function Pricing({ pcPrices, ps5Prices, packageAmounts }: Props) 
         {/* Section header */}
         <Reveal>
           <div style={{ marginBottom: 48 }}>
-            <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}>
+            <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}>
               {t('eyebrow')}
             </span>
             <h2
@@ -61,20 +61,20 @@ export default function Pricing({ pcPrices, ps5Prices, packageAmounts }: Props) 
           style={{ padding: 'clamp(20px, 4vw, 32px) clamp(20px, 4vw, 40px)', marginBottom: 20 }}
         >
           <span className="absolute top-0 left-0 right-0 bg-cz-orange" style={{ height: 2 }} />
-          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 3, marginBottom: 24 }}>
+          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 24 }}>
             {t('pcLabel')}
           </span>
           {/* Mobile: 3+2, Desktop: 5 in a row */}
           <div className="grid grid-cols-3 md:grid-cols-5 gap-4 md:gap-2">
             {pcPrices.map(({ duration_h, amount }) => (
               <div key={duration_h} className="flex flex-col items-center gap-1 text-center">
-                <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 2 }}>
+                <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
                   {duration_h}H
                 </span>
                 <span className="font-display text-white" style={{ fontSize: 'clamp(36px, 5vw, 56px)', lineHeight: 1 }}>
                   {amount}
                 </span>
-                <span className="font-mono text-cz-gray-mid" style={{ fontSize: 10, letterSpacing: 1 }}>KČ</span>
+                <span className="font-mono text-cz-gray-light" style={{ fontSize: 16, letterSpacing: 1 }}>KČ</span>
               </div>
             ))}
           </div>
@@ -88,23 +88,23 @@ export default function Pricing({ pcPrices, ps5Prices, packageAmounts }: Props) 
           style={{ padding: 'clamp(20px, 4vw, 32px) clamp(20px, 4vw, 40px)', marginBottom: 40 }}
         >
           <span className="absolute top-0 left-0 right-0 bg-cz-gray-dark" style={{ height: 2 }} />
-          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 3, marginBottom: 24 }}>
+          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 24 }}>
             {t('ps5Label')}
           </span>
           <div className="grid grid-cols-3 gap-4 md:gap-2" style={{ maxWidth: 480, marginBottom: 24 }}>
             {ps5Prices.map(({ duration_h, amount }) => (
               <div key={duration_h} className="flex flex-col items-center gap-1 text-center">
-                <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 2 }}>
+                <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
                   {duration_h}H
                 </span>
                 <span className="font-display text-white" style={{ fontSize: 'clamp(36px, 5vw, 56px)', lineHeight: 1 }}>
                   {amount}
                 </span>
-                <span className="font-mono text-cz-gray-mid" style={{ fontSize: 10, letterSpacing: 1 }}>KČ</span>
+                <span className="font-mono text-cz-gray-light" style={{ fontSize: 16, letterSpacing: 1 }}>KČ</span>
               </div>
             ))}
           </div>
-          <span className="font-mono text-cz-gray-mid uppercase block" style={{ fontSize: 10, letterSpacing: 2, borderTop: '1px solid #2A2A2A', paddingTop: 20 }}>
+          <span className="font-mono text-cz-gray-light uppercase block" style={{ fontSize: 16, letterSpacing: 2, borderTop: '1px solid #2A2A2A', paddingTop: 20 }}>
             {t('ps5Note')}
           </span>
         </div>
@@ -113,7 +113,7 @@ export default function Pricing({ pcPrices, ps5Prices, packageAmounts }: Props) 
         {/* Packages heading */}
         <Reveal>
           <div style={{ marginBottom: 20 }}>
-            <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 3 }}>
+            <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3 }}>
               {t('packagesHeading')}
             </span>
           </div>
@@ -180,10 +180,10 @@ export default function Pricing({ pcPrices, ps5Prices, packageAmounts }: Props) 
                 }} />
               </div>
 
-              <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 11, letterSpacing: 2, marginBottom: 8 }}>
+              <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 16, letterSpacing: 2, marginBottom: 8 }}>
                 {pkg.name}
               </span>
-              <span className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 2, marginBottom: 20 }}>
+              <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, marginBottom: 20 }}>
                 {pkg.time}
               </span>
               <div className="flex items-baseline gap-2" style={{ marginTop: 'auto', marginBottom: 24 }}>
@@ -209,7 +209,7 @@ export default function Pricing({ pcPrices, ps5Prices, packageAmounts }: Props) 
         {/* Info notes */}
         <Reveal className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-6">
           {[t('noteSession'), t('notePcOnly'), t('noteHappyWeekdays'), t('noteNoRefund')].map((note, i) => (
-            <span key={note} className="font-mono text-cz-gray-mid flex items-center gap-2" style={{ fontSize: 10, letterSpacing: 1 }}>
+            <span key={note} className="font-mono text-cz-gray-light flex items-center gap-2" style={{ fontSize: 16, letterSpacing: 1 }}>
               {i > 0 && <span className="hidden md:inline text-cz-gray-dark">·</span>}
               {note}
             </span>

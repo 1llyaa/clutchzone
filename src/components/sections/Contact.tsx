@@ -51,13 +51,13 @@ export default function Contact() {
         {/* Left — heading + info */}
         <div>
           <Reveal>
-            <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}>
+            <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}>
               {t('eyebrow')}
             </span>
             <h2 className="font-display text-white uppercase" style={{ fontSize: 'clamp(32px, 5vw, 60px)', letterSpacing: 1.5, lineHeight: 0.95, marginBottom: 20 }}>
               {t('heading')}
             </h2>
-            <p className="font-body text-cz-gray-light" style={{ fontSize: 15, lineHeight: 1.8, maxWidth: 420, marginBottom: 36 }}>
+            <p className="font-body text-cz-gray-light" style={{ fontSize: 19, lineHeight: 1.8, maxWidth: 420, marginBottom: 36 }}>
               {t('subtext')}
             </p>
           </Reveal>
@@ -69,8 +69,8 @@ export default function Contact() {
               { label: t('emailLabel'),    value: t('emailValue') },
             ].map(({ label, value }) => (
               <div key={label}>
-                <div className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 3, marginBottom: 4 }}>{label}</div>
-                <div className="font-body text-white" style={{ fontSize: 15 }}>{value}</div>
+                <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 4 }}>{label}</div>
+                <div className="font-body text-white" style={{ fontSize: 17 }}>{value}</div>
               </div>
             ))}
           </Reveal>
@@ -88,7 +88,7 @@ export default function Contact() {
               <button
                 onClick={() => setDone(false)}
                 className="font-mono text-cz-orange uppercase hover:underline"
-                style={{ fontSize: 11, letterSpacing: 2, marginTop: 24 }}
+                style={{ fontSize: 16, letterSpacing: 2, marginTop: 24 }}
               >
                 {t('sendAnother')}
               </button>
@@ -96,7 +96,7 @@ export default function Contact() {
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col gap-5">
               <div className="flex flex-col gap-2">
-                <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+                <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
                   {t('name')}
                 </label>
                 <input
@@ -107,12 +107,12 @@ export default function Contact() {
                   maxLength={100}
                   placeholder={t('namePlaceholder')}
                   className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-[border-color] duration-150 ease-out"
-                  style={{ padding: '11px 14px', fontSize: 14, border: '1px solid #2A2A2A' }}
+                  style={{ padding: '11px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
                 />
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+                <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
                   {t('email')}
                 </label>
                 <input
@@ -122,12 +122,12 @@ export default function Contact() {
                   required
                   placeholder={t('emailPlaceholder')}
                   className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-[border-color] duration-150 ease-out"
-                  style={{ padding: '11px 14px', fontSize: 14, border: '1px solid #2A2A2A' }}
+                  style={{ padding: '11px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
                 />
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+                <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
                   {t('message')}
                 </label>
                 <textarea
@@ -138,19 +138,19 @@ export default function Contact() {
                   rows={5}
                   placeholder={t('messagePlaceholder')}
                   className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-[border-color] duration-150 ease-out resize-none"
-                  style={{ padding: '11px 14px', fontSize: 14, border: '1px solid #2A2A2A' }}
+                  style={{ padding: '11px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
                 />
               </div>
 
               {error && (
-                <p className="font-mono text-red-400" style={{ fontSize: 11, letterSpacing: 1 }}>{error}</p>
+                <p className="font-mono text-red-400" style={{ fontSize: 17, letterSpacing: 1 }}>{error}</p>
               )}
 
               <button
                 type="submit"
                 disabled={submitting}
                 className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:not-disabled:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer disabled:opacity-50"
-                style={{ fontSize: 15, letterSpacing: 2, padding: '14px 0', marginTop: 4 }}
+                style={{ fontSize: 19, letterSpacing: 2, padding: '14px 0', marginTop: 4 }}
               >
                 {submitting ? '...' : t('submit')}
               </button>

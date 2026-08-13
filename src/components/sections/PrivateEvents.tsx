@@ -34,18 +34,18 @@ export default function PrivateEvents({ image }: Props) {
 
         {/* Right — heading + info + CTA */}
         <Reveal delay={70}>
-          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}>
+          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}>
             {t('eyebrow')}
           </span>
           <h2 className="font-display text-white uppercase" style={{ fontSize: 'clamp(32px, 5vw, 60px)', letterSpacing: 1.5, lineHeight: 0.95, marginBottom: 20 }}>
             {t('heading')}
           </h2>
-          <p className="font-body text-cz-gray-light" style={{ fontSize: 15, lineHeight: 1.8, maxWidth: 460, marginBottom: 28 }}>
+          <p className="font-body text-cz-gray-light" style={{ fontSize: 19, lineHeight: 1.8, maxWidth: 460, marginBottom: 28 }}>
             {t('subtext')}
           </p>
 
           <div style={{ marginBottom: 32 }}>
-            <div className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 3, marginBottom: 4 }}>
+            <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 4 }}>
               {t('priceLabel')}
             </div>
             <div className="font-display text-white uppercase" style={{ fontSize: 20, letterSpacing: 1 }}>
@@ -56,7 +56,7 @@ export default function PrivateEvents({ image }: Props) {
           <a
             href="#kontakt"
             className="inline-block bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] text-center"
-            style={{ fontSize: 15, letterSpacing: 2, padding: '14px 36px' }}
+            style={{ fontSize: 19, letterSpacing: 2, padding: '14px 36px' }}
           >
             {t('cta')}
           </a>

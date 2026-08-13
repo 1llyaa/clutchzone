@@ -53,7 +53,7 @@ export default function Stream({ streamUrl }: Props) {
         {/* Section header */}
         <Reveal>
           <div style={{ marginBottom: 48 }}>
-            <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}>
+            <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}>
               {t('eyebrow')}
             </span>
             <h2
@@ -96,7 +96,7 @@ export default function Stream({ streamUrl }: Props) {
             target="_blank"
             rel="noopener noreferrer"
             className="font-mono text-cz-gray-light uppercase hover:text-cz-orange transition-colors"
-            style={{ fontSize: 11, letterSpacing: 2 }}
+            style={{ fontSize: 16, letterSpacing: 2 }}
           >
             twitch.tv/{channel}
           </a>

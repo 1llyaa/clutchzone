@@ -51,7 +51,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
         <div>
           <div className="flex items-center mb-6 md:mb-7" style={{ gap: 12 }}>
             <span className="inline-block bg-cz-orange" style={{ width: 40, height: 1.5 }} />
-            <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 12, letterSpacing: 4 }}>
+            <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 16, letterSpacing: 4 }}>
               {t('eyebrow')}
             </span>
           </div>
@@ -110,7 +110,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
                 <div className="font-display text-white" style={{ fontSize: 'clamp(32px, 4vw, 44px)', lineHeight: 1 }}>
                   {stat.value}
                 </div>
-                <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 2, marginTop: 6 }}>
+                <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, marginTop: 6 }}>
                   {stat.label}
                 </div>
               </div>
@@ -127,7 +127,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
                 className="rounded-full animate-flicker flex-shrink-0"
                 style={{ width: 8, height: 8, background: stationsFree > 0 ? '#22c55e' : '#ef4444' }}
               />
-              <span className="font-mono text-cz-white-soft uppercase tabular-nums" style={{ fontSize: 11, letterSpacing: 1.5 }}>
+              <span className="font-mono text-cz-white-soft uppercase tabular-nums" style={{ fontSize: 16, letterSpacing: 1.5 }}>
                 {stationsFree} / {stationsTotal} {t('stationsFree')}
               </span>
             </div>
@@ -212,7 +212,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
                 className="rounded-full animate-flicker flex-shrink-0"
                 style={{ width: 8, height: 8, background: stationsFree > 0 ? '#22c55e' : '#ef4444' }}
               />
-              <span className="font-mono text-cz-white-soft uppercase tabular-nums" style={{ fontSize: 11, letterSpacing: 1.5 }}>
+              <span className="font-mono text-cz-white-soft uppercase tabular-nums" style={{ fontSize: 16, letterSpacing: 1.5 }}>
                 {stationsFree} / {stationsTotal} {t('stationsFree')}
               </span>
             </div>
@@ -222,7 +222,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
 
       {/* Scroll indicator — hide on mobile */}
       <div className="absolute left-1/2 -translate-x-1/2 z-10 hidden md:flex flex-col items-center gap-3" style={{ bottom: 36 }}>
-        <span className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 3 }}>{t('scroll')}</span>
+        <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3 }}>{t('scroll')}</span>
         <span className="bg-cz-orange animate-scroll-pulse" style={{ width: 1.5, height: 48, display: 'block' }} />
       </div>
     </section>

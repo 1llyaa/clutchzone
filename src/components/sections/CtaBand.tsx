@@ -67,7 +67,7 @@ export default function CtaBand() {
         <div className="relative">
           <span
             className="font-mono text-cz-orange uppercase"
-            style={{ fontSize: 12, letterSpacing: 4 }}
+            style={{ fontSize: 16, letterSpacing: 4 }}
           >
             {t('eyebrow')}
           </span>
