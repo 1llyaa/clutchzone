@@ -20,16 +20,16 @@ function Field({
 }) {
   return (
     <div>
-      <label className="font-mono text-cz-gray-light uppercase block" style={{ fontSize: 10, letterSpacing: 3, marginBottom: 8 }}>
-        {label}{!required && <span className="text-cz-gray-mid"> (nepovinné)</span>}
+      <label className="font-mono text-cz-gray-light uppercase block" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 8 }}>
+        {label}{!required && <span className="text-cz-gray-light"> (nepovinné)</span>}
       </label>
       <input
         type={type}
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-cz-black border border-cz-gray-dark rounded-cz text-white font-body placeholder:text-cz-gray-mid focus:border-cz-orange outline-none transition-colors"
-        style={{ padding: '12px 16px', fontSize: 14 }}
+        className="w-full bg-cz-black border border-cz-gray-dark rounded-cz text-white font-body placeholder:text-cz-gray-light focus:border-cz-orange outline-none transition-colors"
+        style={{ padding: '12px 16px', fontSize: 19 }}
       />
     </div>
   );
@@ -58,7 +58,7 @@ export default function StepContact({ form, setForm, onBack, onSubmit, error }: 
         className="flex items-center justify-between rounded-cz border border-cz-gray-dark"
         style={{ padding: '14px 18px', background: '#0A0A0A' }}
       >
-        <span className="font-mono text-cz-gray-light" style={{ fontSize: 11, letterSpacing: 1 }}>
+        <span className="font-mono text-cz-gray-light" style={{ fontSize: 16, letterSpacing: 1 }}>
           {form.stationType?.toUpperCase()} · {form.option?.label} · {form.date} {form.startTime}
         </span>
         <span className="font-display text-cz-orange" style={{ fontSize: 24, letterSpacing: 1 }}>
@@ -66,7 +66,7 @@ export default function StepContact({ form, setForm, onBack, onSubmit, error }: 
         </span>
       </div>
 
-      <p className="font-mono text-cz-gray-mid" style={{ fontSize: 10, letterSpacing: 1, marginTop: -4 }}>
+      <p className="font-mono text-cz-gray-light" style={{ fontSize: 16, letterSpacing: 1, marginTop: -4 }}>
         {t('priceApprox')}
       </p>
 
@@ -76,7 +76,7 @@ export default function StepContact({ form, setForm, onBack, onSubmit, error }: 
       <Field label={t('discord')} value={form.customerDiscord} onChange={(v) => setForm({ ...form, customerDiscord: v })} placeholder={t('discordPlaceholder')} required={false} />
 
       {error && (
-        <p className="font-mono text-cz-orange" style={{ fontSize: 11, letterSpacing: 1 }}>
+        <p className="font-mono text-cz-orange" style={{ fontSize: 16, letterSpacing: 1 }}>
           {error}
         </p>
       )}
@@ -85,7 +85,7 @@ export default function StepContact({ form, setForm, onBack, onSubmit, error }: 
         <button
           onClick={onBack}
           className="font-display uppercase rounded-[2px] cursor-pointer"
-          style={{ fontSize: 15, letterSpacing: 2, padding: '11px 24px', background: 'transparent', border: '1.5px solid #2A2A2A', color: '#888' }}
+          style={{ fontSize: 16, letterSpacing: 2, padding: '11px 24px', background: 'transparent', border: '1.5px solid #2A2A2A', color: '#888' }}
         >
           {t('back')}
         </button>
@@ -94,12 +94,12 @@ export default function StepContact({ form, setForm, onBack, onSubmit, error }: 
           disabled={!valid || loading}
           className="font-display uppercase rounded-[2px] flex-1 transition-colors"
           style={{
-            fontSize: 15,
+            fontSize: 16,
             letterSpacing: 2,
             padding: '11px 24px',
             background: valid && !loading ? '#E84A1A' : '#2A2A2A',
             border: 'none',
-            color: valid && !loading ? '#fff' : '#555',
+            color: valid && !loading ? '#fff' : '#888888',
             cursor: valid && !loading ? 'pointer' : 'not-allowed',
           }}
         >

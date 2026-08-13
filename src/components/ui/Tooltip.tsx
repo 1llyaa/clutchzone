@@ -42,7 +42,7 @@ export default function Tooltip({ content, children }: TooltipProps) {
             background: '#0A0A0A',
             border: '1px solid #2A2A2A',
             padding: '6px 10px',
-            fontSize: 11,
+            fontSize: 17,
             letterSpacing: 0.5,
             lineHeight: 1.4,
             whiteSpace: 'normal',

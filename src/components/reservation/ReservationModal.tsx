@@ -102,7 +102,7 @@ export default function ReservationModal() {
           style={{ padding: '28px 32px 0' }}
         >
           <div className="flex flex-col gap-1">
-            <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 10, letterSpacing: 3 }}>
+            <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 16, letterSpacing: 3 }}>
               {t('title')} · {step < 6 ? `${step}/5` : ''}
             </span>
             <span className="font-display text-white uppercase" style={{ fontSize: 28, letterSpacing: 1 }}>

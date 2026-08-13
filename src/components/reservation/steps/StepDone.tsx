@@ -18,7 +18,7 @@ export default function StepDone({ result, form, onClose }: Props) {
       <div>
         <span
           className="font-mono text-cz-gray-light uppercase block"
-          style={{ fontSize: 10, letterSpacing: 3, marginBottom: 12 }}
+          style={{ fontSize: 16, letterSpacing: 3, marginBottom: 12 }}
         >
           {t('referenceLabel')}
         </span>
@@ -33,23 +33,23 @@ export default function StepDone({ result, form, onClose }: Props) {
       {/* Details */}
       <div className="flex flex-col gap-3 w-full">
         <div className="flex justify-between border-b border-cz-gray-dark" style={{ paddingBottom: 12 }}>
-          <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+          <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
             {t('stationLabel')}
           </span>
-          <span className="font-mono text-white" style={{ fontSize: 12, letterSpacing: 1 }}>
+          <span className="font-mono text-white" style={{ fontSize: 17, letterSpacing: 1 }}>
             {result.stationLabel}
           </span>
         </div>
         <div className="flex justify-between border-b border-cz-gray-dark" style={{ paddingBottom: 12 }}>
-          <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+          <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
             {t('selectDate')}
           </span>
-          <span className="font-mono text-white" style={{ fontSize: 12, letterSpacing: 1 }}>
+          <span className="font-mono text-white" style={{ fontSize: 17, letterSpacing: 1 }}>
             {form.date} {form.startTime}
           </span>
         </div>
         <div className="flex justify-between border-b border-cz-gray-dark" style={{ paddingBottom: 12 }}>
-          <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+          <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
             {t('total')}
           </span>
           <span className="font-display text-cz-orange" style={{ fontSize: 20, letterSpacing: 1 }}>
@@ -58,14 +58,14 @@ export default function StepDone({ result, form, onClose }: Props) {
         </div>
       </div>
 
-      <p className="font-body text-cz-gray-light" style={{ fontSize: 14, lineHeight: 1.6, maxWidth: 380 }}>
+      <p className="font-body text-cz-gray-light" style={{ fontSize: 19, lineHeight: 1.6, maxWidth: 380 }}>
         {t('doneMessage')}
       </p>
 
       <button
         onClick={onClose}
         className="w-full bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors rounded-[2px] border-none cursor-pointer"
-        style={{ fontSize: 17, letterSpacing: 2, padding: '14px' }}
+        style={{ fontSize: 16, letterSpacing: 2, padding: '14px' }}
       >
         {t('close')}
       </button>

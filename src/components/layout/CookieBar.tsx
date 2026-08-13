@@ -30,7 +30,7 @@ export default function CookieBar() {
       className="fixed bottom-0 left-0 right-0 z-[100] bg-cz-black-mid flex flex-wrap items-center justify-between"
       style={{ borderTop: '1px solid #2A2A2A', padding: '16px 24px', gap: 16 }}
     >
-      <p className="font-body text-cz-gray-light" style={{ fontSize: 13, lineHeight: 1.6, maxWidth: 640, margin: 0 }}>
+      <p className="font-body text-cz-gray-light" style={{ fontSize: 19, lineHeight: 1.6, maxWidth: 640, margin: 0 }}>
         {t('text')}{' '}
         <Link href="/privacy" className="text-cz-orange hover:underline">
           {t('link')}
@@ -39,7 +39,7 @@ export default function CookieBar() {
       <button
         onClick={dismiss}
         className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer flex-shrink-0"
-        style={{ fontSize: 13, letterSpacing: 1.5, padding: '10px 24px' }}
+        style={{ fontSize: 16, letterSpacing: 1.5, padding: '10px 24px' }}
       >
         {t('ack')}
       </button>

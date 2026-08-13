@@ -63,7 +63,7 @@ export default function StepPayment({ result, form, onPayAtClub }: Props) {
       <div>
         <span
           className="font-mono text-cz-gray-light uppercase block"
-          style={{ fontSize: 10, letterSpacing: 3, marginBottom: 12 }}
+          style={{ fontSize: 16, letterSpacing: 3, marginBottom: 12 }}
         >
           {t('referenceLabel')}
         </span>
@@ -78,15 +78,15 @@ export default function StepPayment({ result, form, onPayAtClub }: Props) {
       {/* Order summary */}
       <div className="flex flex-col gap-3 w-full">
         <div className="flex justify-between border-b border-cz-gray-dark" style={{ paddingBottom: 12 }}>
-          <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+          <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
             {t('stationLabel')}
           </span>
-          <span className="font-mono text-white" style={{ fontSize: 12, letterSpacing: 1 }}>
+          <span className="font-mono text-white" style={{ fontSize: 17, letterSpacing: 1 }}>
             {result.stationLabel}
           </span>
         </div>
         <div className="flex justify-between border-b border-cz-gray-dark" style={{ paddingBottom: 12 }}>
-          <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+          <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
             {t('total')}
           </span>
           <span className="font-display text-cz-orange" style={{ fontSize: 20, letterSpacing: 1 }}>
@@ -107,13 +107,13 @@ export default function StepPayment({ result, form, onPayAtClub }: Props) {
         </Button>
 
         <div className="flex items-center gap-2">
-          <span className="font-mono text-cz-orange" style={{ fontSize: 13, letterSpacing: 1 }}>
+          <span className="font-mono text-cz-orange" style={{ fontSize: 17, letterSpacing: 1 }}>
             {t('coinsEarned', { amount: coinsAmount })}
           </span>
           <Tooltip content={t('coinsTooltip')}>
             <span
               className="font-mono text-cz-gray-light rounded-full border border-cz-gray-dark inline-flex items-center justify-center"
-              style={{ width: 16, height: 16, fontSize: 10, lineHeight: 1, cursor: 'help' }}
+              style={{ width: 20, height: 20, fontSize: 16, lineHeight: 1, cursor: 'help' }}
             >
               i
             </span>
@@ -121,7 +121,7 @@ export default function StepPayment({ result, form, onPayAtClub }: Props) {
         </div>
 
         {error && (
-          <p className="font-mono text-cz-orange" style={{ fontSize: 11, letterSpacing: 1 }}>
+          <p className="font-mono text-cz-orange" style={{ fontSize: 16, letterSpacing: 1 }}>
             {error}
           </p>
         )}

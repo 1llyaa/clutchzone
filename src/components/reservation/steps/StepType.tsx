@@ -57,13 +57,13 @@ export default function StepType({ form, setForm, onNext }: Props) {
             </span>
             <span
               className="font-mono text-cz-gray-light uppercase"
-              style={{ fontSize: 10, letterSpacing: 2, marginTop: 8 }}
+              style={{ fontSize: 16, letterSpacing: 2, marginTop: 8 }}
             >
               {card.desc}
             </span>
             <span
-              className="font-mono text-cz-gray-mid uppercase"
-              style={{ fontSize: 10, letterSpacing: 1, marginTop: 4 }}
+              className="font-mono text-cz-gray-light uppercase"
+              style={{ fontSize: 16, letterSpacing: 1, marginTop: 4 }}
             >
               {card.count}
             </span>
