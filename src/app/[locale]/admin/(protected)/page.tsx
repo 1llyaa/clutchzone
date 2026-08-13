@@ -164,7 +164,7 @@ export default async function AdminDashboard() {
                         style={{
                           fontSize: 16,
                           letterSpacing: 1,
-                          padding: '4px 10px',
+                          padding: '3px 8px',
                           color: STATUS_COLOR[b.status] ?? '#888',
                           background: (STATUS_COLOR[b.status] ?? '#888') + '20',
                         }}
