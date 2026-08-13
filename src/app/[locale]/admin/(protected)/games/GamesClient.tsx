@@ -232,7 +232,7 @@ export default function GamesClient() {
                   <img src={coverPreview} alt="" className="w-full h-full object-cover" />
                 ) : (
                   <div className="flex flex-col items-center gap-2 p-3 text-center">
-                    <span className="font-mono text-cz-gray-mid" style={{ fontSize: 24 }}>+</span>
+                    <span className="font-mono text-cz-gray-light" style={{ fontSize: 24 }}>+</span>
                     <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>COVER</span>
                   </div>
                 )}
