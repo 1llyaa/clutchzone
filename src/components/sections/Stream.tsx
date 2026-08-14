@@ -34,7 +34,7 @@ export default function Stream({ streamUrl }: Props) {
   return (
     <section
       id="stream"
-      className="relative bg-cz-black px-6 py-20 md:px-16 md:py-[120px]"
+      className="relative bg-cz-black px-6 py-14 md:px-16 md:py-[104px]"
       style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
     >
       {/* Grid overlay */}
@@ -51,18 +51,16 @@ export default function Stream({ streamUrl }: Props) {
 
       <div className="relative max-w-[1440px] mx-auto">
         {/* Section header */}
-        <Reveal>
-          <div style={{ marginBottom: 48 }}>
-            <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}>
-              {t('eyebrow')}
-            </span>
-            <h2
-              className="font-display text-white uppercase inline-block"
-              style={{ fontSize: 'clamp(36px, 5vw, 60px)', letterSpacing: 1.5, lineHeight: 0.95, paddingBottom: 14, borderBottom: '2px solid #E84A1A' }}
-            >
-              {t('heading')}
-            </h2>
-          </div>
+        <Reveal className="mb-8 md:mb-[40px]">
+          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 13, letterSpacing: 2.5, marginBottom: 12 }}>
+            {t('eyebrow')}
+          </span>
+          <h2
+            className="font-display text-white uppercase"
+            style={{ fontSize: 52, letterSpacing: 1.5, lineHeight: 0.98 }}
+          >
+            {t('heading')}
+          </h2>
         </Reveal>
 
         {/* Stream embed */}
@@ -90,13 +88,13 @@ export default function Stream({ streamUrl }: Props) {
 
         {/* Channel link */}
         <div className="flex items-center gap-3" style={{ marginTop: 16 }}>
-          <span className="rounded-full bg-red-500 animate-flicker flex-shrink-0" style={{ width: 8, height: 8 }} />
+          <span className="rounded-full bg-cz-orange animate-flicker flex-shrink-0" style={{ width: 9, height: 9 }} />
           <a
             href={`https://twitch.tv/${channel}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-mono text-cz-gray-light uppercase hover:text-cz-orange transition-colors"
-            style={{ fontSize: 11, letterSpacing: 2 }}
+            className="font-mono text-cz-white-soft uppercase hover:text-cz-orange transition-colors"
+            style={{ fontSize: 13, letterSpacing: 2.5 }}
           >
             twitch.tv/{channel}
           </a>
