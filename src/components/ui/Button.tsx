@@ -18,11 +18,11 @@ export default function Button({
   disabled = false,
 }: ButtonProps) {
   const base =
-    'font-display uppercase transition-[background-color,color,border-color,scale,box-shadow] duration-150 ease-out rounded-[2px] border-none inline-block';
+    'font-display uppercase transition-[background-color,color,border-color,scale,box-shadow] duration-150 ease-out rounded-[2px] inline-block';
 
   const sizes = {
-    sm: { fontSize: 15, padding: '9px 22px', letterSpacing: 2, borderWidth: '1.5px' },
-    md: { fontSize: 19, padding: '15px 40px', letterSpacing: 2, borderWidth: '1.5px' },
+    sm: { fontSize: 16, padding: '11px 22px', letterSpacing: 1.5 },
+    md: { fontSize: 18, padding: '14px 32px', letterSpacing: 1.5 },
   };
 
   const s = sizes[size];
@@ -33,8 +33,8 @@ export default function Button({
       <button
         onClick={onClick}
         disabled={disabled}
-        className={`${base} ${cursor} bg-cz-orange text-white disabled:opacity-60 disabled:hover:shadow-none hover:bg-cz-orange-dark hover:shadow-[0_0_18px_rgba(232,74,26,0.35)] active:scale-[0.96] ${className}`}
-        style={{ fontSize: s.fontSize, padding: s.padding, letterSpacing: s.letterSpacing }}
+        className={`${base} ${cursor} bg-cz-orange text-white border-[1.5px] border-cz-orange disabled:opacity-60 disabled:hover:shadow-none hover:bg-cz-orange-dark hover:border-cz-orange-dark hover:shadow-[0_0_18px_rgba(232,74,26,0.35)] active:scale-[0.96] ${className}`}
+        style={{ fontSize: s.fontSize, padding: s.padding, letterSpacing: s.letterSpacing, lineHeight: 1 }}
       >
         {children}
       </button>
@@ -45,13 +45,8 @@ export default function Button({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`${base} ${cursor} bg-transparent text-white disabled:opacity-60 hover:text-cz-orange hover:border-cz-orange ${className}`}
-      style={{
-        fontSize: s.fontSize,
-        padding: s.padding,
-        letterSpacing: s.letterSpacing,
-        border: `${s.borderWidth} solid #2A2A2A`,
-      }}
+      className={`${base} ${cursor} bg-transparent text-white border-[1.5px] border-cz-gray-dark disabled:opacity-60 hover:text-cz-orange hover:border-cz-orange ${className}`}
+      style={{ fontSize: s.fontSize, padding: s.padding, letterSpacing: s.letterSpacing, lineHeight: 1 }}
     >
       {children}
     </button>
