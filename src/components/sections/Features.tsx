@@ -14,11 +14,11 @@ export default function Features() {
   return (
     <section
       id="herna"
-      className="relative bg-cz-black px-6 py-14 md:px-16 md:py-[120px]"
+      className="relative bg-cz-black px-6 py-14 md:px-16 md:py-[104px]"
       style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
     >
       <div className="max-w-[1440px] mx-auto">
-        <Reveal className="mb-8 md:mb-16">
+        <Reveal className="mb-8 md:mb-[40px]">
           <span
             className="font-mono text-cz-orange uppercase block"
             style={{ fontSize: 13, letterSpacing: 2.5, marginBottom: 12 }}
