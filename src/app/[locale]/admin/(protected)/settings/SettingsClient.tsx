@@ -220,7 +220,7 @@ export default function SettingsClient({
         <h1 className="font-display text-white uppercase" style={{ fontSize: 36, letterSpacing: 2 }}>
           NASTAVENÍ
         </h1>
-        <p className="font-mono text-cz-gray-mid" style={{ fontSize: 11, letterSpacing: 2, marginTop: 4 }}>
+        <p className="font-mono text-cz-gray-light" style={{ fontSize: 11, letterSpacing: 2, marginTop: 4 }}>
           SPRÁVA UŽIVATELŮ A STANIC
         </p>
       </div>
@@ -375,7 +375,7 @@ export default function SettingsClient({
 
             {/* URL input */}
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+              <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
                 TWITCH URL NEBO NÁZEV KANÁLU
               </label>
               <div className="flex items-center gap-3">
@@ -396,7 +396,7 @@ export default function SettingsClient({
                   {savingStream ? '...' : 'ULOŽIT'}
                 </button>
               </div>
-              <p className="font-mono text-cz-gray-mid" style={{ fontSize: 10, letterSpacing: 1 }}>
+              <p className="font-mono text-cz-gray-light" style={{ fontSize: 10, letterSpacing: 1 }}>
                 Zadejte celý odkaz (https://twitch.tv/nazev) nebo jen název kanálu
               </p>
             </div>
@@ -423,7 +423,7 @@ export default function SettingsClient({
           <div className="flex flex-col gap-5">
             {/* Coins amount input */}
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+              <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
                 POČET MINCÍ PŘI PLATBĚ KARTOU
               </label>
               <div className="flex items-center gap-3">
@@ -469,7 +469,7 @@ export default function SettingsClient({
             <thead>
               <tr style={{ borderBottom: '1px solid #2A2A2A' }}>
                 {['E-MAIL', 'JMÉNO', 'ROLE', 'OD', ''].map((h) => (
-                  <th key={h} className="font-mono text-cz-gray-mid uppercase text-left" style={{ padding: '12px 16px', fontSize: 10, letterSpacing: 2 }}>
+                  <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '12px 16px', fontSize: 10, letterSpacing: 2 }}>
                     {h}
                   </th>
                 ))}
@@ -498,7 +498,7 @@ export default function SettingsClient({
                       {p.role === 'owner' ? 'MAJITEL' : 'RECEPCE'}
                     </span>
                   </td>
-                  <td className="font-mono text-cz-gray-mid" style={{ padding: '12px 16px', fontSize: 11 }}>
+                  <td className="font-mono text-cz-gray-light" style={{ padding: '12px 16px', fontSize: 11 }}>
                     {new Date(p.created_at).toLocaleDateString('cs-CZ')}
                   </td>
                   <td style={{ padding: '12px 16px' }}>
@@ -525,7 +525,7 @@ export default function SettingsClient({
           className="flex items-end gap-3"
         >
           <div className="flex flex-col gap-2">
-            <label className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+            <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
               POZVAT NOVÉHO ZAMĚSTNANCE
             </label>
             <input
@@ -566,7 +566,7 @@ export default function SettingsClient({
         <div className="grid gap-6" style={{ gridTemplateColumns: '1fr 1fr' }}>
           {/* PC */}
           <div>
-            <div className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 2, marginBottom: 12 }}>
+            <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2, marginBottom: 12 }}>
               PC STANICE
             </div>
             <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A' }}>
@@ -600,7 +600,7 @@ export default function SettingsClient({
 
           {/* PS5 */}
           <div>
-            <div className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 2, marginBottom: 12 }}>
+            <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2, marginBottom: 12 }}>
               PS5 STANICE
             </div>
             <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A' }}>
