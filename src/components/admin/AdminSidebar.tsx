@@ -126,7 +126,7 @@ export default function AdminSidebar({
         </div>
         <button
           onClick={handleLogout}
-          className="font-mono text-cz-gray-mid uppercase hover:text-white transition-colors"
+          className="font-mono text-cz-gray-light uppercase hover:text-white transition-colors"
           style={{ fontSize: 10, letterSpacing: 2 }}
         >
           ODHLÁSIT SE →

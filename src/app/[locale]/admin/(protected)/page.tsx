@@ -66,7 +66,7 @@ export default async function AdminDashboard() {
         <h1 className="font-display text-white uppercase" style={{ fontSize: 36, letterSpacing: 2 }}>
           DASHBOARD
         </h1>
-        <p className="font-mono text-cz-gray-mid" style={{ fontSize: 11, letterSpacing: 2, marginTop: 4 }}>
+        <p className="font-mono text-cz-gray-light" style={{ fontSize: 11, letterSpacing: 2, marginTop: 4 }}>
           {new Date().toLocaleDateString('cs-CZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).toUpperCase()}
         </p>
       </div>
@@ -79,7 +79,7 @@ export default async function AdminDashboard() {
             className="bg-cz-black-mid rounded-cz"
             style={{ padding: '24px 28px', border: '1px solid #2A2A2A' }}
           >
-            <div className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 2, marginBottom: 12 }}>
+            <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2, marginBottom: 12 }}>
               {card.label}
             </div>
             <div className="font-display text-white" style={{ fontSize: 40, lineHeight: 1, letterSpacing: 1 }}>
@@ -119,7 +119,7 @@ export default async function AdminDashboard() {
                 {['REFERENCE', 'ZÁKAZNÍK', 'STANICE', 'DATUM', 'ČAS', 'CELKEM', 'STATUS'].map((h) => (
                   <th
                     key={h}
-                    className="font-mono text-cz-gray-mid uppercase text-left"
+                    className="font-mono text-cz-gray-light uppercase text-left"
                     style={{ padding: '12px 16px', fontSize: 10, letterSpacing: 2 }}
                   >
                     {h}
@@ -130,7 +130,7 @@ export default async function AdminDashboard() {
             <tbody>
               {stats.recent.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="font-mono text-cz-gray-mid text-center" style={{ padding: 32, fontSize: 12 }}>
+                  <td colSpan={7} className="font-mono text-cz-gray-light text-center" style={{ padding: 32, fontSize: 12 }}>
                     Žádné rezervace
                   </td>
                 </tr>

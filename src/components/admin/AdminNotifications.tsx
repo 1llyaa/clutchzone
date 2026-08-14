@@ -249,7 +249,7 @@ export default function AdminNotifications({ locale }: { locale: string }) {
             </span>
             <button
               onClick={() => { setLog([]); saveLog([]); }}
-              className="font-mono text-cz-gray-mid uppercase hover:text-white transition-colors cursor-pointer"
+              className="font-mono text-cz-gray-light uppercase hover:text-white transition-colors cursor-pointer"
               style={{ fontSize: 9, letterSpacing: 1 }}
             >
               VYMAZAT
@@ -257,7 +257,7 @@ export default function AdminNotifications({ locale }: { locale: string }) {
           </div>
           <div className="overflow-y-auto flex-1">
             {log.length === 0 ? (
-              <div className="font-mono text-cz-gray-mid text-center uppercase" style={{ padding: 32, fontSize: 11, letterSpacing: 2 }}>
+              <div className="font-mono text-cz-gray-light text-center uppercase" style={{ padding: 32, fontSize: 11, letterSpacing: 2 }}>
                 Žádné notifikace
               </div>
             ) : (
@@ -271,7 +271,7 @@ export default function AdminNotifications({ locale }: { locale: string }) {
                   <div className="flex items-center gap-2" style={{ marginBottom: 3 }}>
                     {!e.read && <span className="rounded-full bg-cz-orange flex-shrink-0" style={{ width: 6, height: 6 }} />}
                     <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 9, letterSpacing: 1.5 }}>{e.title}</span>
-                    <span className="font-mono text-cz-gray-mid" style={{ fontSize: 9, marginLeft: 'auto' }}>
+                    <span className="font-mono text-cz-gray-light" style={{ fontSize: 9, marginLeft: 'auto' }}>
                       {new Date(e.at).toLocaleString('cs-CZ', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
