@@ -13,7 +13,7 @@ export default function PrivateEvents({ image }: Props) {
   return (
     <section
       id="akce"
-      className="bg-cz-black px-6 py-14 md:px-16 md:py-[120px]"
+      className="bg-cz-black px-6 py-14 md:px-16 md:py-[104px]"
       style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
     >
       <div className="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
@@ -34,29 +34,29 @@ export default function PrivateEvents({ image }: Props) {
 
         {/* Right — heading + info + CTA */}
         <Reveal delay={70}>
-          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}>
+          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 13, letterSpacing: 2.5, marginBottom: 12 }}>
             {t('eyebrow')}
           </span>
-          <h2 className="font-display text-white uppercase" style={{ fontSize: 'clamp(32px, 5vw, 60px)', letterSpacing: 1.5, lineHeight: 0.95, marginBottom: 20 }}>
+          <h2 className="font-display text-white uppercase" style={{ fontSize: 52, letterSpacing: 1.5, lineHeight: 0.98, marginBottom: 20 }}>
             {t('heading')}
           </h2>
-          <p className="font-body text-cz-gray-light" style={{ fontSize: 15, lineHeight: 1.8, maxWidth: 460, marginBottom: 28 }}>
+          <p className="font-body text-cz-white-soft" style={{ fontSize: 16, lineHeight: 1.8, maxWidth: 480, marginBottom: 28 }}>
             {t('subtext')}
           </p>
 
-          <div style={{ marginBottom: 32 }}>
-            <div className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 3, marginBottom: 4 }}>
+          <div style={{ marginBottom: 28 }}>
+            <div className="font-mono text-cz-white-soft uppercase" style={{ fontSize: 12, letterSpacing: 2.5, marginBottom: 6 }}>
               {t('priceLabel')}
             </div>
-            <div className="font-display text-white uppercase" style={{ fontSize: 20, letterSpacing: 1 }}>
+            <div className="font-display text-white uppercase" style={{ fontSize: 28, letterSpacing: 1 }}>
               {t('priceValue')}
             </div>
           </div>
 
           <a
             href="#kontakt"
-            className="inline-block bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] text-center"
-            style={{ fontSize: 15, letterSpacing: 2, padding: '14px 36px' }}
+            className="inline-block bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark hover:border-cz-orange-dark active:scale-[0.96] transition-[background-color,border-color,scale] duration-150 ease-out rounded-[2px]"
+            style={{ fontSize: 18, letterSpacing: 1.5, lineHeight: 1, padding: '14px 32px', border: '1.5px solid #E84A1A' }}
           >
             {t('cta')}
           </a>
