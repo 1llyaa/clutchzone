@@ -125,14 +125,14 @@ export default function GalleryClient() {
       <div className="flex items-center justify-between" style={{ marginBottom: 40 }}>
         <div>
           <h1 className="font-display text-white uppercase" style={{ fontSize: 36, letterSpacing: 2 }}>GALERIE</h1>
-          <p className="font-mono text-cz-gray-mid" style={{ fontSize: 11, letterSpacing: 2, marginTop: 4 }}>
+          <p className="font-mono text-cz-gray-light" style={{ fontSize: 11, letterSpacing: 2, marginTop: 4 }}>
             {images.length} FOTOGRAFIÍ · {images.filter((i) => i.is_active).length} AKTIVNÍCH
           </p>
         </div>
 
         {/* Display type selector */}
         <div className="flex items-center gap-2">
-          <span className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 9, letterSpacing: 2, marginRight: 4 }}>TYP ZOBRAZENÍ</span>
+          <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 9, letterSpacing: 2, marginRight: 4 }}>TYP ZOBRAZENÍ</span>
           {DISPLAY_TYPES.map((dt) => (
             <button
               key={dt.value}
@@ -140,7 +140,7 @@ export default function GalleryClient() {
               className="font-mono uppercase rounded-[2px] transition-colors"
               style={{
                 fontSize: 10, letterSpacing: 2, padding: '6px 14px',
-                color:      displayType === dt.value ? '#fff' : '#555',
+                color:      displayType === dt.value ? '#fff' : '#888',
                 background: displayType === dt.value ? '#E84A1A' : 'transparent',
                 border:     `1px solid ${displayType === dt.value ? '#E84A1A' : '#2A2A2A'}`,
               }}
@@ -178,7 +178,7 @@ export default function GalleryClient() {
         ) : (
           <>
             <div className="font-display text-white uppercase" style={{ fontSize: 18, letterSpacing: 2 }}>+ PŘIDAT FOTOGRAFIE</div>
-            <p className="font-mono text-cz-gray-mid" style={{ fontSize: 10, letterSpacing: 2, marginTop: 8 }}>
+            <p className="font-mono text-cz-gray-light" style={{ fontSize: 10, letterSpacing: 2, marginTop: 8 }}>
               PŘETÁHNĚTE SOUBORY NEBO KLIKNĚTE · JPG, PNG, WEBP
             </p>
           </>
@@ -187,9 +187,9 @@ export default function GalleryClient() {
 
       {/* Image grid */}
       {loading ? (
-        <p className="font-mono text-cz-gray-mid text-center" style={{ fontSize: 12, padding: 40 }}>NAČÍTÁNÍ...</p>
+        <p className="font-mono text-cz-gray-light text-center" style={{ fontSize: 12, padding: 40 }}>NAČÍTÁNÍ...</p>
       ) : sorted.length === 0 ? (
-        <p className="font-mono text-cz-gray-mid text-center uppercase" style={{ fontSize: 12, letterSpacing: 3, padding: 40 }}>Žádné fotografie</p>
+        <p className="font-mono text-cz-gray-light text-center uppercase" style={{ fontSize: 12, letterSpacing: 3, padding: 40 }}>Žádné fotografie</p>
       ) : (
         <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
           {sorted.map((img, idx) => (
@@ -242,10 +242,10 @@ export default function GalleryClient() {
                 ) : (
                   <button
                     onClick={() => { setEditId(img.id); setEditCaption(img.caption ?? ''); }}
-                    className="text-left font-body text-cz-gray-mid hover:text-white transition-colors truncate"
+                    className="text-left font-body text-cz-gray-light hover:text-white transition-colors truncate"
                     style={{ fontSize: 11 }}
                   >
-                    {img.caption || <span className="italic text-cz-gray-mid" style={{ fontSize: 10 }}>+ přidat popis</span>}
+                    {img.caption || <span className="italic text-cz-gray-light" style={{ fontSize: 10 }}>+ přidat popis</span>}
                   </button>
                 )}
 

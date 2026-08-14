@@ -168,7 +168,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
       <div className="flex items-center justify-between" style={{ marginBottom: 40 }}>
         <div>
           <h1 className="font-display text-white uppercase" style={{ fontSize: 36, letterSpacing: 2 }}>TURNAJE</h1>
-          <p className="font-mono text-cz-gray-mid" style={{ fontSize: 11, letterSpacing: 2, marginTop: 4 }}>
+          <p className="font-mono text-cz-gray-light" style={{ fontSize: 11, letterSpacing: 2, marginTop: 4 }}>
             {tournaments.length} TURNAJŮ
           </p>
         </div>
@@ -193,14 +193,14 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
           <thead>
             <tr style={{ borderBottom: '1px solid #2A2A2A' }}>
               {['DATUM', 'NÁZEV', 'HRA', 'FORMÁT', 'PRIZE POOL', 'SLOTY', 'STATUS', ''].map((h) => (
-                <th key={h} className="font-mono text-cz-gray-mid uppercase text-left" style={{ padding: '12px 16px', fontSize: 10, letterSpacing: 2 }}>{h}</th>
+                <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '12px 16px', fontSize: 10, letterSpacing: 2 }}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {tournaments.length === 0 ? (
               <tr>
-                <td colSpan={8} className="font-mono text-cz-gray-mid text-center" style={{ padding: 40, fontSize: 12 }}>Žádné turnaje</td>
+                <td colSpan={8} className="font-mono text-cz-gray-light text-center" style={{ padding: 40, fontSize: 12 }}>Žádné turnaje</td>
               </tr>
             ) : tournaments.map((t) => (
               <tr
@@ -262,7 +262,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
             <div>
               <div className="font-mono text-cz-orange uppercase" style={{ fontSize: 10, letterSpacing: 3 }}>REGISTRACE</div>
               <div className="font-display text-white uppercase" style={{ fontSize: 22, letterSpacing: 1 }}>{detail.title}</div>
-              <div className="font-mono text-cz-gray-mid" style={{ fontSize: 11, marginTop: 2 }}>
+              <div className="font-mono text-cz-gray-light" style={{ fontSize: 11, marginTop: 2 }}>
                 {detail.game}
                 {detail.format ? ` · ${detail.format}` : ''}
                 {' · '}
@@ -275,16 +275,16 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
 
           {detail.description && (
             <div style={{ padding: '16px 28px', borderBottom: '1px solid #2A2A2A' }}>
-              <div className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 9, letterSpacing: 2, marginBottom: 6 }}>POPIS</div>
+              <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 9, letterSpacing: 2, marginBottom: 6 }}>POPIS</div>
               <p className="font-body text-cz-white-soft" style={{ fontSize: 13, lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{detail.description}</p>
             </div>
           )}
 
           {/* Registrations list */}
           {regLoading ? (
-            <div className="font-mono text-cz-gray-mid text-center" style={{ padding: 40, fontSize: 12 }}>NAČÍTÁNÍ...</div>
+            <div className="font-mono text-cz-gray-light text-center" style={{ padding: 40, fontSize: 12 }}>NAČÍTÁNÍ...</div>
           ) : registrations.length === 0 ? (
-            <div className="font-mono text-cz-gray-mid text-center uppercase" style={{ padding: 40, fontSize: 12, letterSpacing: 3 }}>Zatím žádné registrace</div>
+            <div className="font-mono text-cz-gray-light text-center uppercase" style={{ padding: 40, fontSize: 12, letterSpacing: 3 }}>Zatím žádné registrace</div>
           ) : (
             <div>
               {registrations.map((reg, i) => (
@@ -322,7 +322,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                           ['DISCORD', reg.captain_discord || '—'],
                         ].map(([label, val]) => (
                           <div key={label}>
-                            <div className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 9, letterSpacing: 2 }}>{label}</div>
+                            <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 9, letterSpacing: 2 }}>{label}</div>
                             <div className="font-body text-cz-white-soft" style={{ fontSize: 13 }}>{val}</div>
                           </div>
                         ))}
@@ -331,7 +331,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                       {/* Players list */}
                       {reg.player_names && reg.player_names.length > 0 && (
                         <div>
-                          <div className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 9, letterSpacing: 2, marginBottom: 4 }}>HRÁČI</div>
+                          <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 9, letterSpacing: 2, marginBottom: 4 }}>HRÁČI</div>
                           <div className="flex flex-wrap gap-2">
                             {reg.player_names.map((name, idx) => (
                               <span
@@ -346,7 +346,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                         </div>
                       )}
 
-                      <div className="font-mono text-cz-gray-mid" style={{ fontSize: 10, marginTop: 8 }}>
+                      <div className="font-mono text-cz-gray-light" style={{ fontSize: 10, marginTop: 8 }}>
                         {new Date(reg.created_at).toLocaleString('cs-CZ')}
                       </div>
                     </div>
@@ -408,7 +408,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                 { label: 'DEADLINE REGISTRACE',  key: 'registration_deadline',  type: 'date',   full: true },
               ].map(({ label, key, type, full }) => (
                 <div key={key} className="flex flex-col gap-2" style={{ gridColumn: full ? '1 / -1' : 'auto' }}>
-                  <label className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>{label}</label>
+                  <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>{label}</label>
                   <input
                     type={type}
                     value={form[key as keyof typeof form] ?? ''}
@@ -419,7 +419,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                 </div>
               ))}
               <div className="flex flex-col gap-2" style={{ gridColumn: '1 / -1' }}>
-                <label className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>POPIS</label>
+                <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>POPIS</label>
                 <textarea
                   value={form.description ?? ''}
                   onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value || null }))}
@@ -434,7 +434,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
               <button onClick={handleSave} disabled={saving} className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark rounded-[2px] disabled:opacity-50" style={{ fontSize: 13, letterSpacing: 2, padding: '11px 28px' }}>
                 {saving ? '...' : 'ULOŽIT'}
               </button>
-              <button onClick={() => setShowForm(false)} className="font-display uppercase text-cz-gray-mid hover:text-white rounded-[2px]" style={{ fontSize: 13, letterSpacing: 2, padding: '11px 28px', border: '1px solid #2A2A2A', background: 'transparent' }}>
+              <button onClick={() => setShowForm(false)} className="font-display uppercase text-cz-gray-light hover:text-white rounded-[2px]" style={{ fontSize: 13, letterSpacing: 2, padding: '11px 28px', border: '1px solid #2A2A2A', background: 'transparent' }}>
                 ZRUŠIT
               </button>
             </div>

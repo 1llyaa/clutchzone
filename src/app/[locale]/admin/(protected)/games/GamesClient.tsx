@@ -143,7 +143,7 @@ export default function GamesClient() {
       <div className="flex items-center justify-between" style={{ marginBottom: 40 }}>
         <div>
           <h1 className="font-display text-white uppercase" style={{ fontSize: 36, letterSpacing: 2 }}>HERNÍ KNIHOVNA</h1>
-          <p className="font-mono text-cz-gray-mid" style={{ fontSize: 11, letterSpacing: 2, marginTop: 4 }}>
+          <p className="font-mono text-cz-gray-light" style={{ fontSize: 11, letterSpacing: 2, marginTop: 4 }}>
             {games.length} HER · {games.filter((g) => g.is_active).length} AKTIVNÍCH
           </p>
         </div>
@@ -158,20 +158,20 @@ export default function GamesClient() {
 
       {/* Table */}
       {loading ? (
-        <p className="font-mono text-cz-gray-mid text-center" style={{ padding: 40, fontSize: 12 }}>NAČÍTÁNÍ...</p>
+        <p className="font-mono text-cz-gray-light text-center" style={{ padding: 40, fontSize: 12 }}>NAČÍTÁNÍ...</p>
       ) : (
         <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A' }}>
           <table className="w-full">
             <thead>
               <tr style={{ borderBottom: '1px solid #2A2A2A' }}>
                 {['', 'NÁZEV', 'ŽÁNR', 'PLATFORMA', 'STATUS', ''].map((h) => (
-                  <th key={h} className="font-mono text-cz-gray-mid uppercase text-left" style={{ padding: '12px 16px', fontSize: 10, letterSpacing: 2 }}>{h}</th>
+                  <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '12px 16px', fontSize: 10, letterSpacing: 2 }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {sorted.length === 0 ? (
-                <tr><td colSpan={6} className="font-mono text-cz-gray-mid text-center" style={{ padding: 40, fontSize: 12 }}>Žádné hry</td></tr>
+                <tr><td colSpan={6} className="font-mono text-cz-gray-light text-center" style={{ padding: 40, fontSize: 12 }}>Žádné hry</td></tr>
               ) : sorted.map((g, idx) => (
                 <tr key={g.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', opacity: g.is_active ? 1 : 0.45 }}>
                   {/* Thumbnail */}
@@ -186,7 +186,7 @@ export default function GamesClient() {
                   <td className="font-body text-white" style={{ padding: '12px 16px', fontSize: 14, fontWeight: 500 }}>{g.title}</td>
                   <td className="font-mono text-cz-gray-light" style={{ padding: '12px 16px', fontSize: 11 }}>{g.genre || '—'}</td>
                   <td style={{ padding: '12px 16px' }}>
-                    <span className="font-mono uppercase rounded-[2px]" style={{ fontSize: 9, letterSpacing: 1, padding: '3px 8px', color: g.platform === 'ps5' ? '#60a5fa' : '#E84A1A', background: g.platform === 'ps5' ? '#60a5fa20' : '#E84A1A20' }}>
+                    <span className="font-mono uppercase rounded-[2px]" style={{ fontSize: 9, letterSpacing: 1, padding: '3px 8px', color: g.platform === 'ps5' ? '#fff' : '#E84A1A', background: g.platform === 'ps5' ? '#2A2A2A' : '#E84A1A20' }}>
                       {PLATFORM_LABEL[g.platform]}
                     </span>
                   </td>
@@ -232,8 +232,8 @@ export default function GamesClient() {
                   <img src={coverPreview} alt="" className="w-full h-full object-cover" />
                 ) : (
                   <div className="flex flex-col items-center gap-2 p-3 text-center">
-                    <span className="font-mono text-cz-gray-mid" style={{ fontSize: 24 }}>+</span>
-                    <span className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 8, letterSpacing: 2 }}>COVER</span>
+                    <span className="font-mono text-cz-gray-light" style={{ fontSize: 24 }}>+</span>
+                    <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 8, letterSpacing: 2 }}>COVER</span>
                   </div>
                 )}
                 <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleFileSelect(e.target.files?.[0] ?? null)} />
@@ -269,7 +269,7 @@ export default function GamesClient() {
                         type="button"
                         onClick={() => setForm((p) => ({ ...p, platform: opt.value }))}
                         className="font-mono uppercase rounded-[2px] transition-colors"
-                        style={{ fontSize: 10, letterSpacing: 1, padding: '6px 14px', color: form.platform === opt.value ? '#fff' : '#555', background: form.platform === opt.value ? '#E84A1A' : 'transparent', border: `1px solid ${form.platform === opt.value ? '#E84A1A' : '#2A2A2A'}` }}
+                        style={{ fontSize: 10, letterSpacing: 1, padding: '6px 14px', color: form.platform === opt.value ? '#fff' : '#888', background: form.platform === opt.value ? '#E84A1A' : 'transparent', border: `1px solid ${form.platform === opt.value ? '#E84A1A' : '#2A2A2A'}` }}
                       >
                         {opt.label}
                       </button>
@@ -296,7 +296,7 @@ export default function GamesClient() {
               <button onClick={handleSave} disabled={saving || !form.title.trim()} className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark rounded-[2px] disabled:opacity-50" style={{ fontSize: 13, letterSpacing: 2, padding: '11px 28px' }}>
                 {saving ? '...' : 'ULOŽIT'}
               </button>
-              <button onClick={() => setShowForm(false)} className="font-display uppercase text-cz-gray-mid hover:text-white rounded-[2px]" style={{ fontSize: 13, letterSpacing: 2, padding: '11px 28px', border: '1px solid #2A2A2A', background: 'transparent' }}>
+              <button onClick={() => setShowForm(false)} className="font-display uppercase text-cz-gray-light hover:text-white rounded-[2px]" style={{ fontSize: 13, letterSpacing: 2, padding: '11px 28px', border: '1px solid #2A2A2A', background: 'transparent' }}>
                 ZRUŠIT
               </button>
             </div>
