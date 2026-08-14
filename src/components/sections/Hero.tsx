@@ -58,7 +58,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
 
           <h1
             className="font-display text-white uppercase"
-            style={{ fontSize: 'clamp(44px, 7.2vw, 88px)', lineHeight: 0.94, letterSpacing: 2 }}
+            style={{ fontSize: 'clamp(44px, 7.2vw, 88px)', lineHeight: 0.94, letterSpacing: 1.5 }}
           >
             {t('h1Line1')}
             <br />
@@ -110,7 +110,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
                 <div className="font-display text-white" style={{ fontSize: 40, lineHeight: 1 }}>
                   {stat.value}
                 </div>
-                <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 13, letterSpacing: 1.5, marginTop: 6 }}>
+                <div className="font-mono text-cz-white-soft uppercase" style={{ fontSize: 13, letterSpacing: 1.5, marginTop: 6 }}>
                   {stat.label}
                 </div>
               </div>
