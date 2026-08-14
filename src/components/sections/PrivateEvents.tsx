@@ -55,8 +55,8 @@ export default function PrivateEvents({ image }: Props) {
 
           <a
             href="#kontakt"
-            className="inline-block bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark hover:border-cz-orange-dark active:scale-[0.96] transition-[background-color,border-color,scale] duration-150 ease-out rounded-[2px]"
-            style={{ fontSize: 18, letterSpacing: 1.5, lineHeight: 1, padding: '14px 32px', border: '1.5px solid #E84A1A' }}
+            className="inline-block bg-cz-orange text-white font-display uppercase border-[1.5px] border-cz-orange hover:bg-cz-orange-dark hover:border-cz-orange-dark active:scale-[0.96] transition-[background-color,border-color,scale] duration-150 ease-out rounded-[2px]"
+            style={{ fontSize: 18, letterSpacing: 1.5, lineHeight: 1, padding: '14px 32px' }}
           >
             {t('cta')}
           </a>

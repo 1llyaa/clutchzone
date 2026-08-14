@@ -83,15 +83,15 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
           <div className="flex flex-wrap gap-4" style={{ marginTop: 36 }}>
             <button
               onClick={open}
-              className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark hover:border-cz-orange-dark active:scale-[0.96] transition-[background-color,border-color,scale] duration-150 ease-out rounded-[2px] cursor-pointer"
-              style={{ fontSize: 18, letterSpacing: 1.5, lineHeight: 1, padding: '14px 32px', border: '1.5px solid #E84A1A' }}
+              className="bg-cz-orange text-white font-display uppercase border-[1.5px] border-cz-orange hover:bg-cz-orange-dark hover:border-cz-orange-dark active:scale-[0.96] transition-[background-color,border-color,scale] duration-150 ease-out rounded-[2px] cursor-pointer"
+              style={{ fontSize: 18, letterSpacing: 1.5, lineHeight: 1, padding: '14px 32px' }}
             >
               {t('ctaPrimary')}
             </button>
             <button
               onClick={() => document.getElementById('cenik')?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-transparent text-white font-display uppercase hover:text-cz-orange hover:border-cz-orange active:scale-[0.96] transition-[color,border-color,scale] duration-150 ease-out rounded-[2px] cursor-pointer"
-              style={{ fontSize: 18, letterSpacing: 1.5, lineHeight: 1, padding: '14px 32px', border: '1.5px solid rgba(255,255,255,0.2)' }}
+              className="bg-transparent text-white font-display uppercase border-[1.5px] border-white/20 hover:text-cz-orange hover:border-cz-orange active:scale-[0.96] transition-[color,border-color,scale] duration-150 ease-out rounded-[2px] cursor-pointer"
+              style={{ fontSize: 18, letterSpacing: 1.5, lineHeight: 1, padding: '14px 32px' }}
             >
               {t('ctaSecondary')}
             </button>

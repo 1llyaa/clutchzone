@@ -127,8 +127,8 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
                       <button
                         onClick={() => !isFull && setSelected(row)}
                         disabled={isFull}
-                        className={`font-display uppercase transition-[color,border-color,scale] duration-200 ease-out rounded-[2px] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed active:not-disabled:scale-[0.96] ${!isFull ? 'hover:text-cz-orange hover:border-cz-orange' : ''} ${isFull ? 'text-cz-gray-light' : 'text-white'}`}
-                        style={{ fontSize: 16, lineHeight: 1, letterSpacing: 1.5, padding: '11px 22px', background: 'transparent', border: '1.5px solid #2A2A2A' }}
+                        className={`font-display uppercase border-[1.5px] border-cz-gray-dark transition-[color,border-color,scale] duration-200 ease-out rounded-[2px] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed active:not-disabled:scale-[0.96] ${!isFull ? 'hover:text-cz-orange hover:border-cz-orange' : ''} ${isFull ? 'text-cz-gray-light' : 'text-white'}`}
+                        style={{ fontSize: 16, lineHeight: 1, letterSpacing: 1.5, padding: '11px 22px', background: 'transparent' }}
                       >
                         {isFull ? 'PLNÝ' : t('cta')}
                       </button>
@@ -176,7 +176,7 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
                         onClick={() => !isFull && setSelected(row)}
                         disabled={isFull}
                         className={`font-display uppercase rounded-[2px] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-[background-color,color,scale] duration-150 active:not-disabled:scale-[0.96] ${isFull ? 'text-cz-gray-light' : 'text-white'}`}
-                        style={{ fontSize: 16, lineHeight: 1, letterSpacing: 1.5, padding: '11px 22px', background: isFull ? 'transparent' : '#E84A1A', border: isFull ? '1.5px solid #2A2A2A' : 'none' }}
+                        style={{ fontSize: 16, lineHeight: 1, letterSpacing: 1.5, padding: '11px 22px', background: isFull ? 'transparent' : '#E84A1A', border: isFull ? '1.5px solid #2A2A2A' : '1.5px solid #E84A1A' }}
                       >
                         {isFull ? 'PLNÝ' : t('cta')}
                       </button>

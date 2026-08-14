@@ -149,8 +149,8 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:not-disabled:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] cursor-pointer disabled:opacity-50"
-                style={{ fontSize: 18, letterSpacing: 1.5, lineHeight: 1, padding: '14px 0', border: '1.5px solid #E84A1A', marginTop: 4 }}
+                className="bg-cz-orange text-white font-display uppercase border-[1.5px] border-cz-orange hover:bg-cz-orange-dark hover:border-cz-orange-dark active:not-disabled:scale-[0.96] transition-[background-color,border-color,scale] duration-150 ease-out rounded-[2px] cursor-pointer disabled:opacity-50"
+                style={{ fontSize: 18, letterSpacing: 1.5, lineHeight: 1, padding: '14px 0', marginTop: 4 }}
               >
                 {submitting ? '...' : t('submit')}
               </button>
