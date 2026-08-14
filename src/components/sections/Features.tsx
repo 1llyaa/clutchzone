@@ -21,37 +21,40 @@ export default function Features() {
         <Reveal className="mb-8 md:mb-16">
           <span
             className="font-mono text-cz-orange uppercase block"
-            style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}
+            style={{ fontSize: 13, letterSpacing: 2.5, marginBottom: 12 }}
           >
             {t('eyebrow')}
           </span>
           <h2
             className="font-display text-white uppercase"
-            style={{ fontSize: 'clamp(32px, 5vw, 60px)', letterSpacing: 1.5, lineHeight: 0.95 }}
+            style={{ fontSize: 52, letterSpacing: 1.5, lineHeight: 0.98 }}
           >
             {t('heading')}
           </h2>
         </Reveal>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: 20 }}>
           {cards.map((card, i) => (
             <Reveal key={card.no} delay={i * 70}>
               <div
                 className="group flex flex-col h-full bg-cz-black-mid border border-cz-gray-dark rounded-cz cz-card-lift hover:border-cz-orange"
-                style={{ padding: 'clamp(20px, 4vw, 32px) clamp(18px, 3vw, 28px)' }}
+                style={{ padding: 32 }}
               >
-                <span className="font-mono text-cz-orange" style={{ fontSize: 13, letterSpacing: 2 }}>
+                <span
+                  className="font-mono text-cz-orange"
+                  style={{ fontWeight: 700, fontSize: 13, letterSpacing: 2 }}
+                >
                   {card.no}
                 </span>
                 <h3
-                  className="font-display text-white uppercase mt-5 md:mt-8"
-                  style={{ fontSize: 'clamp(22px, 3vw, 30px)', letterSpacing: 1 }}
+                  className="font-display text-white uppercase"
+                  style={{ fontSize: 28, letterSpacing: 1, marginTop: 22 }}
                 >
                   {card.title}
                 </h3>
                 <p
-                  className="font-body text-cz-gray-light mt-3"
-                  style={{ fontWeight: 300, fontSize: 'clamp(13px, 1.5vw, 15px)', lineHeight: 1.65 }}
+                  className="font-body text-cz-white-soft"
+                  style={{ fontSize: 16, lineHeight: 1.75, marginTop: 12, maxWidth: 460 }}
                 >
                   {card.desc}
                 </p>
