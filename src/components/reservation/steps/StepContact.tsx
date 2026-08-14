@@ -21,14 +21,14 @@ function Field({
   return (
     <div>
       <label className="font-mono text-cz-gray-light uppercase block" style={{ fontSize: 10, letterSpacing: 3, marginBottom: 8 }}>
-        {label}{!required && <span className="text-cz-gray-mid"> (nepovinné)</span>}
+        {label}{!required && <span className="text-cz-gray-light"> (nepovinné)</span>}
       </label>
       <input
         type={type}
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-cz-black border border-cz-gray-dark rounded-cz text-white font-body placeholder:text-cz-gray-mid focus:border-cz-orange outline-none transition-colors"
+        className="w-full bg-cz-black border border-cz-gray-dark rounded-cz text-white font-body placeholder:text-cz-gray-light focus:border-cz-orange outline-none transition-colors"
         style={{ padding: '12px 16px', fontSize: 14 }}
       />
     </div>
@@ -66,7 +66,7 @@ export default function StepContact({ form, setForm, onBack, onSubmit, error }: 
         </span>
       </div>
 
-      <p className="font-mono text-cz-gray-mid" style={{ fontSize: 10, letterSpacing: 1, marginTop: -4 }}>
+      <p className="font-mono text-cz-gray-light" style={{ fontSize: 10, letterSpacing: 1, marginTop: -4 }}>
         {t('priceApprox')}
       </p>
 
@@ -99,7 +99,7 @@ export default function StepContact({ form, setForm, onBack, onSubmit, error }: 
             padding: '11px 24px',
             background: valid && !loading ? '#E84A1A' : '#2A2A2A',
             border: 'none',
-            color: valid && !loading ? '#fff' : '#555',
+            color: valid && !loading ? '#fff' : '#888',
             cursor: valid && !loading ? 'pointer' : 'not-allowed',
           }}
         >

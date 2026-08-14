@@ -78,12 +78,12 @@ export default function StepDuration({ form, setForm, onNext, onBack }: Props) {
                 {opt.label}
               </span>
               {opt.timeLabel && (
-                <span className="font-mono text-cz-gray-mid" style={{ fontSize: 10, letterSpacing: 1, marginTop: 4 }}>
+                <span className="font-mono text-cz-gray-light" style={{ fontSize: 10, letterSpacing: 1, marginTop: 4 }}>
                   {opt.timeLabel}
                 </span>
               )}
               {!opt.isPass && (
-                <span className="font-mono text-cz-gray-mid" style={{ fontSize: 10, letterSpacing: 1, marginTop: 4 }}>
+                <span className="font-mono text-cz-gray-light" style={{ fontSize: 10, letterSpacing: 1, marginTop: 4 }}>
                   {form.startTime} – {addHours(form.startTime, opt.duration_h)}
                 </span>
               )}
@@ -99,7 +99,7 @@ export default function StepDuration({ form, setForm, onNext, onBack }: Props) {
       </div>
 
       {/* Approximate price note */}
-      <p className="font-mono text-cz-gray-mid" style={{ fontSize: 10, letterSpacing: 1 }}>
+      <p className="font-mono text-cz-gray-light" style={{ fontSize: 10, letterSpacing: 1 }}>
         {t('priceApprox')}
       </p>
 
@@ -129,7 +129,7 @@ export default function StepDuration({ form, setForm, onNext, onBack }: Props) {
             padding: '11px 24px',
             background: form.option ? '#E84A1A' : '#2A2A2A',
             border: 'none',
-            color: form.option ? '#fff' : '#555',
+            color: form.option ? '#fff' : '#888',
             cursor: form.option ? 'pointer' : 'not-allowed',
           }}
         >

@@ -120,7 +120,7 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
             <div className="font-display text-white uppercase" style={{ fontSize: 28, letterSpacing: 1, marginTop: 4 }}>
               {tournament.title}
             </div>
-            <div className="font-mono text-cz-gray-mid" style={{ fontSize: 11, marginTop: 4 }}>
+            <div className="font-mono text-cz-gray-light" style={{ fontSize: 11, marginTop: 4 }}>
               {tournament.game} · {slotsLeft} {slotsLeft === 1 ? 'místo' : 'míst'} zbývá
             </div>
           </div>
@@ -227,7 +227,7 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
               <div className="flex flex-col gap-2" style={{ gridColumn: '1 / -1' }}>
                 <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
                   {t('players')}
-                  <span className="ml-2 normal-case font-body text-cz-gray-mid" style={{ fontSize: 11, letterSpacing: 0 }}>
+                  <span className="ml-2 normal-case font-body text-cz-gray-light" style={{ fontSize: 11, letterSpacing: 0 }}>
                     — {t('playersHint')}
                   </span>
                 </label>
@@ -260,7 +260,7 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
               <button
                 type="button"
                 onClick={onClose}
-                className="font-display uppercase text-cz-gray-mid hover:text-white transition-colors rounded-[2px] cursor-pointer"
+                className="font-display uppercase text-cz-gray-light hover:text-white transition-colors rounded-[2px] cursor-pointer"
                 style={{ fontSize: 15, letterSpacing: 2, padding: '13px 24px', border: '1px solid #2A2A2A', background: 'transparent' }}
               >
                 {t('close')}

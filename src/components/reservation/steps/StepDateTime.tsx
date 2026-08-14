@@ -161,7 +161,7 @@ export default function StepDateTime({ form, setForm, onNext, onBack }: Props) {
             padding: '11px 24px',
             background: canProceed ? '#E84A1A' : '#2A2A2A',
             border: 'none',
-            color: canProceed ? '#fff' : '#555',
+            color: canProceed ? '#fff' : '#888',
             cursor: canProceed ? 'pointer' : 'not-allowed',
           }}
         >
