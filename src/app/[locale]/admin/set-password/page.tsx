@@ -67,7 +67,7 @@ export default function SetPasswordPage() {
           </div>
         </div>
 
-        <p className="font-mono text-cz-gray-mid" style={{ fontSize: 11, letterSpacing: 1, marginBottom: 24, lineHeight: 1.7 }}>
+        <p className="font-mono text-cz-gray-light" style={{ fontSize: 11, letterSpacing: 1, marginBottom: 24, lineHeight: 1.7 }}>
           Vítejte. Před prvním přihlášením si nastavte heslo.
         </p>
 

@@ -39,7 +39,7 @@ export default function AcceptInvitePage() {
       <div className="flex flex-col items-center gap-4">
         <Logo size={44} />
         {status === 'loading' ? (
-          <p className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 11, letterSpacing: 3 }}>
+          <p className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 3 }}>
             OVĚŘOVÁNÍ...
           </p>
         ) : (
