@@ -10,12 +10,12 @@ export default function CtaBand() {
 
   return (
     <section
-      className="relative bg-cz-black px-6 pb-20 md:px-16 md:pb-[120px]"
+      className="relative bg-cz-black px-6 pb-20 md:px-16 md:pb-[104px]"
     >
       <Reveal>
       <div
         className="relative max-w-[1440px] mx-auto rounded-cz overflow-hidden text-center bg-cz-black-mid border border-cz-gray-dark"
-        style={{ padding: 'clamp(48px, 8vw, 80px) clamp(24px, 6vw, 64px)' }}
+        style={{ padding: 'clamp(48px, 8vw, 72px) clamp(24px, 6vw, 64px)' }}
       >
         {/* Grid overlay */}
         <div
@@ -67,28 +67,28 @@ export default function CtaBand() {
         <div className="relative">
           <span
             className="font-mono text-cz-orange uppercase"
-            style={{ fontSize: 12, letterSpacing: 4 }}
+            style={{ fontSize: 13, letterSpacing: 2.5 }}
           >
             {t('eyebrow')}
           </span>
           <h2
             className="font-display text-white uppercase"
-            style={{ fontSize: 'clamp(40px, 7vw, 72px)', letterSpacing: 2, lineHeight: 0.95, margin: '18px 0 32px' }}
+            style={{ fontSize: 60, letterSpacing: 1.5, lineHeight: 0.98, margin: '16px 0 28px' }}
           >
             {t('heading')}
           </h2>
           <div className="flex gap-4 md:gap-5 justify-center flex-wrap">
             <button
               onClick={open}
-              className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark hover:shadow-[0_0_18px_rgba(232,74,26,0.35)] active:scale-[0.96] transition-[background-color,scale,box-shadow] duration-150 ease-out rounded-[2px] border-none cursor-pointer"
-              style={{ fontSize: 'clamp(15px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(12px, 2vw, 16px) clamp(28px, 4vw, 44px)' }}
+              className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark hover:shadow-[0_0_18px_rgba(232,74,26,0.35)] active:scale-[0.96] transition-[background-color,scale,box-shadow] duration-150 ease-out rounded-[2px] cursor-pointer"
+              style={{ fontSize: 18, letterSpacing: 1.5, lineHeight: 1, padding: '14px 32px', border: '1.5px solid #E84A1A' }}
             >
               {t('primary')}
             </button>
             <button
               onClick={() => document.getElementById('kontakt')?.scrollIntoView({ behavior: 'smooth' })}
               className="bg-transparent text-white font-display uppercase hover:text-cz-orange hover:border-cz-orange active:scale-[0.96] transition-[color,border-color,scale] duration-150 ease-out rounded-[2px] cursor-pointer"
-              style={{ fontSize: 'clamp(15px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(11px, 2vw, 15px) clamp(28px, 4vw, 44px)', border: '1.5px solid rgba(255,255,255,0.15)' }}
+              style={{ fontSize: 18, letterSpacing: 1.5, lineHeight: 1, padding: '14px 32px', border: '1.5px solid rgba(255,255,255,0.2)' }}
             >
               {t('secondary')}
             </button>
