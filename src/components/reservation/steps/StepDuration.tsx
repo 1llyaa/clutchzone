@@ -47,7 +47,7 @@ export default function StepDuration({ form, setForm, onNext, onBack }: Props) {
   return (
     <div className="flex flex-col gap-4" style={{ marginTop: 8 }}>
       {/* Summary line */}
-      <div className="font-mono text-cz-gray-light" style={{ fontSize: 11, letterSpacing: 1 }}>
+      <div className="font-mono text-cz-gray-light" style={{ fontSize: 16, letterSpacing: 1 }}>
         {form.stationType?.toUpperCase()} · {form.date} · {form.startTime}
       </div>
 
@@ -69,7 +69,7 @@ export default function StepDuration({ form, setForm, onNext, onBack }: Props) {
               {(opt.isHappyHour || opt.isPass) && (
                 <span
                   className="font-mono text-cz-orange uppercase"
-                  style={{ fontSize: 9, letterSpacing: 2, marginBottom: 6 }}
+                  style={{ fontSize: 16, letterSpacing: 2, marginBottom: 6 }}
                 >
                   {opt.isHappyHour ? t('happyHourBadge') : t('passBadge')}
                 </span>
@@ -78,18 +78,18 @@ export default function StepDuration({ form, setForm, onNext, onBack }: Props) {
                 {opt.label}
               </span>
               {opt.timeLabel && (
-                <span className="font-mono text-cz-gray-light" style={{ fontSize: 10, letterSpacing: 1, marginTop: 4 }}>
+                <span className="font-mono text-cz-gray-light" style={{ fontSize: 17, letterSpacing: 1, marginTop: 4 }}>
                   {opt.timeLabel}
                 </span>
               )}
               {!opt.isPass && (
-                <span className="font-mono text-cz-gray-light" style={{ fontSize: 10, letterSpacing: 1, marginTop: 4 }}>
+                <span className="font-mono text-cz-gray-light" style={{ fontSize: 17, letterSpacing: 1, marginTop: 4 }}>
                   {form.startTime} – {addHours(form.startTime, opt.duration_h)}
                 </span>
               )}
               <span className="font-display text-cz-orange" style={{ fontSize: 28, marginTop: 12, letterSpacing: 1 }}>
                 {opt.amount}
-                <span className="font-body text-cz-gray-light" style={{ fontSize: 13, marginLeft: 4, fontWeight: 400 }}>
+                <span className="font-body text-cz-gray-light" style={{ fontSize: 17, marginLeft: 4, fontWeight: 400 }}>
                   Kč
                 </span>
               </span>
@@ -99,13 +99,13 @@ export default function StepDuration({ form, setForm, onNext, onBack }: Props) {
       </div>
 
       {/* Approximate price note */}
-      <p className="font-mono text-cz-gray-light" style={{ fontSize: 10, letterSpacing: 1 }}>
+      <p className="font-mono text-cz-gray-light" style={{ fontSize: 16, letterSpacing: 1 }}>
         {t('priceApprox')}
       </p>
 
       {/* Availability */}
       {available !== null && (
-        <p className="font-mono" style={{ fontSize: 11, letterSpacing: 1, color: available > 0 ? '#888' : '#E84A1A' }}>
+        <p className="font-mono" style={{ fontSize: 16, letterSpacing: 1, color: available > 0 ? '#888' : '#E84A1A' }}>
           {available > 0 ? `${available} ${t('stationsFree')}` : t('errorUnavailable')}
         </p>
       )}
@@ -115,7 +115,7 @@ export default function StepDuration({ form, setForm, onNext, onBack }: Props) {
         <button
           onClick={onBack}
           className="font-display uppercase rounded-[2px] cursor-pointer"
-          style={{ fontSize: 15, letterSpacing: 2, padding: '11px 24px', background: 'transparent', border: '1.5px solid #2A2A2A', color: '#888' }}
+          style={{ fontSize: 16, letterSpacing: 2, padding: '11px 24px', background: 'transparent', border: '1.5px solid #2A2A2A', color: '#888' }}
         >
           {t('back')}
         </button>
@@ -124,12 +124,12 @@ export default function StepDuration({ form, setForm, onNext, onBack }: Props) {
           disabled={!form.option}
           className="font-display uppercase rounded-[2px] flex-1"
           style={{
-            fontSize: 15,
+            fontSize: 16,
             letterSpacing: 2,
             padding: '11px 24px',
             background: form.option ? '#E84A1A' : '#2A2A2A',
             border: 'none',
-            color: form.option ? '#fff' : '#888',
+            color: form.option ? '#fff' : '#888888',
             cursor: form.option ? 'pointer' : 'not-allowed',
           }}
         >

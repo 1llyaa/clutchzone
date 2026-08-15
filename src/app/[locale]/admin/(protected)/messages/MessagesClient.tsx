@@ -45,7 +45,7 @@ export default function MessagesClient({ messages }: { messages: Message[] }) {
         <h1 className="font-display text-white uppercase" style={{ fontSize: 36, letterSpacing: 2 }}>
           ZPRÁVY
         </h1>
-        <p className="font-mono text-cz-gray-light" style={{ fontSize: 11, letterSpacing: 2, marginTop: 4 }}>
+        <p className="font-mono text-cz-gray-light" style={{ fontSize: 16, letterSpacing: 2, marginTop: 4 }}>
           {unreadCount > 0
             ? `${unreadCount} NEPŘEČTENÝCH ZPRÁV`
             : 'VŠE PŘEČTENO'}
@@ -59,7 +59,7 @@ export default function MessagesClient({ messages }: { messages: Message[] }) {
           style={{ width: 380, border: '1px solid #2A2A2A' }}
         >
           {messages.length === 0 ? (
-            <div className="font-mono text-cz-gray-light text-center" style={{ padding: 40, fontSize: 12 }}>
+            <div className="font-mono text-cz-gray-light text-center" style={{ padding: 40, fontSize: 17 }}>
               Žádné zprávy
             </div>
           ) : (
@@ -78,7 +78,7 @@ export default function MessagesClient({ messages }: { messages: Message[] }) {
                 <div className="flex items-center justify-between" style={{ marginBottom: 4 }}>
                   <span
                     className="font-body"
-                    style={{ fontSize: 13, fontWeight: m.is_read ? 400 : 700, color: m.is_read ? '#888' : '#fff' }}
+                    style={{ fontSize: 17, fontWeight: m.is_read ? 400 : 700, color: m.is_read ? '#888' : '#fff' }}
                   >
                     {m.name}
                   </span>
@@ -86,10 +86,10 @@ export default function MessagesClient({ messages }: { messages: Message[] }) {
                     <span className="rounded-full bg-cz-orange" style={{ width: 7, height: 7, flexShrink: 0 }} />
                   )}
                 </div>
-                <div className="font-body text-cz-gray-light truncate" style={{ fontSize: 12 }}>
+                <div className="font-body text-cz-gray-light truncate" style={{ fontSize: 17 }}>
                   {m.message.slice(0, 60)}{m.message.length > 60 ? '…' : ''}
                 </div>
-                <div className="font-mono text-cz-gray-light" style={{ fontSize: 10, marginTop: 6 }}>
+                <div className="font-mono text-cz-gray-light" style={{ fontSize: 17, marginTop: 6 }}>
                   {new Date(m.created_at).toLocaleDateString('cs-CZ')}
                 </div>
               </button>
@@ -111,10 +111,10 @@ export default function MessagesClient({ messages }: { messages: Message[] }) {
                 <div className="font-display text-white uppercase" style={{ fontSize: 22, letterSpacing: 1 }}>
                   {selected.name}
                 </div>
-                <div className="font-mono text-cz-gray-light" style={{ fontSize: 12, marginTop: 4 }}>
+                <div className="font-mono text-cz-gray-light" style={{ fontSize: 17, marginTop: 4 }}>
                   {selected.email}
                 </div>
-                <div className="font-mono text-cz-gray-light" style={{ fontSize: 10, marginTop: 4 }}>
+                <div className="font-mono text-cz-gray-light" style={{ fontSize: 17, marginTop: 4 }}>
                   {new Date(selected.created_at).toLocaleString('cs-CZ')}
                 </div>
               </div>
@@ -122,7 +122,7 @@ export default function MessagesClient({ messages }: { messages: Message[] }) {
                 <button
                   onClick={() => markRead(selected.id, !selected.is_read)}
                   className="font-mono text-cz-gray-light uppercase hover:text-white transition-colors"
-                  style={{ fontSize: 10, letterSpacing: 2 }}
+                  style={{ fontSize: 16, letterSpacing: 2 }}
                 >
                   {selected.is_read ? 'OZNAČIT NEPŘEČTENÉ' : 'OZNAČIT PŘEČTENÉ'}
                 </button>
@@ -130,14 +130,14 @@ export default function MessagesClient({ messages }: { messages: Message[] }) {
                   onClick={() => deleteMessage(selected.id)}
                   disabled={acting}
                   className="font-mono text-red-400 uppercase hover:underline disabled:opacity-50"
-                  style={{ fontSize: 10, letterSpacing: 2 }}
+                  style={{ fontSize: 16, letterSpacing: 2 }}
                 >
                   SMAZAT
                 </button>
               </div>
             </div>
             <div className="flex-1 overflow-auto" style={{ padding: 28 }}>
-              <p className="font-body text-cz-white-soft" style={{ fontSize: 15, lineHeight: 1.8, whiteSpace: 'pre-wrap' }}>
+              <p className="font-body text-cz-white-soft" style={{ fontSize: 19, lineHeight: 1.8, whiteSpace: 'pre-wrap' }}>
                 {selected.message}
               </p>
             </div>
@@ -147,7 +147,7 @@ export default function MessagesClient({ messages }: { messages: Message[] }) {
             className="flex-1 bg-cz-black-mid rounded-cz flex items-center justify-center"
             style={{ border: '1px solid #2A2A2A' }}
           >
-            <p className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 3 }}>
+            <p className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3 }}>
               VYBERTE ZPRÁVU
             </p>
           </div>

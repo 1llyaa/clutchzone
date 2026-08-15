@@ -51,7 +51,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
         <div>
           <div className="flex items-center mb-6 md:mb-7" style={{ gap: 12 }}>
             <span className="inline-block bg-cz-orange" style={{ width: 40, height: 1.5 }} />
-            <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 13, letterSpacing: 2.5 }}>
+            <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 16, letterSpacing: 4 }}>
               {t('eyebrow')}
             </span>
           </div>
@@ -75,7 +75,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
 
           <p
             className="font-body text-cz-white-soft"
-            style={{ fontSize: 16, lineHeight: 1.75, maxWidth: 480, marginTop: 28 }}
+            style={{ fontWeight: 300, fontSize: 'clamp(16px, 2vw, 19px)', lineHeight: 1.7, maxWidth: 480, marginTop: 28 }}
           >
             {t('subhead')}
           </p>
@@ -83,15 +83,15 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
           <div className="flex flex-wrap gap-4" style={{ marginTop: 36 }}>
             <button
               onClick={open}
-              className="bg-cz-orange text-white font-display uppercase border-[1.5px] border-cz-orange hover:bg-cz-orange-dark hover:border-cz-orange-dark active:scale-[0.96] transition-[background-color,border-color,scale] duration-150 ease-out rounded-[2px] cursor-pointer"
-              style={{ fontSize: 18, letterSpacing: 1.5, lineHeight: 1, padding: '14px 32px' }}
+              className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer"
+              style={{ fontSize: 'clamp(16px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(12px, 2vw, 16px) clamp(24px, 4vw, 40px)' }}
             >
               {t('ctaPrimary')}
             </button>
             <button
               onClick={() => document.getElementById('cenik')?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-transparent text-white font-display uppercase border-[1.5px] border-white/20 hover:text-cz-orange hover:border-cz-orange active:scale-[0.96] transition-[color,border-color,scale] duration-150 ease-out rounded-[2px] cursor-pointer"
-              style={{ fontSize: 18, letterSpacing: 1.5, lineHeight: 1, padding: '14px 32px' }}
+              className="bg-transparent text-white font-display uppercase hover:text-cz-orange hover:border-cz-orange active:scale-[0.96] transition-[color,border-color,scale] duration-150 ease-out rounded-[2px] cursor-pointer"
+              style={{ fontSize: 'clamp(16px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(11px, 2vw, 15px) clamp(24px, 4vw, 40px)', border: '1.5px solid rgba(255,255,255,0.15)' }}
             >
               {t('ctaSecondary')}
             </button>
@@ -110,7 +110,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
                 <div className="font-display text-white" style={{ fontSize: 40, lineHeight: 1 }}>
                   {stat.value}
                 </div>
-                <div className="font-mono text-cz-white-soft uppercase" style={{ fontSize: 13, letterSpacing: 1.5, marginTop: 6 }}>
+                <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, marginTop: 6 }}>
                   {stat.label}
                 </div>
               </div>
@@ -127,7 +127,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
                 className="rounded-full animate-flicker flex-shrink-0"
                 style={{ width: 8, height: 8, background: stationsFree > 0 ? '#E84A1A' : '#ef4444' }}
               />
-              <span className="font-mono text-cz-white-soft uppercase tabular-nums" style={{ fontSize: 13, letterSpacing: 1 }}>
+              <span className="font-mono text-cz-white-soft uppercase tabular-nums" style={{ fontSize: 16, letterSpacing: 1.5 }}>
                 {stationsFree} / {stationsTotal} {t('stationsFree')}
               </span>
             </div>
@@ -212,7 +212,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
                 className="rounded-full animate-flicker flex-shrink-0"
                 style={{ width: 8, height: 8, background: stationsFree > 0 ? '#E84A1A' : '#ef4444' }}
               />
-              <span className="font-mono text-cz-white-soft uppercase tabular-nums" style={{ fontSize: 13, letterSpacing: 1 }}>
+              <span className="font-mono text-cz-white-soft uppercase tabular-nums" style={{ fontSize: 16, letterSpacing: 1.5 }}>
                 {stationsFree} / {stationsTotal} {t('stationsFree')}
               </span>
             </div>
@@ -222,7 +222,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
 
       {/* Scroll indicator — hide on mobile */}
       <div className="absolute left-1/2 -translate-x-1/2 z-10 hidden md:flex flex-col items-center gap-3" style={{ bottom: 36 }}>
-        <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 12, letterSpacing: 2.5 }}>{t('scroll')}</span>
+        <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3 }}>{t('scroll')}</span>
         <span className="bg-cz-orange animate-scroll-pulse" style={{ width: 1.5, height: 48, display: 'block' }} />
       </div>
     </section>

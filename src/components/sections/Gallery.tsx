@@ -41,8 +41,8 @@ function MobileGallery({ images }: { images: GalleryImage[] }) {
               <img loading="lazy" decoding="async" src={img.url} alt={img.caption || ''} className="w-full h-full object-cover" />
               {img.caption && (
                 <div
-                  className="absolute bottom-0 left-0 right-0 font-mono text-cz-gray-light"
-                  style={{ padding: '12px 14px', background: 'linear-gradient(transparent, rgba(0,0,0,0.72))', fontSize: 13, letterSpacing: 2 }}
+                  className="absolute bottom-0 left-0 right-0 font-body text-white"
+                  style={{ padding: '12px 14px', background: 'linear-gradient(transparent, rgba(0,0,0,0.72))', fontSize: 17 }}
                 >
                   {img.caption}
                 </div>
@@ -83,8 +83,8 @@ function Carousel({ images }: { images: GalleryImage[] }) {
           <img loading="lazy" decoding="async" src={img.url} alt={img.caption || ''} className="w-full h-full object-cover" />
           {img.caption && (
             <div
-              className="absolute bottom-0 left-0 right-0 font-mono text-cz-gray-light"
-              style={{ padding: '24px 40px', background: 'linear-gradient(transparent, rgba(0,0,0,0.7))', fontSize: 13, letterSpacing: 2 }}
+              className="absolute bottom-0 left-0 right-0 font-body text-white"
+              style={{ padding: '24px 40px', background: 'linear-gradient(transparent, rgba(0,0,0,0.7))', fontSize: 17 }}
             >
               {img.caption}
             </div>
@@ -134,8 +134,8 @@ function Masonry({ images }: { images: GalleryImage[] }) {
           <img loading="lazy" decoding="async" src={img.url} alt={img.caption || ''} className="w-full block" />
           {img.caption && (
             <div
-              className="absolute bottom-0 left-0 right-0 font-mono text-cz-gray-light"
-              style={{ padding: '16px', background: 'linear-gradient(transparent, rgba(0,0,0,0.65))', fontSize: 13, letterSpacing: 2 }}
+              className="absolute bottom-0 left-0 right-0 font-body text-white"
+              style={{ padding: '16px', background: 'linear-gradient(transparent, rgba(0,0,0,0.65))', fontSize: 17 }}
             >
               {img.caption}
             </div>
@@ -160,8 +160,8 @@ function Mosaic({ images }: { images: GalleryImage[] }) {
           <img loading="lazy" decoding="async" src={img.url} alt={img.caption || ''} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
           {img.caption && (
             <div
-              className="absolute bottom-0 left-0 right-0 font-mono text-cz-gray-light opacity-0 hover:opacity-100 transition-opacity duration-300"
-              style={{ padding: '16px', background: 'linear-gradient(transparent, rgba(0,0,0,0.7))', fontSize: 13, letterSpacing: 2 }}
+              className="absolute bottom-0 left-0 right-0 font-body text-white opacity-0 hover:opacity-100 transition-opacity duration-300"
+              style={{ padding: '16px', background: 'linear-gradient(transparent, rgba(0,0,0,0.7))', fontSize: 17 }}
             >
               {img.caption}
             </div>
@@ -185,8 +185,8 @@ export default function Gallery({ images, displayType }: Props) {
       style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
     >
       {/* Heading */}
-      <Reveal className="max-w-[1440px] mx-auto px-6 mb-8 md:px-16 md:mb-[40px]">
-        <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 13, letterSpacing: 2.5, marginBottom: 12 }}>
+      <Reveal className="max-w-[1440px] mx-auto px-6 mb-8 md:px-16 md:mb-12">
+        <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}>
           {t('eyebrow')}
         </span>
         <h2 className="font-display text-white uppercase" style={{ fontSize: 52, letterSpacing: 1.5, lineHeight: 0.98 }}>

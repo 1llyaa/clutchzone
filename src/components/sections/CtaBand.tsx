@@ -67,7 +67,7 @@ export default function CtaBand() {
         <div className="relative">
           <span
             className="font-mono text-cz-orange uppercase"
-            style={{ fontSize: 13, letterSpacing: 2.5 }}
+            style={{ fontSize: 16, letterSpacing: 4 }}
           >
             {t('eyebrow')}
           </span>
@@ -80,15 +80,15 @@ export default function CtaBand() {
           <div className="flex gap-4 md:gap-5 justify-center flex-wrap">
             <button
               onClick={open}
-              className="bg-cz-orange text-white font-display uppercase border-[1.5px] border-cz-orange hover:bg-cz-orange-dark hover:border-cz-orange-dark hover:shadow-[0_0_18px_rgba(232,74,26,0.35)] active:scale-[0.96] transition-[background-color,border-color,scale,box-shadow] duration-150 ease-out rounded-[2px] cursor-pointer"
-              style={{ fontSize: 18, letterSpacing: 1.5, lineHeight: 1, padding: '14px 32px' }}
+              className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark hover:shadow-[0_0_18px_rgba(232,74,26,0.35)] active:scale-[0.96] transition-[background-color,scale,box-shadow] duration-150 ease-out rounded-[2px] border-none cursor-pointer"
+              style={{ fontSize: 'clamp(16px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(12px, 2vw, 16px) clamp(28px, 4vw, 44px)' }}
             >
               {t('primary')}
             </button>
             <button
               onClick={() => document.getElementById('kontakt')?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-transparent text-white font-display uppercase border-[1.5px] border-white/20 hover:text-cz-orange hover:border-cz-orange active:scale-[0.96] transition-[color,border-color,scale] duration-150 ease-out rounded-[2px] cursor-pointer"
-              style={{ fontSize: 18, letterSpacing: 1.5, lineHeight: 1, padding: '14px 32px' }}
+              className="bg-transparent text-white font-display uppercase hover:text-cz-orange hover:border-cz-orange active:scale-[0.96] transition-[color,border-color,scale] duration-150 ease-out rounded-[2px] cursor-pointer"
+              style={{ fontSize: 'clamp(16px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(11px, 2vw, 15px) clamp(28px, 4vw, 44px)', border: '1.5px solid rgba(255,255,255,0.15)' }}
             >
               {t('secondary')}
             </button>

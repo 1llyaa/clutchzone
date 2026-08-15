@@ -45,14 +45,14 @@ function GameCard({ game }: { game: Game }) {
           className="w-full h-full flex items-center justify-center"
           style={{ background: 'linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%)' }}
         >
-          <span className="font-display text-cz-gray-light uppercase" style={{ fontSize: 12, letterSpacing: 3 }}>NO IMAGE</span>
+          <span className="font-display text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3 }}>NO IMAGE</span>
         </div>
       )}
 
       {/* Platform badge */}
       <div
         className="absolute top-3 left-3 font-mono uppercase rounded-[2px]"
-        style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, padding: '5px 9px', color: '#fff', background: PLATFORM_COLOR[game.platform] ?? '#E84A1A' }}
+        style={{ fontSize: 16, letterSpacing: 2, padding: '3px 7px', color: '#fff', background: PLATFORM_COLOR[game.platform] ?? '#E84A1A' }}
       >
         {game.platform === 'both' ? 'PC + PS5' : game.platform.toUpperCase()}
       </div>
@@ -74,7 +74,7 @@ function GameCard({ game }: { game: Game }) {
         }}
       >
         {game.genre && (
-          <span className="font-mono text-cz-orange uppercase block" style={{ fontWeight: 700, fontSize: 12, letterSpacing: 2, marginBottom: 8 }}>
+          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 6 }}>
             {game.genre}
           </span>
         )}
@@ -82,7 +82,7 @@ function GameCard({ game }: { game: Game }) {
           {game.title}
         </h3>
         {game.description && (
-          <p className="font-body text-cz-white-soft" style={{ fontSize: 15, lineHeight: 1.6 }}>
+          <p className="font-body text-cz-gray-light" style={{ fontSize: 19, lineHeight: 1.6 }}>
             {game.description.length > 90 ? `${game.description.slice(0, 90)}…` : game.description}
           </p>
         )}
@@ -121,7 +121,7 @@ export default function Games({ games }: { games: Game[] }) {
       {/* Heading */}
       <Reveal className="max-w-[1440px] mx-auto flex items-end justify-between px-6 pb-8 md:px-16 md:pb-[40px]">
         <div>
-          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 13, letterSpacing: 2.5, marginBottom: 12 }}>
+          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}>
             {t('eyebrow')}
           </span>
           <h2 className="font-display text-white uppercase" style={{ fontSize: 52, letterSpacing: 1.5, lineHeight: 0.98 }}>

@@ -55,13 +55,13 @@ export default function TournamentDetailModal({ tournament, onClose, onRegister 
         {/* Header */}
         <div className="flex items-start justify-between px-5 pb-5 pt-7 md:px-8 md:pt-7">
           <div>
-            <div className="font-mono text-cz-orange uppercase" style={{ fontSize: 10, letterSpacing: 3 }}>
+            <div className="font-mono text-cz-orange uppercase" style={{ fontSize: 16, letterSpacing: 3 }}>
               {t('detailTitle')}
             </div>
             <div className="font-display text-white uppercase" style={{ fontSize: 28, letterSpacing: 1, marginTop: 4 }}>
               {tournament.title}
             </div>
-            <div className="font-mono text-cz-gray-light" style={{ fontSize: 11, marginTop: 4 }}>
+            <div className="font-mono text-cz-gray-light" style={{ fontSize: 16, marginTop: 4 }}>
               {tournament.game} · {formatDate(tournament.date)}
             </div>
           </div>
@@ -78,15 +78,15 @@ export default function TournamentDetailModal({ tournament, onClose, onRegister 
           {/* Stats row */}
           <div className="flex gap-8" style={{ marginBottom: 24, paddingBottom: 20, borderBottom: '1px solid #2A2A2A' }}>
             <div>
-              <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>{t('prizePool')}</div>
+              <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>{t('prizePool')}</div>
               <div className="font-display text-white" style={{ fontSize: 24, marginTop: 2 }}>
                 {tournament.prize_pool ? `${tournament.prize_pool.toLocaleString('cs-CZ')} Kč` : '—'}
               </div>
             </div>
             <div>
-              <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>{t('registered')}</div>
+              <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>{t('registered')}</div>
               <div className={`font-display tabular-nums ${isFull ? 'text-cz-orange' : 'text-white'}`} style={{ fontSize: 24, marginTop: 2 }}>
-                {tournament.filled_slots}<span className="font-mono text-cz-gray-light" style={{ fontSize: 13 }}>/{tournament.max_slots}</span>
+                {tournament.filled_slots}<span className="font-mono text-cz-gray-light" style={{ fontSize: 17 }}>/{tournament.max_slots}</span>
               </div>
             </div>
           </div>
@@ -94,7 +94,7 @@ export default function TournamentDetailModal({ tournament, onClose, onRegister 
           {/* Description */}
           <p
             className="font-body text-cz-white-soft"
-            style={{ fontSize: 14, lineHeight: 1.75, whiteSpace: 'pre-wrap', marginBottom: 28 }}
+            style={{ fontSize: 19, lineHeight: 1.75, whiteSpace: 'pre-wrap', marginBottom: 28 }}
           >
             {tournament.description?.trim() || t('noDescription')}
           </p>
@@ -104,14 +104,14 @@ export default function TournamentDetailModal({ tournament, onClose, onRegister 
               onClick={() => onRegister(tournament)}
               disabled={isFull}
               className="flex-1 bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:not-disabled:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-              style={{ fontSize: 15, letterSpacing: 2, padding: 13 }}
+              style={{ fontSize: 16, letterSpacing: 2, padding: 13 }}
             >
               {isFull ? 'PLNÝ' : t('detailCta')}
             </button>
             <button
               onClick={onClose}
               className="font-display uppercase text-cz-gray-light hover:text-white transition-colors rounded-[2px] cursor-pointer"
-              style={{ fontSize: 15, letterSpacing: 2, padding: '13px 24px', border: '1px solid #2A2A2A', background: 'transparent' }}
+              style={{ fontSize: 16, letterSpacing: 2, padding: '13px 24px', border: '1px solid #2A2A2A', background: 'transparent' }}
             >
               ×
             </button>

@@ -44,7 +44,7 @@ export default function StepDateTime({ form, setForm, onNext, onBack }: Props) {
       <div>
         <label
           className="font-mono text-cz-gray-light uppercase block"
-          style={{ fontSize: 10, letterSpacing: 3, marginBottom: 10 }}
+          style={{ fontSize: 16, letterSpacing: 3, marginBottom: 10 }}
         >
           {t('selectDate')}
         </label>
@@ -59,7 +59,7 @@ export default function StepDateTime({ form, setForm, onNext, onBack }: Props) {
             }}
             className="w-full bg-cz-black border border-cz-gray-dark rounded-cz font-mono text-white"
             style={{
-              padding: '12px 44px 12px 16px', fontSize: 14, letterSpacing: 1, colorScheme: 'dark',
+              padding: '12px 44px 12px 16px', fontSize: 19, letterSpacing: 1, colorScheme: 'dark',
               WebkitAppearance: 'none', appearance: 'none', boxSizing: 'border-box',
             }}
           />
@@ -74,7 +74,7 @@ export default function StepDateTime({ form, setForm, onNext, onBack }: Props) {
           </svg>
         </div>
         {isClosed && (
-          <p className="font-mono text-cz-orange" style={{ fontSize: 11, letterSpacing: 1, marginTop: 8 }}>
+          <p className="font-mono text-cz-orange" style={{ fontSize: 16, letterSpacing: 1, marginTop: 8 }}>
             {t('monday')}
           </p>
         )}
@@ -85,7 +85,7 @@ export default function StepDateTime({ form, setForm, onNext, onBack }: Props) {
         <div>
           <label
             className="font-mono text-cz-gray-light uppercase block"
-            style={{ fontSize: 10, letterSpacing: 3, marginBottom: 10 }}
+            style={{ fontSize: 16, letterSpacing: 3, marginBottom: 10 }}
           >
             {t('selectTime')}
           </label>
@@ -101,7 +101,7 @@ export default function StepDateTime({ form, setForm, onNext, onBack }: Props) {
                     onClick={() => selectHour(hour)}
                     className="font-mono uppercase rounded-[2px] border transition-[background-color,border-color,color] duration-150 ease-out cursor-pointer active:scale-[0.96]"
                     style={{
-                      fontSize: 12,
+                      fontSize: 16,
                       letterSpacing: 1,
                       padding: '8px 14px',
                       background: isSelectedHour ? '#E84A1A' : '#0A0A0A',
@@ -122,7 +122,7 @@ export default function StepDateTime({ form, setForm, onNext, onBack }: Props) {
                             onClick={() => selectQuarter(hour, m)}
                             className="font-mono rounded-[2px] border transition-[background-color,border-color,color] duration-150 ease-out cursor-pointer active:scale-[0.96]"
                             style={{
-                              fontSize: 10,
+                              fontSize: 16,
                               padding: '4px 6px',
                               background: active ? '#E84A1A' : 'transparent',
                               borderColor: active ? '#E84A1A' : '#2A2A2A',
@@ -147,7 +147,7 @@ export default function StepDateTime({ form, setForm, onNext, onBack }: Props) {
         <button
           onClick={onBack}
           className="font-display uppercase rounded-[2px] cursor-pointer transition-colors"
-          style={{ fontSize: 15, letterSpacing: 2, padding: '11px 24px', background: 'transparent', border: '1.5px solid #2A2A2A', color: '#888' }}
+          style={{ fontSize: 16, letterSpacing: 2, padding: '11px 24px', background: 'transparent', border: '1.5px solid #2A2A2A', color: '#888' }}
         >
           {t('back')}
         </button>
@@ -156,12 +156,12 @@ export default function StepDateTime({ form, setForm, onNext, onBack }: Props) {
           disabled={!canProceed}
           className="font-display uppercase rounded-[2px] cursor-pointer transition-colors flex-1"
           style={{
-            fontSize: 15,
+            fontSize: 16,
             letterSpacing: 2,
             padding: '11px 24px',
             background: canProceed ? '#E84A1A' : '#2A2A2A',
             border: 'none',
-            color: canProceed ? '#fff' : '#888',
+            color: canProceed ? '#fff' : '#888888',
             cursor: canProceed ? 'pointer' : 'not-allowed',
           }}
         >

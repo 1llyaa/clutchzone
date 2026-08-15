@@ -89,13 +89,13 @@ export default function BookingSuccessPage() {
             </span>
 
             {loading && (
-              <p className="font-mono text-cz-gray-light" style={{ fontSize: 13, letterSpacing: 1 }}>
+              <p className="font-mono text-cz-gray-light" style={{ fontSize: 17, letterSpacing: 1 }}>
                 {t('paymentProcessing')}
               </p>
             )}
 
             {!loading && !status && (
-              <p className="font-body text-cz-gray-light" style={{ fontSize: 14, lineHeight: 1.6, maxWidth: 380 }}>
+              <p className="font-body text-cz-gray-light" style={{ fontSize: 19, lineHeight: 1.6, maxWidth: 380 }}>
                 {t('successUnconfirmedMessage')}
               </p>
             )}
@@ -106,7 +106,7 @@ export default function BookingSuccessPage() {
                 <div>
                   <span
                     className="font-mono text-cz-gray-light uppercase block"
-                    style={{ fontSize: 10, letterSpacing: 3, marginBottom: 12 }}
+                    style={{ fontSize: 16, letterSpacing: 3, marginBottom: 12 }}
                   >
                     {t('referenceLabel')}
                   </span>
@@ -121,23 +121,23 @@ export default function BookingSuccessPage() {
                 {/* Details */}
                 <div className="flex flex-col gap-3 w-full">
                   <div className="flex justify-between border-b border-cz-gray-dark" style={{ paddingBottom: 12 }}>
-                    <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+                    <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
                       {t('stationLabel')}
                     </span>
-                    <span className="font-mono text-white" style={{ fontSize: 12, letterSpacing: 1 }}>
+                    <span className="font-mono text-white" style={{ fontSize: 17, letterSpacing: 1 }}>
                       {status.stationLabel}
                     </span>
                   </div>
                   <div className="flex justify-between border-b border-cz-gray-dark" style={{ paddingBottom: 12 }}>
-                    <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+                    <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
                       {t('selectDate')}
                     </span>
-                    <span className="font-mono text-white" style={{ fontSize: 12, letterSpacing: 1 }}>
+                    <span className="font-mono text-white" style={{ fontSize: 17, letterSpacing: 1 }}>
                       {status.date} {status.startTime?.slice(0, 5)}
                     </span>
                   </div>
                   <div className="flex justify-between border-b border-cz-gray-dark" style={{ paddingBottom: 12 }}>
-                    <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+                    <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
                       {t('total')}
                     </span>
                     <span className="font-display text-cz-orange" style={{ fontSize: 20, letterSpacing: 1 }}>
@@ -148,20 +148,20 @@ export default function BookingSuccessPage() {
 
                 {isPaid ? (
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-cz-orange" style={{ fontSize: 13, letterSpacing: 1 }}>
+                    <span className="font-mono text-cz-orange" style={{ fontSize: 17, letterSpacing: 1 }}>
                       {t('successCoinsMessage', { amount: status.coinsAwarded })}
                     </span>
                     <Tooltip content={t('coinsTooltip')}>
                       <span
                         className="font-mono text-cz-gray-light rounded-full border border-cz-gray-dark inline-flex items-center justify-center"
-                        style={{ width: 16, height: 16, fontSize: 10, lineHeight: 1, cursor: 'help' }}
+                        style={{ width: 22, height: 22, fontSize: 16, lineHeight: 1, cursor: 'help' }}
                       >
                         i
                       </span>
                     </Tooltip>
                   </div>
                 ) : (
-                  <p className="font-body text-cz-gray-light" style={{ fontSize: 14, lineHeight: 1.6, maxWidth: 380 }}>
+                  <p className="font-body text-cz-gray-light" style={{ fontSize: 19, lineHeight: 1.6, maxWidth: 380 }}>
                     {t('paymentProcessing')}
                   </p>
                 )}

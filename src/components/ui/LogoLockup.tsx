@@ -18,7 +18,7 @@ export default function LogoLockup({ size = 44, subtitle = 'ESPORT CLUB · ČB' 
         </span>
         <span
           className="font-mono text-cz-orange uppercase mt-[3px]"
-          style={{ fontSize: 9, letterSpacing: 3 }}
+          style={{ fontSize: 16, letterSpacing: 3 }}
         >
           {subtitle}
         </span>

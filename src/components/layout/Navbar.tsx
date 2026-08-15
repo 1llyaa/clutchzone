@@ -41,8 +41,8 @@ export default function Navbar() {
           <a
             key={link.href}
             href={link.href}
-            className="font-body text-cz-white-soft uppercase hover:text-white transition-[color] duration-200 ease-out cz-link-underline"
-            style={{ fontSize: 12, fontWeight: 500, letterSpacing: 1.2 }}
+            className="font-mono text-cz-gray-light uppercase hover:text-white transition-[color] duration-200 ease-out cz-link-underline"
+            style={{ fontSize: 16, letterSpacing: 2 }}
           >
             {link.label}
           </a>
@@ -51,11 +51,11 @@ export default function Navbar() {
         <div className="flex items-center gap-2 ml-2">
           {(['cs', 'en'] as const).map((l, i) => (
             <span key={l} className="flex items-center gap-2">
-              {i > 0 && <span className="text-cz-gray-dark font-mono text-xs">|</span>}
+              {i > 0 && <span className="text-cz-gray-dark font-mono text-base">|</span>}
               <button
                 onClick={() => switchLocale(l)}
                 className="font-mono uppercase transition-colors duration-150 bg-transparent border-none cursor-pointer"
-                style={{ fontSize: 12, letterSpacing: 1, color: locale === l ? '#E84A1A' : '#888888' }}
+                style={{ fontSize: 16, letterSpacing: 2, color: locale === l ? '#E84A1A' : '#888888' }}
               >
                 {l.toUpperCase()}
               </button>
@@ -114,8 +114,8 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               onClick={() => setMenuOpen(false)}
-              className="font-body text-cz-white-soft uppercase hover:text-white transition-[color] duration-200 ease-out py-3"
-              style={{ fontSize: 12, fontWeight: 500, letterSpacing: 1.2, borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+              className="font-mono text-cz-gray-light uppercase hover:text-white transition-[color] duration-200 ease-out py-3"
+              style={{ fontSize: 16, letterSpacing: 2, borderBottom: '1px solid rgba(255,255,255,0.05)' }}
             >
               {link.label}
             </a>
@@ -126,7 +126,7 @@ export default function Navbar() {
                 key={l}
                 onClick={() => { switchLocale(l); setMenuOpen(false); }}
                 className="font-mono uppercase transition-colors bg-transparent border-none cursor-pointer"
-                style={{ fontSize: 12, letterSpacing: 1, color: locale === l ? '#E84A1A' : '#888888' }}
+                style={{ fontSize: 16, letterSpacing: 2, color: locale === l ? '#E84A1A' : '#888888' }}
               >
                 {l.toUpperCase()}
               </button>
@@ -134,8 +134,8 @@ export default function Navbar() {
           </div>
           <button
             onClick={() => { open(); setMenuOpen(false); }}
-            className="bg-cz-orange text-white font-display uppercase border-[1.5px] border-cz-orange hover:bg-cz-orange-dark hover:border-cz-orange-dark active:scale-[0.96] transition-[background-color,border-color,scale] duration-150 ease-out rounded-[2px] cursor-pointer"
-            style={{ fontSize: 16, letterSpacing: 1.5, lineHeight: 1, padding: '11px 22px' }}
+            className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer"
+            style={{ fontSize: 16, letterSpacing: 2, padding: '13px 0' }}
           >
             {t('cta')}
           </button>

@@ -151,7 +151,7 @@ export default function BookingsClient({
           <h1 className="font-display text-white uppercase" style={{ fontSize: 36, letterSpacing: 2 }}>
             REZERVACE
           </h1>
-          <p className="font-mono text-cz-gray-light" style={{ fontSize: 11, letterSpacing: 2, marginTop: 4 }}>
+          <p className="font-mono text-cz-gray-light" style={{ fontSize: 16, letterSpacing: 2, marginTop: 4 }}>
             {bookings.length} REZERVACÍ · {rangeLabel}
           </p>
         </div>
@@ -159,25 +159,25 @@ export default function BookingsClient({
         {/* Date range picker */}
         <div className="flex items-center gap-3">
           <div className="flex flex-col gap-1">
-            <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 9, letterSpacing: 2 }}>OD</label>
+            <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>OD</label>
             <input
               type="date"
               value={localFrom}
               onChange={(e) => handleFromChange(e.target.value)}
               className="bg-cz-black-mid text-white font-mono rounded-[2px] focus:outline-none focus:border-cz-orange"
-              style={{ padding: '8px 12px', fontSize: 13, border: '1px solid #2A2A2A', colorScheme: 'dark' }}
+              style={{ padding: '8px 12px', fontSize: 19, border: '1px solid #2A2A2A', colorScheme: 'dark' }}
             />
           </div>
           <div className="font-mono text-cz-gray-light" style={{ fontSize: 16, marginTop: 16 }}>–</div>
           <div className="flex flex-col gap-1">
-            <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 9, letterSpacing: 2 }}>DO</label>
+            <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>DO</label>
             <input
               type="date"
               value={localTo}
               min={localFrom}
               onChange={(e) => handleToChange(e.target.value)}
               className="bg-cz-black-mid text-white font-mono rounded-[2px] focus:outline-none focus:border-cz-orange"
-              style={{ padding: '8px 12px', fontSize: 13, border: '1px solid #2A2A2A', colorScheme: 'dark' }}
+              style={{ padding: '8px 12px', fontSize: 19, border: '1px solid #2A2A2A', colorScheme: 'dark' }}
             />
           </div>
           {!isSingleDay && (
@@ -189,7 +189,7 @@ export default function BookingsClient({
                 applyRange(today, today);
               }}
               className="font-mono text-cz-gray-light uppercase hover:text-white transition-colors"
-              style={{ fontSize: 9, letterSpacing: 2, marginTop: 16 }}
+              style={{ fontSize: 16, letterSpacing: 2, marginTop: 16 }}
             >
               DNES
             </button>
@@ -200,7 +200,7 @@ export default function BookingsClient({
       {/* Station grid — only meaningful for a single day */}
       {isSingleDay && (
         <div style={{ marginBottom: 40 }}>
-          <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 3, marginBottom: 12 }}>
+          <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 12 }}>
             PC STANICE
           </div>
           <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(10, 1fr)', marginBottom: 16 }}>
@@ -212,8 +212,8 @@ export default function BookingsClient({
                   className="rounded-[2px] flex flex-col items-center justify-center"
                   style={{ padding: '10px 4px', background: TILE_BG[state], border: `1px solid ${TILE_BORDER[state]}` }}
                 >
-                  <span className="font-mono text-white" style={{ fontSize: 11, letterSpacing: 1 }}>{s.label}</span>
-                  <span className="font-mono uppercase" style={{ fontSize: 8, letterSpacing: 1, marginTop: 3, color: state === 'occupied' ? '#E84A1A' : '#888888' }}>
+                  <span className="font-mono text-white" style={{ fontSize: 17, letterSpacing: 1 }}>{s.label}</span>
+                  <span className="font-mono uppercase" style={{ fontSize: 16, letterSpacing: 1, marginTop: 3, color: state === 'occupied' ? '#E84A1A' : '#888888' }}>
                     {state === 'occupied' ? 'OBSAZENO' : state === 'inactive' ? 'INACTIVE' : 'VOLNÉ'}
                   </span>
                 </div>
@@ -221,7 +221,7 @@ export default function BookingsClient({
             })}
           </div>
 
-          <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 3, marginBottom: 12 }}>
+          <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 12 }}>
             PS5 STANICE
           </div>
           <div className="flex gap-2">
@@ -233,8 +233,8 @@ export default function BookingsClient({
                   className="rounded-[2px] flex flex-col items-center justify-center"
                   style={{ padding: '10px 20px', background: TILE_BG[state], border: `1px solid ${TILE_BORDER[state]}` }}
                 >
-                  <span className="font-mono text-white" style={{ fontSize: 11, letterSpacing: 1 }}>{s.label}</span>
-                  <span className="font-mono uppercase" style={{ fontSize: 8, letterSpacing: 1, marginTop: 3, color: state === 'occupied' ? '#E84A1A' : '#888888' }}>
+                  <span className="font-mono text-white" style={{ fontSize: 17, letterSpacing: 1 }}>{s.label}</span>
+                  <span className="font-mono uppercase" style={{ fontSize: 16, letterSpacing: 1, marginTop: 3, color: state === 'occupied' ? '#E84A1A' : '#888888' }}>
                     {state === 'occupied' ? 'OBSAZENO' : 'VOLNÉ'}
                   </span>
                 </div>
@@ -254,7 +254,7 @@ export default function BookingsClient({
                 ...(!isSingleDay ? ['DATUM'] : []),
                 'ČAS', 'DÉLKA', 'CELKEM', 'PLATBA', 'STATUS', '',
               ].map((h) => (
-                <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '12px 14px', fontSize: 10, letterSpacing: 2 }}>
+                <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '12px 14px', fontSize: 16, letterSpacing: 2 }}>
                   {h}
                 </th>
               ))}
@@ -263,7 +263,7 @@ export default function BookingsClient({
           <tbody>
             {bookings.length === 0 ? (
               <tr>
-                <td colSpan={isSingleDay ? 10 : 11} className="font-mono text-cz-gray-light text-center" style={{ padding: 40, fontSize: 12 }}>
+                <td colSpan={isSingleDay ? 10 : 11} className="font-mono text-cz-gray-light text-center" style={{ padding: 40, fontSize: 19 }}>
                   Žádné rezervace pro zvolené období
                 </td>
               </tr>
@@ -273,28 +273,28 @@ export default function BookingsClient({
                   key={b.id}
                   style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', opacity: b.status === 'cancelled' ? 0.45 : 1 }}
                 >
-                  <td className="font-mono text-cz-orange" style={{ padding: '12px 14px', fontSize: 12 }}>{b.reference}</td>
-                  <td className="font-body text-white" style={{ padding: '12px 14px', fontSize: 13 }}>{b.customer_name}</td>
+                  <td className="font-mono text-cz-orange" style={{ padding: '12px 14px', fontSize: 17 }}>{b.reference}</td>
+                  <td className="font-body text-white" style={{ padding: '12px 14px', fontSize: 17 }}>{b.customer_name}</td>
                   <td style={{ padding: '12px 14px' }}>
-                    <div className="font-mono text-cz-gray-light" style={{ fontSize: 11 }}>{b.customer_email}</div>
+                    <div className="font-mono text-cz-gray-light" style={{ fontSize: 17 }}>{b.customer_email}</div>
                     {b.customer_phone && (
-                      <div className="font-mono text-cz-gray-light" style={{ fontSize: 10, marginTop: 2 }}>{b.customer_phone}</div>
+                      <div className="font-mono text-cz-gray-light" style={{ fontSize: 17, marginTop: 2 }}>{b.customer_phone}</div>
                     )}
                   </td>
-                  <td className="font-mono text-cz-gray-light" style={{ padding: '12px 14px', fontSize: 12 }}>{b.stations?.label ?? '—'}</td>
+                  <td className="font-mono text-cz-gray-light" style={{ padding: '12px 14px', fontSize: 17 }}>{b.stations?.label ?? '—'}</td>
                   {!isSingleDay && (
-                    <td className="font-mono text-cz-gray-light" style={{ padding: '12px 14px', fontSize: 12 }}>
+                    <td className="font-mono text-cz-gray-light" style={{ padding: '12px 14px', fontSize: 17 }}>
                       {new Date(b.date).toLocaleDateString('cs-CZ')}
                     </td>
                   )}
-                  <td className="font-mono text-white" style={{ padding: '12px 14px', fontSize: 12 }}>{b.start_time?.slice(0, 5)}</td>
-                  <td className="font-mono text-cz-gray-light" style={{ padding: '12px 14px', fontSize: 12 }}>{Math.round(b.duration_minutes / 60)}h</td>
-                  <td className="font-body text-white" style={{ padding: '12px 14px', fontSize: 13 }}>{b.total_price} Kč</td>
+                  <td className="font-mono text-white" style={{ padding: '12px 14px', fontSize: 17 }}>{b.start_time?.slice(0, 5)}</td>
+                  <td className="font-mono text-cz-gray-light" style={{ padding: '12px 14px', fontSize: 17 }}>{Math.round(b.duration_minutes / 60)}h</td>
+                  <td className="font-body text-white" style={{ padding: '12px 14px', fontSize: 17 }}>{b.total_price} Kč</td>
                   <td style={{ padding: '12px 14px' }}>
                     <span
                       className="font-mono uppercase rounded-[2px]"
                       style={{
-                        fontSize: 9, letterSpacing: 1, padding: '3px 8px',
+                        fontSize: 16, letterSpacing: 1, padding: '3px 8px',
                         color: PAYMENT_COLOR(b),
                         background: PAYMENT_COLOR(b) + '20',
                       }}
@@ -302,7 +302,7 @@ export default function BookingsClient({
                       {PAYMENT_LABEL(b)}
                     </span>
                     {b.coins_awarded > 0 && (
-                      <div className="font-mono text-cz-gray-light" style={{ fontSize: 10, marginTop: 4 }}>
+                      <div className="font-mono text-cz-gray-light" style={{ fontSize: 17, marginTop: 4 }}>
                         🪙 {b.coins_awarded}
                       </div>
                     )}
@@ -310,13 +310,13 @@ export default function BookingsClient({
                   <td style={{ padding: '12px 14px' }}>
                     <span
                       className="font-mono uppercase rounded-[2px]"
-                      style={{ fontSize: 9, letterSpacing: 1, padding: '3px 8px', color: STATUS_COLOR[b.status] ?? '#888', background: (STATUS_COLOR[b.status] ?? '#888') + '20' }}
+                      style={{ fontSize: 16, letterSpacing: 1, padding: '3px 8px', color: STATUS_COLOR[b.status] ?? '#888', background: (STATUS_COLOR[b.status] ?? '#888') + '20' }}
                     >
                       {STATUS_LABEL[b.status] ?? b.status}
                     </span>
                   </td>
                   <td style={{ padding: '12px 14px' }}>
-                    <button onClick={() => setSelected(b)} className="font-mono text-cz-orange uppercase hover:underline" style={{ fontSize: 10, letterSpacing: 1 }}>
+                    <button onClick={() => setSelected(b)} className="font-mono text-cz-orange uppercase hover:underline" style={{ fontSize: 16, letterSpacing: 1 }}>
                       DETAIL
                     </button>
                   </td>
@@ -333,7 +333,7 @@ export default function BookingsClient({
           <div className="bg-cz-black-mid h-full flex flex-col" style={{ width: 400, borderLeft: '1px solid #2A2A2A' }} onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between" style={{ padding: '24px 28px', borderBottom: '1px solid #2A2A2A' }}>
               <div>
-                <div className="font-mono text-cz-orange" style={{ fontSize: 13 }}>{selected.reference}</div>
+                <div className="font-mono text-cz-orange" style={{ fontSize: 17 }}>{selected.reference}</div>
                 <div className="font-display text-white uppercase" style={{ fontSize: 20 }}>DETAIL REZERVACE</div>
               </div>
               <button onClick={() => setSelected(null)} className="font-mono text-cz-gray-mid hover:text-white" style={{ fontSize: 18 }}>×</button>
@@ -356,8 +356,8 @@ export default function BookingsClient({
                 ['Mince k připsání', selected.coins_awarded > 0 ? `${selected.coins_awarded}` : '—'],
               ].map(([label, value]) => (
                 <div key={label} style={{ marginBottom: 16 }}>
-                  <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2, marginBottom: 4 }}>{label}</div>
-                  <div className="font-body text-white" style={{ fontSize: 14 }}>{value}</div>
+                  <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, marginBottom: 4 }}>{label}</div>
+                  <div className="font-body text-white" style={{ fontSize: 17 }}>{value}</div>
                 </div>
               ))}
             </div>
@@ -369,7 +369,7 @@ export default function BookingsClient({
                     disabled={updating}
                     onClick={() => updateStatus(selected.id, 'completed')}
                     className="flex-1 bg-cz-orange text-white font-display uppercase rounded-[2px] hover:bg-cz-orange-dark transition-colors disabled:opacity-50"
-                    style={{ fontSize: 13, letterSpacing: 2, padding: '10px 0' }}
+                    style={{ fontSize: 16, letterSpacing: 2, padding: '10px 0' }}
                   >
                     DOKONČIT
                   </button>
@@ -377,7 +377,7 @@ export default function BookingsClient({
                     disabled={updating}
                     onClick={() => updateStatus(selected.id, 'cancelled')}
                     className="flex-1 font-display uppercase rounded-[2px] hover:border-red-500 hover:text-red-400 transition-colors disabled:opacity-50"
-                    style={{ fontSize: 13, letterSpacing: 2, padding: '10px 0', border: '1px solid #2A2A2A', color: '#888', background: 'transparent' }}
+                    style={{ fontSize: 16, letterSpacing: 2, padding: '10px 0', border: '1px solid #2A2A2A', color: '#888', background: 'transparent' }}
                   >
                     ZRUŠIT
                   </button>
@@ -387,7 +387,7 @@ export default function BookingsClient({
                 disabled={deleting}
                 onClick={() => deleteBooking(selected.id)}
                 className="w-full font-display uppercase rounded-[2px] hover:bg-red-500 hover:border-red-500 hover:text-white transition-colors disabled:opacity-50"
-                style={{ fontSize: 13, letterSpacing: 2, padding: '10px 0', border: '1px solid #ef4444', color: '#ef4444', background: 'transparent' }}
+                style={{ fontSize: 16, letterSpacing: 2, padding: '10px 0', border: '1px solid #ef4444', color: '#ef4444', background: 'transparent' }}
               >
                 {deleting ? '...' : 'SMAZAT REZERVACI'}
               </button>

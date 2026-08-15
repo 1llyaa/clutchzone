@@ -51,16 +51,18 @@ export default function Stream({ streamUrl }: Props) {
 
       <div className="relative max-w-[1440px] mx-auto">
         {/* Section header */}
-        <Reveal className="mb-8 md:mb-[40px]">
-          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 13, letterSpacing: 2.5, marginBottom: 12 }}>
-            {t('eyebrow')}
-          </span>
-          <h2
-            className="font-display text-white uppercase"
-            style={{ fontSize: 52, letterSpacing: 1.5, lineHeight: 0.98 }}
-          >
-            {t('heading')}
-          </h2>
+        <Reveal>
+          <div style={{ marginBottom: 48 }}>
+            <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}>
+              {t('eyebrow')}
+            </span>
+            <h2
+              className="font-display text-white uppercase inline-block"
+              style={{ fontSize: 'clamp(36px, 5vw, 60px)', letterSpacing: 1.5, lineHeight: 0.95, paddingBottom: 14, borderBottom: '2px solid #E84A1A' }}
+            >
+              {t('heading')}
+            </h2>
+          </div>
         </Reveal>
 
         {/* Stream embed */}
@@ -93,8 +95,8 @@ export default function Stream({ streamUrl }: Props) {
             href={`https://twitch.tv/${channel}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-mono text-cz-white-soft uppercase hover:text-cz-orange transition-colors"
-            style={{ fontSize: 13, letterSpacing: 2.5 }}
+            className="font-mono text-cz-gray-light uppercase hover:text-cz-orange transition-colors"
+            style={{ fontSize: 16, letterSpacing: 2 }}
           >
             twitch.tv/{channel}
           </a>

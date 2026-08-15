@@ -21,8 +21,8 @@ export default function Button({
     'font-display uppercase transition-[background-color,color,border-color,scale,box-shadow] duration-150 ease-out rounded-[2px] inline-block';
 
   const sizes = {
-    sm: { fontSize: 16, padding: '11px 22px', letterSpacing: 1.5 },
-    md: { fontSize: 18, padding: '14px 32px', letterSpacing: 1.5 },
+    sm: { fontSize: 16, padding: '9px 22px', letterSpacing: 2, borderWidth: '1.5px' },
+    md: { fontSize: 19, padding: '15px 40px', letterSpacing: 2, borderWidth: '1.5px' },
   };
 
   const s = sizes[size];

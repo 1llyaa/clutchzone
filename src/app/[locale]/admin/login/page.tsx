@@ -49,7 +49,7 @@ export default function AdminLoginPage() {
           <div className="font-display text-white uppercase" style={{ fontSize: 22, letterSpacing: 2, marginTop: 10 }}>
             CLUTCH ZONE
           </div>
-          <div className="font-mono text-cz-orange uppercase" style={{ fontSize: 10, letterSpacing: 4 }}>
+          <div className="font-mono text-cz-orange uppercase" style={{ fontSize: 16, letterSpacing: 4 }}>
             ADMIN PANEL
           </div>
         </div>
@@ -58,7 +58,7 @@ export default function AdminLoginPage() {
           <div className="flex flex-col gap-2">
             <label
               className="font-mono text-cz-gray-light uppercase"
-              style={{ fontSize: 10, letterSpacing: 2 }}
+              style={{ fontSize: 16, letterSpacing: 2 }}
             >
               E-MAIL
             </label>
@@ -69,14 +69,14 @@ export default function AdminLoginPage() {
               required
               autoComplete="email"
               className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors"
-              style={{ padding: '10px 14px', fontSize: 14, border: '1px solid #2A2A2A' }}
+              style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
             />
           </div>
 
           <div className="flex flex-col gap-2">
             <label
               className="font-mono text-cz-gray-light uppercase"
-              style={{ fontSize: 10, letterSpacing: 2 }}
+              style={{ fontSize: 16, letterSpacing: 2 }}
             >
               HESLO
             </label>
@@ -87,12 +87,12 @@ export default function AdminLoginPage() {
               required
               autoComplete="current-password"
               className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors"
-              style={{ padding: '10px 14px', fontSize: 14, border: '1px solid #2A2A2A' }}
+              style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
             />
           </div>
 
           {error && (
-            <p className="font-mono text-red-400" style={{ fontSize: 11, letterSpacing: 1 }}>
+            <p className="font-mono text-red-400" style={{ fontSize: 17, letterSpacing: 1 }}>
               {error}
             </p>
           )}
@@ -101,7 +101,7 @@ export default function AdminLoginPage() {
             type="submit"
             disabled={loading}
             className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors rounded-[2px] border-none cursor-pointer disabled:opacity-50"
-            style={{ fontSize: 15, letterSpacing: 2, padding: '13px 0', marginTop: 8 }}
+            style={{ fontSize: 16, letterSpacing: 2, padding: '13px 0', marginTop: 8 }}
           >
             {loading ? '...' : 'PŘIHLÁSIT SE'}
           </button>

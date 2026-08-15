@@ -34,18 +34,18 @@ export default function PrivateEvents({ image }: Props) {
 
         {/* Right — heading + info + CTA */}
         <Reveal delay={70}>
-          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 13, letterSpacing: 2.5, marginBottom: 12 }}>
+          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}>
             {t('eyebrow')}
           </span>
           <h2 className="font-display text-white uppercase" style={{ fontSize: 52, letterSpacing: 1.5, lineHeight: 0.98, marginBottom: 20 }}>
             {t('heading')}
           </h2>
-          <p className="font-body text-cz-white-soft" style={{ fontSize: 16, lineHeight: 1.8, maxWidth: 480, marginBottom: 28 }}>
+          <p className="font-body text-cz-gray-light" style={{ fontSize: 19, lineHeight: 1.8, maxWidth: 460, marginBottom: 28 }}>
             {t('subtext')}
           </p>
 
-          <div style={{ marginBottom: 28 }}>
-            <div className="font-mono text-cz-white-soft uppercase" style={{ fontSize: 12, letterSpacing: 2.5, marginBottom: 6 }}>
+          <div style={{ marginBottom: 32 }}>
+            <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 4 }}>
               {t('priceLabel')}
             </div>
             <div className="font-display text-white uppercase" style={{ fontSize: 28, letterSpacing: 1 }}>
@@ -55,8 +55,8 @@ export default function PrivateEvents({ image }: Props) {
 
           <a
             href="#kontakt"
-            className="inline-block bg-cz-orange text-white font-display uppercase border-[1.5px] border-cz-orange hover:bg-cz-orange-dark hover:border-cz-orange-dark active:scale-[0.96] transition-[background-color,border-color,scale] duration-150 ease-out rounded-[2px]"
-            style={{ fontSize: 18, letterSpacing: 1.5, lineHeight: 1, padding: '14px 32px' }}
+            className="inline-block bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] text-center"
+            style={{ fontSize: 16, letterSpacing: 2, padding: '14px 36px' }}
           >
             {t('cta')}
           </a>

@@ -65,18 +65,20 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
         <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at top right, #0A0A0A 15%, transparent 55%)' }} />
       </div>
       <div className="relative z-10 max-w-[1440px] mx-auto">
-        <Reveal className="mb-8 md:mb-[40px]">
-          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 13, letterSpacing: 2.5, marginBottom: 12 }}>
-            {t('eyebrow')}
-          </span>
-          <h2 className="font-display text-white uppercase" style={{ fontSize: 52, letterSpacing: 1.5, lineHeight: 0.98 }}>
-            {t('heading')}
-          </h2>
+        <Reveal>
+          <div style={{ marginBottom: 40 }}>
+            <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}>
+              {t('eyebrow')}
+            </span>
+            <h2 className="font-display text-white uppercase" style={{ fontSize: 'clamp(36px, 5vw, 60px)', letterSpacing: 1.5, lineHeight: 0.95 }}>
+              {t('heading')}
+            </h2>
+          </div>
         </Reveal>
 
         {tournaments.length === 0 ? (
           <Reveal>
-            <div className="font-mono text-cz-gray-light uppercase text-center" style={{ padding: '40px 0', borderTop: '1px solid #2A2A2A', fontSize: 12, letterSpacing: 3 }}>
+            <div className="font-mono text-cz-gray-light uppercase text-center" style={{ padding: '40px 0', borderTop: '1px solid #2A2A2A', fontSize: 16, letterSpacing: 3 }}>
               ŽÁDNÉ NADCHÁZEJÍCÍ TURNAJE
             </div>
           </Reveal>
@@ -98,10 +100,10 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
                     }}
                   >
                     <div>
-                      <div className="font-display text-cz-orange" style={{ fontSize: 36, lineHeight: 1 }}>{formatDate(row.date)}</div>
-                      <span className="font-mono text-cz-white-soft block" style={{ fontSize: 12, letterSpacing: 1.5, marginTop: 4 }}>{new Date(row.date).getUTCFullYear()}</span>
+                      <div className="font-display text-cz-orange" style={{ fontSize: 40, lineHeight: 1 }}>{formatDate(row.date)}</div>
+                      <span className="font-mono text-cz-gray-light block" style={{ fontSize: 16, letterSpacing: 2, marginTop: 2 }}>{new Date(row.date).getUTCFullYear()}</span>
                     </div>
-                    <span className="font-mono text-white uppercase justify-self-start" style={{ fontSize: 13, letterSpacing: 1.5, border: '1px solid #2A2A2A', borderRadius: 2, padding: '7px 11px' }}>
+                    <span className="font-mono text-cz-gray-light uppercase justify-self-start" style={{ fontSize: 16, letterSpacing: 2, border: '1px solid #2A2A2A', borderRadius: 2, padding: '6px 10px' }}>
                       {row.game}
                     </span>
                     <button
@@ -112,23 +114,23 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
                       {row.title}
                     </button>
                     <div>
-                      <span className="font-mono text-cz-white-soft uppercase block" style={{ fontSize: 12, letterSpacing: 1.5 }}>{t('prizePool')}</span>
-                      <span className="font-display text-white" style={{ fontSize: 26 }}>
+                      <span className="font-mono text-cz-gray-light uppercase block" style={{ fontSize: 16, letterSpacing: 2 }}>{t('prizePool')}</span>
+                      <span className="font-display text-white" style={{ fontSize: 28 }}>
                         {row.prize_pool ? `${row.prize_pool.toLocaleString('cs-CZ')} Kč` : '—'}
                       </span>
                     </div>
                     <div>
-                      <span className="font-mono text-cz-white-soft uppercase block" style={{ fontSize: 12, letterSpacing: 1.5 }}>{t('registered')}</span>
-                      <span className={`font-display tabular-nums ${isFull ? 'text-cz-orange' : 'text-white'}`} style={{ fontSize: 26 }}>
-                        {row.filled_slots}<span className="font-mono text-cz-gray-light" style={{ fontSize: 14 }}>/{row.max_slots}</span>
+                      <span className="font-mono text-cz-gray-light uppercase block" style={{ fontSize: 16, letterSpacing: 2 }}>{t('registered')}</span>
+                      <span className={`font-display tabular-nums ${isFull ? 'text-cz-orange' : 'text-white'}`} style={{ fontSize: 28 }}>
+                        {row.filled_slots}<span className="font-mono text-cz-gray-light" style={{ fontSize: 17 }}>/{row.max_slots}</span>
                       </span>
                     </div>
                     <div className="flex justify-end">
                       <button
                         onClick={() => !isFull && setSelected(row)}
                         disabled={isFull}
-                        className={`font-display uppercase border-[1.5px] border-cz-gray-dark transition-[color,border-color,scale] duration-200 ease-out rounded-[2px] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed active:not-disabled:scale-[0.96] ${!isFull ? 'hover:text-cz-orange hover:border-cz-orange' : ''} ${isFull ? 'text-cz-gray-light' : 'text-white'}`}
-                        style={{ fontSize: 16, lineHeight: 1, letterSpacing: 1.5, padding: '11px 22px', background: 'transparent' }}
+                        className={`font-display uppercase transition-[color,border-color,scale] duration-200 ease-out rounded-[2px] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed active:not-disabled:scale-[0.96] ${!isFull ? 'hover:text-cz-orange hover:border-cz-orange' : ''}`}
+                        style={{ fontSize: 16, letterSpacing: 2, padding: '9px 22px', background: 'transparent', color: isFull ? '#888888' : '#fff', border: '1.5px solid #2A2A2A' }}
                       >
                         {isFull ? 'PLNÝ' : t('cta')}
                       </button>
@@ -139,10 +141,10 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
                   <div className="md:hidden" style={{ padding: '20px 4px' }}>
                     <div className="flex items-center gap-4" style={{ marginBottom: 12 }}>
                       <div>
-                        <div className="font-display text-cz-orange" style={{ fontSize: 36, lineHeight: 1 }}>{formatDate(row.date)}</div>
-                        <span className="font-mono text-cz-white-soft" style={{ fontSize: 12, letterSpacing: 1.5 }}>{new Date(row.date).getUTCFullYear()}</span>
+                        <div className="font-display text-cz-orange" style={{ fontSize: 32, lineHeight: 1 }}>{formatDate(row.date)}</div>
+                        <span className="font-mono text-cz-gray-light" style={{ fontSize: 16, letterSpacing: 2 }}>{new Date(row.date).getUTCFullYear()}</span>
                       </div>
-                      <span className="font-mono text-white uppercase" style={{ fontSize: 13, letterSpacing: 1.5, border: '1px solid #2A2A2A', borderRadius: 2, padding: '7px 11px' }}>
+                      <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, border: '1px solid #2A2A2A', borderRadius: 2, padding: '4px 8px' }}>
                         {row.game}
                       </span>
                     </div>
@@ -159,24 +161,24 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
                       <div className="flex gap-6">
                         {row.prize_pool ? (
                           <div>
-                            <span className="font-mono text-cz-white-soft uppercase block" style={{ fontSize: 12, letterSpacing: 1.5 }}>{t('prizePool')}</span>
-                            <span className="font-display text-white" style={{ fontSize: 26 }}>
+                            <span className="font-mono text-cz-gray-light uppercase block" style={{ fontSize: 16, letterSpacing: 2 }}>{t('prizePool')}</span>
+                            <span className="font-display text-white" style={{ fontSize: 22 }}>
                               {row.prize_pool.toLocaleString('cs-CZ')} Kč
                             </span>
                           </div>
                         ) : null}
                         <div>
-                          <span className="font-mono text-cz-white-soft uppercase block" style={{ fontSize: 12, letterSpacing: 1.5 }}>{t('registered')}</span>
-                          <span className={`font-display tabular-nums ${isFull ? 'text-cz-orange' : 'text-white'}`} style={{ fontSize: 26 }}>
-                            {row.filled_slots}<span className="font-mono text-cz-gray-light" style={{ fontSize: 12 }}>/{row.max_slots}</span>
+                          <span className="font-mono text-cz-gray-light uppercase block" style={{ fontSize: 16, letterSpacing: 2 }}>{t('registered')}</span>
+                          <span className={`font-display tabular-nums ${isFull ? 'text-cz-orange' : 'text-white'}`} style={{ fontSize: 22 }}>
+                            {row.filled_slots}<span className="font-mono text-cz-gray-light" style={{ fontSize: 17 }}>/{row.max_slots}</span>
                           </span>
                         </div>
                       </div>
                       <button
                         onClick={() => !isFull && setSelected(row)}
                         disabled={isFull}
-                        className={`font-display uppercase rounded-[2px] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-[background-color,color,scale] duration-150 active:not-disabled:scale-[0.96] ${isFull ? 'text-cz-gray-light' : 'text-white'}`}
-                        style={{ fontSize: 16, lineHeight: 1, letterSpacing: 1.5, padding: '11px 22px', background: isFull ? 'transparent' : '#E84A1A', border: isFull ? '1.5px solid #2A2A2A' : '1.5px solid #E84A1A' }}
+                        className="font-display uppercase rounded-[2px] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-[background-color,color,scale] duration-150 active:not-disabled:scale-[0.96]"
+                        style={{ fontSize: 16, letterSpacing: 2, padding: '10px 20px', background: isFull ? 'transparent' : '#E84A1A', color: '#fff', border: isFull ? '1.5px solid #2A2A2A' : 'none' }}
                       >
                         {isFull ? 'PLNÝ' : t('cta')}
                       </button>
