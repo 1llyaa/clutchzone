@@ -1,0 +1,219 @@
+'use client';
+
+import { useLocale } from 'next-intl';
+import { useMemo, useState } from 'react';
+import { useReservation } from '@/components/reservation/ReservationContext';
+import Reveal from '@/components/ui/Reveal';
+import { dayTypeCloseHour, dayTypeOpenHour } from '@/lib/pricing/dayTypes';
+import { calculatePricing } from '@/lib/pricing/engine';
+import type { PricingConfig, StationType } from '@/lib/pricing/types';
+import BetterChoiceCard from './BetterChoiceCard';
+import CalculatorInputs from './CalculatorInputs';
+import FullPriceTable from './FullPriceTable';
+import OfferCard from './OfferCard';
+
+interface Props {
+  config: PricingConfig;
+}
+
+function defaultDayTypeKey(config: PricingConfig): string {
+  const todayDow = new Date().getDay(); // 0 = neděle … 6 = sobota, matches our convention
+  for (let i = 0; i < 7; i++) {
+    const dow = (todayDow + i) % 7;
+    const group = config.dayTypes.find((g) => g.days.includes(dow));
+    if (group) return group.key;
+  }
+  return config.dayTypes[0]?.key ?? '';
+}
+
+export default function PriceCalculator({ config }: Props) {
+  const locale = useLocale() === 'en' ? 'en' : 'cs';
+  const { open } = useReservation();
+
+  const [stationType, setStationType] = useState<StationType>('pc');
+  const [dayTypeKey, setDayTypeKey] = useState(() => defaultDayTypeKey(config));
+  const [startHour, setStartHour] = useState(18);
+  const [durationHours, setDurationHours] = useState(3);
+  const [stationsCount, setStationsCount] = useState(1);
+  const [overrideOfferId, setOverrideOfferId] = useState<string | null>(null);
+
+  const dayType = config.dayTypes.find((d) => d.key === dayTypeKey) ?? config.dayTypes[0];
+
+  function handleDayType(key: string) {
+    setDayTypeKey(key);
+    setOverrideOfferId(null);
+    const next = config.dayTypes.find((d) => d.key === key);
+    if (!next) return;
+    const open = Math.round(dayTypeOpenHour(next));
+    const close = Math.round(dayTypeCloseHour(next));
+    if (startHour < open || startHour > close - 1) setStartHour(open);
+  }
+
+  function handleStartHour(h: number) {
+    setStartHour(h);
+    setOverrideOfferId(null);
+  }
+
+  function handleDurationHours(h: number) {
+    setDurationHours(h);
+    setOverrideOfferId(null);
+  }
+
+  const result = useMemo(() => {
+    if (!dayType) return null;
+    return calculatePricing({ stationType, dayTypeKey: dayType.key, startHour, durationHours, stationsCount }, config, locale);
+  }, [config, stationType, dayType, startHour, durationHours, stationsCount, locale]);
+
+  if (!dayType || !result) {
+    return null; // no open days configured — nothing to calculate
+  }
+
+  const closeHour = dayTypeCloseHour(dayType);
+  const fitHours = Math.max(0, Math.min(durationHours, closeHour - startHour));
+  const fitNote =
+    fitHours < durationHours
+      ? `Do zavírací doby se vejde ${fitHours}h. Zbylých ${durationHours - fitHours}h ti zůstane jako kredit na příští návštěvu.`
+      : null;
+
+  const overrideOffer = overrideOfferId ? result.all.find((o) => o.id === overrideOfferId) ?? null : null;
+  const displayedOffer = overrideOffer ?? result.recommended;
+  const upsell = !overrideOffer ? result.alternatives.find((o) => o.kind === 'hours_upsell') ?? null : null;
+  const alts = result.alternatives.filter((o) => o.id !== upsell?.id && o.id !== displayedOffer.id).slice(0, 2);
+
+  return (
+    <section
+      id="cenik"
+      className="relative bg-cz-black px-6 py-20 md:px-16 md:py-[104px]"
+      style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+    >
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+          maskImage: 'radial-gradient(ellipse 70% 60% at 50% 0%, #000, transparent 80%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 0%, #000, transparent 80%)',
+        }}
+      />
+      <div className="relative max-w-[1200px] mx-auto">
+        <Reveal>
+          <div style={{ marginBottom: 40 }}>
+            <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 13, letterSpacing: 2.5, marginBottom: 12 }}>
+              {'// SPOČÍTEJ SI CENU'}
+            </span>
+            <h2
+              className="font-display text-white uppercase"
+              style={{ margin: 0, fontSize: 'clamp(36px, 5vw, 52px)', lineHeight: 0.98, letterSpacing: 1 }}
+            >
+              KOLIK TĚ TO BUDE STÁT
+            </h2>
+            <div style={{ width: 64, height: 2, background: '#E84A1A', marginTop: 24 }} />
+          </div>
+        </Reveal>
+
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,38fr)_minmax(0,62fr)] gap-12 items-start">
+          <Reveal>
+            <CalculatorInputs
+              config={config}
+              stationType={stationType}
+              onStationType={(t) => {
+                setStationType(t);
+                setOverrideOfferId(null);
+              }}
+              dayType={dayType}
+              onDayType={handleDayType}
+              startHour={startHour}
+              onStartHour={handleStartHour}
+              durationHours={durationHours}
+              onDurationHours={handleDurationHours}
+              stationsCount={stationsCount}
+              onStationsCount={setStationsCount}
+              fitNote={fitNote}
+            />
+          </Reveal>
+
+          <Reveal delay={80}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 0 }}>
+              {result.betterChoice && !overrideOffer && (
+                <BetterChoiceCard
+                  offer={result.betterChoice}
+                  recommended={result.recommended}
+                  onApply={() => setOverrideOfferId(result.betterChoice!.id)}
+                />
+              )}
+
+              <OfferCard
+                offer={displayedOffer}
+                creditExpiryMonths={config.creditExpiryMonths}
+                badgeLabel={overrideOffer ? 'VYBRÁNO' : 'DOPORUČUJEME'}
+                isOverride={!!overrideOffer}
+                onRevert={() => setOverrideOfferId(null)}
+                upsell={upsell}
+                onApplyUpsell={upsell ? () => setOverrideOfferId(upsell.id) : undefined}
+                onReserve={open}
+                onGoKredit={(e) => {
+                  e.preventDefault();
+                  document.getElementById('kredit')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              />
+
+              {alts.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>
+                  <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 2.5, color: '#E8E8E8', textTransform: 'uppercase' }}>
+                    NEBO PŘIPLAŤ A MĚJ VÍC
+                  </div>
+                  {alts.map((a) => {
+                    const delta = a.totalAmount - displayedOffer.totalAmount;
+                    return (
+                      <div
+                        key={a.id}
+                        style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '14px 16px', background: '#0A0A0A', border: '1px solid #2A2A2A', borderRadius: 2 }}
+                      >
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 20, letterSpacing: 1, color: '#FFFFFF', textTransform: 'uppercase' }}>
+                            {a.label}
+                          </div>
+                          <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 13, letterSpacing: 1, marginTop: 6, color: a.isCredit ? '#E84A1A' : '#888888', textTransform: 'uppercase' }}>
+                            {a.isCredit ? 'HODINY ZŮSTÁVAJÍ' : 'PLATÍ JEN V TOMTO ČASE'} · {a.effectiveHourly} KČ/H
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 26, letterSpacing: 1, color: '#FFFFFF' }}>
+                            {a.totalAmount} <span style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 1.5, color: '#E8E8E8' }}>KČ</span>
+                          </div>
+                          <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 13, fontWeight: 700, letterSpacing: 1, color: delta > 0 ? '#888888' : '#E84A1A', marginTop: 4 }}>
+                            {delta > 0 ? `+${delta} KČ` : delta < 0 ? `${delta} KČ` : '='}
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => setOverrideOfferId(a.id)}
+                          style={{
+                            fontFamily: "'Bebas Neue',sans-serif",
+                            fontSize: 16,
+                            letterSpacing: 1.5,
+                            lineHeight: 1,
+                            color: '#E84A1A',
+                            background: 'transparent',
+                            border: '1.5px solid #E84A1A',
+                            padding: '10px 16px',
+                            cursor: 'pointer',
+                            borderRadius: 2,
+                          }}
+                        >
+                          VYBRAT
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </Reveal>
+        </div>
+
+        <FullPriceTable config={config} />
+      </div>
+    </section>
+  );
+}
