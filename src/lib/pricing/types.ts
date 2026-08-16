@@ -86,6 +86,7 @@ export interface Offer {
   effectiveHourly: number;
   savingsVsHourly: number;
   fitsClosingTime: boolean;
+  timeWindowLabel: string | null; // e.g. "14:00–17:00", set only for kind === 'pass'
 }
 
 export interface OfferResult {

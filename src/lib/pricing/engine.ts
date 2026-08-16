@@ -108,7 +108,12 @@ function buildHoursOffer(
     effectiveHourly: Math.round(combo.amount / combo.totalHours),
     savingsVsHourly: input.durationHours * baseTierAmount * input.stationsCount - totalAmount,
     fitsClosingTime,
+    timeWindowLabel: null,
   };
+}
+
+function formatClock(t: string): string {
+  return t.slice(0, 5);
 }
 
 function buildPassOffer(pass: TimePass, dayType: DayTypeGroup, input: CalcInput, locale: 'cs' | 'en', baseTierAmount: number): Offer | null {
@@ -144,6 +149,7 @@ function buildPassOffer(pass: TimePass, dayType: DayTypeGroup, input: CalcInput,
     effectiveHourly: Math.round(unitPrice / coverage),
     savingsVsHourly: input.durationHours * baseTierAmount * input.stationsCount - totalAmount,
     fitsClosingTime: true,
+    timeWindowLabel: `${formatClock(pass.windowStart)}–${formatClock(pass.windowEnd)}`,
   };
 }
 

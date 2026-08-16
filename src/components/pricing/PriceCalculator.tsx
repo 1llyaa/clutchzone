@@ -151,63 +151,14 @@ export default function PriceCalculator({ config }: Props) {
                 onRevert={() => setOverrideOfferId(null)}
                 upsell={upsell}
                 onApplyUpsell={upsell ? () => setOverrideOfferId(upsell.id) : undefined}
+                alts={alts}
+                onSelectAlt={(id) => setOverrideOfferId(id)}
                 onReserve={open}
                 onGoKredit={(e) => {
                   e.preventDefault();
                   document.getElementById('kredit')?.scrollIntoView({ behavior: 'smooth' });
                 }}
               />
-
-              {alts.length > 0 && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>
-                  <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 2.5, color: '#E8E8E8', textTransform: 'uppercase' }}>
-                    NEBO PŘIPLAŤ A MĚJ VÍC
-                  </div>
-                  {alts.map((a) => {
-                    const delta = a.totalAmount - displayedOffer.totalAmount;
-                    return (
-                      <div
-                        key={a.id}
-                        style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '14px 16px', background: '#0A0A0A', border: '1px solid #2A2A2A', borderRadius: 2 }}
-                      >
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 20, letterSpacing: 1, color: '#FFFFFF', textTransform: 'uppercase' }}>
-                            {a.label}
-                          </div>
-                          <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 13, letterSpacing: 1, marginTop: 6, color: a.isCredit ? '#E84A1A' : '#888888', textTransform: 'uppercase' }}>
-                            {a.isCredit ? 'HODINY ZŮSTÁVAJÍ' : 'PLATÍ JEN V TOMTO ČASE'} · {a.effectiveHourly} KČ/H
-                          </div>
-                        </div>
-                        <div style={{ textAlign: 'right' }}>
-                          <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 26, letterSpacing: 1, color: '#FFFFFF' }}>
-                            {a.totalAmount} <span style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 1.5, color: '#E8E8E8' }}>KČ</span>
-                          </div>
-                          <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 13, fontWeight: 700, letterSpacing: 1, color: delta > 0 ? '#888888' : '#E84A1A', marginTop: 4 }}>
-                            {delta > 0 ? `+${delta} KČ` : delta < 0 ? `${delta} KČ` : '='}
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => setOverrideOfferId(a.id)}
-                          style={{
-                            fontFamily: "'Bebas Neue',sans-serif",
-                            fontSize: 16,
-                            letterSpacing: 1.5,
-                            lineHeight: 1,
-                            color: '#E84A1A',
-                            background: 'transparent',
-                            border: '1.5px solid #E84A1A',
-                            padding: '10px 16px',
-                            cursor: 'pointer',
-                            borderRadius: 2,
-                          }}
-                        >
-                          VYBRAT
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
             </div>
           </Reveal>
         </div>

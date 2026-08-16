@@ -11,6 +11,8 @@ interface Props {
   onRevert?: () => void;
   upsell?: Offer | null;
   onApplyUpsell?: () => void;
+  alts?: Offer[];
+  onSelectAlt?: (id: string) => void;
   onReserve: () => void;
   onGoKredit: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }
@@ -23,6 +25,8 @@ export default function OfferCard({
   onRevert,
   upsell,
   onApplyUpsell,
+  alts = [],
+  onSelectAlt,
   onReserve,
   onGoKredit,
 }: Props) {
@@ -76,20 +80,6 @@ export default function OfferCard({
 
       <SavingsBadge amount={offer.savingsVsHourly} />
 
-      {upsell && onApplyUpsell && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16, background: '#1A1A1A', border: '1px solid #2A2A2A', padding: '12px 16px', marginTop: 12 }}>
-          <span style={{ flex: 1, fontFamily: "'Inter',sans-serif", fontWeight: 500, fontSize: 16, color: '#FFFFFF', textTransform: 'uppercase' }}>
-            Za +{upsell.totalAmount - offer.totalAmount} Kč máš {upsell.hoursCovered - offer.hoursCovered === 1 ? 'o hodinu' : `o ${upsell.hoursCovered - offer.hoursCovered} hodiny`} víc
-          </span>
-          <button
-            onClick={onApplyUpsell}
-            style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 16, letterSpacing: 1.5, lineHeight: 1, color: '#E84A1A', background: 'transparent', border: '1px solid #E84A1A', padding: '6px 14px', cursor: 'pointer', borderRadius: 2 }}
-          >
-            PŘIDAT
-          </button>
-        </div>
-      )}
-
       <div style={{ fontFamily: "'Inter',sans-serif", fontWeight: 500, fontSize: 16, color: '#E8E8E8', marginTop: 10 }}>
         {offer.effectiveHourly} Kč / hodina
       </div>
@@ -140,7 +130,72 @@ export default function OfferCard({
             textTransform: 'uppercase',
           }}
         >
-          PLATÍ JEN V TOMTO ČASE · NEPŘENÁŠÍ SE
+          PLATÍ JEN {offer.timeWindowLabel ?? 'V TOMTO ČASE'} · NEPŘENÁŠÍ SE
+        </div>
+      )}
+
+      {upsell && onApplyUpsell && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, background: '#1A1A1A', border: '1px solid #E84A1A', padding: '12px 16px', marginTop: 16 }}>
+          <span style={{ flex: 1, fontFamily: "'Inter',sans-serif", fontWeight: 500, fontSize: 16, color: '#FFFFFF', textTransform: 'uppercase' }}>
+            Za +{upsell.totalAmount - offer.totalAmount} Kč máš {upsell.hoursCovered - offer.hoursCovered === 1 ? 'o hodinu' : `o ${upsell.hoursCovered - offer.hoursCovered} hodiny`} víc
+          </span>
+          <button
+            onClick={onApplyUpsell}
+            style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 16, letterSpacing: 1.5, lineHeight: 1, color: '#E84A1A', background: 'transparent', border: '1px solid #E84A1A', padding: '6px 14px', cursor: 'pointer', borderRadius: 2 }}
+          >
+            PŘIDAT
+          </button>
+        </div>
+      )}
+
+      {alts.length > 0 && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 20 }}>
+          <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 2.5, color: '#E8E8E8', textTransform: 'uppercase' }}>
+            NEBO PŘIPLAŤ A MĚJ VÍC
+          </div>
+          {alts.map((a) => {
+            const delta = a.totalAmount - offer.totalAmount;
+            return (
+              <div
+                key={a.id}
+                style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '14px 16px', background: '#0A0A0A', border: '1px solid #2A2A2A', borderRadius: 2 }}
+              >
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 20, letterSpacing: 1, color: '#FFFFFF', textTransform: 'uppercase' }}>
+                    {a.label}
+                  </div>
+                  <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 13, letterSpacing: 1, marginTop: 6, color: a.isCredit ? '#E84A1A' : '#888888', textTransform: 'uppercase' }}>
+                    {a.isCredit ? 'HODINY ZŮSTÁVAJÍ' : `PLATÍ ${a.timeWindowLabel ?? 'JEN V TOMTO ČASE'}`} · {a.effectiveHourly} KČ/H
+                  </div>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 26, letterSpacing: 1, color: '#FFFFFF' }}>
+                    {a.totalAmount} <span style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 1.5, color: '#E8E8E8' }}>KČ</span>
+                  </div>
+                  <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 13, fontWeight: 700, letterSpacing: 1, color: delta > 0 ? '#888888' : '#E84A1A', marginTop: 4 }}>
+                    {delta > 0 ? `+${delta} KČ` : delta < 0 ? `${delta} KČ` : '='}
+                  </div>
+                </div>
+                <button
+                  onClick={() => onSelectAlt?.(a.id)}
+                  style={{
+                    fontFamily: "'Bebas Neue',sans-serif",
+                    fontSize: 16,
+                    letterSpacing: 1.5,
+                    lineHeight: 1,
+                    color: '#E84A1A',
+                    background: 'transparent',
+                    border: '1.5px solid #E84A1A',
+                    padding: '10px 16px',
+                    cursor: 'pointer',
+                    borderRadius: 2,
+                  }}
+                >
+                  VYBRAT
+                </button>
+              </div>
+            );
+          })}
         </div>
       )}
 
