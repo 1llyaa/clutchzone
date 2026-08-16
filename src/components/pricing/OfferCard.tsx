@@ -14,7 +14,8 @@ interface Props {
   alts?: Offer[];
   onSelectAlt?: (id: string) => void;
   onReserve: () => void;
-  onGoKredit: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+  reserveLabel?: string;
+  onGoKredit?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 
 export default function OfferCard({
@@ -28,6 +29,7 @@ export default function OfferCard({
   alts = [],
   onSelectAlt,
   onReserve,
+  reserveLabel = 'REZERVOVAT',
   onGoKredit,
 }: Props) {
   return (
@@ -217,13 +219,15 @@ export default function OfferCard({
           textTransform: 'uppercase',
         }}
       >
-        REZERVOVAT
+        {reserveLabel}
       </button>
-      <div style={{ textAlign: 'center', marginTop: 14 }}>
-        <a href="#kredit" onClick={onGoKredit} style={{ fontFamily: "'Inter',sans-serif", fontSize: 16, color: '#E84A1A' }}>
-          Nebo si kup jen hodiny do zásoby →
-        </a>
-      </div>
+      {onGoKredit && (
+        <div style={{ textAlign: 'center', marginTop: 14 }}>
+          <a href="#kredit" onClick={onGoKredit} style={{ fontFamily: "'Inter',sans-serif", fontSize: 16, color: '#E84A1A' }}>
+            Nebo si kup jen hodiny do zásoby →
+          </a>
+        </div>
+      )}
     </div>
   );
 }

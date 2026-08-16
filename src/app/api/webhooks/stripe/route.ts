@@ -17,10 +17,12 @@ export async function POST(request: NextRequest) {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object; // Stripe.Checkout.Session
-    const bookingId = session.metadata?.bookingId;
+    // Metadata key is named bookingId for historical reasons — it now holds
+    // the booking_group_id, since a checkout can cover several stations.
+    const groupId = session.metadata?.bookingId;
     const parsedCoins = parseInt(session.metadata?.coins ?? '0', 10);
     const coins = Number.isFinite(parsedCoins) ? parsedCoins : 0;
-    if (bookingId) {
+    if (groupId) {
       const admin = createAdminClient();
       const { error } = await admin
         .from('bookings')
@@ -32,11 +34,11 @@ export async function POST(request: NextRequest) {
               ? session.payment_intent
               : session.payment_intent?.id,
         })
-        .eq('id', bookingId);
+        .eq('booking_group_id', groupId);
 
       if (error) {
         console.error(
-          `Failed to mark booking ${bookingId} as paid (coins: ${coins}) after Stripe checkout.session.completed:`,
+          `Failed to mark booking group ${groupId} as paid (coins: ${coins}) after Stripe checkout.session.completed:`,
           error
         );
       }

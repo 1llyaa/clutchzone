@@ -82,7 +82,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
 
           <div className="flex flex-wrap gap-4" style={{ marginTop: 36 }}>
             <button
-              onClick={open}
+              onClick={() => open()}
               className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer"
               style={{ fontSize: 'clamp(16px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(12px, 2vw, 16px) clamp(24px, 4vw, 40px)' }}
             >

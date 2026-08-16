@@ -1,3 +1,4 @@
+import { dayTypeCloseHour } from './dayTypes';
 import type {
   CalcInput,
   DayTypeGroup,
@@ -8,6 +9,19 @@ import type {
   PricingConfig,
   TimePass,
 } from './types';
+
+/**
+ * How many hours actually block a station on the reservation date.
+ * Pass offers consume exactly their coverage; hours/hours_upsell offers
+ * only occupy the station for what fits before closing today — any
+ * surplus purchased hours are banked credit, not extra on-site time
+ * (spec §3.7).
+ */
+export function reservedHoursOnSite(offer: Offer, input: CalcInput, dayType: DayTypeGroup): number {
+  if (offer.kind === 'pass') return offer.hoursCovered;
+  const closeHour = dayTypeCloseHour(dayType);
+  return Math.max(0, Math.min(input.durationHours, closeHour - input.startHour));
+}
 
 function parseTimeToHours(t: string): number {
   const [h, m] = t.split(':').map(Number);

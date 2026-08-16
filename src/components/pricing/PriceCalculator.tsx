@@ -6,7 +6,7 @@ import { useReservation } from '@/components/reservation/ReservationContext';
 import Reveal from '@/components/ui/Reveal';
 import { dayTypeCloseHour, dayTypeOpenHour } from '@/lib/pricing/dayTypes';
 import { calculatePricing } from '@/lib/pricing/engine';
-import type { PricingConfig, StationType } from '@/lib/pricing/types';
+import type { CalcInput, Offer, PricingConfig, StationType } from '@/lib/pricing/types';
 import BetterChoiceCard from './BetterChoiceCard';
 import CalculatorInputs from './CalculatorInputs';
 import FullPriceTable from './FullPriceTable';
@@ -14,6 +14,9 @@ import OfferCard from './OfferCard';
 
 interface Props {
   config: PricingConfig;
+  variant?: 'full' | 'compact';
+  /** Compact/in-modal usage: called instead of opening the reservation modal. */
+  onOfferChosen?: (input: CalcInput, offer: Offer) => void;
 }
 
 function defaultDayTypeKey(config: PricingConfig): string {
@@ -26,9 +29,10 @@ function defaultDayTypeKey(config: PricingConfig): string {
   return config.dayTypes[0]?.key ?? '';
 }
 
-export default function PriceCalculator({ config }: Props) {
+export default function PriceCalculator({ config, variant = 'full', onOfferChosen }: Props) {
   const locale = useLocale() === 'en' ? 'en' : 'cs';
   const { open } = useReservation();
+  const isCompact = variant === 'compact';
 
   const [stationType, setStationType] = useState<StationType>('pc');
   const [dayTypeKey, setDayTypeKey] = useState(() => defaultDayTypeKey(config));
@@ -80,6 +84,79 @@ export default function PriceCalculator({ config }: Props) {
   const upsell = !overrideOffer ? result.alternatives.find((o) => o.kind === 'hours_upsell') ?? null : null;
   const alts = result.alternatives.filter((o) => o.id !== upsell?.id && o.id !== displayedOffer.id).slice(0, 2);
 
+  const calcInput: CalcInput = { stationType, dayTypeKey: dayType.key, startHour, durationHours, stationsCount };
+
+  function handleReserve() {
+    if (onOfferChosen) {
+      onOfferChosen(calcInput, displayedOffer);
+      return;
+    }
+    open({ ...calcInput, offerId: displayedOffer.id });
+  }
+
+  const inputsBlock = (
+    <CalculatorInputs
+      config={config}
+      stationType={stationType}
+      onStationType={(t) => {
+        setStationType(t);
+        setOverrideOfferId(null);
+      }}
+      dayType={dayType}
+      onDayType={handleDayType}
+      startHour={startHour}
+      onStartHour={handleStartHour}
+      durationHours={durationHours}
+      onDurationHours={handleDurationHours}
+      stationsCount={stationsCount}
+      onStationsCount={setStationsCount}
+      fitNote={fitNote}
+    />
+  );
+
+  const offerBlock = (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 0 }}>
+      {result.betterChoice && !overrideOffer && (
+        <BetterChoiceCard
+          offer={result.betterChoice}
+          recommended={result.recommended}
+          onApply={() => setOverrideOfferId(result.betterChoice!.id)}
+        />
+      )}
+
+      <OfferCard
+        offer={displayedOffer}
+        creditExpiryMonths={config.creditExpiryMonths}
+        badgeLabel={overrideOffer ? 'VYBRÁNO' : 'DOPORUČUJEME'}
+        isOverride={!!overrideOffer}
+        onRevert={() => setOverrideOfferId(null)}
+        upsell={upsell}
+        onApplyUpsell={upsell ? () => setOverrideOfferId(upsell.id) : undefined}
+        alts={alts}
+        onSelectAlt={(id) => setOverrideOfferId(id)}
+        onReserve={handleReserve}
+        reserveLabel={isCompact ? 'POKRAČOVAT' : undefined}
+        onGoKredit={
+          isCompact
+            ? undefined
+            : (e) => {
+                e.preventDefault();
+                document.getElementById('kredit')?.scrollIntoView({ behavior: 'smooth' });
+              }
+        }
+      />
+    </div>
+  );
+
+  if (isCompact) {
+    return (
+      <div className="flex flex-col gap-8">
+        {inputsBlock}
+        {offerBlock}
+      </div>
+    );
+  }
+
   return (
     <section
       id="cenik"
@@ -113,54 +190,8 @@ export default function PriceCalculator({ config }: Props) {
         </Reveal>
 
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,38fr)_minmax(0,62fr)] gap-12 items-start">
-          <Reveal>
-            <CalculatorInputs
-              config={config}
-              stationType={stationType}
-              onStationType={(t) => {
-                setStationType(t);
-                setOverrideOfferId(null);
-              }}
-              dayType={dayType}
-              onDayType={handleDayType}
-              startHour={startHour}
-              onStartHour={handleStartHour}
-              durationHours={durationHours}
-              onDurationHours={handleDurationHours}
-              stationsCount={stationsCount}
-              onStationsCount={setStationsCount}
-              fitNote={fitNote}
-            />
-          </Reveal>
-
-          <Reveal delay={80}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minWidth: 0 }}>
-              {result.betterChoice && !overrideOffer && (
-                <BetterChoiceCard
-                  offer={result.betterChoice}
-                  recommended={result.recommended}
-                  onApply={() => setOverrideOfferId(result.betterChoice!.id)}
-                />
-              )}
-
-              <OfferCard
-                offer={displayedOffer}
-                creditExpiryMonths={config.creditExpiryMonths}
-                badgeLabel={overrideOffer ? 'VYBRÁNO' : 'DOPORUČUJEME'}
-                isOverride={!!overrideOffer}
-                onRevert={() => setOverrideOfferId(null)}
-                upsell={upsell}
-                onApplyUpsell={upsell ? () => setOverrideOfferId(upsell.id) : undefined}
-                alts={alts}
-                onSelectAlt={(id) => setOverrideOfferId(id)}
-                onReserve={open}
-                onGoKredit={(e) => {
-                  e.preventDefault();
-                  document.getElementById('kredit')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              />
-            </div>
-          </Reveal>
+          <Reveal>{inputsBlock}</Reveal>
+          <Reveal delay={80}>{offerBlock}</Reveal>
         </div>
 
         <FullPriceTable config={config} />

@@ -9,22 +9,23 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params;
+  const { id: groupId } = await params;
   const admin = createAdminClient();
 
-  const { data: booking, error: bookingErr } = await admin
+  const { data: rows, error: bookingErr } = await admin
     .from('bookings')
     .select('id, reference, total_price, payment_status')
-    .eq('id', id)
-    .single();
+    .eq('booking_group_id', groupId);
 
-  if (bookingErr || !booking) {
+  if (bookingErr || !rows?.length) {
     return NextResponse.json({ error: 'Rezervace nenalezena' }, { status: 404 });
   }
 
-  if (booking.payment_status === 'paid') {
+  if (rows.some((r) => r.payment_status === 'paid')) {
     return NextResponse.json({ error: 'Rezervace je již zaplacena' }, { status: 409 });
   }
+
+  const totalAmount = rows.reduce((sum, r) => sum + r.total_price, 0);
 
   const { data: setting } = await admin
     .from('site_settings')
@@ -47,25 +48,25 @@ export async function POST(
         {
           price_data: {
             currency: 'czk',
-            product_data: { name: `Rezervace ${booking.reference}` },
-            unit_amount: booking.total_price * 100,
+            product_data: { name: `Rezervace ${rows[0].reference}` },
+            unit_amount: totalAmount * 100,
           },
           quantity: 1,
         },
       ],
-      metadata: { bookingId: booking.id, coins: String(coinsAmount) },
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/${locale}/booking/success?session_id={CHECKOUT_SESSION_ID}&booking=${booking.id}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/${locale}/booking/cancelled?booking=${booking.id}`,
+      metadata: { bookingId: groupId, coins: String(coinsAmount) },
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/${locale}/booking/success?session_id={CHECKOUT_SESSION_ID}&booking=${groupId}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/${locale}/booking/cancelled?booking=${groupId}`,
     });
 
     const { error: updateErr } = await admin
       .from('bookings')
       .update({ payment_method: 'online', stripe_checkout_session_id: session.id })
-      .eq('id', id);
+      .eq('booking_group_id', groupId);
 
     if (updateErr) {
       console.error(
-        `Failed to record Stripe checkout session on booking ${id} (session ${session.id}):`,
+        `Failed to record Stripe checkout session on booking group ${groupId} (session ${session.id}):`,
         updateErr
       );
     }

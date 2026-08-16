@@ -79,7 +79,7 @@ export default function CtaBand() {
           </h2>
           <div className="flex gap-4 md:gap-5 justify-center flex-wrap">
             <button
-              onClick={open}
+              onClick={() => open()}
               className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark hover:shadow-[0_0_18px_rgba(232,74,26,0.35)] active:scale-[0.96] transition-[background-color,scale,box-shadow] duration-150 ease-out rounded-[2px] border-none cursor-pointer"
               style={{ fontSize: 'clamp(16px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(12px, 2vw, 16px) clamp(28px, 4vw, 44px)' }}
             >

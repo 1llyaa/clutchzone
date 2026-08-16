@@ -10,6 +10,10 @@ interface BookingEmailData {
   startTime: string;
   durationMinutes: number;
   totalPrice: number;
+  offerLabel?: string;
+  isCredit?: boolean;
+  creditExpiryMonths?: number;
+  clutchzoneAccount?: string | null;
 }
 
 // Escape user-supplied values before interpolating into email HTML.
@@ -51,18 +55,21 @@ export async function sendBookingNotification(b: BookingEmailData): Promise<void
   const rows: [string, string][] = [
     ['Reference', b.reference],
     ['Stanice', b.stationLabel],
+    ['Nabídka', b.offerLabel ?? '—'],
     ['Datum', b.date],
     ['Čas', `${b.startTime} – ${endMin}`],
     ['Cena', `${b.totalPrice} Kč`],
     ['Jméno', b.customerName],
     ['E-mail', b.customerEmail],
     ['Telefon', b.customerPhone],
+    ...(b.clutchzoneAccount ? [['Clutchzone account', b.clutchzoneAccount] as [string, string]] : []),
   ];
 
   const html = `
     <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#111;color:#e8e8e8;padding:32px;border-top:3px solid #E84A1A">
       <h2 style="margin:0 0 4px;color:#fff;text-transform:uppercase;letter-spacing:2px">Nová rezervace</h2>
       <p style="margin:0 0 24px;color:#888;font-size:13px">Clutch Zone — právě přišla nová rezervace.</p>
+      ${b.isCredit ? `<p style="margin:0 0 20px;padding:10px 14px;background:rgba(232,74,26,0.1);border:1px solid rgba(232,74,26,0.3);color:#ff8a5c;font-size:13px">Hodinový kredit — připiš na Clutchzone account při první návštěvě.</p>` : ''}
       <table style="width:100%;border-collapse:collapse;font-size:14px">
         ${rows.map(([k, v]) => `
           <tr>
@@ -101,10 +108,18 @@ export async function sendBookingConfirmation(b: BookingEmailData): Promise<void
 
   const rows: [string, string][] = [
     ['Stanice', b.stationLabel],
+    ['Nabídka', b.offerLabel ?? '—'],
     ['Datum', b.date],
     ['Čas', `${b.startTime} – ${endMin}`],
     ['Cena', `${b.totalPrice} Kč`],
   ];
+
+  const creditNote = b.isCredit
+    ? `<p style="margin:0 0 20px;padding:12px 14px;background:rgba(232,74,26,0.08);border:1px solid rgba(232,74,26,0.25);color:#ff8a5c;font-size:13px;line-height:1.6">
+        Hodiny ti připíšeme na Clutchzone account při první návštěvě — ukaž tenhle kód na recepci.
+        Platnost ${b.creditExpiryMonths ?? 3} měsíce od nákupu.
+      </p>`
+    : '';
 
   const html = `
     <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#111;color:#e8e8e8;padding:32px;border-top:3px solid #E84A1A">
@@ -120,10 +135,10 @@ export async function sendBookingConfirmation(b: BookingEmailData): Promise<void
             <td style="padding:8px 0;color:#fff;border-bottom:1px solid #2a2a2a"><strong>${escapeHtml(v)}</strong></td>
           </tr>`).join('')}
       </table>
-      <p style="margin:24px 0 0;color:#888;font-size:13px;line-height:1.6">
-        Přijďte 10 minut před začátkem a ukažte referenční kód na recepci.
-        Uvedená cena je orientační — platba probíhá na místě.
+      <p style="margin:24px 0 20px;color:#888;font-size:13px;line-height:1.6">
+        Přijďte 10 minut před začátkem a ukažte referenční kód na recepci. Cena uvedená výše je závazná.
       </p>
+      ${creditNote}
     </div>`;
 
   try {
@@ -132,7 +147,7 @@ export async function sendBookingConfirmation(b: BookingEmailData): Promise<void
       to: b.customerEmail,
       subject: `Rezervace potvrzena ${b.reference} · Clutch Zone · ${b.date} ${b.startTime}`,
       html,
-      text: `Rezervace potvrzena: ${b.reference}\n${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\nPřijďte 10 minut před začátkem a ukažte referenční kód na recepci.`,
+      text: `Rezervace potvrzena: ${b.reference}\n${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\nPřijďte 10 minut před začátkem a ukažte referenční kód na recepci. Cena je závazná.${b.isCredit ? `\nHodiny ti připíšeme na Clutchzone account při první návštěvě.` : ''}`,
     });
   } catch (err) {
     console.error('Booking confirmation email failed:', err);

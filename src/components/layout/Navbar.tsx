@@ -64,7 +64,7 @@ export default function Navbar() {
         </div>
 
         <button
-          onClick={open}
+          onClick={() => open()}
           className="bg-cz-orange text-white font-display uppercase border-[1.5px] border-cz-orange hover:bg-cz-orange-dark hover:border-cz-orange-dark hover:shadow-[0_0_18px_rgba(232,74,26,0.35)] active:scale-[0.96] transition-[background-color,border-color,scale,box-shadow] duration-150 ease-out rounded-[2px] cursor-pointer"
           style={{ fontSize: 16, letterSpacing: 1.5, lineHeight: 1, padding: '11px 22px' }}
         >
