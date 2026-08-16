@@ -13,18 +13,20 @@ CREATE INDEX IF NOT EXISTS bookings_reference_idx ON bookings (reference);
 -- the FK stays for old rows' history, just stops being mandatory.
 ALTER TABLE bookings ALTER COLUMN pricing_id DROP NOT NULL;
 
+-- IF NOT EXISTS on every column — safe to re-run after a partial failure
+-- (e.g. a check constraint typo) without hand-editing what already landed.
 ALTER TABLE bookings
-  ADD COLUMN booking_group_id uuid,
-  ADD COLUMN stations_count int NOT NULL DEFAULT 1,
-  ADD COLUMN time_pass_id uuid REFERENCES time_passes(id),
-  ADD COLUMN offer_kind text CHECK (offer_kind IN ('hours', 'hours_upsell', 'pass')),
-  ADD COLUMN pays_with_credit boolean NOT NULL DEFAULT false,
+  ADD COLUMN IF NOT EXISTS booking_group_id uuid,
+  ADD COLUMN IF NOT EXISTS stations_count int NOT NULL DEFAULT 1,
+  ADD COLUMN IF NOT EXISTS time_pass_id uuid REFERENCES time_passes(id),
+  ADD COLUMN IF NOT EXISTS offer_kind text CHECK (offer_kind IN ('hours', 'hours_upsell', 'pass')),
+  ADD COLUMN IF NOT EXISTS pays_with_credit boolean NOT NULL DEFAULT false,
   -- nullable on purpose: a brand-new player may not have a ggLeap
   -- account yet — staff pairs it up at their first visit via the
   -- reference code instead of blocking the booking on it
-  ADD COLUMN clutchzone_account text,
-  ADD COLUMN terms_accepted_at timestamptz,
-  ADD COLUMN terms_version text;
+  ADD COLUMN IF NOT EXISTS clutchzone_account text,
+  ADD COLUMN IF NOT EXISTS terms_accepted_at timestamptz,
+  ADD COLUMN IF NOT EXISTS terms_version text;
 
 CREATE INDEX IF NOT EXISTS bookings_group_idx ON bookings (booking_group_id);
 
