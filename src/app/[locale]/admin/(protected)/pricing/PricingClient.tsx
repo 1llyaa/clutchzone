@@ -1,208 +1,111 @@
 'use client';
 
-import { useState, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
+import { useMemo, useState } from 'react';
+import { deriveDayTypes } from '@/lib/pricing/dayTypes';
+import type { DayTypeGroup, HourTier, OpeningHoursRow, TimePass } from '@/lib/pricing/types';
+import HourTiersTab from './HourTiersTab';
+import ImpactPanel from './ImpactPanel';
+import OpeningHoursTab from './OpeningHoursTab';
+import TimePassesTab from './TimePassesTab';
 
-interface Tier {
-  id: string;
-  tier: string;
-  label: string;
-  amount: number;
-  unit: string;
-  description: string | null;
-  is_featured: boolean;
+type Tab = 'hours' | 'passes' | 'opening';
+
+const TABS: { key: Tab; label: string }[] = [
+  { key: 'hours', label: 'HODINOVÉ CENOVKY' },
+  { key: 'passes', label: 'ČASOVÉ PASY' },
+  { key: 'opening', label: 'OTEVÍRACÍ DOBA' },
+];
+
+function sameDayTypes(a: DayTypeGroup[], b: DayTypeGroup[]): boolean {
+  if (a.length !== b.length) return false;
+  return a.every((g, i) => g.label === b[i]?.label && g.days.join(',') === b[i]?.days.join(','));
 }
-interface DurationPrice { duration_h: number; amount: number }
 
 export default function PricingClient({
-  tiers,
-  pcPrices,
-  ps5Prices,
+  initialHourTiers,
+  initialTimePasses,
+  initialOpeningHours,
+  initialDayTypes,
 }: {
-  tiers: Tier[];
-  pcPrices: DurationPrice[];
-  ps5Prices: DurationPrice[];
+  initialHourTiers: HourTier[];
+  initialTimePasses: TimePass[];
+  initialOpeningHours: OpeningHoursRow[];
+  initialDayTypes: DayTypeGroup[];
 }) {
-  const router = useRouter();
-  const [, startTransition] = useTransition();
-  const [saving, setSaving] = useState<string | null>(null);
+  const [tab, setTab] = useState<Tab>('hours');
+  const [hourTiers, setHourTiers] = useState(initialHourTiers);
+  const [timePasses, setTimePasses] = useState(initialTimePasses);
+  const [openingHours, setOpeningHours] = useState(initialOpeningHours);
+  const [savedDayTypes, setSavedDayTypes] = useState(initialDayTypes);
 
-  // Editable amounts keyed by id/key
-  const [tierAmounts, setTierAmounts]   = useState<Record<string, number>>(
-    Object.fromEntries(tiers.map((t) => [t.id, t.amount]))
-  );
-  const [pcAmounts, setPcAmounts]       = useState<Record<number, number>>(
-    Object.fromEntries(pcPrices.map((p) => [p.duration_h, p.amount]))
-  );
-  const [ps5Amounts, setPs5Amounts]     = useState<Record<number, number>>(
-    Object.fromEntries(ps5Prices.map((p) => [p.duration_h, p.amount]))
-  );
+  const draftDayTypes = useMemo(() => deriveDayTypes(openingHours, timePasses), [openingHours, timePasses]);
+  const isDirty = !sameDayTypes(draftDayTypes, savedDayTypes);
 
-  async function saveTier(id: string) {
-    setSaving(id);
-    await fetch(`/api/admin/pricing/tier/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount: tierAmounts[id] }),
-    });
-    setSaving(null);
-    startTransition(() => router.refresh());
-  }
-
-  async function saveDuration(table: 'pc' | 'ps5', duration_h: number, amount: number) {
-    const key = `${table}-${duration_h}`;
-    setSaving(key);
-    await fetch(`/api/admin/pricing/duration`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ table, duration_h, amount }),
-    });
-    setSaving(null);
-    startTransition(() => router.refresh());
-  }
-
-  function Row({ label, value, onSave, onChange, saveKey }: {
-    label: string;
-    value: number;
-    onChange: (v: number) => void;
-    onSave: () => void;
-    saveKey: string;
-  }) {
-    return (
-      <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-        <td className="font-mono text-white" style={{ padding: '12px 16px', fontSize: 17 }}>
-          {label}
-        </td>
-        <td style={{ padding: '8px 16px' }}>
-          <div className="flex items-center gap-3">
-            <input
-              type="number"
-              value={value}
-              onChange={(e) => onChange(Number(e.target.value))}
-              className="bg-cz-black text-white font-mono rounded-[2px] focus:outline-none focus:border-cz-orange"
-              style={{ padding: '7px 12px', fontSize: 19, border: '1px solid #2A2A2A', width: 100 }}
-            />
-            <span className="font-mono text-cz-gray-light" style={{ fontSize: 16 }}>Kč</span>
-            <button
-              onClick={onSave}
-              disabled={saving === saveKey}
-              className="font-mono text-cz-orange uppercase hover:underline disabled:opacity-50"
-              style={{ fontSize: 16, letterSpacing: 1 }}
-            >
-              {saving === saveKey ? '...' : 'ULOŽIT'}
-            </button>
-          </div>
-        </td>
-      </tr>
-    );
+  function commitDayTypes(nextOpeningHours = openingHours, nextTimePasses = timePasses) {
+    setSavedDayTypes(deriveDayTypes(nextOpeningHours, nextTimePasses));
   }
 
   return (
     <div style={{ padding: '40px 48px' }}>
-      <div style={{ marginBottom: 40 }}>
-        <h1 className="font-display text-white uppercase" style={{ fontSize: 36, letterSpacing: 2 }}>
-          CENÍK
-        </h1>
+      <div style={{ marginBottom: 32 }}>
+        <h1 className="font-display text-white uppercase" style={{ fontSize: 36, letterSpacing: 2 }}>CENÍK</h1>
         <p className="font-mono text-cz-gray-light" style={{ fontSize: 16, letterSpacing: 2, marginTop: 4 }}>
-          ÚPRAVA PŘÍMÝCH CENOVEK
+          SPRÁVA CENOVEK, PASŮ A OTEVÍRACÍ DOBY
         </p>
       </div>
 
-      {/* Special packages */}
-      <div style={{ marginBottom: 40 }}>
-        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 16 }}>
-          ZVÝHODNĚNÉ BALÍČKY
-        </div>
-        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A' }}>
-          <table className="w-full">
-            <thead>
-              <tr style={{ borderBottom: '1px solid #2A2A2A' }}>
-                {['BALÍČEK', 'CENA'].map((h) => (
-                  <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '12px 16px', fontSize: 16, letterSpacing: 2 }}>
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {tiers.map((tier) => (
-                <Row
-                  key={tier.id}
-                  label={`${tier.label}  (${tier.description ?? tier.unit})`}
-                  value={tierAmounts[tier.id]}
-                  onChange={(v) => setTierAmounts((prev) => ({ ...prev, [tier.id]: v }))}
-                  onSave={() => saveTier(tier.id)}
-                  saveKey={tier.id}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
+      <ImpactPanel dayTypes={draftDayTypes} isDirty={isDirty} />
+
+      <div className="flex gap-8" style={{ borderBottom: '1px solid #2A2A2A', marginBottom: 28 }}>
+        {TABS.map((t) => (
+          <button
+            key={t.key}
+            onClick={() => setTab(t.key)}
+            className="font-mono uppercase"
+            style={{
+              fontSize: 16, letterSpacing: 2, padding: '0 0 14px', background: 'transparent', border: 'none', cursor: 'pointer',
+              color: tab === t.key ? '#E84A1A' : '#888888',
+              borderBottom: tab === t.key ? '2px solid #E84A1A' : '2px solid transparent',
+              marginBottom: -1,
+            }}
+          >
+            {t.label}
+          </button>
+        ))}
       </div>
 
-      {/* PC duration prices */}
-      <div style={{ marginBottom: 40 }}>
-        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 16 }}>
-          PC — DÉLKOVÉ CENY
-        </div>
-        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A' }}>
-          <table className="w-full">
-            <thead>
-              <tr style={{ borderBottom: '1px solid #2A2A2A' }}>
-                {['DÉLKA', 'CENA'].map((h) => (
-                  <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '12px 16px', fontSize: 16, letterSpacing: 2 }}>
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {pcPrices.map((p) => (
-                <Row
-                  key={p.duration_h}
-                  label={`${p.duration_h} hodin`}
-                  value={pcAmounts[p.duration_h]}
-                  onChange={(v) => setPcAmounts((prev) => ({ ...prev, [p.duration_h]: v }))}
-                  onSave={() => saveDuration('pc', p.duration_h, pcAmounts[p.duration_h])}
-                  saveKey={`pc-${p.duration_h}`}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* PS5 duration prices */}
-      <div>
-        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 16 }}>
-          PS5 — DÉLKOVÉ CENY
-        </div>
-        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A' }}>
-          <table className="w-full">
-            <thead>
-              <tr style={{ borderBottom: '1px solid #2A2A2A' }}>
-                {['DÉLKA', 'CENA'].map((h) => (
-                  <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '12px 16px', fontSize: 16, letterSpacing: 2 }}>
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {ps5Prices.map((p) => (
-                <Row
-                  key={p.duration_h}
-                  label={`${p.duration_h} hodin`}
-                  value={ps5Amounts[p.duration_h]}
-                  onChange={(v) => setPs5Amounts((prev) => ({ ...prev, [p.duration_h]: v }))}
-                  onSave={() => saveDuration('ps5', p.duration_h, ps5Amounts[p.duration_h])}
-                  saveKey={`ps5-${p.duration_h}`}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      {tab === 'hours' && (
+        <HourTiersTab
+          hourTiers={hourTiers}
+          onUpdate={(t) => setHourTiers((prev) => prev.map((x) => (x.id === t.id ? t : x)))}
+          onCreate={(t) => setHourTiers((prev) => [...prev, t])}
+        />
+      )}
+      {tab === 'passes' && (
+        <TimePassesTab
+          timePasses={timePasses}
+          onUpdate={(p) => {
+            const next = timePasses.map((x) => (x.id === p.id ? p : x));
+            setTimePasses(next);
+            commitDayTypes(openingHours, next);
+          }}
+          onCreate={(p) => {
+            const next = [...timePasses, p];
+            setTimePasses(next);
+            commitDayTypes(openingHours, next);
+          }}
+        />
+      )}
+      {tab === 'opening' && (
+        <OpeningHoursTab
+          openingHours={openingHours}
+          onUpdate={(r) => {
+            const next = openingHours.map((x) => (x.dayOfWeek === r.dayOfWeek ? r : x));
+            setOpeningHours(next);
+            commitDayTypes(next, timePasses);
+          }}
+        />
+      )}
     </div>
   );
 }
