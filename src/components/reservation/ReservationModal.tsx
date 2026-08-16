@@ -19,8 +19,9 @@ interface ContactInfo {
   phone: string;
   discord: string;
   clutchzoneAccount: string;
+  noAccountYet: boolean;
 }
-const EMPTY_CONTACT: ContactInfo = { name: '', email: '', phone: '', discord: '', clutchzoneAccount: '' };
+const EMPTY_CONTACT: ContactInfo = { name: '', email: '', phone: '', discord: '', clutchzoneAccount: '', noAccountYet: false };
 
 interface BookingResult {
   reference: string;

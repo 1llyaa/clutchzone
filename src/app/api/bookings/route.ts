@@ -42,9 +42,6 @@ export async function POST(req: NextRequest) {
   if (!data.termsAccepted) {
     return NextResponse.json({ error: 'Bez souhlasu s podmínkami nemůžeme rezervaci dokončit.' }, { status: 400 });
   }
-  if (data.offerKind !== 'pass' && !data.clutchzoneAccount?.trim()) {
-    return NextResponse.json({ error: 'Chybí Clutchzone account — bez něj nejde připsat hodiny.' }, { status: 400 });
-  }
 
   // Revalidate everything server-side over the SAME engine + live DB data —
   // never trust stationType/date/hours/offer/price coming from the client.

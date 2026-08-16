@@ -19,6 +19,9 @@ ALTER TABLE bookings
   ADD COLUMN time_pass_id uuid REFERENCES time_passes(id),
   ADD COLUMN offer_kind text CHECK (offer_kind IN ('hours', 'hours_upsell', 'pass')),
   ADD COLUMN pays_with_credit boolean NOT NULL DEFAULT false,
+  -- nullable on purpose: a brand-new player may not have a ggLeap
+  -- account yet — staff pairs it up at their first visit via the
+  -- reference code instead of blocking the booking on it
   ADD COLUMN clutchzone_account text,
   ADD COLUMN terms_accepted_at timestamptz,
   ADD COLUMN terms_version text;

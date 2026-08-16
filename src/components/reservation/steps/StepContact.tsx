@@ -6,6 +6,7 @@ interface ContactInfo {
   phone: string;
   discord: string;
   clutchzoneAccount: string;
+  noAccountYet: boolean;
 }
 
 interface Props {
@@ -17,10 +18,10 @@ interface Props {
 }
 
 function Field({
-  label, value, onChange, placeholder, type = 'text', required = true, hint,
+  label, value, onChange, placeholder, type = 'text', required = true, hint, disabled = false,
 }: {
   label: string; value: string; onChange: (v: string) => void;
-  placeholder: string; type?: string; required?: boolean; hint?: string;
+  placeholder: string; type?: string; required?: boolean; hint?: string; disabled?: boolean;
 }) {
   return (
     <div>
@@ -31,9 +32,10 @@ function Field({
         type={type}
         value={value}
         placeholder={placeholder}
+        disabled={disabled}
         onChange={(e) => onChange(e.target.value)}
         className="w-full bg-cz-black border border-cz-gray-dark rounded-cz text-white font-body placeholder:text-cz-gray-light focus:border-cz-orange outline-none transition-colors"
-        style={{ padding: '12px 16px', fontSize: 16 }}
+        style={{ padding: '12px 16px', fontSize: 16, opacity: disabled ? 0.4 : 1, cursor: disabled ? 'not-allowed' : 'text' }}
       />
       {hint && <p className="font-mono text-cz-gray-light" style={{ fontSize: 12, letterSpacing: 1, marginTop: 6 }}>{hint}</p>}
     </div>
@@ -41,11 +43,12 @@ function Field({
 }
 
 export default function StepContact({ contact, onChange, requireClutchzoneAccount, onBack, onNext }: Props) {
+  const accountNeeded = requireClutchzoneAccount && !contact.noAccountYet;
   const valid =
     contact.name.trim().length >= 2 &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email) &&
     contact.phone.trim().length >= 9 &&
-    (!requireClutchzoneAccount || contact.clutchzoneAccount.trim().length >= 2);
+    (!accountNeeded || contact.clutchzoneAccount.trim().length >= 2);
 
   const set = (patch: Partial<ContactInfo>) => onChange({ ...contact, ...patch });
 
@@ -54,14 +57,51 @@ export default function StepContact({ contact, onChange, requireClutchzoneAccoun
       <Field label="Jméno" value={contact.name} onChange={(v) => set({ name: v })} placeholder="Jan Novák" />
       <Field label="E-mail" value={contact.email} onChange={(v) => set({ email: v })} placeholder="jan@email.cz" type="email" />
       <Field label="Telefon" value={contact.phone} onChange={(v) => set({ phone: v })} placeholder="+420 123 456 789" type="tel" />
-      <Field
-        label="Clutchzone account"
-        value={contact.clutchzoneAccount}
-        onChange={(v) => set({ clutchzoneAccount: v })}
-        placeholder="tvoje přezdívka v ggLeap"
-        required={requireClutchzoneAccount}
-        hint={requireClutchzoneAccount ? 'Podle tohohle jména ti obsluha připíše hodiny na účet.' : undefined}
-      />
+
+      {requireClutchzoneAccount && (
+        <div>
+          <Field
+            label="Clutchzone account"
+            value={contact.clutchzoneAccount}
+            onChange={(v) => set({ clutchzoneAccount: v })}
+            placeholder="tvoje přezdívka v ggLeap"
+            required={accountNeeded}
+            disabled={contact.noAccountYet}
+            hint={accountNeeded ? 'Podle tohohle jména ti obsluha připíše hodiny na účet.' : undefined}
+          />
+          <div
+            onClick={() => set({ noAccountYet: !contact.noAccountYet, clutchzoneAccount: contact.noAccountYet ? contact.clutchzoneAccount : '' })}
+            style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 10, cursor: 'pointer' }}
+          >
+            <div
+              style={{
+                width: 16,
+                height: 16,
+                flexShrink: 0,
+                border: `1.5px solid ${contact.noAccountYet ? '#E84A1A' : '#555555'}`,
+                background: contact.noAccountYet ? '#E84A1A' : 'transparent',
+                borderRadius: 2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 11,
+                color: '#fff',
+              }}
+            >
+              {contact.noAccountYet ? '✓' : ''}
+            </div>
+            <span className="font-mono text-cz-gray-light" style={{ fontSize: 13, letterSpacing: 1 }}>
+              Nemám zatím Clutchzone účet
+            </span>
+          </div>
+          {contact.noAccountYet && (
+            <p className="font-mono text-cz-gray-light" style={{ fontSize: 12, letterSpacing: 1, marginTop: 6 }}>
+              V pořádku — účet ti založíme na místě, hodiny připíšeme dodatečně podle referenčního kódu.
+            </p>
+          )}
+        </div>
+      )}
+
       <Field label="Discord" value={contact.discord} onChange={(v) => set({ discord: v })} placeholder="uživatel#0000" required={false} />
 
       <div className="flex gap-3" style={{ marginTop: 4 }}>
