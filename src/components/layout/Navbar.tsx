@@ -25,6 +25,7 @@ export default function Navbar() {
     { label: t('akce'), href: '#akce' },
     { label: t('kontakt'), href: '#kontakt' },
   ];
+  const isHome = pathname === '/';
 
   return (
     <nav
@@ -37,16 +38,27 @@ export default function Navbar() {
 
       {/* Desktop nav */}
       <div className="hidden md:flex items-center gap-10">
-        {links.map((link) => (
-          <a
-            key={link.href}
-            href={link.href}
-            className="font-mono text-cz-gray-light uppercase hover:text-white transition-[color] duration-200 ease-out cz-link-underline"
-            style={{ fontSize: 16, letterSpacing: 2 }}
-          >
-            {link.label}
-          </a>
-        ))}
+        {links.map((link) =>
+          isHome ? (
+            <a
+              key={link.href}
+              href={link.href}
+              className="font-mono text-cz-gray-light uppercase hover:text-white transition-[color] duration-200 ease-out cz-link-underline"
+              style={{ fontSize: 16, letterSpacing: 2 }}
+            >
+              {link.label}
+            </a>
+          ) : (
+            <Link
+              key={link.href}
+              href={`/${link.href}`}
+              className="font-mono text-cz-gray-light uppercase hover:text-white transition-[color] duration-200 ease-out cz-link-underline"
+              style={{ fontSize: 16, letterSpacing: 2 }}
+            >
+              {link.label}
+            </Link>
+          ),
+        )}
 
         <div className="flex items-center gap-2 ml-2">
           {(['cs', 'en'] as const).map((l, i) => (
@@ -109,17 +121,29 @@ export default function Navbar() {
           className="absolute top-full left-0 right-0 bg-cz-black-mid md:hidden flex flex-col animate-menu-in"
           style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '20px 24px' }}
         >
-          {links.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={() => setMenuOpen(false)}
-              className="font-mono text-cz-gray-light uppercase hover:text-white transition-[color] duration-200 ease-out py-3"
-              style={{ fontSize: 16, letterSpacing: 2, borderBottom: '1px solid rgba(255,255,255,0.05)' }}
-            >
-              {link.label}
-            </a>
-          ))}
+          {links.map((link) =>
+            isHome ? (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className="font-mono text-cz-gray-light uppercase hover:text-white transition-[color] duration-200 ease-out py-3"
+                style={{ fontSize: 16, letterSpacing: 2, borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+              >
+                {link.label}
+              </a>
+            ) : (
+              <Link
+                key={link.href}
+                href={`/${link.href}`}
+                onClick={() => setMenuOpen(false)}
+                className="font-mono text-cz-gray-light uppercase hover:text-white transition-[color] duration-200 ease-out py-3"
+                style={{ fontSize: 16, letterSpacing: 2, borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+              >
+                {link.label}
+              </Link>
+            ),
+          )}
           <div className="flex items-center gap-3 mt-4 mb-4">
             {(['cs', 'en'] as const).map((l) => (
               <button
