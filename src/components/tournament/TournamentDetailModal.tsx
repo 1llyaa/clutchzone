@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { X } from '@phosphor-icons/react';
+import Button from '@/components/ui/Button';
 
 interface Tournament {
   id: string;
@@ -65,13 +67,9 @@ export default function TournamentDetailModal({ tournament, onClose, onRegister 
               {tournament.game} · {formatDate(tournament.date)}
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="font-mono text-cz-gray-mid hover:text-white transition-colors"
-            style={{ fontSize: 20, lineHeight: 1 }}
-          >
-            ×
-          </button>
+          <Button variant="ghost" iconOnly onClick={onClose} aria-label="Zavřít">
+            <X size={20} weight="bold" />
+          </Button>
         </div>
 
         <div className="px-5 pb-8 md:px-8">
@@ -108,13 +106,9 @@ export default function TournamentDetailModal({ tournament, onClose, onRegister 
             >
               {isFull ? 'PLNÝ' : t('detailCta')}
             </button>
-            <button
-              onClick={onClose}
-              className="font-display uppercase text-cz-gray-light hover:text-white transition-colors rounded-[2px] cursor-pointer"
-              style={{ fontSize: 16, letterSpacing: 2, padding: '13px 24px', border: '1px solid #2A2A2A', background: 'transparent' }}
-            >
-              ×
-            </button>
+            <Button variant="ghost" iconOnly onClick={onClose} aria-label="Zavřít">
+              <X size={20} weight="bold" />
+            </Button>
           </div>
         </div>
       </div>

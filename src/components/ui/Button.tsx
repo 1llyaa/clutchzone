@@ -7,6 +7,8 @@ interface ButtonProps {
   size?: 'xs' | 'sm' | 'md';
   /** Square icon-only shape (~40x40px), no uppercase/letter-spacing text styling. */
   iconOnly?: boolean;
+  /** Native button `type`. Defaults to the browser's implicit `submit` — set explicitly to `button` when placing this inside a `<form>` for a non-submit action (e.g. cancel). */
+  type?: 'button' | 'submit';
   onClick?: () => void;
   className?: string;
   disabled?: boolean;
@@ -18,6 +20,7 @@ export default function Button({
   variant = 'primary',
   size = 'md',
   iconOnly = false,
+  type,
   onClick,
   className = '',
   disabled = false,
@@ -45,6 +48,7 @@ export default function Button({
   if (variant === 'primary') {
     return (
       <button
+        type={type}
         onClick={onClick}
         disabled={disabled}
         aria-label={ariaLabel}
@@ -58,6 +62,7 @@ export default function Button({
 
   return (
     <button
+      type={type}
       onClick={onClick}
       disabled={disabled}
       aria-label={ariaLabel}

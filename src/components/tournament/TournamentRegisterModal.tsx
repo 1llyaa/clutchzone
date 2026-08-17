@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { X, Check } from '@phosphor-icons/react';
+import Button from '@/components/ui/Button';
 
 interface Tournament {
   id: string;
@@ -124,13 +126,9 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
               {tournament.game} · {slotsLeft} {slotsLeft === 1 ? 'místo' : 'míst'} zbývá
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="font-mono text-cz-gray-mid hover:text-white transition-colors"
-            style={{ fontSize: 20, lineHeight: 1 }}
-          >
-            ×
-          </button>
+          <Button variant="ghost" iconOnly onClick={onClose} aria-label={t('close')}>
+            <X size={20} weight="bold" />
+          </Button>
         </div>
 
         {done ? (
@@ -140,18 +138,14 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
               className="flex flex-col items-center text-center"
               style={{ padding: '32px 0' }}
             >
-              <span className="text-white" style={{ fontSize: 40 }}>✓</span>
+              <Check size={40} weight="bold" className="text-white" />
               <p className="font-body text-white" style={{ fontSize: 19, lineHeight: 1.7, marginTop: 16, maxWidth: 340 }}>
                 {t('success')}
               </p>
             </div>
-            <button
-              onClick={onClose}
-              className="w-full bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors rounded-[2px] border-none cursor-pointer"
-              style={{ fontSize: 16, letterSpacing: 2, padding: 13 }}
-            >
+            <Button variant="primary" size="sm" className="w-full" onClick={onClose}>
               {t('close')}
-            </button>
+            </Button>
           </div>
         ) : (
           /* Registration form */
@@ -257,14 +251,9 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
               >
                 {submitting ? '...' : t('submit')}
               </button>
-              <button
-                type="button"
-                onClick={onClose}
-                className="font-display uppercase text-cz-gray-light hover:text-white transition-colors rounded-[2px] cursor-pointer"
-                style={{ fontSize: 16, letterSpacing: 2, padding: '13px 24px', border: '1px solid #2A2A2A', background: 'transparent' }}
-              >
+              <Button type="button" variant="ghost" size="sm" onClick={onClose}>
                 {t('close')}
-              </button>
+              </Button>
             </div>
           </form>
         )}

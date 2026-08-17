@@ -47,7 +47,7 @@ export default function Tooltip({ content, children }: TooltipProps) {
             lineHeight: 1.4,
             whiteSpace: 'normal',
             maxWidth: 240,
-            boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+            boxShadow: 'var(--shadow-float-sm)',
             zIndex: 10,
           }}
         >
