@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/auth';
 import { createAdminClient } from '@/lib/supabase/admin';
 
+// `id` is normally a booking_group_id (every row in the N-station group
+// gets updated/deleted together) — the `id.eq` fallback covers legacy
+// rows from before booking_group_id existed, where a row is its own group.
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -22,7 +25,10 @@ export async function PATCH(
   }
 
   const admin = createAdminClient();
-  const { error } = await admin.from('bookings').update(updates).eq('id', id);
+  const { error } = await admin
+    .from('bookings')
+    .update(updates)
+    .or(`booking_group_id.eq.${id},id.eq.${id}`);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   return NextResponse.json({ ok: true });
@@ -37,7 +43,10 @@ export async function DELETE(
 
   const { id } = await params;
   const admin = createAdminClient();
-  const { error } = await admin.from('bookings').delete().eq('id', id);
+  const { error } = await admin
+    .from('bookings')
+    .delete()
+    .or(`booking_group_id.eq.${id},id.eq.${id}`);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   return NextResponse.json({ ok: true });

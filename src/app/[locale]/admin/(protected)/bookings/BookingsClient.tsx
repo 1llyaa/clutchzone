@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useMemo, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 
 const STATUS_LABEL: Record<string, string> = {
@@ -54,7 +54,31 @@ interface Booking {
   payment_method: string;
   payment_status: string;
   coins_awarded: number;
+  booking_group_id: string | null;
+  stations_count: number | null;
+  time_pass_id: string | null;
+  offer_kind: string | null;
   stations: { label: string; type: string } | null;
+}
+
+interface GroupedBooking {
+  groupKey: string;
+  reference: string;
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string | null;
+  customer_discord: string | null;
+  date: string;
+  start_time: string;
+  duration_minutes: number;
+  total_price: number;
+  status: string;
+  payment_method: string;
+  payment_status: string;
+  coins_awarded: number;
+  stationLabels: string[];
+  stationsCount: number;
+  variant: string;
 }
 
 interface Station {
@@ -64,26 +88,69 @@ interface Station {
   is_active: boolean;
 }
 
+function variantLabel(b: Booking, passNameById: Record<string, string>): string {
+  if (b.offer_kind === 'pass') return (b.time_pass_id && passNameById[b.time_pass_id]) || 'Pas';
+  if (b.offer_kind === 'hours_upsell') return 'Hodiny (navíc)';
+  if (b.offer_kind === 'hours') return 'Hodiny';
+  return '—';
+}
+
+function groupBookings(bookings: Booking[], passNameById: Record<string, string>): GroupedBooking[] {
+  const byGroup = new Map<string, Booking[]>();
+  for (const b of bookings) {
+    const key = b.booking_group_id ?? b.id;
+    const list = byGroup.get(key) ?? [];
+    list.push(b);
+    byGroup.set(key, list);
+  }
+  return [...byGroup.values()].map((rows) => {
+    const first = rows[0];
+    return {
+      groupKey: first.booking_group_id ?? first.id,
+      reference: first.reference,
+      customer_name: first.customer_name,
+      customer_email: first.customer_email,
+      customer_phone: first.customer_phone,
+      customer_discord: first.customer_discord,
+      date: first.date,
+      start_time: first.start_time,
+      duration_minutes: first.duration_minutes,
+      total_price: rows.reduce((sum, r) => sum + r.total_price, 0),
+      status: first.status,
+      payment_method: first.payment_method,
+      payment_status: first.payment_status,
+      coins_awarded: rows.reduce((sum, r) => sum + (r.coins_awarded ?? 0), 0),
+      stationLabels: rows.map((r) => r.stations?.label).filter((l): l is string => !!l),
+      stationsCount: first.stations_count ?? rows.length,
+      variant: variantLabel(first, passNameById),
+    };
+  });
+}
+
 export default function BookingsClient({
   bookings,
   stations,
+  passNameById,
   from,
   to,
 }: {
   bookings: Booking[];
   stations: Station[];
+  passNameById: Record<string, string>;
   from: string;
   to: string;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [selected, setSelected] = useState<Booking | null>(null);
+  const [selected, setSelected] = useState<GroupedBooking | null>(null);
   const [updating, setUpdating] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [localFrom, setLocalFrom] = useState(from);
   const [localTo,   setLocalTo]   = useState(to);
 
   const isSingleDay = from === to;
+
+  const grouped = useMemo(() => groupBookings(bookings, passNameById), [bookings, passNameById]);
 
   const occupiedIds = new Set(
     bookings.filter((b) => b.status !== 'cancelled').map((b) => b.station_id)
@@ -109,9 +176,9 @@ export default function BookingsClient({
     applyRange(localFrom, val);
   }
 
-  async function updateStatus(bookingId: string, status: string) {
+  async function updateStatus(groupKey: string, status: string) {
     setUpdating(true);
-    await fetch(`/api/admin/bookings/${bookingId}`, {
+    await fetch(`/api/admin/bookings/${groupKey}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status }),
@@ -121,10 +188,10 @@ export default function BookingsClient({
     startTransition(() => router.refresh());
   }
 
-  async function deleteBooking(bookingId: string) {
+  async function deleteBooking(groupKey: string) {
     if (!confirm('Opravdu smazat rezervaci? Tato akce je nevratná.')) return;
     setDeleting(true);
-    await fetch(`/api/admin/bookings/${bookingId}`, { method: 'DELETE' });
+    await fetch(`/api/admin/bookings/${groupKey}`, { method: 'DELETE' });
     setDeleting(false);
     setSelected(null);
     startTransition(() => router.refresh());
@@ -152,7 +219,7 @@ export default function BookingsClient({
             REZERVACE
           </h1>
           <p className="font-mono text-cz-gray-light" style={{ fontSize: 16, letterSpacing: 2, marginTop: 4 }}>
-            {bookings.length} REZERVACÍ · {rangeLabel}
+            {grouped.length} REZERVACÍ · {rangeLabel}
           </p>
         </div>
 
@@ -245,32 +312,32 @@ export default function BookingsClient({
       )}
 
       {/* Booking table */}
-      <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A' }}>
+      <div className="bg-cz-black-mid rounded-cz overflow-x-auto" style={{ border: '1px solid #2A2A2A' }}>
         <table className="w-full">
           <thead>
             <tr style={{ borderBottom: '1px solid #2A2A2A' }}>
               {[
-                'REFERENCE', 'ZÁKAZNÍK', 'KONTAKT', 'STANICE',
+                'REFERENCE', 'ZÁKAZNÍK', 'KONTAKT', 'STANICE', 'POČET STANIC', 'VARIANTA',
                 ...(!isSingleDay ? ['DATUM'] : []),
                 'ČAS', 'DÉLKA', 'CELKEM', 'PLATBA', 'STATUS', '',
               ].map((h) => (
-                <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '12px 14px', fontSize: 16, letterSpacing: 2 }}>
+                <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '12px 14px', fontSize: 16, letterSpacing: 2, whiteSpace: 'nowrap' }}>
                   {h}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {bookings.length === 0 ? (
+            {grouped.length === 0 ? (
               <tr>
-                <td colSpan={isSingleDay ? 10 : 11} className="font-mono text-cz-gray-light text-center" style={{ padding: 40, fontSize: 19 }}>
+                <td colSpan={isSingleDay ? 12 : 13} className="font-mono text-cz-gray-light text-center" style={{ padding: 40, fontSize: 19 }}>
                   Žádné rezervace pro zvolené období
                 </td>
               </tr>
             ) : (
-              bookings.map((b) => (
+              grouped.map((b) => (
                 <tr
-                  key={b.id}
+                  key={b.groupKey}
                   style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', opacity: b.status === 'cancelled' ? 0.45 : 1 }}
                 >
                   <td className="font-mono text-cz-orange" style={{ padding: '12px 14px', fontSize: 17 }}>{b.reference}</td>
@@ -281,7 +348,9 @@ export default function BookingsClient({
                       <div className="font-mono text-cz-gray-light" style={{ fontSize: 17, marginTop: 2 }}>{b.customer_phone}</div>
                     )}
                   </td>
-                  <td className="font-mono text-cz-gray-light" style={{ padding: '12px 14px', fontSize: 17 }}>{b.stations?.label ?? '—'}</td>
+                  <td className="font-mono text-cz-gray-light" style={{ padding: '12px 14px', fontSize: 17 }}>{b.stationLabels.join(', ') || '—'}</td>
+                  <td className="font-mono text-white" style={{ padding: '12px 14px', fontSize: 17, textAlign: 'center' }}>{b.stationsCount}</td>
+                  <td className="font-mono text-cz-gray-light" style={{ padding: '12px 14px', fontSize: 17 }}>{b.variant}</td>
                   {!isSingleDay && (
                     <td className="font-mono text-cz-gray-light" style={{ padding: '12px 14px', fontSize: 17 }}>
                       {new Date(b.date).toLocaleDateString('cs-CZ')}
@@ -345,7 +414,9 @@ export default function BookingsClient({
                 ['E-mail',    selected.customer_email],
                 ['Telefon',   selected.customer_phone || '—'],
                 ['Discord',   selected.customer_discord || '—'],
-                ['Stanice',   selected.stations?.label || '—'],
+                ['Stanice',   selected.stationLabels.join(', ') || '—'],
+                ['Počet stanic', String(selected.stationsCount)],
+                ['Varianta',  selected.variant],
                 ['Datum',     new Date(selected.date).toLocaleDateString('cs-CZ')],
                 ['Čas',       selected.start_time?.slice(0, 5)],
                 ['Délka',     `${Math.round(selected.duration_minutes / 60)} hodin`],
@@ -367,7 +438,7 @@ export default function BookingsClient({
                 <div className="flex gap-3">
                   <button
                     disabled={updating}
-                    onClick={() => updateStatus(selected.id, 'completed')}
+                    onClick={() => updateStatus(selected.groupKey, 'completed')}
                     className="flex-1 bg-cz-orange text-white font-display uppercase rounded-[2px] hover:bg-cz-orange-dark transition-colors disabled:opacity-50"
                     style={{ fontSize: 16, letterSpacing: 2, padding: '10px 0' }}
                   >
@@ -375,7 +446,7 @@ export default function BookingsClient({
                   </button>
                   <button
                     disabled={updating}
-                    onClick={() => updateStatus(selected.id, 'cancelled')}
+                    onClick={() => updateStatus(selected.groupKey, 'cancelled')}
                     className="flex-1 font-display uppercase rounded-[2px] hover:border-red-500 hover:text-red-400 transition-colors disabled:opacity-50"
                     style={{ fontSize: 16, letterSpacing: 2, padding: '10px 0', border: '1px solid #2A2A2A', color: '#888', background: 'transparent' }}
                   >
@@ -385,7 +456,7 @@ export default function BookingsClient({
               )}
               <button
                 disabled={deleting}
-                onClick={() => deleteBooking(selected.id)}
+                onClick={() => deleteBooking(selected.groupKey)}
                 className="w-full font-display uppercase rounded-[2px] hover:bg-red-500 hover:border-red-500 hover:text-white transition-colors disabled:opacity-50"
                 style={{ fontSize: 16, letterSpacing: 2, padding: '10px 0', border: '1px solid #ef4444', color: '#ef4444', background: 'transparent' }}
               >
