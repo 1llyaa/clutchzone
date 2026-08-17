@@ -14,10 +14,10 @@ async function handleBookingPaid(admin: ReturnType<typeof createAdminClient>, gr
   }
 }
 
-async function handleCreditPaid(admin: ReturnType<typeof createAdminClient>, orderId: string) {
+async function handleCreditPaid(admin: ReturnType<typeof createAdminClient>, orderId: string, coins: number) {
   const { data: order, error } = await admin
     .from('credit_orders')
-    .update({ payment_status: 'paid' })
+    .update({ payment_status: 'paid', coins_awarded: coins })
     .eq('id', orderId)
     .select('reference, customer_name, customer_email, total_amount, expires_at, clutchzone_account')
     .single();
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
 
     if (session.metadata?.kind === 'credit') {
       const orderId = session.metadata?.creditOrderId;
-      if (orderId) await handleCreditPaid(admin, orderId);
+      if (orderId) await handleCreditPaid(admin, orderId, coins);
     } else {
       // Metadata key is named bookingId for historical reasons — it now holds
       // the booking_group_id, since a checkout can cover several stations.

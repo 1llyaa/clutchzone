@@ -20,6 +20,8 @@ export interface QueueEntry {
   termsAcceptedAt: string;
   termsVersion: string;
   totalHours?: number;
+  needsCredit: boolean;
+  coinsAwarded: number;
 }
 
 function formatDate(iso: string): string {
@@ -71,7 +73,7 @@ export default function CreditsClient({ entries, showAll }: { entries: QueueEntr
         <div>
           <h1 className="font-display text-white uppercase" style={{ fontSize: 36, letterSpacing: 2 }}>KREDITY</h1>
           <p className="font-mono text-cz-gray-light" style={{ fontSize: 16, letterSpacing: 2, marginTop: 4 }}>
-            HODINOVÝ KREDIT K PŘIPSÁNÍ — Z NÁKUPU I Z REZERVACE
+            HODINOVÝ KREDIT A MINCE Z KARETNÍCH PLATEB
           </p>
         </div>
         <button
@@ -89,12 +91,12 @@ export default function CreditsClient({ entries, showAll }: { entries: QueueEntr
         <table className="w-full">
           <thead>
             <tr style={{ borderBottom: '1px solid #2A2A2A' }}>
-              {['ZDROJ', 'REFERENCE', 'ZÁKAZNÍK', 'POLOŽKY', 'ČÁSTKA', 'ZAPLACENO', 'PLATNOST DO', 'STAV', 'LHŮTA NA ODSTOUPENÍ', 'KDO/KDY PŘIPSAL', 'SOUHLAS'].map(th)}
+              {['ZDROJ', 'REFERENCE', 'ZÁKAZNÍK', 'POLOŽKY', 'ČÁSTKA', 'MINCE', 'ZAPLACENO', 'PLATNOST DO', 'STAV', 'LHŮTA NA ODSTOUPENÍ', 'KDO/KDY PŘIPSAL', 'SOUHLAS'].map(th)}
             </tr>
           </thead>
           <tbody>
             {entries.length === 0 && (
-              <tr><td colSpan={11} className="font-mono text-cz-gray-light text-center" style={{ padding: 32, fontSize: 16 }}>Žádné objednávky</td></tr>
+              <tr><td colSpan={12} className="font-mono text-cz-gray-light text-center" style={{ padding: 32, fontSize: 16 }}>Žádné objednávky</td></tr>
             )}
             {entries.map((e) => {
               const withdrawal = withdrawalLabel(e.paidAt);
@@ -118,10 +120,13 @@ export default function CreditsClient({ entries, showAll }: { entries: QueueEntr
                   </td>
                   <td className="font-mono text-cz-gray-light" style={{ padding: '10px 14px', fontSize: 14 }}>{e.description}</td>
                   <td className="font-mono text-white" style={{ padding: '10px 14px', fontSize: 15 }}>{e.amount} Kč</td>
+                  <td className="font-mono" style={{ padding: '10px 14px', fontSize: 15, color: e.coinsAwarded ? '#E84A1A' : '#555' }}>{e.coinsAwarded || '—'}</td>
                   <td className="font-mono text-cz-gray-light" style={{ padding: '10px 14px', fontSize: 14 }}>{formatDate(e.paidAt)}</td>
-                  <td className="font-mono text-cz-gray-light" style={{ padding: '10px 14px', fontSize: 14 }}>{formatDate(e.expiresAt)}</td>
+                  <td className="font-mono text-cz-gray-light" style={{ padding: '10px 14px', fontSize: 14 }}>{e.needsCredit ? formatDate(e.expiresAt) : '—'}</td>
                   <td style={{ padding: '10px 14px' }}>
-                    {e.fulfilledAt ? (
+                    {!e.needsCredit ? (
+                      <span className="font-mono uppercase" style={{ fontSize: 13, letterSpacing: 1, color: '#555' }}>BEZ KREDITU</span>
+                    ) : e.fulfilledAt ? (
                       <span className="font-mono uppercase" style={{ fontSize: 13, letterSpacing: 1, color: '#22c55e' }}>PŘIPSÁNO</span>
                     ) : (
                       <button

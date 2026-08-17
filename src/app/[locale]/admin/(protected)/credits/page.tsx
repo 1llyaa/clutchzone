@@ -41,16 +41,22 @@ async function fetchKreditOrders(admin: ReturnType<typeof createAdminClient>, sh
       fulfilledByName: fulfilledBy ? fulfilledBy.display_name ?? fulfilledBy.email : null,
       termsAcceptedAt: o.terms_accepted_at,
       termsVersion: o.terms_version,
+      needsCredit: true,
+      coinsAwarded: o.coins_awarded ?? 0,
     };
   });
 }
 
 async function fetchBookingCredits(admin: ReturnType<typeof createAdminClient>, showAll: boolean, creditExpiryMonths: number): Promise<QueueEntry[]> {
+  // Two audiences share this list: hours/hours_upsell bookings need staff
+  // to actually credit hours on ggLeap (fulfilled_at applies); pass bookings
+  // never bank hours, but a card-paid one still earned the customer coins,
+  // and staff wants that visible here too (not just the hour-credit queue).
   let query = admin
     .from('bookings')
     .select('*')
-    .in('offer_kind', ['hours', 'hours_upsell'])
     .neq('status', 'cancelled')
+    .or('offer_kind.in.(hours,hours_upsell),and(payment_method.eq.online,payment_status.eq.paid)')
     .order('created_at', { ascending: false });
   if (!showAll) query = query.is('fulfilled_at', null);
 
@@ -67,8 +73,10 @@ async function fetchBookingCredits(admin: ReturnType<typeof createAdminClient>, 
 
   return [...byGroup.values()].map((group) => {
     const first = group![0];
+    const needsCredit = ['hours', 'hours_upsell'].includes(first.offer_kind);
     const totalAmount = group!.reduce((sum, r) => sum + r.total_price, 0);
-    const totalHours = (first.credit_hours ?? 0) * group!.length;
+    const totalHours = needsCredit ? (first.credit_hours ?? 0) * group!.length : 0;
+    const coinsAwarded = group!.reduce((sum, r) => sum + (r.coins_awarded ?? 0), 0);
     const fulfilledBy = first.fulfilled_by ? profileById.get(first.fulfilled_by) ?? null : null;
     const expires = new Date(first.created_at);
     expires.setMonth(expires.getMonth() + creditExpiryMonths);
@@ -81,7 +89,9 @@ async function fetchBookingCredits(admin: ReturnType<typeof createAdminClient>, 
       customerEmail: first.customer_email,
       customerPhone: first.customer_phone,
       clutchzoneAccount: first.clutchzone_account,
-      description: `${group!.length}× ${first.credit_hours}H (rezervace ${first.date})`,
+      description: needsCredit
+        ? `${group!.length}× ${first.credit_hours}H (rezervace ${first.date})`
+        : `PAS · ${first.date} ${String(first.start_time).slice(0, 5)}`,
       amount: totalAmount,
       paidAt: first.created_at,
       expiresAt: expires.toISOString().slice(0, 10),
@@ -90,6 +100,8 @@ async function fetchBookingCredits(admin: ReturnType<typeof createAdminClient>, 
       termsAcceptedAt: first.terms_accepted_at,
       termsVersion: first.terms_version,
       totalHours,
+      needsCredit,
+      coinsAwarded,
     };
   });
 }
