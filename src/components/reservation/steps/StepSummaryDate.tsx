@@ -1,20 +1,13 @@
 'use client';
 
+import { useLocale, useTranslations } from 'next-intl';
 import PriceCalculator from '@/components/pricing/PriceCalculator';
 import { nextDatesForDayType } from '@/lib/pricing/dates';
 import type { CalcInput, DayTypeGroup, Offer, PricingConfig } from '@/lib/pricing/types';
 
-const DAY_NAMES_FULL = ['NEDĚLE', 'PONDĚLÍ', 'ÚTERÝ', 'STŘEDA', 'ČTVRTEK', 'PÁTEK', 'SOBOTA'];
+const DAY_NAMES_SHORT_CS = ['NE', 'PO', 'ÚT', 'ST', 'ČT', 'PÁ', 'SO'];
+const DAY_NAMES_SHORT_EN = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
-function hoursWord(n: number): string {
-  if (n === 1) return 'HODINA';
-  if (n >= 2 && n <= 4) return 'HODINY';
-  return 'HODIN';
-}
-function stationsWord(n: number): string {
-  if (n <= 4) return 'STANICE';
-  return 'STANIC';
-}
 function formatDateLabel(iso: string): string {
   const d = new Date(iso + 'T12:00:00');
   return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.`;
@@ -49,6 +42,11 @@ export default function StepSummaryDate({
   onEditCalculator,
   onNext,
 }: Props) {
+  const t = useTranslations('booking');
+  const tc = useTranslations('calculator');
+  const locale = useLocale() === 'en' ? 'en' : 'cs';
+  const dayNames = locale === 'en' ? DAY_NAMES_SHORT_EN : DAY_NAMES_SHORT_CS;
+
   if (!calcInput || !offer) {
     return <PriceCalculator config={config} variant="compact" onOfferChosen={onOfferChosen} />;
   }
@@ -58,12 +56,17 @@ export default function StepSummaryDate({
   const today = new Date().toISOString().slice(0, 10);
   const canProceed = !!date && (!availability || availability.available >= calcInput.stationsCount);
 
+  const hours = calcInput.durationHours;
+  const hoursWord = hours === 1 ? tc('hoursWord1') : hours >= 2 && hours <= 4 ? tc('hoursWord2to4') : tc('hoursWord5plus');
+  const stations = calcInput.stationsCount;
+  const stationsWord = stations <= 4 ? tc('stationsWord1to4') : tc('stationsWord5plus');
+
   return (
     <div className="flex flex-col gap-5" style={{ marginTop: 8 }}>
       <div style={{ background: '#0A0A0A', border: '1px solid #2A2A2A', padding: 20 }}>
         <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 1.5, color: '#E8E8E8', textTransform: 'uppercase' }}>
-          {calcInput.stationType === 'pc' ? 'GAMING PC' : 'PS5'} · {dayType?.label} · {String(calcInput.startHour % 24).padStart(2, '0')}:00 ·{' '}
-          {calcInput.durationHours} {hoursWord(calcInput.durationHours)} · {calcInput.stationsCount} {stationsWord(calcInput.stationsCount)}
+          {calcInput.stationType === 'pc' ? tc('pc') : tc('ps5')} · {dayType?.label} · {String(calcInput.startHour % 24).padStart(2, '0')}:00 ·{' '}
+          {hours} {hoursWord} · {stations} {stationsWord}
         </div>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 16, marginTop: 14 }}>
           <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 26, letterSpacing: 1, color: '#FFFFFF', textTransform: 'uppercase' }}>
@@ -78,14 +81,14 @@ export default function StepSummaryDate({
             onClick={onEditCalculator}
             style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: "'Space Mono',monospace", fontSize: 13, letterSpacing: 2, color: '#E84A1A', textTransform: 'uppercase' }}
           >
-            UPRAVIT ↑
+            {t('editCalculator')}
           </button>
         </div>
       </div>
 
       <div>
         <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 2.5, color: '#E8E8E8', textTransform: 'uppercase', marginBottom: 10 }}>
-          VYBER DATUM
+          {t('pickDate')}
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8 }}>
           {quickDates.map((d) => {
@@ -108,7 +111,7 @@ export default function StepSummaryDate({
                   textAlign: 'center',
                 }}
               >
-                {DAY_NAMES_FULL[dow].slice(0, 2)} {formatDateLabel(d)}
+                {dayNames[dow]} {formatDateLabel(d)}
               </button>
             );
           })}
@@ -134,7 +137,7 @@ export default function StepSummaryDate({
               display: 'inline-block',
             }}
           />
-          {availability.available} z {availability.total} stanic volných
+          {t('stationsFreeOfTotal', { available: availability.available, total: availability.total })}
         </div>
       )}
 
@@ -173,7 +176,7 @@ export default function StepSummaryDate({
           textTransform: 'uppercase',
         }}
       >
-        POKRAČOVAT NA KONTAKT
+        {t('continueToContact')}
       </button>
     </div>
   );

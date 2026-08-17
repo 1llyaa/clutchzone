@@ -1,5 +1,6 @@
 'use client';
 
+import { useLocale, useTranslations } from 'next-intl';
 import { dayTypeCloseHour, dayTypeOpenHour } from '@/lib/pricing/dayTypes';
 import type { DayTypeGroup, PricingConfig, StationType } from '@/lib/pricing/types';
 
@@ -58,6 +59,9 @@ export default function CalculatorInputs({
   fitNote,
   maxStations = MAX_STATIONS,
 }: Props) {
+  const t = useTranslations('calculator');
+  const locale = useLocale() === 'en' ? 'en' : 'cs';
+
   const closeHour = Math.round(dayTypeCloseHour(dayType));
   const openHour = Math.round(dayTypeOpenHour(dayType));
   const hourSlots: number[] = [];
@@ -77,17 +81,17 @@ export default function CalculatorInputs({
     <div style={{ display: 'flex', flexDirection: 'column', gap: 28, minWidth: 0 }}>
       <div style={{ minWidth: 0 }}>
         <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 2.5, color: '#E8E8E8', textTransform: 'uppercase', marginBottom: 10 }}>
-          NA ČEM CHCEŠ HRÁT
+          {t('stationTypeLabel')}
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-          <button style={pillStyle(stationType === 'pc')} onClick={() => onStationType('pc')}>GAMING PC</button>
-          <button style={pillStyle(stationType === 'ps5')} onClick={() => onStationType('ps5')}>PS5</button>
+          <button style={pillStyle(stationType === 'pc')} onClick={() => onStationType('pc')}>{t('pc')}</button>
+          <button style={pillStyle(stationType === 'ps5')} onClick={() => onStationType('ps5')}>{t('ps5')}</button>
         </div>
       </div>
 
       <div>
         <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 2.5, color: '#E8E8E8', textTransform: 'uppercase', marginBottom: 10 }}>
-          KDY PŘIJDEŠ
+          {t('dayLabel')}
         </div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {config.dayTypes.map((d) => (
@@ -100,7 +104,7 @@ export default function CalculatorInputs({
 
       <div>
         <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 2.5, color: '#E8E8E8', textTransform: 'uppercase', marginBottom: 10 }}>
-          V KOLIK
+          {t('hourLabel')}
         </div>
         <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
           {hourSlots.map((h) => (
@@ -115,14 +119,14 @@ export default function CalculatorInputs({
         {activePassesForStation.length > 0 && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 1.5, color: '#E8E8E8', marginTop: 12 }}>
             <span style={{ width: 5, height: 5, borderRadius: 100, background: '#E84A1A', display: 'inline-block' }} />
-            {activePassesForStation.map((p) => p.nameCs).join(' · ')} — LEVNĚJŠÍ ČAS
+            {t('cheaperTime', { names: activePassesForStation.map((p) => (locale === 'en' ? p.nameEn : p.nameCs)).join(' · ') })}
           </div>
         )}
       </div>
 
       <div>
         <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 2.5, color: '#E8E8E8', textTransform: 'uppercase', marginBottom: 10 }}>
-          JAK DLOUHO
+          {t('durationLabel')}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid #2A2A2A', background: '#111111', padding: '12px 16px' }}>
           <button
@@ -159,7 +163,7 @@ export default function CalculatorInputs({
 
       <div>
         <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 2.5, color: '#E8E8E8', textTransform: 'uppercase', marginBottom: 10 }}>
-          KOLIK VÁS BUDE
+          {t('stationsLabel')}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid #2A2A2A', background: '#111111', padding: '12px 16px' }}>
           <button
@@ -180,7 +184,7 @@ export default function CalculatorInputs({
         </div>
         {stationsCount >= maxStations && (
           <div style={{ fontFamily: "'Inter',sans-serif", fontSize: 16, color: '#888888', marginTop: 12 }}>
-            Víc než {maxStations} stanic? <a href="#privatni">Podívej se na privátní akce →</a>
+            {t('morePrivate', { max: maxStations })} <a href="#privatni">{t('privateEventsLink')}</a>
           </div>
         )}
       </div>

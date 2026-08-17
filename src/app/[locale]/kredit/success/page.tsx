@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import { track } from '@/lib/analytics/track';
 
 interface OrderStatus {
   reference: string;
@@ -24,6 +25,7 @@ function formatCzechDate(iso: string): string {
 }
 
 export default function KreditSuccessPage() {
+  const t = useTranslations('kredit');
   const locale = useLocale();
   const searchParams = useSearchParams();
   const orderId = searchParams.get('order');
@@ -61,6 +63,14 @@ export default function KreditSuccessPage() {
 
   const isPaid = status?.paymentStatus === 'paid';
 
+  const trackedRef = useRef(false);
+  useEffect(() => {
+    if (isPaid && status && !trackedRef.current) {
+      trackedRef.current = true;
+      track('credit_purchase_completed', { amount: status.totalAmount });
+    }
+  }, [isPaid, status]);
+
   return (
     <>
       <Navbar />
@@ -69,15 +79,15 @@ export default function KreditSuccessPage() {
           <span className="absolute top-0 left-0 right-0 bg-cz-orange rounded-t-cz" style={{ height: 2 }} />
           <div className="flex flex-col items-center text-center gap-6" style={{ padding: '40px 32px' }}>
             <span className="font-display text-white uppercase" style={{ fontSize: 28, letterSpacing: 1 }}>
-              {isPaid ? 'NÁKUP KREDITU POTVRZEN' : 'ČEKÁME NA POTVRZENÍ PLATBY'}
+              {isPaid ? t('successTitlePaid') : t('successTitlePending')}
             </span>
 
-            {loading && <p className="font-mono text-cz-gray-light" style={{ fontSize: 17, letterSpacing: 1 }}>Zpracovávám platbu…</p>}
+            {loading && <p className="font-mono text-cz-gray-light" style={{ fontSize: 17, letterSpacing: 1 }}>{t('processingPayment')}</p>}
 
             {!loading && status && (
               <>
                 <div>
-                  <span className="font-mono text-cz-gray-light uppercase block" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 12 }}>REFERENČNÍ KÓD</span>
+                  <span className="font-mono text-cz-gray-light uppercase block" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 12 }}>{t('referenceLabel')}</span>
                   <div className="font-display text-white rounded-cz border border-cz-orange inline-block" style={{ fontSize: 48, letterSpacing: 4, padding: '16px 40px', background: 'rgba(232,74,26,0.06)' }}>
                     {status.reference}
                   </div>
@@ -90,23 +100,23 @@ export default function KreditSuccessPage() {
                     </div>
                   ))}
                   <div className="flex justify-between border-b border-cz-gray-dark" style={{ paddingBottom: 12 }}>
-                    <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>PLATNOST DO</span>
+                    <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>{t('validUntilDone')}</span>
                     <span className="font-mono text-white" style={{ fontSize: 17, letterSpacing: 1 }}>{formatCzechDate(status.expiresAt)}</span>
                   </div>
                   <div className="flex justify-between border-b border-cz-gray-dark" style={{ paddingBottom: 12 }}>
-                    <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>CELKEM</span>
+                    <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>{t('totalDone')}</span>
                     <span className="font-display text-cz-orange" style={{ fontSize: 20, letterSpacing: 1 }}>{status.totalAmount} Kč</span>
                   </div>
                 </div>
                 <p className="font-body text-cz-gray-light" style={{ fontSize: 19, lineHeight: 1.6, maxWidth: 380 }}>
-                  {isPaid ? 'Hodiny ti připíšeme na Clutchzone účet při první návštěvě — ukaž tenhle kód na recepci.' : 'Jakmile platbu potvrdíme, přijde ti e-mail.'}
+                  {isPaid ? t('successNotePaid') : t('successNotePending')}
                 </p>
               </>
             )}
 
             {!loading && !status && (
               <p className="font-body text-cz-gray-light" style={{ fontSize: 19, lineHeight: 1.6, maxWidth: 380 }}>
-                Objednávku se nepodařilo najít. Pokud ti přesto peníze odešly, napiš nám referenční kód z e-mailu.
+                {t('orderNotFound')}
               </p>
             )}
 
@@ -115,7 +125,7 @@ export default function KreditSuccessPage() {
               className="w-full bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors rounded-[2px] border-none cursor-pointer inline-block text-center"
               style={{ fontSize: 17, letterSpacing: 2, padding: '14px' }}
             >
-              NA ÚVODNÍ STRÁNKU
+              {t('backHome')}
             </Link>
           </div>
         </div>

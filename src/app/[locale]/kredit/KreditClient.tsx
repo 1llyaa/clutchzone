@@ -1,6 +1,6 @@
 'use client';
 
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 import type { HourTier, StationType } from '@/lib/pricing/types';
 
@@ -29,6 +29,8 @@ function expiresLabel(months: number): string {
 }
 
 export default function KreditClient({ hourTiers, creditExpiryMonths }: Props) {
+  const t = useTranslations('kredit');
+  const tc = useTranslations('calculator');
   const locale = useLocale();
   const [tab, setTab] = useState<StationType>('pc');
   const [cart, setCart] = useState<Record<string, number>>({});
@@ -85,10 +87,10 @@ export default function KreditClient({ hourTiers, creditExpiryMonths }: Props) {
         }),
       });
       const data = await res.json();
-      if (!res.ok) { setError(data.error ?? 'Něco se pokazilo, zkus to prosím znovu.'); setLoading(false); return; }
+      if (!res.ok) { setError(data.error ?? t('submitError')); setLoading(false); return; }
       window.location.href = data.url;
     } catch {
-      setError('Něco se pokazilo, zkus to prosím znovu.');
+      setError(t('submitError'));
       setLoading(false);
     }
   }
@@ -98,10 +100,10 @@ export default function KreditClient({ hourTiers, creditExpiryMonths }: Props) {
       <div style={{ maxWidth: 1200, margin: '0 auto' }}>
         <div style={{ marginBottom: 40 }}>
           <span style={{ fontFamily: "'Space Mono',monospace", fontSize: 13, letterSpacing: 2.5, color: '#E84A1A', textTransform: 'uppercase', display: 'block', marginBottom: 12 }}>
-            {'// HODINY DO ZÁSOBY'}
+            {t('eyebrow')}
           </span>
           <h1 style={{ margin: 0, fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(36px, 5vw, 52px)', lineHeight: 0.98, letterSpacing: 1, color: '#FFFFFF', textTransform: 'uppercase' }}>
-            KUP HODINY, PŘIJĎ KDYKOLIV
+            {t('heading')}
           </h1>
           <div style={{ width: 64, height: 2, background: '#E84A1A', marginTop: 20 }} />
         </div>
@@ -109,16 +111,16 @@ export default function KreditClient({ hourTiers, creditExpiryMonths }: Props) {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-12 items-start">
           <div style={{ minWidth: 0 }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, maxWidth: 320, marginBottom: 28 }}>
-              {(['pc', 'ps5'] as const).map((t) => (
+              {(['pc', 'ps5'] as const).map((st) => (
                 <button
-                  key={t}
-                  onClick={() => setTab(t)}
+                  key={st}
+                  onClick={() => setTab(st)}
                   style={{
-                    height: 44, border: `1px solid ${tab === t ? '#E84A1A' : '#2A2A2A'}`, background: tab === t ? 'rgba(232,74,26,0.12)' : '#111111',
-                    color: tab === t ? '#FFFFFF' : '#E8E8E8', fontFamily: "'Bebas Neue',sans-serif", fontSize: 15, letterSpacing: 1, cursor: 'pointer', borderRadius: 2,
+                    height: 44, border: `1px solid ${tab === st ? '#E84A1A' : '#2A2A2A'}`, background: tab === st ? 'rgba(232,74,26,0.12)' : '#111111',
+                    color: tab === st ? '#FFFFFF' : '#E8E8E8', fontFamily: "'Bebas Neue',sans-serif", fontSize: 15, letterSpacing: 1, cursor: 'pointer', borderRadius: 2,
                   }}
                 >
-                  {t === 'pc' ? 'GAMING PC' : 'PS5'}
+                  {st === 'pc' ? tc('pc') : tc('ps5')}
                 </button>
               ))}
             </div>
@@ -138,7 +140,7 @@ export default function KreditClient({ hourTiers, creditExpiryMonths }: Props) {
                     <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 1.5, color: '#E8E8E8', marginTop: 6 }}>{perHour} KČ/H</div>
                     {save > 0 && (
                       <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, fontWeight: 700, letterSpacing: 1.5, color: '#E84A1A', marginTop: 10 }}>
-                        {'↓ UŠETŘÍŠ '}{save}{' KČ'}
+                        {t('savings', { amount: save })}
                       </div>
                     )}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginTop: 20, borderTop: '1px solid #2A2A2A', paddingTop: 16 }}>
@@ -153,10 +155,10 @@ export default function KreditClient({ hourTiers, creditExpiryMonths }: Props) {
           </div>
 
           <div style={{ position: 'sticky', top: 88, background: '#111111', border: '1px solid #2A2A2A', borderTop: '2px solid #E84A1A', padding: 28 }}>
-            <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 2.5, color: '#E8E8E8', textTransform: 'uppercase', marginBottom: 18 }}>SOUHRN</div>
+            <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 2.5, color: '#E8E8E8', textTransform: 'uppercase', marginBottom: 18 }}>{t('summary')}</div>
 
             {cartLines.length === 0 ? (
-              <p style={{ fontFamily: "'Inter',sans-serif", fontSize: 15, color: '#888888' }}>Zatím nic v košíku — přidej hodiny vlevo.</p>
+              <p style={{ fontFamily: "'Inter',sans-serif", fontSize: 15, color: '#888888' }}>{t('emptyCart')}</p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {cartLines.map((l) => (
@@ -170,35 +172,35 @@ export default function KreditClient({ hourTiers, creditExpiryMonths }: Props) {
 
             <div style={{ height: 1, background: '#2A2A2A', margin: '20px 0' }} />
             <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12 }}>
-              <span style={{ fontFamily: "'Space Mono',monospace", fontSize: 13, letterSpacing: 2, color: '#888888', textTransform: 'uppercase' }}>CELKEM</span>
+              <span style={{ fontFamily: "'Space Mono',monospace", fontSize: 13, letterSpacing: 2, color: '#888888', textTransform: 'uppercase' }}>{t('total')}</span>
               <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 48, lineHeight: 1, color: '#FFFFFF' }}>{cartTotal} <span style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 1.5, color: '#E8E8E8' }}>KČ</span></span>
             </div>
             {cartSave > 0 && (
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, fontFamily: "'Space Mono',monospace", fontSize: 12, fontWeight: 700, letterSpacing: 1, color: '#E84A1A', marginTop: 12, textTransform: 'uppercase' }}>
-                <span>UŠETŘÍŠ</span><span>{cartSave} KČ</span>
+                <span>{t('save')}</span><span>{cartSave} KČ</span>
               </div>
             )}
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, fontFamily: "'Space Mono',monospace", fontSize: 13, letterSpacing: 1, color: '#E8E8E8', marginTop: 14, paddingTop: 14, borderTop: '1px solid #2A2A2A', textTransform: 'uppercase' }}>
-              <span>PLATNOST DO</span><span>{expiresLabel(creditExpiryMonths)}</span>
+              <span>{t('validUntil')}</span><span>{expiresLabel(creditExpiryMonths)}</span>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 20 }}>
-              <input placeholder="Jméno" value={contact.name} onChange={(e) => setContact((c) => ({ ...c, name: e.target.value }))}
+              <input placeholder={t('namePlaceholder')} value={contact.name} onChange={(e) => setContact((c) => ({ ...c, name: e.target.value }))}
                 style={{ padding: '10px 14px', fontSize: 15, background: '#0A0A0A', border: '1px solid #2A2A2A', color: '#fff', borderRadius: 2 }} />
-              <input placeholder="E-mail" type="email" value={contact.email} onChange={(e) => setContact((c) => ({ ...c, email: e.target.value }))}
+              <input placeholder={t('emailPlaceholder')} type="email" value={contact.email} onChange={(e) => setContact((c) => ({ ...c, email: e.target.value }))}
                 style={{ padding: '10px 14px', fontSize: 15, background: '#0A0A0A', border: '1px solid #2A2A2A', color: '#fff', borderRadius: 2 }} />
-              <input placeholder="Telefon" type="tel" value={contact.phone} onChange={(e) => setContact((c) => ({ ...c, phone: e.target.value }))}
+              <input placeholder={t('phonePlaceholder')} type="tel" value={contact.phone} onChange={(e) => setContact((c) => ({ ...c, phone: e.target.value }))}
                 style={{ padding: '10px 14px', fontSize: 15, background: '#0A0A0A', border: '1px solid #2A2A2A', color: '#fff', borderRadius: 2 }} />
-              <input placeholder="Clutchzone account (přezdívka v ggLeap)" disabled={contact.noAccountYet} value={contact.clutchzoneAccount} onChange={(e) => setContact((c) => ({ ...c, clutchzoneAccount: e.target.value }))}
+              <input placeholder={t('clutchzoneAccountPlaceholder')} disabled={contact.noAccountYet} value={contact.clutchzoneAccount} onChange={(e) => setContact((c) => ({ ...c, clutchzoneAccount: e.target.value }))}
                 style={{ padding: '10px 14px', fontSize: 15, background: '#0A0A0A', border: '1px solid #2A2A2A', color: '#fff', borderRadius: 2, opacity: contact.noAccountYet ? 0.4 : 1 }} />
               <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 1, color: '#888888', cursor: 'pointer' }}>
                 <input type="checkbox" checked={contact.noAccountYet} onChange={(e) => setContact((c) => ({ ...c, noAccountYet: e.target.checked, clutchzoneAccount: e.target.checked ? '' : c.clutchzoneAccount }))} />
-                Nemám zatím Clutchzone účet
+                {t('noAccountYetLabel')}
               </label>
             </div>
 
             <div style={{ background: '#1A1A1A', border: '1px solid #2A2A2A', padding: '12px 14px', marginTop: 18, fontFamily: "'Inter',sans-serif", fontSize: 15, lineHeight: 1.75, color: '#FFFFFF' }}>
-              Hodiny mají platnost {creditExpiryMonths} měsíce od nákupu. Nevyužité hodiny po uplynutí propadají.
+              {t('creditExpiryNote', { months: creditExpiryMonths })}
             </div>
 
             <div
@@ -209,13 +211,15 @@ export default function KreditClient({ hourTiers, creditExpiryMonths }: Props) {
                 {termsAccepted ? '✓' : ''}
               </div>
               <div style={{ fontFamily: "'Inter',sans-serif", fontSize: 15, lineHeight: 1.6, color: consentError ? '#E84A1A' : '#E8E8E8' }}>
-                Souhlasím s <a href="/terms" target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} style={{ textDecoration: 'underline' }}>obchodními podmínkami</a>{' '}
-                a beru na vědomí <a href="/privacy" target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} style={{ textDecoration: 'underline' }}>zásady ochrany osobních údajů</a>.
+                {t('agreeTermsPrefix')}{' '}
+                <a href="/terms" target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} style={{ textDecoration: 'underline' }}>{t('termsLink')}</a>{' '}
+                {t('andAcknowledge')}{' '}
+                <a href="/privacy" target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} style={{ textDecoration: 'underline' }}>{t('privacyLink')}</a>.
               </div>
             </div>
             {consentError && (
               <p style={{ fontFamily: "'Space Mono',monospace", fontSize: 13, letterSpacing: 1, color: '#E84A1A', marginTop: 8 }}>
-                BEZ SOUHLASU S PODMÍNKAMI NEMŮŽEME NÁKUP DOKONČIT.
+                {t('consentError')}
               </p>
             )}
 
@@ -227,12 +231,12 @@ export default function KreditClient({ hourTiers, creditExpiryMonths }: Props) {
                 borderRadius: 2, color: valid && !loading ? '#FFFFFF' : '#888888', fontFamily: "'Bebas Neue',sans-serif", fontSize: 18, letterSpacing: 1.5, lineHeight: 1, cursor: valid && !loading ? 'pointer' : 'not-allowed', textTransform: 'uppercase',
               }}
             >
-              {loading ? '...' : 'ZAPLATIT KARTOU'}
+              {loading ? '...' : t('payByCard')}
             </button>
             {error && <p style={{ fontFamily: "'Space Mono',monospace", fontSize: 13, color: '#E84A1A', marginTop: 8 }}>{error}</p>}
 
             <p style={{ fontFamily: "'Inter',sans-serif", fontSize: 14, lineHeight: 1.6, color: '#888888', marginTop: 14 }}>
-              Hodiny ti připíšeme na Clutchzone účet při první návštěvě — ukaž referenční kód na recepci.
+              {t('creditFootnote')}
             </p>
           </div>
         </div>

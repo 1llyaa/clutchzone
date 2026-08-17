@@ -1,6 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -39,6 +40,7 @@ function buildPrefillFromParams(config: PricingConfig, params: URLSearchParams) 
 }
 
 export default function RezervacePage() {
+  const t = useTranslations('rezervace');
   const { open } = useReservation();
   const searchParams = useSearchParams();
   const [config, setConfig] = useState<PricingConfig | null>(null);
@@ -64,17 +66,17 @@ export default function RezervacePage() {
       <main className="flex items-center justify-center" style={{ minHeight: '60vh', padding: '64px 16px' }}>
         <div className="flex flex-col items-center text-center gap-5">
           <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 13, letterSpacing: 2.5 }}>
-            {'// REZERVACE'}
+            {t('eyebrow')}
           </span>
           <h1 className="font-display text-white uppercase" style={{ fontSize: 'clamp(32px, 5vw, 48px)', letterSpacing: 1 }}>
-            NAKLIKEJ SI TERMÍN
+            {t('heading')}
           </h1>
           <button
             onClick={() => open()}
             className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors rounded-[2px] border-none cursor-pointer"
             style={{ fontSize: 17, letterSpacing: 2, padding: '14px 32px' }}
           >
-            OTEVŘÍT REZERVACI
+            {t('openButton')}
           </button>
         </div>
       </main>

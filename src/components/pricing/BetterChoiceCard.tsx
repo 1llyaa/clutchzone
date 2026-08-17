@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import type { Offer } from '@/lib/pricing/types';
 
 interface Props {
@@ -9,7 +10,11 @@ interface Props {
 }
 
 export default function BetterChoiceCard({ offer, recommended, onApply }: Props) {
+  const t = useTranslations('calculator');
   const extraHours = offer.hoursCovered - recommended.hoursCovered;
+  const hoursText = extraHours === 1 ? t('sameHourSingular') : t('sameHourPlural', { n: extraHours });
+  const priceText = offer.totalAmount === recommended.totalAmount ? t('samePrice') : `${offer.totalAmount} Kč`;
+
   return (
     <div
       style={{
@@ -24,11 +29,10 @@ export default function BetterChoiceCard({ offer, recommended, onApply }: Props)
     >
       <div style={{ flex: 1 }}>
         <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 13, letterSpacing: 2, color: '#E84A1A', textTransform: 'uppercase', marginBottom: 8 }}>
-          LEPŠÍ VOLBA
+          {t('betterChoice')}
         </div>
         <div style={{ fontFamily: "'Inter',sans-serif", fontSize: 16, lineHeight: 1.75, color: '#E8E8E8' }}>
-          {offer.label} dá o {extraHours === 1 ? 'hodinu' : `${extraHours} hodiny`} víc za{' '}
-          {offer.totalAmount === recommended.totalAmount ? 'stejnou cenu' : `${offer.totalAmount} Kč`}.
+          {t('betterChoiceMoreHours', { label: offer.label, hours: hoursText, price: priceText })}
         </div>
       </div>
       <button
@@ -46,7 +50,7 @@ export default function BetterChoiceCard({ offer, recommended, onApply }: Props)
           borderRadius: 2,
         }}
       >
-        POUŽÍT
+        {t('use')}
       </button>
     </div>
   );

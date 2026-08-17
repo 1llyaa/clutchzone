@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Link } from '@/navigation';
 import type { Offer } from '@/lib/pricing/types';
 import SavingsBadge from './SavingsBadge';
@@ -22,7 +23,7 @@ interface Props {
 export default function OfferCard({
   offer,
   creditExpiryMonths,
-  badgeLabel = 'DOPORUČUJEME',
+  badgeLabel,
   isOverride = false,
   onRevert,
   upsell,
@@ -30,9 +31,14 @@ export default function OfferCard({
   alts = [],
   onSelectAlt,
   onReserve,
-  reserveLabel = 'REZERVOVAT',
+  reserveLabel,
   showKreditLink = false,
 }: Props) {
+  const t = useTranslations('calculator');
+  const resolvedBadgeLabel = badgeLabel ?? t('recommended');
+  const resolvedReserveLabel = reserveLabel ?? t('reserve');
+  const upsellHoursDelta = upsell ? upsell.hoursCovered - offer.hoursCovered : 0;
+
   return (
     <div
       style={{
@@ -58,14 +64,14 @@ export default function OfferCard({
             textTransform: 'uppercase',
           }}
         >
-          {badgeLabel}
+          {resolvedBadgeLabel}
         </div>
         {isOverride && onRevert && (
           <button
             onClick={onRevert}
             style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: "'Space Mono',monospace", fontSize: 13, letterSpacing: 1.5, color: '#888888', textTransform: 'uppercase' }}
           >
-            VRÁTIT ZPĚT
+            {t('revert')}
           </button>
         )}
       </div>
@@ -84,7 +90,7 @@ export default function OfferCard({
       <SavingsBadge amount={offer.savingsVsHourly} />
 
       <div style={{ fontFamily: "'Inter',sans-serif", fontWeight: 500, fontSize: 16, color: '#E8E8E8', marginTop: 10 }}>
-        {offer.effectiveHourly} Kč / hodina
+        {t('perHour', { amount: offer.effectiveHourly })}
       </div>
 
       <div style={{ height: 1, background: '#2A2A2A', margin: '24px 0 16px' }} />
@@ -116,7 +122,7 @@ export default function OfferCard({
             textTransform: 'uppercase',
           }}
         >
-          HODINY ZŮSTÁVAJÍ · PLATNOST {creditExpiryMonths} MĚSÍCE
+          {t('creditTag', { months: creditExpiryMonths })}
         </div>
       ) : (
         <div
@@ -133,20 +139,23 @@ export default function OfferCard({
             textTransform: 'uppercase',
           }}
         >
-          PLATÍ JEN {offer.timeWindowLabel ?? 'V TOMTO ČASE'} · NEPŘENÁŠÍ SE
+          {t('timeTag', { window: offer.timeWindowLabel ?? t('timeTagDefault') })}
         </div>
       )}
 
       {upsell && onApplyUpsell && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, background: '#1A1A1A', border: '1px solid #E84A1A', padding: '12px 16px', marginTop: 16 }}>
           <span style={{ flex: 1, fontFamily: "'Inter',sans-serif", fontWeight: 500, fontSize: 16, color: '#FFFFFF', textTransform: 'uppercase' }}>
-            Za +{upsell.totalAmount - offer.totalAmount} Kč máš {upsell.hoursCovered - offer.hoursCovered === 1 ? 'o hodinu' : `o ${upsell.hoursCovered - offer.hoursCovered} hodiny`} víc
+            {t('upsellText', {
+              delta: upsell.totalAmount - offer.totalAmount,
+              hours: upsellHoursDelta === 1 ? t('hourSingular') : t('hourPlural', { n: upsellHoursDelta }),
+            })}
           </span>
           <button
             onClick={onApplyUpsell}
             style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 16, letterSpacing: 1.5, lineHeight: 1, color: '#E84A1A', background: 'transparent', border: '1px solid #E84A1A', padding: '6px 14px', cursor: 'pointer', borderRadius: 2 }}
           >
-            PŘIDAT
+            {t('add')}
           </button>
         </div>
       )}
@@ -154,7 +163,7 @@ export default function OfferCard({
       {alts.length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 20 }}>
           <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 2.5, color: '#E8E8E8', textTransform: 'uppercase' }}>
-            NEBO PŘIPLAŤ A MĚJ VÍC
+            {t('orTopUp')}
           </div>
           {alts.map((a) => {
             const delta = a.totalAmount - offer.totalAmount;
@@ -168,7 +177,7 @@ export default function OfferCard({
                     {a.label}
                   </div>
                   <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 13, letterSpacing: 1, marginTop: 6, color: a.isCredit ? '#E84A1A' : '#888888', textTransform: 'uppercase' }}>
-                    {a.isCredit ? 'HODINY ZŮSTÁVAJÍ' : `PLATÍ ${a.timeWindowLabel ?? 'JEN V TOMTO ČASE'}`} · {a.effectiveHourly} KČ/H
+                    {a.isCredit ? t('timeTagAltCredit') : t('timeTagAlt', { window: a.timeWindowLabel ?? t('timeTagDefault') })} · {a.effectiveHourly} KČ/H
                   </div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
@@ -194,7 +203,7 @@ export default function OfferCard({
                     borderRadius: 2,
                   }}
                 >
-                  VYBRAT
+                  {t('select')}
                 </button>
               </div>
             );
@@ -220,12 +229,12 @@ export default function OfferCard({
           textTransform: 'uppercase',
         }}
       >
-        {reserveLabel}
+        {resolvedReserveLabel}
       </button>
       {showKreditLink && (
         <div style={{ textAlign: 'center', marginTop: 14 }}>
           <Link href="/kredit" style={{ fontFamily: "'Inter',sans-serif", fontSize: 16, color: '#E84A1A' }}>
-            Nebo si kup jen hodiny do zásoby →
+            {t('buyHoursLink')}
           </Link>
         </div>
       )}

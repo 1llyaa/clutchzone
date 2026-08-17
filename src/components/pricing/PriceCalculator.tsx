@@ -1,9 +1,10 @@
 'use client';
 
-import { useLocale } from 'next-intl';
-import { useMemo, useState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useReservation } from '@/components/reservation/ReservationContext';
 import Reveal from '@/components/ui/Reveal';
+import { track } from '@/lib/analytics/track';
 import { dayTypeCloseHour, dayTypeOpenHour } from '@/lib/pricing/dayTypes';
 import { calculatePricing } from '@/lib/pricing/engine';
 import type { CalcInput, Offer, PricingConfig, StationType } from '@/lib/pricing/types';
@@ -30,6 +31,7 @@ function defaultDayTypeKey(config: PricingConfig): string {
 }
 
 export default function PriceCalculator({ config, variant = 'full', onOfferChosen }: Props) {
+  const t = useTranslations('calculator');
   const locale = useLocale() === 'en' ? 'en' : 'cs';
   const { open } = useReservation();
   const isCompact = variant === 'compact';
@@ -41,9 +43,17 @@ export default function PriceCalculator({ config, variant = 'full', onOfferChose
   const [stationsCount, setStationsCount] = useState(1);
   const [overrideOfferId, setOverrideOfferId] = useState<string | null>(null);
 
+  const interactedRef = useRef(false);
+  function markInteracted() {
+    if (interactedRef.current) return;
+    interactedRef.current = true;
+    track('calculator_interacted', {});
+  }
+
   const dayType = config.dayTypes.find((d) => d.key === dayTypeKey) ?? config.dayTypes[0];
 
   function handleDayType(key: string) {
+    markInteracted();
     setDayTypeKey(key);
     setOverrideOfferId(null);
     const next = config.dayTypes.find((d) => d.key === key);
@@ -54,11 +64,13 @@ export default function PriceCalculator({ config, variant = 'full', onOfferChose
   }
 
   function handleStartHour(h: number) {
+    markInteracted();
     setStartHour(h);
     setOverrideOfferId(null);
   }
 
   function handleDurationHours(h: number) {
+    markInteracted();
     setDurationHours(h);
     setOverrideOfferId(null);
   }
@@ -68,6 +80,18 @@ export default function PriceCalculator({ config, variant = 'full', onOfferChose
     return calculatePricing({ stationType, dayTypeKey: dayType.key, startHour, durationHours, stationsCount }, config, locale);
   }, [config, stationType, dayType, startHour, durationHours, stationsCount, locale]);
 
+  const shownOfferKey = useMemo(() => {
+    if (!result) return null;
+    const off = overrideOfferId ? result.all.find((o) => o.id === overrideOfferId) ?? null : null;
+    const chosen = off ?? result.recommended;
+    return { id: chosen.id, kind: chosen.kind, passId: chosen.passId, amount: chosen.totalAmount };
+  }, [result, overrideOfferId]);
+
+  useEffect(() => {
+    if (shownOfferKey) track('calculator_offer_shown', { kind: shownOfferKey.kind, passId: shownOfferKey.passId, amount: shownOfferKey.amount });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shownOfferKey?.id]);
+
   if (!dayType || !result) {
     return null; // no open days configured — nothing to calculate
   }
@@ -76,7 +100,7 @@ export default function PriceCalculator({ config, variant = 'full', onOfferChose
   const fitHours = Math.max(0, Math.min(durationHours, closeHour - startHour));
   const fitNote =
     fitHours < durationHours
-      ? `Do zavírací doby se vejde ${fitHours}h. Zbylých ${durationHours - fitHours}h ti zůstane jako kredit na příští návštěvu.`
+      ? t('fitNote', { fit: fitHours, rest: durationHours - fitHours })
       : null;
 
   const overrideOffer = overrideOfferId ? result.all.find((o) => o.id === overrideOfferId) ?? null : null;
@@ -87,6 +111,7 @@ export default function PriceCalculator({ config, variant = 'full', onOfferChose
   const calcInput: CalcInput = { stationType, dayTypeKey: dayType.key, startHour, durationHours, stationsCount };
 
   function handleReserve() {
+    track('calculator_to_reservation', { kind: displayedOffer.kind, amount: displayedOffer.totalAmount });
     if (onOfferChosen) {
       onOfferChosen(calcInput, displayedOffer);
       return;
@@ -99,6 +124,7 @@ export default function PriceCalculator({ config, variant = 'full', onOfferChose
       config={config}
       stationType={stationType}
       onStationType={(t) => {
+        markInteracted();
         setStationType(t);
         setOverrideOfferId(null);
       }}
@@ -109,7 +135,10 @@ export default function PriceCalculator({ config, variant = 'full', onOfferChose
       durationHours={durationHours}
       onDurationHours={handleDurationHours}
       stationsCount={stationsCount}
-      onStationsCount={setStationsCount}
+      onStationsCount={(n) => {
+        markInteracted();
+        setStationsCount(n);
+      }}
       fitNote={fitNote}
     />
   );
@@ -120,22 +149,28 @@ export default function PriceCalculator({ config, variant = 'full', onOfferChose
         <BetterChoiceCard
           offer={result.betterChoice}
           recommended={result.recommended}
-          onApply={() => setOverrideOfferId(result.betterChoice!.id)}
+          onApply={() => {
+            track('better_choice_applied', { amount: result.betterChoice!.totalAmount });
+            setOverrideOfferId(result.betterChoice!.id);
+          }}
         />
       )}
 
       <OfferCard
         offer={displayedOffer}
         creditExpiryMonths={config.creditExpiryMonths}
-        badgeLabel={overrideOffer ? 'VYBRÁNO' : 'DOPORUČUJEME'}
+        badgeLabel={overrideOffer ? t('selected') : undefined}
         isOverride={!!overrideOffer}
-        onRevert={() => setOverrideOfferId(null)}
+        onRevert={() => {
+          track('better_choice_reverted', { amount: displayedOffer.totalAmount });
+          setOverrideOfferId(null);
+        }}
         upsell={upsell}
         onApplyUpsell={upsell ? () => setOverrideOfferId(upsell.id) : undefined}
         alts={alts}
         onSelectAlt={(id) => setOverrideOfferId(id)}
         onReserve={handleReserve}
-        reserveLabel={isCompact ? 'POKRAČOVAT' : undefined}
+        reserveLabel={isCompact ? t('continueLabel') : undefined}
         showKreditLink={!isCompact}
       />
     </div>
@@ -170,13 +205,13 @@ export default function PriceCalculator({ config, variant = 'full', onOfferChose
         <Reveal>
           <div style={{ marginBottom: 40 }}>
             <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 13, letterSpacing: 2.5, marginBottom: 12 }}>
-              {'// SPOČÍTEJ SI CENU'}
+              {t('eyebrow')}
             </span>
             <h2
               className="font-display text-white uppercase"
               style={{ margin: 0, fontSize: 'clamp(36px, 5vw, 52px)', lineHeight: 0.98, letterSpacing: 1 }}
             >
-              KOLIK TĚ TO BUDE STÁT
+              {t('heading')}
             </h2>
             <div style={{ width: 64, height: 2, background: '#E84A1A', marginTop: 24 }} />
           </div>

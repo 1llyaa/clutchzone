@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
+
 interface ContactInfo {
   name: string;
   email: string;
@@ -18,15 +20,15 @@ interface Props {
 }
 
 function Field({
-  label, value, onChange, placeholder, type = 'text', required = true, hint, disabled = false,
+  label, value, onChange, placeholder, type = 'text', required = true, optionalHint, hint, disabled = false,
 }: {
   label: string; value: string; onChange: (v: string) => void;
-  placeholder: string; type?: string; required?: boolean; hint?: string; disabled?: boolean;
+  placeholder: string; type?: string; required?: boolean; optionalHint?: string; hint?: string; disabled?: boolean;
 }) {
   return (
     <div>
       <label className="font-mono text-cz-gray-light uppercase block" style={{ fontSize: 12, letterSpacing: 2.5, marginBottom: 8 }}>
-        {label}{!required && <span className="text-cz-gray-light"> (nepovinné)</span>}
+        {label}{!required && <span className="text-cz-gray-light"> {optionalHint}</span>}
       </label>
       <input
         type={type}
@@ -43,6 +45,7 @@ function Field({
 }
 
 export default function StepContact({ contact, onChange, requireClutchzoneAccount, onBack, onNext }: Props) {
+  const t = useTranslations('booking');
   const accountNeeded = requireClutchzoneAccount && !contact.noAccountYet;
   const valid =
     contact.name.trim().length >= 2 &&
@@ -54,20 +57,20 @@ export default function StepContact({ contact, onChange, requireClutchzoneAccoun
 
   return (
     <div className="flex flex-col gap-4" style={{ marginTop: 8 }}>
-      <Field label="Jméno" value={contact.name} onChange={(v) => set({ name: v })} placeholder="Jan Novák" />
-      <Field label="E-mail" value={contact.email} onChange={(v) => set({ email: v })} placeholder="jan@email.cz" type="email" />
-      <Field label="Telefon" value={contact.phone} onChange={(v) => set({ phone: v })} placeholder="+420 123 456 789" type="tel" />
+      <Field label={t('nameField')} value={contact.name} onChange={(v) => set({ name: v })} placeholder="Jan Novák" />
+      <Field label={t('emailField')} value={contact.email} onChange={(v) => set({ email: v })} placeholder="jan@email.cz" type="email" />
+      <Field label={t('phoneField')} value={contact.phone} onChange={(v) => set({ phone: v })} placeholder="+420 123 456 789" type="tel" />
 
       {requireClutchzoneAccount && (
         <div>
           <Field
-            label="Clutchzone account"
+            label={t('clutchzoneAccountLabel')}
             value={contact.clutchzoneAccount}
             onChange={(v) => set({ clutchzoneAccount: v })}
-            placeholder="tvoje přezdívka v ggLeap"
+            placeholder={t('clutchzoneAccountPlaceholder')}
             required={accountNeeded}
             disabled={contact.noAccountYet}
-            hint={accountNeeded ? 'Podle tohohle jména ti obsluha připíše hodiny na účet.' : undefined}
+            hint={accountNeeded ? t('clutchzoneAccountHint') : undefined}
           />
           <div
             onClick={() => set({ noAccountYet: !contact.noAccountYet, clutchzoneAccount: contact.noAccountYet ? contact.clutchzoneAccount : '' })}
@@ -91,18 +94,18 @@ export default function StepContact({ contact, onChange, requireClutchzoneAccoun
               {contact.noAccountYet ? '✓' : ''}
             </div>
             <span className="font-mono text-cz-gray-light" style={{ fontSize: 13, letterSpacing: 1 }}>
-              Nemám zatím Clutchzone účet
+              {t('noAccountYetLabel')}
             </span>
           </div>
           {contact.noAccountYet && (
             <p className="font-mono text-cz-gray-light" style={{ fontSize: 12, letterSpacing: 1, marginTop: 6 }}>
-              V pořádku — účet ti založíme na místě, hodiny připíšeme dodatečně podle referenčního kódu.
+              {t('noAccountYetNote')}
             </p>
           )}
         </div>
       )}
 
-      <Field label="Discord" value={contact.discord} onChange={(v) => set({ discord: v })} placeholder="uživatel#0000" required={false} />
+      <Field label={t('discordField')} value={contact.discord} onChange={(v) => set({ discord: v })} placeholder="uživatel#0000" required={false} optionalHint={t('optionalHint')} />
 
       <div className="flex gap-3" style={{ marginTop: 4 }}>
         <button
@@ -110,7 +113,7 @@ export default function StepContact({ contact, onChange, requireClutchzoneAccoun
           className="font-display uppercase rounded-[2px] cursor-pointer"
           style={{ fontSize: 16, letterSpacing: 2, padding: '11px 24px', background: 'transparent', border: '1.5px solid #2A2A2A', color: '#888' }}
         >
-          ZPĚT
+          {t('back')}
         </button>
         <button
           onClick={onNext}
@@ -126,7 +129,7 @@ export default function StepContact({ contact, onChange, requireClutchzoneAccoun
             cursor: valid ? 'pointer' : 'not-allowed',
           }}
         >
-          POKRAČOVAT NA PLATBU
+          {t('continueToPayment')}
         </button>
       </div>
     </div>

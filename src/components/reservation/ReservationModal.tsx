@@ -1,8 +1,9 @@
 'use client';
 
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
 import { useReservation } from './ReservationContext';
+import { track } from '@/lib/analytics/track';
 import { calculatePricing, reservedHoursOnSite } from '@/lib/pricing/engine';
 import { dayTypeForDate } from '@/lib/pricing/dates';
 import type { CalcInput, Offer, PricingConfig } from '@/lib/pricing/types';
@@ -10,8 +11,6 @@ import StepSummaryDate from './steps/StepSummaryDate';
 import StepContact from './steps/StepContact';
 import StepPayment from './steps/StepPayment';
 import StepDone from './steps/StepDone';
-
-const STEP_TITLES = ['SOUHRN A DATUM', 'KONTAKT', 'PLATBA A POTVRZENÍ'];
 
 interface ContactInfo {
   name: string;
@@ -31,6 +30,7 @@ interface BookingResult {
 }
 
 export default function ReservationModal() {
+  const t = useTranslations('booking');
   const locale = useLocale();
   const { isOpen, prefill, close } = useReservation();
   const [config, setConfig] = useState<PricingConfig | null>(null);
@@ -47,6 +47,12 @@ export default function ReservationModal() {
   const [submitError, setSubmitError] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<BookingResult | null>(null);
+
+  const STEP_TITLES = [t('stepSummaryTitle'), t('stepContactTitle'), t('stepPaymentTitle')];
+
+  useEffect(() => {
+    if (isOpen) track('reservation_step_reached', { step });
+  }, [isOpen, step]);
 
   useEffect(() => {
     if (isOpen && !config) {
@@ -79,22 +85,22 @@ export default function ReservationModal() {
   const { activeOffer, dateWarning } = useMemo(() => {
     if (!config || !calcInput || !offer || !date) return { activeOffer: offer, dateWarning: null as string | null };
     const dt = dayTypeForDate(config.dayTypes, date);
-    if (!dt) return { activeOffer: offer, dateWarning: 'V tento den je zavřeno — vyber prosím jiné datum.' };
+    if (!dt) return { activeOffer: offer, dateWarning: t('closedDayWarning') };
     if (dt.key === calcInput.dayTypeKey) return { activeOffer: offer, dateWarning: null };
     const res = calculatePricing({ ...calcInput, dayTypeKey: dt.key }, config);
-    if (!res) return { activeOffer: offer, dateWarning: 'Pro vybrané datum nejde cenu spočítat, vyber prosím jiné.' };
+    if (!res) return { activeOffer: offer, dateWarning: t('cannotComputePrice') };
     const stillThere = res.all.find((o) => o.id === offer.id);
     if (stillThere) {
       return {
         activeOffer: stillThere,
-        dateWarning: stillThere.totalAmount !== offer.totalAmount ? `Pro vybrané datum je cena ${stillThere.totalAmount} Kč.` : null,
+        dateWarning: stillThere.totalAmount !== offer.totalAmount ? t('priceChangedForDate', { amount: stillThere.totalAmount }) : null,
       };
     }
     return {
       activeOffer: res.recommended,
-      dateWarning: `Zvolené datum má jiný typ dne — cena se přepočítala na ${res.recommended.label} za ${res.recommended.totalAmount} Kč.`,
+      dateWarning: t('dayTypeChangedWarning', { label: res.recommended.label, amount: res.recommended.totalAmount }),
     };
-  }, [config, calcInput, offer, date]);
+  }, [config, calcInput, offer, date, t]);
 
   useEffect(() => {
     const dt = date && config ? dayTypeForDate(config.dayTypes, date) : null;
@@ -183,7 +189,7 @@ export default function ReservationModal() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setSubmitError(data.error ?? 'Něco se pokazilo, zkus to prosím znovu.');
+        setSubmitError(data.error ?? t('submitError'));
         setLoading(false);
         return;
       }
@@ -199,16 +205,17 @@ export default function ReservationModal() {
           window.location.href = checkoutData.url; // full redirect — intentionally leaves the SPA
           return;
         }
-        setSubmitError(checkoutData.error ?? 'Chyba při vytváření platby');
+        setSubmitError(checkoutData.error ?? t('checkoutError'));
         setLoading(false);
         return;
       }
 
+      track('reservation_completed', { kind: off.kind, stations: calcInput.stationsCount, amount: off.totalAmount });
       setResult({ reference: data.reference, stationLabels: data.stationLabels, totalAmount: data.totalAmount, isCredit: data.isCredit });
       setStep(4);
       setLoading(false);
     } catch {
-      setSubmitError('Něco se pokazilo, zkus to prosím znovu.');
+      setSubmitError(t('submitError'));
       setLoading(false);
     }
   }
@@ -233,10 +240,10 @@ export default function ReservationModal() {
         <div className="flex items-center justify-between" style={{ padding: '28px 32px 0' }}>
           <div className="flex flex-col gap-1">
             <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 14, letterSpacing: 3 }}>
-              REZERVACE {step <= 3 ? `· ${step}/3` : ''}
+              {t('title')} {step <= 3 ? `· ${step}/3` : ''}
             </span>
             <span className="font-display text-white uppercase" style={{ fontSize: 26, letterSpacing: 1 }}>
-              {step <= 3 ? STEP_TITLES[stepIndex] : 'HOTOVO'}
+              {step <= 3 ? STEP_TITLES[stepIndex] : t('doneStepLabel')}
             </span>
           </div>
           <button
@@ -262,7 +269,7 @@ export default function ReservationModal() {
         <div key={step} className="animate-step-in" style={{ padding: '24px 32px 32px', flex: 1 }}>
           {!config ? (
             <p className="font-mono text-cz-gray-light" style={{ fontSize: 15, letterSpacing: 1, textAlign: 'center', padding: '40px 0' }}>
-              Načítám ceník…
+              {t('loadingPricing')}
             </p>
           ) : (
             <>

@@ -1,6 +1,9 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
+
 export default function SavingsBadge({ amount }: { amount: number }) {
+  const t = useTranslations('calculator');
   if (amount <= 0) return null;
   return (
     <div
@@ -16,7 +19,7 @@ export default function SavingsBadge({ amount }: { amount: number }) {
         marginTop: 12,
       }}
     >
-      ↓ UŠETŘÍŠ {amount} KČ
+      {t('savings', { amount })}
     </div>
   );
 }

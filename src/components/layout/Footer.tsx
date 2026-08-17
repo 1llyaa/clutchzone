@@ -1,16 +1,32 @@
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 import { Link } from '@/navigation';
 import Logo from '@/components/ui/Logo';
 import Reveal from '@/components/ui/Reveal';
 import { BUSINESS } from '@/lib/business';
+import { getPricingConfig } from '@/lib/pricing/config-server';
 
-export default function Footer() {
-  const t = useTranslations('footer');
+const DAY_NAMES_CS = ['NEDĚLE', 'PONDĚLÍ', 'ÚTERÝ', 'STŘEDA', 'ČTVRTEK', 'PÁTEK', 'SOBOTA'];
+
+function formatClose(time: string): string {
+  return time.slice(0, 5) === '24:00' ? '00:00' : time.slice(0, 5);
+}
+
+export default async function Footer() {
+  const t = await getTranslations('footer');
+  const config = await getPricingConfig();
+
+  const closedLabel = config.openingHours
+    .filter((d) => d.isClosed)
+    .map((d) => DAY_NAMES_CS[d.dayOfWeek])
+    .join(', ');
 
   const hours = [
-    { days: t('hours1days'), time: t('hours1time'), closed: true },
-    { days: t('hours2days'), time: t('hours2time'), closed: false },
-    { days: t('hours3days'), time: t('hours3time'), closed: false },
+    ...(closedLabel ? [{ days: closedLabel, time: t('closed'), closed: true }] : []),
+    ...config.dayTypes.map((g) => ({
+      days: g.label,
+      time: g.openTime ? `${g.openTime.slice(0, 5)} – ${formatClose(g.closeTime ?? '')}` : '—',
+      closed: false,
+    })),
   ];
 
   return (
