@@ -28,15 +28,16 @@ export default async function ProtectedAdminLayout({
   }
 
   const admin = createAdminClient();
-  const { count: unfulfilledCreditsCount } = await admin
-    .from('credit_orders')
-    .select('id', { count: 'exact', head: true })
-    .eq('payment_status', 'paid')
-    .is('fulfilled_at', null);
+  const [{ count: unfulfilledOrdersCount }, { data: unfulfilledBookingRows }] = await Promise.all([
+    admin.from('credit_orders').select('id', { count: 'exact', head: true }).eq('payment_status', 'paid').is('fulfilled_at', null),
+    admin.from('bookings').select('booking_group_id').in('offer_kind', ['hours', 'hours_upsell']).neq('status', 'cancelled').is('fulfilled_at', null),
+  ]);
+  const unfulfilledBookingGroups = new Set((unfulfilledBookingRows ?? []).map((r) => r.booking_group_id)).size;
+  const unfulfilledCreditsCount = (unfulfilledOrdersCount ?? 0) + unfulfilledBookingGroups;
 
   return (
     <div className="min-h-screen bg-cz-black flex">
-      <AdminSidebar profile={profile} locale={locale} unfulfilledCreditsCount={unfulfilledCreditsCount ?? 0} />
+      <AdminSidebar profile={profile} locale={locale} unfulfilledCreditsCount={unfulfilledCreditsCount} />
       <main className="flex-1 min-h-screen" style={{ marginLeft: 240 }}>
         {children}
       </main>

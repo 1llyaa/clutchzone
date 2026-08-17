@@ -136,6 +136,7 @@ export async function POST(req: NextRequest) {
     stations_count: data.stationsCount,
     time_pass_id: offer.passId,
     offer_kind: offer.kind,
+    credit_hours: offer.kind === 'pass' ? null : offer.hoursCovered,
     pays_with_credit: false,
     clutchzone_account: data.clutchzoneAccount?.trim() || null,
     customer_name: data.customerName,
