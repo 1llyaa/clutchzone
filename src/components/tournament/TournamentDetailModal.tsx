@@ -106,8 +106,8 @@ export default function TournamentDetailModal({ tournament, onClose, onRegister 
             >
               {isFull ? 'PLNÝ' : t('detailCta')}
             </button>
-            <Button variant="ghost" iconOnly onClick={onClose} aria-label="Zavřít">
-              <X size={20} weight="bold" />
+            <Button variant="ghost" size="sm" onClick={onClose}>
+              {t('close')}
             </Button>
           </div>
         </div>
