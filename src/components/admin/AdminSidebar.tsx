@@ -9,6 +9,7 @@ import type { AdminProfile } from '@/lib/admin/auth';
 const NAV = [
   { href: '/admin',             label: 'DASHBOARD',  exact: true },
   { href: '/admin/bookings',    label: 'REZERVACE' },
+  { href: '/admin/credits',     label: 'KREDITY',    badge: true },
   { href: '/admin/tournaments', label: 'TURNAJE' },
   { href: '/admin/gallery',     label: 'GALERIE' },
   { href: '/admin/games',       label: 'HRY' },
@@ -29,9 +30,11 @@ const ROLE_LABEL: Record<string, string> = {
 export default function AdminSidebar({
   profile,
   locale,
+  unfulfilledCreditsCount = 0,
 }: {
   profile: AdminProfile;
   locale: string;
+  unfulfilledCreditsCount?: number;
 }) {
   const pathname = usePathname();
 
@@ -97,6 +100,14 @@ export default function AdminSidebar({
                 />
               )}
               {item.label}
+              {item.badge && unfulfilledCreditsCount > 0 && (
+                <span
+                  className="font-mono text-white bg-cz-orange rounded-full flex items-center justify-center tabular-nums"
+                  style={{ minWidth: 20, height: 20, fontSize: 13, padding: '0 5px', marginLeft: 'auto' }}
+                >
+                  {unfulfilledCreditsCount}
+                </span>
+              )}
             </Link>
           );
         })}

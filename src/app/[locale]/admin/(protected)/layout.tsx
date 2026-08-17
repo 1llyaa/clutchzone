@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { requireAdmin } from '@/lib/admin/auth';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import AdminNotifications from '@/components/admin/AdminNotifications';
@@ -26,9 +27,16 @@ export default async function ProtectedAdminLayout({
     redirect(`/${locale}/admin/login`);
   }
 
+  const admin = createAdminClient();
+  const { count: unfulfilledCreditsCount } = await admin
+    .from('credit_orders')
+    .select('id', { count: 'exact', head: true })
+    .eq('payment_status', 'paid')
+    .is('fulfilled_at', null);
+
   return (
     <div className="min-h-screen bg-cz-black flex">
-      <AdminSidebar profile={profile} locale={locale} />
+      <AdminSidebar profile={profile} locale={locale} unfulfilledCreditsCount={unfulfilledCreditsCount ?? 0} />
       <main className="flex-1 min-h-screen" style={{ marginLeft: 240 }}>
         {children}
       </main>
