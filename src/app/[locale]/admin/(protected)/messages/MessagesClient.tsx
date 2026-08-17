@@ -56,7 +56,7 @@ export default function MessagesClient({ messages }: { messages: Message[] }) {
         {/* List */}
         <div
           className="bg-cz-black-mid rounded-cz overflow-auto flex-shrink-0"
-          style={{ width: 380, border: '1px solid #2A2A2A' }}
+          style={{ width: 380, maxWidth: 'min(380px, 92vw)', border: '1px solid #2A2A2A' }}
         >
           {messages.length === 0 ? (
             <div className="font-mono text-cz-gray-light text-center" style={{ padding: 40, fontSize: 17 }}>

@@ -3,7 +3,8 @@
 interface ButtonProps {
   children: React.ReactNode;
   variant?: 'primary' | 'ghost';
-  size?: 'sm' | 'md';
+  /** `xs` is the dense admin table-row action size (edit/delete/save/cancel/toggle in table cells). `sm`/`md` are the marketing-site sizes. */
+  size?: 'xs' | 'sm' | 'md';
   /** Square icon-only shape (~40x40px), no uppercase/letter-spacing text styling. */
   iconOnly?: boolean;
   onClick?: () => void;
@@ -28,6 +29,7 @@ export default function Button({
   const textShape = 'font-display uppercase';
 
   const sizes = {
+    xs: { fontSize: 16, padding: '4px 10px', letterSpacing: 1 },
     sm: { fontSize: 16, padding: '11px 22px', letterSpacing: 1.5 },
     md: { fontSize: 18, padding: '14px 32px', letterSpacing: 1.5 },
   };

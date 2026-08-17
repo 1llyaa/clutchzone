@@ -44,9 +44,9 @@ const STATUS_LABEL: Record<string, string> = {
   completed: 'Dokončeno',
 };
 const STATUS_COLOR: Record<string, string> = {
-  confirmed: '#22c55e',
-  pending:   '#eab308',
-  cancelled: '#ef4444',
+  confirmed: 'var(--color-cz-success)',
+  pending:   'var(--color-cz-warning)',
+  cancelled: 'var(--color-cz-danger)',
   completed: '#888888',
 };
 
@@ -166,7 +166,7 @@ export default async function AdminDashboard() {
                           letterSpacing: 1,
                           padding: '3px 8px',
                           color: STATUS_COLOR[b.status] ?? '#888',
-                          background: (STATUS_COLOR[b.status] ?? '#888') + '20',
+                          background: `color-mix(in srgb, ${STATUS_COLOR[b.status] ?? '#888'} 12.5%, transparent)`,
                         }}
                       >
                         {STATUS_LABEL[b.status] ?? b.status}

@@ -58,7 +58,7 @@ export default function AdminSidebar({
   return (
     <aside
       className="fixed left-0 top-0 bottom-0 z-40 flex flex-col bg-cz-black-mid"
-      style={{ width: 240, borderRight: '1px solid #2A2A2A' }}
+      style={{ width: 240, maxWidth: 'min(240px, 92vw)', borderRight: '1px solid #2A2A2A' }}
     >
       {/* Logo */}
       <div
@@ -103,7 +103,7 @@ export default function AdminSidebar({
               {item.badge && unfulfilledCreditsCount > 0 && (
                 <span
                   className="font-mono text-white bg-cz-orange rounded-full flex items-center justify-center tabular-nums"
-                  style={{ minWidth: 20, height: 20, fontSize: 13, padding: '0 5px', marginLeft: 'auto' }}
+                  style={{ minWidth: 24, height: 24, fontSize: 16, padding: '0 5px', marginLeft: 'auto' }}
                 >
                   {unfulfilledCreditsCount}
                 </span>

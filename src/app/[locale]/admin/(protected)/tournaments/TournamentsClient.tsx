@@ -2,6 +2,8 @@
 
 import { useState, useTransition, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { Plus, X } from '@phosphor-icons/react';
+import Button from '@/components/ui/Button';
 
 interface Tournament {
   id: string;
@@ -40,9 +42,9 @@ const EMPTY: Omit<Tournament, 'id' | 'filled_slots' | 'is_active'> = {
 };
 
 const REG_STATUS_COLOR: Record<string, string> = {
-  pending:   '#eab308',
-  confirmed: '#22c55e',
-  cancelled: '#ef4444',
+  pending:   'var(--color-cz-warning)',
+  confirmed: 'var(--color-cz-success)',
+  cancelled: 'var(--color-cz-danger)',
 };
 const REG_STATUS_LABEL: Record<string, string> = {
   pending:   'ČEKÁ',
@@ -172,17 +174,13 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
             {tournaments.length} TURNAJŮ
           </p>
         </div>
-        <button
-          onClick={openCreate}
-          className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors rounded-[2px]"
-          style={{ fontSize: 16, letterSpacing: 2, padding: '10px 24px' }}
-        >
-          + NOVÝ TURNAJ
-        </button>
+        <Button onClick={openCreate} size="sm" className="inline-flex items-center gap-2">
+          <Plus size={16} weight="bold" /> NOVÝ TURNAJ
+        </Button>
       </div>
 
       {deleteError && (
-        <div className="font-mono text-red-400 rounded-[2px]" style={{ fontSize: 17, padding: '10px 16px', background: '#ef444415', border: '1px solid #ef4444', marginBottom: 16 }}>
+        <div className="font-mono text-red-400 rounded-[2px]" style={{ fontSize: 17, padding: '10px 16px', background: 'color-mix(in srgb, var(--color-cz-danger) 8%, transparent)', border: '1px solid var(--color-cz-danger)', marginBottom: 16 }}>
           Smazání selhalo: {deleteError}
         </div>
       )}
@@ -234,7 +232,11 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                   <button
                     onClick={(e) => { e.stopPropagation(); toggleActive(t); }}
                     className="font-mono uppercase rounded-[2px]"
-                    style={{ fontSize: 16, letterSpacing: 1, padding: '3px 8px', color: t.is_active ? '#22c55e' : '#888', background: t.is_active ? '#22c55e20' : '#88888820' }}
+                    style={{
+                      fontSize: 16, letterSpacing: 1, padding: '3px 8px',
+                      color: t.is_active ? 'var(--color-cz-success)' : '#888',
+                      background: t.is_active ? 'color-mix(in srgb, var(--color-cz-success) 12.5%, transparent)' : '#88888820',
+                    }}
                   >
                     {t.is_active ? 'AKTIVNÍ' : 'INACTIVE'}
                   </button>
@@ -270,7 +272,9 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                 {detail.prize_pool ? ` · Prize: ${detail.prize_pool} Kč` : ''}
               </div>
             </div>
-            <button onClick={() => setDetail(null)} className="font-mono text-cz-gray-mid hover:text-white" style={{ fontSize: 20 }}>×</button>
+            <button onClick={() => setDetail(null)} aria-label="Zavřít" className="text-cz-gray-light hover:text-white transition-colors">
+              <X size={20} weight="bold" />
+            </button>
           </div>
 
           {detail.description && (
@@ -307,7 +311,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                           style={{
                             fontSize: 16, letterSpacing: 1, padding: '2px 8px',
                             color: REG_STATUS_COLOR[reg.status] ?? '#888',
-                            background: (REG_STATUS_COLOR[reg.status] ?? '#888') + '20',
+                            background: `color-mix(in srgb, ${REG_STATUS_COLOR[reg.status] ?? '#888'} 12.5%, transparent)`,
                           }}
                         >
                           {REG_STATUS_LABEL[reg.status] ?? reg.status}
@@ -358,7 +362,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                           onClick={() => updateRegStatus(reg.id, 'confirmed')}
                           disabled={regActing === reg.id}
                           className="font-mono uppercase rounded-[2px] disabled:opacity-50 hover:bg-green-500/20 transition-colors"
-                          style={{ fontSize: 16, letterSpacing: 1, padding: '4px 10px', color: '#22c55e', border: '1px solid #22c55e', background: 'transparent' }}
+                          style={{ fontSize: 16, letterSpacing: 1, padding: '4px 10px', color: 'var(--color-cz-success)', border: '1px solid var(--color-cz-success)', background: 'transparent' }}
                         >
                           POTVRDIT
                         </button>
@@ -368,7 +372,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                           onClick={() => updateRegStatus(reg.id, 'cancelled')}
                           disabled={regActing === reg.id}
                           className="font-mono uppercase rounded-[2px] disabled:opacity-50 hover:bg-yellow-500/10 transition-colors"
-                          style={{ fontSize: 16, letterSpacing: 1, padding: '4px 10px', color: '#eab308', border: '1px solid #eab308', background: 'transparent' }}
+                          style={{ fontSize: 16, letterSpacing: 1, padding: '4px 10px', color: 'var(--color-cz-warning)', border: '1px solid var(--color-cz-warning)', background: 'transparent' }}
                         >
                           ZRUŠIT
                         </button>
@@ -377,7 +381,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                         onClick={() => deleteReg(reg.id)}
                         disabled={regActing === reg.id}
                         className="font-mono uppercase rounded-[2px] disabled:opacity-50 hover:bg-red-500/10 transition-colors"
-                        style={{ fontSize: 16, letterSpacing: 1, padding: '4px 10px', color: '#ef4444', border: '1px solid #ef4444', background: 'transparent' }}
+                        style={{ fontSize: 16, letterSpacing: 1, padding: '4px 10px', color: 'var(--color-cz-danger)', border: '1px solid var(--color-cz-danger)', background: 'transparent' }}
                       >
                         SMAZAT
                       </button>
@@ -431,12 +435,12 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
               </div>
             </div>
             <div className="flex gap-3" style={{ marginTop: 28 }}>
-              <button onClick={handleSave} disabled={saving} className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark rounded-[2px] disabled:opacity-50" style={{ fontSize: 16, letterSpacing: 2, padding: '11px 28px' }}>
+              <Button onClick={handleSave} disabled={saving} size="sm">
                 {saving ? '...' : 'ULOŽIT'}
-              </button>
-              <button onClick={() => setShowForm(false)} className="font-display uppercase text-cz-gray-light hover:text-white rounded-[2px]" style={{ fontSize: 16, letterSpacing: 2, padding: '11px 28px', border: '1px solid #2A2A2A', background: 'transparent' }}>
+              </Button>
+              <Button onClick={() => setShowForm(false)} variant="ghost" size="sm">
                 ZRUŠIT
-              </button>
+              </Button>
             </div>
           </div>
         </div>

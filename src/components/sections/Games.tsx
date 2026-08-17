@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { CaretLeft, CaretRight } from '@phosphor-icons/react';
 import Button from '@/components/ui/Button';
+import ImagePlaceholder from '@/components/ui/ImagePlaceholder';
 import Reveal from '@/components/ui/Reveal';
 
 interface Game {
@@ -43,12 +44,7 @@ function GameCard({ game }: { game: Game }) {
           style={{ transform: hovered ? 'scale(1.06)' : 'scale(1)', transition: 'transform 0.5s ease', willChange: 'transform' }}
         />
       ) : (
-        <div
-          className="w-full h-full flex items-center justify-center"
-          style={{ background: 'linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%)' }}
-        >
-          <span className="font-display text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3 }}>NO IMAGE</span>
-        </div>
+        <ImagePlaceholder label="NO IMAGE" />
       )}
 
       {/* Platform badge */}

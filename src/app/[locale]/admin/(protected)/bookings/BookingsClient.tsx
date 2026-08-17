@@ -2,6 +2,8 @@
 
 import { useMemo, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { X } from '@phosphor-icons/react';
+import Button from '@/components/ui/Button';
 
 const STATUS_LABEL: Record<string, string> = {
   confirmed: 'Potvrzeno',
@@ -10,9 +12,9 @@ const STATUS_LABEL: Record<string, string> = {
   completed: 'Dokončeno',
 };
 const STATUS_COLOR: Record<string, string> = {
-  confirmed: '#22c55e',
-  pending:   '#eab308',
-  cancelled: '#ef4444',
+  confirmed: 'var(--color-cz-success)',
+  pending:   'var(--color-cz-warning)',
+  cancelled: 'var(--color-cz-danger)',
   completed: '#888888',
 };
 function PAYMENT_LABEL(b: { payment_method: string; payment_status: string }): string {
@@ -23,7 +25,7 @@ function PAYMENT_LABEL(b: { payment_method: string; payment_status: string }): s
 }
 function PAYMENT_COLOR(b: { payment_method: string; payment_status: string }): string {
   if (b.payment_method === 'online') {
-    return b.payment_status === 'paid' ? '#22c55e' : '#eab308';
+    return b.payment_status === 'paid' ? 'var(--color-cz-success)' : 'var(--color-cz-warning)';
   }
   return '#888888';
 }
@@ -365,7 +367,7 @@ export default function BookingsClient({
                       style={{
                         fontSize: 16, letterSpacing: 1, padding: '3px 8px',
                         color: PAYMENT_COLOR(b),
-                        background: PAYMENT_COLOR(b) + '20',
+                        background: `color-mix(in srgb, ${PAYMENT_COLOR(b)} 12.5%, transparent)`,
                       }}
                     >
                       {PAYMENT_LABEL(b)}
@@ -379,7 +381,7 @@ export default function BookingsClient({
                   <td style={{ padding: '12px 14px' }}>
                     <span
                       className="font-mono uppercase rounded-[2px]"
-                      style={{ fontSize: 16, letterSpacing: 1, padding: '3px 8px', color: STATUS_COLOR[b.status] ?? '#888', background: (STATUS_COLOR[b.status] ?? '#888') + '20' }}
+                      style={{ fontSize: 16, letterSpacing: 1, padding: '3px 8px', color: STATUS_COLOR[b.status] ?? '#888', background: `color-mix(in srgb, ${STATUS_COLOR[b.status] ?? '#888'} 12.5%, transparent)` }}
                     >
                       {STATUS_LABEL[b.status] ?? b.status}
                     </span>
@@ -399,13 +401,15 @@ export default function BookingsClient({
       {/* Detail panel */}
       {selected && (
         <div className="fixed inset-0 z-50 flex items-center justify-end" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={() => setSelected(null)}>
-          <div className="bg-cz-black-mid h-full flex flex-col" style={{ width: 400, borderLeft: '1px solid #2A2A2A' }} onClick={(e) => e.stopPropagation()}>
+          <div className="bg-cz-black-mid h-full flex flex-col" style={{ width: 400, maxWidth: 'min(400px, 92vw)', borderLeft: '1px solid #2A2A2A' }} onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between" style={{ padding: '24px 28px', borderBottom: '1px solid #2A2A2A' }}>
               <div>
                 <div className="font-mono text-cz-orange" style={{ fontSize: 17 }}>{selected.reference}</div>
                 <div className="font-display text-white uppercase" style={{ fontSize: 20 }}>DETAIL REZERVACE</div>
               </div>
-              <button onClick={() => setSelected(null)} className="font-mono text-cz-gray-mid hover:text-white" style={{ fontSize: 18 }}>×</button>
+              <button onClick={() => setSelected(null)} aria-label="Zavřít" className="text-cz-gray-light hover:text-white transition-colors">
+                <X size={18} weight="bold" />
+              </button>
             </div>
 
             <div className="flex-1 overflow-auto" style={{ padding: 28 }}>
@@ -436,14 +440,14 @@ export default function BookingsClient({
             <div className="flex flex-col gap-3" style={{ padding: '20px 28px', borderTop: '1px solid #2A2A2A' }}>
               {selected.status !== 'cancelled' && selected.status !== 'completed' && (
                 <div className="flex gap-3">
-                  <button
+                  <Button
                     disabled={updating}
                     onClick={() => updateStatus(selected.groupKey, 'completed')}
-                    className="flex-1 bg-cz-orange text-white font-display uppercase rounded-[2px] hover:bg-cz-orange-dark transition-colors disabled:opacity-50"
-                    style={{ fontSize: 16, letterSpacing: 2, padding: '10px 0' }}
+                    size="sm"
+                    className="flex-1"
                   >
                     DOKONČIT
-                  </button>
+                  </Button>
                   <button
                     disabled={updating}
                     onClick={() => updateStatus(selected.groupKey, 'cancelled')}
@@ -458,7 +462,7 @@ export default function BookingsClient({
                 disabled={deleting}
                 onClick={() => deleteBooking(selected.groupKey)}
                 className="w-full font-display uppercase rounded-[2px] hover:bg-red-500 hover:border-red-500 hover:text-white transition-colors disabled:opacity-50"
-                style={{ fontSize: 16, letterSpacing: 2, padding: '10px 0', border: '1px solid #ef4444', color: '#ef4444', background: 'transparent' }}
+                style={{ fontSize: 16, letterSpacing: 2, padding: '10px 0', border: '1px solid var(--color-cz-danger)', color: 'var(--color-cz-danger)', background: 'transparent' }}
               >
                 {deleting ? '...' : 'SMAZAT REZERVACI'}
               </button>

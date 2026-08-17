@@ -2,6 +2,9 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
+import Image from 'next/image';
+import { Plus, Check } from '@phosphor-icons/react';
+import Button from '@/components/ui/Button';
 
 interface GalleryImage {
   id: string;
@@ -134,19 +137,14 @@ export default function GalleryClient() {
         <div className="flex items-center gap-2">
           <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, marginRight: 4 }}>TYP ZOBRAZENÍ</span>
           {DISPLAY_TYPES.map((dt) => (
-            <button
+            <Button
               key={dt.value}
               onClick={() => updateDisplayType(dt.value)}
-              className="font-mono uppercase rounded-[2px] transition-colors"
-              style={{
-                fontSize: 16, letterSpacing: 2, padding: '6px 14px',
-                color:      displayType === dt.value ? '#fff' : '#888888',
-                background: displayType === dt.value ? '#E84A1A' : 'transparent',
-                border:     `1px solid ${displayType === dt.value ? '#E84A1A' : '#2A2A2A'}`,
-              }}
+              variant={displayType === dt.value ? 'primary' : 'ghost'}
+              size="xs"
             >
               {dt.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -177,7 +175,9 @@ export default function GalleryClient() {
           <p className="font-mono text-cz-orange uppercase" style={{ fontSize: 16, letterSpacing: 3 }}>NAHRÁVÁNÍ...</p>
         ) : (
           <>
-            <div className="font-display text-white uppercase" style={{ fontSize: 18, letterSpacing: 2 }}>+ PŘIDAT FOTOGRAFIE</div>
+            <div className="font-display text-white uppercase flex items-center gap-2" style={{ fontSize: 18, letterSpacing: 2 }}>
+              <Plus size={18} weight="bold" /> PŘIDAT FOTOGRAFIE
+            </div>
             <p className="font-mono text-cz-gray-light" style={{ fontSize: 16, letterSpacing: 2, marginTop: 8 }}>
               PŘETÁHNĚTE SOUBORY NEBO KLIKNĚTE · JPG, PNG, WEBP
             </p>
@@ -200,11 +200,12 @@ export default function GalleryClient() {
             >
               {/* Thumbnail */}
               <div className="relative" style={{ aspectRatio: '4/3', background: '#111' }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={img.url}
                   alt={img.caption || ''}
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="(max-width: 1024px) 50vw, 25vw"
+                  className="object-cover"
                 />
                 <div className="absolute top-2 right-2 flex gap-1">
                   <button
@@ -237,7 +238,9 @@ export default function GalleryClient() {
                       className="flex-1 bg-cz-black text-white font-body rounded-[2px] focus:outline-none"
                       style={{ fontSize: 19, padding: '4px 8px', border: '1px solid #E84A1A' }}
                     />
-                    <button onClick={() => saveCaption(img.id)} className="font-mono text-cz-orange" style={{ fontSize: 16 }}>✓</button>
+                    <button onClick={() => saveCaption(img.id)} aria-label="Uložit" className="text-cz-orange">
+                      <Check size={16} weight="bold" />
+                    </button>
                   </div>
                 ) : (
                   <button
@@ -255,8 +258,8 @@ export default function GalleryClient() {
                     className="font-mono uppercase rounded-[2px] transition-colors"
                     style={{
                       fontSize: 16, letterSpacing: 1, padding: '3px 8px',
-                      color:      img.is_active ? '#22c55e' : '#888',
-                      background: img.is_active ? '#22c55e20' : '#88888820',
+                      color:      img.is_active ? 'var(--color-cz-success)' : '#888',
+                      background: img.is_active ? 'color-mix(in srgb, var(--color-cz-success) 12.5%, transparent)' : '#88888820',
                     }}
                   >
                     {img.is_active ? 'AKTIVNÍ' : 'SKRYTÉ'}

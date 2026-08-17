@@ -3,6 +3,8 @@
 import { useState, useTransition, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { createBrowserClient } from '@supabase/ssr';
+import Image from 'next/image';
+import Button from '@/components/ui/Button';
 
 interface Profile {
   id: string;
@@ -238,11 +240,12 @@ export default function SettingsClient({
                 className="relative flex-shrink-0 rounded-[2px] overflow-hidden"
                 style={{ width: 120, height: 160, background: '#0A0A0A', border: '1px solid #2A2A2A' }}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={heroImage}
                   alt="Hero"
-                  style={{ width: '100%', height: '100%', objectFit: 'contain', outline: 'none' }}
+                  fill
+                  sizes="120px"
+                  style={{ objectFit: 'contain', outline: 'none' }}
                 />
               </div>
             )}
@@ -263,19 +266,19 @@ export default function SettingsClient({
                 }}
               />
 
-              <button
+              <Button
                 onClick={() => heroInputRef.current?.click()}
                 disabled={uploadingHero}
-                className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 rounded-[2px] disabled:opacity-50 self-start"
-                style={{ fontSize: 16, letterSpacing: 2, padding: '10px 24px' }}
+                size="sm"
+                className="self-start"
               >
                 {uploadingHero ? 'NAHRÁVÁM...' : 'NAHRÁT NOVÝ OBRÁZEK'}
-              </button>
+              </Button>
 
               {heroMsg && (
                 <p
                   className="font-mono"
-                  style={{ fontSize: 17, color: heroMsg.startsWith('Chyba') ? '#ef4444' : '#22c55e' }}
+                  style={{ fontSize: 17, color: heroMsg.startsWith('Chyba') ? 'var(--color-cz-danger)' : 'var(--color-cz-success)' }}
                 >
                   {heroMsg}
                 </p>
@@ -298,11 +301,12 @@ export default function SettingsClient({
                 className="relative flex-shrink-0 rounded-[2px] overflow-hidden"
                 style={{ width: 160, height: 120, background: '#0A0A0A', border: '1px solid #2A2A2A' }}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={privateEventsImage}
                   alt="Private events"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', outline: 'none' }}
+                  fill
+                  sizes="160px"
+                  style={{ objectFit: 'cover', outline: 'none' }}
                 />
               </div>
             )}
@@ -323,19 +327,19 @@ export default function SettingsClient({
                 }}
               />
 
-              <button
+              <Button
                 onClick={() => privateEventsInputRef.current?.click()}
                 disabled={uploadingPrivateEvents}
-                className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 rounded-[2px] disabled:opacity-50 self-start"
-                style={{ fontSize: 16, letterSpacing: 2, padding: '10px 24px' }}
+                size="sm"
+                className="self-start"
               >
                 {uploadingPrivateEvents ? 'NAHRÁVÁM...' : 'NAHRÁT NOVÝ OBRÁZEK'}
-              </button>
+              </Button>
 
               {privateEventsMsg && (
                 <p
                   className="font-mono"
-                  style={{ fontSize: 17, color: privateEventsMsg.startsWith('Chyba') ? '#ef4444' : '#22c55e' }}
+                  style={{ fontSize: 17, color: privateEventsMsg.startsWith('Chyba') ? 'var(--color-cz-danger)' : 'var(--color-cz-success)' }}
                 >
                   {privateEventsMsg}
                 </p>
@@ -365,8 +369,10 @@ export default function SettingsClient({
                   fontSize: 16,
                   letterSpacing: 1,
                   padding: '4px 12px',
-                  color: streamVisible ? '#22c55e' : '#ef4444',
-                  background: streamVisible ? '#22c55e20' : '#ef444420',
+                  color: streamVisible ? 'var(--color-cz-success)' : 'var(--color-cz-danger)',
+                  background: streamVisible
+                    ? 'color-mix(in srgb, var(--color-cz-success) 12.5%, transparent)'
+                    : 'color-mix(in srgb, var(--color-cz-danger) 12.5%, transparent)',
                 }}
               >
                 {streamVisible ? 'AKTIVNÍ' : 'SKRYTÝ'}
@@ -387,14 +393,9 @@ export default function SettingsClient({
                   className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange flex-1"
                   style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
                 />
-                <button
-                  onClick={handleStreamSave}
-                  disabled={savingStream}
-                  className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 rounded-[2px] disabled:opacity-50 flex-shrink-0"
-                  style={{ fontSize: 16, letterSpacing: 2, padding: '10px 24px' }}
-                >
+                <Button onClick={handleStreamSave} disabled={savingStream} size="sm" className="flex-shrink-0">
                   {savingStream ? '...' : 'ULOŽIT'}
-                </button>
+                </Button>
               </div>
               <p className="font-mono text-cz-gray-light" style={{ fontSize: 17, letterSpacing: 1 }}>
                 Zadejte celý odkaz (https://twitch.tv/nazev) nebo jen název kanálu
@@ -404,7 +405,7 @@ export default function SettingsClient({
             {streamMsg && (
               <p
                 className="font-mono"
-                style={{ fontSize: 17, color: streamMsg.startsWith('Chyba') ? '#ef4444' : '#22c55e' }}
+                style={{ fontSize: 17, color: streamMsg.startsWith('Chyba') ? 'var(--color-cz-danger)' : 'var(--color-cz-success)' }}
               >
                 {streamMsg}
               </p>
@@ -435,21 +436,16 @@ export default function SettingsClient({
                   className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange flex-1"
                   style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
                 />
-                <button
-                  onClick={handleCoinsSave}
-                  disabled={savingCoins}
-                  className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 rounded-[2px] disabled:opacity-50 flex-shrink-0"
-                  style={{ fontSize: 16, letterSpacing: 2, padding: '10px 24px' }}
-                >
+                <Button onClick={handleCoinsSave} disabled={savingCoins} size="sm" className="flex-shrink-0">
                   {savingCoins ? '...' : 'ULOŽIT'}
-                </button>
+                </Button>
               </div>
             </div>
 
             {coinsMsg && (
               <p
                 className="font-mono"
-                style={{ fontSize: 17, color: coinsMsg.startsWith('Chyba') ? '#ef4444' : '#22c55e' }}
+                style={{ fontSize: 17, color: coinsMsg.startsWith('Chyba') ? 'var(--color-cz-danger)' : 'var(--color-cz-success)' }}
               >
                 {coinsMsg}
               </p>
@@ -538,19 +534,14 @@ export default function SettingsClient({
               style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A', width: 300 }}
             />
           </div>
-          <button
-            type="submit"
-            disabled={inviting}
-            className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark rounded-[2px] disabled:opacity-50"
-            style={{ fontSize: 16, letterSpacing: 2, padding: '10px 24px' }}
-          >
+          <Button disabled={inviting} size="sm">
             {inviting ? '...' : 'ODESLAT POZVÁNKU'}
-          </button>
+          </Button>
         </form>
         {inviteMsg && (
           <p
             className="font-mono"
-            style={{ fontSize: 17, marginTop: 10, color: inviteMsg.startsWith('Chyba') ? '#ef4444' : '#22c55e' }}
+            style={{ fontSize: 17, marginTop: 10, color: inviteMsg.startsWith('Chyba') ? 'var(--color-cz-danger)' : 'var(--color-cz-success)' }}
           >
             {inviteMsg}
           </p>
@@ -587,8 +578,10 @@ export default function SettingsClient({
                       fontSize: 16,
                       letterSpacing: 1,
                       padding: '3px 10px',
-                      color: s.is_active ? '#22c55e' : '#ef4444',
-                      background: s.is_active ? '#22c55e20' : '#ef444420',
+                      color: s.is_active ? 'var(--color-cz-success)' : 'var(--color-cz-danger)',
+                      background: s.is_active
+                        ? 'color-mix(in srgb, var(--color-cz-success) 12.5%, transparent)'
+                        : 'color-mix(in srgb, var(--color-cz-danger) 12.5%, transparent)',
                     }}
                   >
                     {toggling === s.id ? '...' : s.is_active ? 'AKTIVNÍ' : 'INACTIVE'}
@@ -621,8 +614,10 @@ export default function SettingsClient({
                       fontSize: 16,
                       letterSpacing: 1,
                       padding: '3px 10px',
-                      color: s.is_active ? '#22c55e' : '#ef4444',
-                      background: s.is_active ? '#22c55e20' : '#ef444420',
+                      color: s.is_active ? 'var(--color-cz-success)' : 'var(--color-cz-danger)',
+                      background: s.is_active
+                        ? 'color-mix(in srgb, var(--color-cz-success) 12.5%, transparent)'
+                        : 'color-mix(in srgb, var(--color-cz-danger) 12.5%, transparent)',
                     }}
                   >
                     {toggling === s.id ? '...' : s.is_active ? 'AKTIVNÍ' : 'INACTIVE'}
