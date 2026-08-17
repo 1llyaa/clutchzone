@@ -1,5 +1,6 @@
 'use client';
 
+import { Link } from '@/navigation';
 import type { Offer } from '@/lib/pricing/types';
 import SavingsBadge from './SavingsBadge';
 
@@ -15,7 +16,7 @@ interface Props {
   onSelectAlt?: (id: string) => void;
   onReserve: () => void;
   reserveLabel?: string;
-  onGoKredit?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+  showKreditLink?: boolean;
 }
 
 export default function OfferCard({
@@ -30,7 +31,7 @@ export default function OfferCard({
   onSelectAlt,
   onReserve,
   reserveLabel = 'REZERVOVAT',
-  onGoKredit,
+  showKreditLink = false,
 }: Props) {
   return (
     <div
@@ -221,11 +222,11 @@ export default function OfferCard({
       >
         {reserveLabel}
       </button>
-      {onGoKredit && (
+      {showKreditLink && (
         <div style={{ textAlign: 'center', marginTop: 14 }}>
-          <a href="#kredit" onClick={onGoKredit} style={{ fontFamily: "'Inter',sans-serif", fontSize: 16, color: '#E84A1A' }}>
+          <Link href="/kredit" style={{ fontFamily: "'Inter',sans-serif", fontSize: 16, color: '#E84A1A' }}>
             Nebo si kup jen hodiny do zásoby →
-          </a>
+          </Link>
         </div>
       )}
     </div>

@@ -136,14 +136,7 @@ export default function PriceCalculator({ config, variant = 'full', onOfferChose
         onSelectAlt={(id) => setOverrideOfferId(id)}
         onReserve={handleReserve}
         reserveLabel={isCompact ? 'POKRAČOVAT' : undefined}
-        onGoKredit={
-          isCompact
-            ? undefined
-            : (e) => {
-                e.preventDefault();
-                document.getElementById('kredit')?.scrollIntoView({ behavior: 'smooth' });
-              }
-        }
+        showKreditLink={!isCompact}
       />
     </div>
   );

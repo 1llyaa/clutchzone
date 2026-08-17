@@ -154,6 +154,114 @@ export async function sendBookingConfirmation(b: BookingEmailData): Promise<void
   }
 }
 
+interface CreditOrderEmailData {
+  reference: string;
+  customerName: string;
+  customerEmail: string;
+  totalAmount: number;
+  expiresAt: string; // YYYY-MM-DD
+  clutchzoneAccount: string | null;
+  items: { stationType: 'pc' | 'ps5'; hours: number; quantity: number }[];
+}
+
+function formatCzechDate(iso: string): string {
+  const [y, m, d] = iso.split('-');
+  return `${Number(d)}. ${Number(m)}. ${y}`;
+}
+
+// Admin notification — fires only once the order is actually paid (spec §11.3:
+// unpaid credit orders are just clutter, staff only needs to know once money
+// has moved and hours need crediting).
+export async function sendCreditOrderNotification(o: CreditOrderEmailData): Promise<void> {
+  const transport = getTransport();
+  const to = process.env.ADMIN_NOTIFY_EMAIL;
+  if (!transport || !to) return;
+
+  const itemsList = o.items.map((i) => `${i.quantity}× ${i.hours}H ${i.stationType.toUpperCase()}`).join(', ');
+  const rows: [string, string][] = [
+    ['Reference', o.reference],
+    ['Položky', itemsList],
+    ['Částka', `${o.totalAmount} Kč`],
+    ['Platnost do', formatCzechDate(o.expiresAt)],
+    ['Jméno', o.customerName],
+    ['E-mail', o.customerEmail],
+    ['Clutchzone account', o.clutchzoneAccount ?? '— (nemá zatím účet)'],
+  ];
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#111;color:#e8e8e8;padding:32px;border-top:3px solid #E84A1A">
+      <h2 style="margin:0 0 4px;color:#fff;text-transform:uppercase;letter-spacing:2px">Zaplacený nákup kreditu</h2>
+      <p style="margin:0 0 24px;color:#888;font-size:13px">Clutch Zone — hodiny čekají na připsání.</p>
+      <table style="width:100%;border-collapse:collapse;font-size:14px">
+        ${rows.map(([k, v]) => `
+          <tr>
+            <td style="padding:8px 0;color:#888;border-bottom:1px solid #2a2a2a;width:140px">${k}</td>
+            <td style="padding:8px 0;color:#fff;border-bottom:1px solid #2a2a2a"><strong>${escapeHtml(v)}</strong></td>
+          </tr>`).join('')}
+      </table>
+      <p style="margin:24px 0 0;font-size:12px">
+        <a href="${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/cs/admin/credits" style="color:#E84A1A">Otevřít v administraci →</a>
+      </p>
+    </div>`;
+
+  try {
+    await transport.sendMail({
+      from: process.env.SMTP_FROM ?? process.env.SMTP_USER,
+      to,
+      subject: `Zaplacený kredit ${o.reference} · ${itemsList}`,
+      html,
+      text: rows.map(([k, v]) => `${k}: ${v}`).join('\n'),
+    });
+  } catch (err) {
+    console.error('Credit order notification email failed:', err);
+  }
+}
+
+// Confirmation for the customer — fires once payment clears.
+export async function sendCreditPurchaseConfirmation(o: CreditOrderEmailData): Promise<void> {
+  const transport = getTransport();
+  if (!transport) return;
+
+  const itemsRows: [string, string][] = o.items.map((i) => [`${i.stationType.toUpperCase()} hodiny`, `${i.quantity}× ${i.hours}H`]);
+  const rows: [string, string][] = [
+    ...itemsRows,
+    ['Celkem', `${o.totalAmount} Kč`],
+    ['Platnost do', formatCzechDate(o.expiresAt)],
+  ];
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#111;color:#e8e8e8;padding:32px;border-top:3px solid #E84A1A">
+      <h2 style="margin:0 0 4px;color:#fff;text-transform:uppercase;letter-spacing:2px">Nákup kreditu potvrzen</h2>
+      <p style="margin:0 0 24px;color:#888;font-size:13px">Díky za nákup v Clutch Zone, ${escapeHtml(o.customerName)}!</p>
+      <div style="text-align:center;margin:0 0 24px">
+        <span style="display:inline-block;font-size:32px;letter-spacing:4px;color:#fff;border:1px solid #E84A1A;padding:12px 32px;background:rgba(232,74,26,0.08)">${o.reference}</span>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:14px">
+        ${rows.map(([k, v]) => `
+          <tr>
+            <td style="padding:8px 0;color:#888;border-bottom:1px solid #2a2a2a;width:140px">${k}</td>
+            <td style="padding:8px 0;color:#fff;border-bottom:1px solid #2a2a2a"><strong>${escapeHtml(v)}</strong></td>
+          </tr>`).join('')}
+      </table>
+      <p style="margin:24px 0 0;padding:12px 14px;background:rgba(232,74,26,0.08);border:1px solid rgba(232,74,26,0.25);color:#ff8a5c;font-size:13px;line-height:1.6">
+        Hodiny ti připíšeme na Clutchzone account při první návštěvě — ukaž tenhle kód na recepci.
+        Nevyužité hodiny po ${formatCzechDate(o.expiresAt)} propadají.
+      </p>
+    </div>`;
+
+  try {
+    await transport.sendMail({
+      from: process.env.SMTP_FROM ?? process.env.SMTP_USER,
+      to: o.customerEmail,
+      subject: `Nákup kreditu potvrzen ${o.reference} · Clutch Zone`,
+      html,
+      text: `Nákup kreditu potvrzen: ${o.reference}\n${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\nHodiny ti připíšeme na Clutchzone account při první návštěvě — ukaž tenhle kód na recepci.`,
+    });
+  } catch (err) {
+    console.error('Credit purchase confirmation email failed:', err);
+  }
+}
+
 interface TournamentEmailData {
   tournamentTitle: string;
   tournamentDate: string;

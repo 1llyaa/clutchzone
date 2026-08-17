@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { OpeningHoursRow } from '@/lib/pricing/types';
 
 const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0];
+const CLOSE_TIME_RE = /^([01]\d|2[0-4]):([0-5]\d)$/;
 const DAY_NAMES: Record<number, string> = { 0: 'NEDĚLE', 1: 'PONDĚLÍ', 2: 'ÚTERÝ', 3: 'STŘEDA', 4: 'ČTVRTEK', 5: 'PÁTEK', 6: 'SOBOTA' };
 
 type Draft = { isClosed: boolean; openTime: string; closeTime: string; crossesMidnight: boolean };
@@ -23,6 +24,10 @@ export default function OpeningHoursTab({ openingHours, onUpdate }: { openingHou
 
   async function save(r: OpeningHoursRow) {
     const d = draftFor(r);
+    if (!d.isClosed && !CLOSE_TIME_RE.test(d.closeTime)) {
+      setErrors((e) => ({ ...e, [r.dayOfWeek]: 'Zavírací čas musí být HH:MM, 00:00–24:00 (24:00 = půlnoc)' }));
+      return;
+    }
     setSaving(r.dayOfWeek);
     setErrors((e) => ({ ...e, [r.dayOfWeek]: '' }));
     const res = await fetch(`/api/admin/opening-hours/${r.dayOfWeek}`, {
@@ -68,8 +73,23 @@ export default function OpeningHoursTab({ openingHours, onUpdate }: { openingHou
                     className="bg-cz-black text-white font-mono rounded-[2px]" style={{ padding: '6px 10px', fontSize: 16, border: '1px solid #2A2A2A', colorScheme: 'dark', opacity: d.isClosed ? 0.4 : 1 }} />
                 </td>
                 <td style={{ padding: '10px 14px' }}>
-                  <input type="time" disabled={d.isClosed} value={d.closeTime} onChange={(e) => setDrafts((p) => ({ ...p, [r.dayOfWeek]: { ...d, closeTime: e.target.value } }))}
-                    className="bg-cz-black text-white font-mono rounded-[2px]" style={{ padding: '6px 10px', fontSize: 16, border: '1px solid #2A2A2A', colorScheme: 'dark', opacity: d.isClosed ? 0.4 : 1 }} />
+                  {/* plain text, not type="time" — the browser's time picker can't hold "24:00"
+                      (valid range 00:00–23:59), and 24:00 is the value we use for "closes at
+                      midnight" (see dayTypeCloseHour in src/lib/pricing/dayTypes.ts) */}
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="HH:MM"
+                    maxLength={5}
+                    disabled={d.isClosed}
+                    value={d.closeTime}
+                    onChange={(e) => setDrafts((p) => ({ ...p, [r.dayOfWeek]: { ...d, closeTime: e.target.value } }))}
+                    className="bg-cz-black text-white font-mono rounded-[2px] placeholder:text-cz-gray-dark"
+                    style={{ padding: '6px 10px', fontSize: 16, border: '1px solid #2A2A2A', width: 76, opacity: d.isClosed ? 0.4 : 1 }}
+                  />
+                  {d.closeTime === '24:00' && (
+                    <span className="font-mono text-cz-gray-light" style={{ fontSize: 12, letterSpacing: 0.5, marginLeft: 8 }}>půlnoc</span>
+                  )}
                 </td>
                 <td style={{ padding: '10px 14px' }}>
                   <input type="checkbox" disabled={d.isClosed} checked={d.crossesMidnight} onChange={(e) => setDrafts((p) => ({ ...p, [r.dayOfWeek]: { ...d, crossesMidnight: e.target.checked } }))} />
