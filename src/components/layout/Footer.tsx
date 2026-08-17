@@ -53,7 +53,7 @@ export default async function Footer() {
             </span>
             <span
               className="font-mono text-cz-orange uppercase"
-              style={{ fontSize: 11, letterSpacing: 2, marginTop: 4 }}
+              style={{ fontSize: 16, letterSpacing: 3, marginTop: 4 }}
             >
               {t('lockup')}
             </span>
