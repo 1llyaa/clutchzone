@@ -285,7 +285,7 @@ export default function ReservationModal() {
                 <StepContact
                   contact={contact}
                   onChange={setContact}
-                  requireClutchzoneAccount={effectiveOffer.kind !== 'pass'}
+                  requireClutchzoneAccount
                   onBack={() => setStep(1)}
                   onNext={() => setStep(3)}
                 />

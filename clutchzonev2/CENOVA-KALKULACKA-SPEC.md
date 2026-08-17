@@ -263,9 +263,9 @@ Modal má **3 kroky místo dnešních 6**:
 - Až tady proběhne **kontrola dostupnosti** — kalkulačka datum nezná a nesmí dostupnost předstírat
 - Datum s jiným typem dne → **přepočet ceny s viditelným upozorněním**, nikdy tiše
 
-**Krok 2 — KONTAKT** Jméno, e-mail, telefon, Discord (volitelný), **Clutchzone account** (přezdívka v ggLeap). Povinné, kdykoli je vybraná nabídka hodinový kredit (`offerKind` = `hours` nebo `hours_upsell`) — u čistě časového pasu (`offerKind` = `pass`) nevzniká kredit, takže pole není potřeba vynucovat.
+**Krok 2 — KONTAKT** Jméno, e-mail, telefon, Discord (volitelný), **Clutchzone account** (přezdívka v ggLeap). Povinné vždy, bez ohledu na `offerKind` — u `hours`/`hours_upsell` se na účet připisují hodiny, ale i čistě časový pas (`offerKind` = `pass`) při platbě kartou generuje mince (`pay_now_coins_amount`), a ty se připisují na tentýž ggLeap účet. Pole tedy potřebuje vyplnit každá online placená objednávka, ne jen ty s hodinovým kreditem.
 
-Pod polem zaškrtávátko „Nemám zatím Clutchzone účet" — nový hráč ho logicky ještě mít nemůže. Zaškrtnutím se pole vypne a zobrazí se poznámka, že účet založí obsluha na místě a hodiny připíše dodatečně podle referenčního kódu. Server pole nevynucuje natvrdo (jen UI vede k vyplnění) — bez účtu jde rezervaci pořád dohledat přes referenci a kontakt.
+Pod polem zaškrtávátko „Nemám zatím Clutchzone účet" — nový hráč ho logicky ještě mít nemůže. Zaškrtnutím se pole vypne a zobrazí se poznámka, že účet založí obsluha na místě a hodiny/mince připíše dodatečně podle referenčního kódu. Server pole nevynucuje natvrdo (jen UI vede k vyplnění) — bez účtu jde rezervaci pořád dohledat přes referenci a kontakt.
 
 **Krok 3 — PLATBA A POTVRZENÍ**
 - `ZAPLATIT NYNÍ` (Stripe) — cena závazná, +mince
@@ -418,7 +418,7 @@ Bez ní se to na recepci neuhlídá, protože kredit připisuje člověk ručně
 
 ### 7.3 Sekce `REZERVACE`
 
-Doplnit sloupce `POČET STANIC`, `VARIANTA` (název pasu nebo „Hodiny") a `CLUTCHZONE ACCOUNT` (jen u rezervací, kde `offerKind` dává hodinový kredit — u pasů prázdné).
+Doplnit sloupce `POČET STANIC`, `VARIANTA` (název pasu nebo „Hodiny") a `CLUTCHZONE ACCOUNT` — vyplněné u každé online placené rezervace bez ohledu na `offerKind` (i pas generuje mince na stejný účet), prázdné jen když zákazník zaškrtl „nemám zatím účet".
 
 ---
 
