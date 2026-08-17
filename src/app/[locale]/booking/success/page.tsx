@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import Tooltip from '@/components/ui/Tooltip';
+import { track } from '@/lib/analytics/track';
 
 interface BookingStatus {
   reference: string;
@@ -16,6 +17,8 @@ interface BookingStatus {
   totalPrice: number;
   paymentStatus: string;
   coinsAwarded: number;
+  offerKind: string;
+  stationsCount: number;
 }
 
 const MAX_POLL_ATTEMPTS = 5;
@@ -72,6 +75,14 @@ export default function BookingSuccessPage() {
   }, [bookingId]);
 
   const isPaid = status?.paymentStatus === 'paid';
+
+  const trackedRef = useRef(false);
+  useEffect(() => {
+    if (isPaid && status && !trackedRef.current) {
+      trackedRef.current = true;
+      track('reservation_completed', { kind: status.offerKind, stations: status.stationsCount, amount: status.totalPrice });
+    }
+  }, [isPaid, status]);
 
   return (
     <>

@@ -9,7 +9,7 @@ export async function GET(
   const admin = createAdminClient();
   const { data, error } = await admin
     .from('bookings')
-    .select('reference, date, start_time, total_price, payment_status, coins_awarded, stations(label)')
+    .select('reference, date, start_time, total_price, payment_status, coins_awarded, offer_kind, stations(label)')
     .eq('booking_group_id', groupId);
 
   if (error || !data?.length) {
@@ -25,5 +25,7 @@ export async function GET(
     totalPrice: data.reduce((sum, r) => sum + r.total_price, 0),
     paymentStatus: first.payment_status,
     coinsAwarded: first.coins_awarded,
+    offerKind: first.offer_kind,
+    stationsCount: data.length,
   });
 }
