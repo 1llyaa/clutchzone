@@ -56,6 +56,9 @@ async function fetchBookingCredits(admin: ReturnType<typeof createAdminClient>, 
     .from('bookings')
     .select('*')
     .neq('status', 'cancelled')
+    // Paid with already-banked credit → nothing new to hand over, staff
+    // already deducted it in person, never belongs in this queue.
+    .eq('pays_with_credit', false)
     .or('offer_kind.in.(hours,hours_upsell),and(payment_method.eq.online,payment_status.eq.paid)')
     .order('created_at', { ascending: false });
   if (!showAll) query = query.is('fulfilled_at', null);

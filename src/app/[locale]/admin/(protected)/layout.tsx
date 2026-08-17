@@ -35,6 +35,7 @@ export default async function ProtectedAdminLayout({
       .select('booking_group_id')
       .neq('status', 'cancelled')
       .is('fulfilled_at', null)
+      .eq('pays_with_credit', false)
       .or('offer_kind.in.(hours,hours_upsell),and(payment_method.eq.online,payment_status.eq.paid)'),
   ]);
   const unfulfilledBookingGroups = new Set((unfulfilledBookingRows ?? []).map((r) => r.booking_group_id)).size;

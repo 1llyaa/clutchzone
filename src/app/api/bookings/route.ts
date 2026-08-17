@@ -18,6 +18,7 @@ const BookingSchema = z.object({
   termsAccepted: z.boolean(),
   clutchzoneAccount: z.string().trim().optional(),
   paymentMethod: z.enum(['online', 'onsite']),
+  paysWithCredit: z.boolean().optional().default(false),
   customerName: z.string().min(2),
   customerEmail: z.string().email(),
   customerPhone: z.string().min(9),
@@ -136,8 +137,11 @@ export async function POST(req: NextRequest) {
     stations_count: data.stationsCount,
     time_pass_id: offer.passId,
     offer_kind: offer.kind,
-    credit_hours: offer.kind === 'pass' ? null : offer.hoursCovered,
-    pays_with_credit: false,
+    // Paying with already-banked credit consumes it on the spot (staff
+    // deducts from ggLeap in person) — it never itself banks new hours,
+    // so it must never show up in the admin "needs crediting" queue.
+    credit_hours: offer.kind === 'pass' || data.paysWithCredit ? null : offer.hoursCovered,
+    pays_with_credit: data.paysWithCredit,
     clutchzone_account: data.clutchzoneAccount?.trim() || null,
     customer_name: data.customerName,
     customer_email: data.customerEmail,

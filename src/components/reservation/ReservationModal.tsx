@@ -148,7 +148,7 @@ export default function ReservationModal() {
     document.getElementById('cenik')?.scrollIntoView({ behavior: 'smooth' });
   }
 
-  async function handleConfirm(method: 'online' | 'onsite') {
+  async function handleConfirm(method: 'online' | 'onsite' | 'credit') {
     if (!termsAccepted) {
       setConsentError(true);
       return;
@@ -173,7 +173,8 @@ export default function ReservationModal() {
           expectedAmount: off.totalAmount,
           termsAccepted: true,
           clutchzoneAccount: contact.clutchzoneAccount.trim() || undefined,
-          paymentMethod: method,
+          paymentMethod: method === 'credit' ? 'onsite' : method,
+          paysWithCredit: method === 'credit',
           customerName: contact.name,
           customerEmail: contact.email,
           customerPhone: contact.phone,
@@ -299,6 +300,7 @@ export default function ReservationModal() {
                   loading={loading}
                   error={submitError}
                   onConfirm={handleConfirm}
+                  showCreditOption={effectiveOffer.kind !== 'pass'}
                 />
               )}
               {step === 4 && result && (

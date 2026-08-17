@@ -11,10 +11,11 @@ interface Props {
   consentError: boolean;
   loading: boolean;
   error: string;
-  onConfirm: (method: 'online' | 'onsite') => void;
+  onConfirm: (method: 'online' | 'onsite' | 'credit') => void;
+  showCreditOption: boolean;
 }
 
-export default function StepPayment({ offer, termsAccepted, onToggleConsent, consentError, loading, error, onConfirm }: Props) {
+export default function StepPayment({ offer, termsAccepted, onToggleConsent, consentError, loading, error, onConfirm, showCreditOption }: Props) {
   const [coinsAmount, setCoinsAmount] = useState(50);
 
   useEffect(() => {
@@ -64,6 +65,17 @@ export default function StepPayment({ offer, termsAccepted, onToggleConsent, con
       >
         ZAPLATIT V KLUBU
       </button>
+
+      {showCreditOption && (
+        <button
+          onClick={() => onConfirm('credit')}
+          disabled={loading}
+          className="w-full font-display uppercase rounded-[2px] cursor-pointer transition-colors"
+          style={{ fontSize: 15, letterSpacing: 2, padding: 12, background: 'transparent', border: '1.5px solid #2A2A2A', color: '#888', opacity: loading ? 0.6 : 1 }}
+        >
+          MÁM KREDIT
+        </button>
+      )}
 
       <div
         onClick={onToggleConsent}
