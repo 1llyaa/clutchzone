@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { labelText, secondaryText, bodyText } from '@/lib/typography';
 
 interface Props {
   reference: string;
@@ -19,7 +20,7 @@ export default function StepDone({ reference, stationLabels, date, startTime, to
   return (
     <div className="flex flex-col items-center text-center gap-6" style={{ marginTop: 16 }}>
       <div>
-        <span className="font-mono text-cz-gray-light uppercase block" style={{ fontSize: 13, letterSpacing: 3, marginBottom: 12 }}>
+        <span className="font-mono text-cz-gray-light uppercase block" style={{ ...labelText, letterSpacing: 3, marginBottom: 12 }}>
           {t('referenceLabel')}
         </span>
         <div
@@ -32,27 +33,27 @@ export default function StepDone({ reference, stationLabels, date, startTime, to
 
       <div className="flex flex-col gap-3 w-full">
         <div className="flex justify-between border-b border-cz-gray-dark" style={{ paddingBottom: 12 }}>
-          <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 13, letterSpacing: 2 }}>{t('stationsLabelDone')}</span>
-          <span className="font-mono text-white" style={{ fontSize: 15, letterSpacing: 1 }}>{stationLabels.join(', ')}</span>
+          <span className="font-mono text-cz-gray-light uppercase" style={{ ...labelText, letterSpacing: 2 }}>{t('stationsLabelDone')}</span>
+          <span className="font-mono text-white" style={{ ...secondaryText, letterSpacing: 1 }}>{stationLabels.join(', ')}</span>
         </div>
         <div className="flex justify-between border-b border-cz-gray-dark" style={{ paddingBottom: 12 }}>
-          <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 13, letterSpacing: 2 }}>{t('variantLabel')}</span>
-          <span className="font-mono text-white" style={{ fontSize: 15, letterSpacing: 1 }}>{offerLabel}</span>
+          <span className="font-mono text-cz-gray-light uppercase" style={{ ...labelText, letterSpacing: 2 }}>{t('variantLabel')}</span>
+          <span className="font-mono text-white" style={{ ...secondaryText, letterSpacing: 1 }}>{offerLabel}</span>
         </div>
         <div className="flex justify-between border-b border-cz-gray-dark" style={{ paddingBottom: 12 }}>
-          <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 13, letterSpacing: 2 }}>{t('dateLabelDone')}</span>
-          <span className="font-mono text-white" style={{ fontSize: 15, letterSpacing: 1 }}>{date} {startTime}</span>
+          <span className="font-mono text-cz-gray-light uppercase" style={{ ...labelText, letterSpacing: 2 }}>{t('dateLabelDone')}</span>
+          <span className="font-mono text-white" style={{ ...secondaryText, letterSpacing: 1 }}>{date} {startTime}</span>
         </div>
         <div className="flex justify-between border-b border-cz-gray-dark" style={{ paddingBottom: 12 }}>
-          <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 13, letterSpacing: 2 }}>{t('total')}</span>
+          <span className="font-mono text-cz-gray-light uppercase" style={{ ...labelText, letterSpacing: 2 }}>{t('total')}</span>
           <span className="font-display text-cz-orange" style={{ fontSize: 20, letterSpacing: 1 }}>{totalAmount} Kč</span>
         </div>
       </div>
 
       {isCredit && (
         <div style={{ background: 'rgba(232,74,26,0.08)', border: '1px solid rgba(232,74,26,0.25)', padding: '16px 18px', width: '100%' }}>
-          <div className="font-mono text-cz-orange uppercase" style={{ fontSize: 13, fontWeight: 700, letterSpacing: 2 }}>{t('creditNoteTitle')}</div>
-          <p className="font-body text-cz-gray-light" style={{ fontSize: 15, lineHeight: 1.6, marginTop: 8 }}>
+          <div className="font-mono text-cz-orange uppercase" style={{ ...labelText, fontWeight: 700, letterSpacing: 2 }}>{t('creditNoteTitle')}</div>
+          <p className="font-body text-cz-gray-light" style={{ ...bodyText, marginTop: 8 }}>
             {t('creditNoteBody', { months: creditExpiryMonths })}
           </p>
         </div>

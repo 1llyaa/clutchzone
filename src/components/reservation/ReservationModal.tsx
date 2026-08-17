@@ -7,6 +7,7 @@ import { track } from '@/lib/analytics/track';
 import { calculatePricing, reservedHoursOnSite } from '@/lib/pricing/engine';
 import { dayTypeForDate } from '@/lib/pricing/dates';
 import type { CalcInput, Offer, PricingConfig } from '@/lib/pricing/types';
+import { labelText, secondaryText } from '@/lib/typography';
 import StepSummaryDate from './steps/StepSummaryDate';
 import StepContact from './steps/StepContact';
 import StepPayment from './steps/StepPayment';
@@ -239,7 +240,7 @@ export default function ReservationModal() {
 
         <div className="flex items-center justify-between" style={{ padding: '28px 32px 0' }}>
           <div className="flex flex-col gap-1">
-            <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 14, letterSpacing: 3 }}>
+            <span className="font-mono text-cz-orange uppercase" style={{ ...labelText, letterSpacing: 3 }}>
               {t('title')} {step <= 3 ? `· ${step}/3` : ''}
             </span>
             <span className="font-display text-white uppercase" style={{ fontSize: 26, letterSpacing: 1 }}>
@@ -268,7 +269,7 @@ export default function ReservationModal() {
 
         <div key={step} className="animate-step-in" style={{ padding: '24px 32px 32px', flex: 1 }}>
           {!config ? (
-            <p className="font-mono text-cz-gray-light" style={{ fontSize: 15, letterSpacing: 1, textAlign: 'center', padding: '40px 0' }}>
+            <p className="font-body text-cz-gray-light" style={{ ...secondaryText, textAlign: 'center', padding: '40px 0' }}>
               {t('loadingPricing')}
             </p>
           ) : (
