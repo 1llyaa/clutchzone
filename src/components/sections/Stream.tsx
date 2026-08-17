@@ -57,8 +57,8 @@ export default function Stream({ streamUrl }: Props) {
               {t('eyebrow')}
             </span>
             <h2
-              className="font-display text-white uppercase inline-block"
-              style={{ fontSize: 'clamp(36px, 5vw, 60px)', letterSpacing: 1.5, lineHeight: 0.95, paddingBottom: 14, borderBottom: '2px solid #E84A1A' }}
+              className="font-display text-white uppercase inline-block border-b-2 border-cz-orange"
+              style={{ fontSize: 'clamp(36px, 5vw, 60px)', letterSpacing: 1.5, lineHeight: 0.95, paddingBottom: 14 }}
             >
               {t('heading')}
             </h2>

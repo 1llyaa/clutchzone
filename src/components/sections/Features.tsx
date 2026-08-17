@@ -27,7 +27,7 @@ export default function Features() {
           </span>
           <h2
             className="font-display text-white uppercase"
-            style={{ fontSize: 52, letterSpacing: 1.5, lineHeight: 0.98 }}
+            style={{ fontSize: 'clamp(2rem, 5vw, 3.25rem)', letterSpacing: 1.5, lineHeight: 0.98 }}
           >
             {t('heading')}
           </h2>
@@ -51,7 +51,7 @@ export default function Features() {
                 </h3>
                 <p
                   className="font-body text-cz-gray-light mt-3"
-                  style={{ fontWeight: 300, fontSize: 'clamp(16px, 1.8vw, 17px)', lineHeight: 1.65 }}
+                  style={{ fontSize: 'clamp(16px, 1.8vw, 17px)', lineHeight: 1.65 }}
                 >
                   {card.desc}
                 </p>

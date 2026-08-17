@@ -2,6 +2,9 @@
 
 import { useState, useRef, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
+import { CaretLeft, CaretRight } from '@phosphor-icons/react';
+import Button from '@/components/ui/Button';
 import Reveal from '@/components/ui/Reveal';
 
 interface Game {
@@ -14,9 +17,9 @@ interface Game {
 }
 
 const PLATFORM_COLOR: Record<string, string> = {
-  pc:   '#E84A1A',
-  ps5:  '#2A2A2A',
-  both: '#2A2A2A',
+  pc:   'var(--color-cz-orange)',
+  ps5:  'var(--color-cz-gray-dark)',
+  both: 'var(--color-cz-gray-dark)',
 };
 
 function GameCard({ game }: { game: Game }) {
@@ -31,13 +34,12 @@ function GameCard({ game }: { game: Game }) {
     >
       {/* Cover image */}
       {game.cover_url ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          loading="lazy"
-          decoding="async"
+        <Image
           src={game.cover_url}
           alt={game.title}
-          className="w-full h-full object-cover"
+          fill
+          sizes="220px"
+          className="object-cover"
           style={{ transform: hovered ? 'scale(1.06)' : 'scale(1)', transition: 'transform 0.5s ease', willChange: 'transform' }}
         />
       ) : (
@@ -52,7 +54,7 @@ function GameCard({ game }: { game: Game }) {
       {/* Platform badge */}
       <div
         className="absolute top-3 left-3 font-mono uppercase rounded-[2px]"
-        style={{ fontSize: 16, letterSpacing: 2, padding: '3px 7px', color: '#fff', background: PLATFORM_COLOR[game.platform] ?? '#E84A1A' }}
+        style={{ fontSize: 16, letterSpacing: 2, padding: '3px 7px', color: '#fff', background: PLATFORM_COLOR[game.platform] ?? 'var(--color-cz-orange)' }}
       >
         {game.platform === 'both' ? 'PC + PS5' : game.platform.toUpperCase()}
       </div>
@@ -82,7 +84,7 @@ function GameCard({ game }: { game: Game }) {
           {game.title}
         </h3>
         {game.description && (
-          <p className="font-body text-cz-gray-light" style={{ fontSize: 19, lineHeight: 1.6 }}>
+          <p className="font-body text-cz-white-soft" style={{ fontSize: 19, lineHeight: 1.6 }}>
             {game.description.length > 90 ? `${game.description.slice(0, 90)}…` : game.description}
           </p>
         )}
@@ -124,29 +126,31 @@ export default function Games({ games }: { games: Game[] }) {
           <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}>
             {t('eyebrow')}
           </span>
-          <h2 className="font-display text-white uppercase" style={{ fontSize: 52, letterSpacing: 1.5, lineHeight: 0.98 }}>
+          <h2 className="font-display text-white uppercase" style={{ fontSize: 'clamp(2rem, 5vw, 3.25rem)', letterSpacing: 1.5, lineHeight: 0.98 }}>
             {t('heading')}
           </h2>
         </div>
 
         {/* Scroll arrows */}
         <div className="flex gap-2">
-          <button
+          <Button
+            variant="ghost"
+            iconOnly
             onClick={() => scroll('left')}
             disabled={!canLeft}
-            className="font-display text-white rounded-[2px] transition-all disabled:opacity-20 hover:bg-cz-orange hover:text-white"
-            style={{ fontSize: 20, width: 44, height: 44, border: '1.5px solid #2A2A2A', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            aria-label="Předchozí"
           >
-            ←
-          </button>
-          <button
+            <CaretLeft size={20} weight="bold" />
+          </Button>
+          <Button
+            variant="ghost"
+            iconOnly
             onClick={() => scroll('right')}
             disabled={!canRight}
-            className="font-display text-white rounded-[2px] transition-all disabled:opacity-20 hover:bg-cz-orange hover:text-white"
-            style={{ fontSize: 20, width: 44, height: 44, border: '1.5px solid #2A2A2A', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            aria-label="Další"
           >
-            →
-          </button>
+            <CaretRight size={20} weight="bold" />
+          </Button>
         </div>
       </Reveal>
 

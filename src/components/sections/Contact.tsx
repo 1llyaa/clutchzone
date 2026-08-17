@@ -54,7 +54,7 @@ export default function Contact() {
             <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}>
               {t('eyebrow')}
             </span>
-            <h2 className="font-display text-white uppercase" style={{ fontSize: 52, letterSpacing: 1.5, lineHeight: 0.98, marginBottom: 20 }}>
+            <h2 className="font-display text-white uppercase" style={{ fontSize: 'clamp(2rem, 5vw, 3.25rem)', letterSpacing: 1.5, lineHeight: 0.98, marginBottom: 20 }}>
               {t('heading')}
             </h2>
             <p className="font-body text-cz-gray-light" style={{ fontSize: 19, lineHeight: 1.8, maxWidth: 420, marginBottom: 36 }}>
@@ -78,7 +78,7 @@ export default function Contact() {
 
         {/* Right — form */}
         <Reveal delay={100}>
-        <div className="bg-cz-black-mid rounded-cz" style={{ padding: 'clamp(24px, 4vw, 40px)', border: '1px solid #2A2A2A' }}>
+        <div className="bg-cz-black-mid rounded-cz border border-cz-gray-dark" style={{ padding: 'clamp(24px, 4vw, 40px)' }}>
           {done ? (
             <div className="flex flex-col items-center text-center" style={{ padding: '40px 0' }}>
               <span style={{ fontSize: 44 }}>✓</span>
@@ -106,8 +106,8 @@ export default function Contact() {
                   required
                   maxLength={100}
                   placeholder={t('namePlaceholder')}
-                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-[border-color] duration-150 ease-out"
-                  style={{ padding: '11px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
+                  className="bg-cz-black text-white font-body border border-cz-gray-dark rounded-[2px] focus:outline-none focus:border-cz-orange transition-[border-color] duration-150 ease-out"
+                  style={{ padding: '11px 14px', fontSize: 19 }}
                 />
               </div>
 
@@ -121,8 +121,8 @@ export default function Contact() {
                   onChange={field('email')}
                   required
                   placeholder={t('emailPlaceholder')}
-                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-[border-color] duration-150 ease-out"
-                  style={{ padding: '11px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
+                  className="bg-cz-black text-white font-body border border-cz-gray-dark rounded-[2px] focus:outline-none focus:border-cz-orange transition-[border-color] duration-150 ease-out"
+                  style={{ padding: '11px 14px', fontSize: 19 }}
                 />
               </div>
 
@@ -137,13 +137,13 @@ export default function Contact() {
                   maxLength={2000}
                   rows={5}
                   placeholder={t('messagePlaceholder')}
-                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-[border-color] duration-150 ease-out resize-none"
-                  style={{ padding: '11px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
+                  className="bg-cz-black text-white font-body border border-cz-gray-dark rounded-[2px] focus:outline-none focus:border-cz-orange transition-[border-color] duration-150 ease-out resize-none"
+                  style={{ padding: '11px 14px', fontSize: 19 }}
                 />
               </div>
 
               {error && (
-                <p className="font-mono text-red-400" style={{ fontSize: 17, letterSpacing: 1 }}>{error}</p>
+                <p className="font-mono text-cz-danger" style={{ fontSize: 17, letterSpacing: 1 }}>{error}</p>
               )}
 
               <button
