@@ -30,7 +30,12 @@ export default async function ProtectedAdminLayout({
   const admin = createAdminClient();
   const [{ count: unfulfilledOrdersCount }, { data: unfulfilledBookingRows }] = await Promise.all([
     admin.from('credit_orders').select('id', { count: 'exact', head: true }).eq('payment_status', 'paid').is('fulfilled_at', null),
-    admin.from('bookings').select('booking_group_id').in('offer_kind', ['hours', 'hours_upsell']).neq('status', 'cancelled').is('fulfilled_at', null),
+    admin
+      .from('bookings')
+      .select('booking_group_id')
+      .neq('status', 'cancelled')
+      .is('fulfilled_at', null)
+      .or('offer_kind.in.(hours,hours_upsell),and(payment_method.eq.online,payment_status.eq.paid)'),
   ]);
   const unfulfilledBookingGroups = new Set((unfulfilledBookingRows ?? []).map((r) => r.booking_group_id)).size;
   const unfulfilledCreditsCount = (unfulfilledOrdersCount ?? 0) + unfulfilledBookingGroups;

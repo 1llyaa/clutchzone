@@ -124,10 +124,10 @@ export default function CreditsClient({ entries, showAll }: { entries: QueueEntr
                   <td className="font-mono text-cz-gray-light" style={{ padding: '10px 14px', fontSize: 14 }}>{formatDate(e.paidAt)}</td>
                   <td className="font-mono text-cz-gray-light" style={{ padding: '10px 14px', fontSize: 14 }}>{e.needsCredit ? formatDate(e.expiresAt) : '—'}</td>
                   <td style={{ padding: '10px 14px' }}>
-                    {!e.needsCredit ? (
-                      <span className="font-mono uppercase" style={{ fontSize: 13, letterSpacing: 1, color: '#555' }}>BEZ KREDITU</span>
+                    {!e.needsCredit && !e.coinsAwarded ? (
+                      <span className="font-mono uppercase" style={{ fontSize: 13, letterSpacing: 1, color: '#555' }}>NIC K PŘIPSÁNÍ</span>
                     ) : e.fulfilledAt ? (
-                      <span className="font-mono uppercase" style={{ fontSize: 13, letterSpacing: 1, color: '#22c55e' }}>PŘIPSÁNO</span>
+                      <span className="font-mono uppercase" style={{ fontSize: 13, letterSpacing: 1, color: '#22c55e' }}>VYŘÍZENO</span>
                     ) : (
                       <button
                         onClick={() => fulfill(e)}
@@ -135,7 +135,7 @@ export default function CreditsClient({ entries, showAll }: { entries: QueueEntr
                         className="font-mono uppercase"
                         style={{ fontSize: 13, letterSpacing: 1, color: '#E84A1A', background: 'transparent', border: '1px solid #E84A1A', borderRadius: 2, padding: '4px 10px', cursor: 'pointer' }}
                       >
-                        {fulfilling === e.id ? '...' : 'NEPŘIPSÁNO — PŘIPSAT'}
+                        {fulfilling === e.id ? '...' : e.needsCredit ? 'PŘIPSAT HODINY' : 'PŘIPSAT MINCE'}
                       </button>
                     )}
                   </td>

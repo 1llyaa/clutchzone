@@ -2,8 +2,12 @@ import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/auth';
 import { createAdminClient } from '@/lib/supabase/admin';
 
-// `id` here is booking_group_id — a hour-credit booking spans N rows
-// (one per station), so fulfilling it means every row in the group.
+// `id` here is booking_group_id — a booking spans N rows (one per
+// station), so fulfilling it means every row in the group. "Fulfilled"
+// covers whatever staff owes the customer from this booking at the
+// club — hour credit for hours/hours_upsell, and/or the coins from an
+// online card payment (a pass booking has no hours but can still owe
+// coins).
 export async function POST(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -18,18 +22,19 @@ export async function POST(
 
   const { data: rows } = await admin
     .from('bookings')
-    .select('offer_kind, status, fulfilled_at')
+    .select('status, fulfilled_at, coins_awarded, offer_kind')
     .eq('booking_group_id', groupId);
 
   if (!rows?.length) return NextResponse.json({ error: 'Rezervace nenalezena' }, { status: 404 });
-  if (rows.some((r) => !['hours', 'hours_upsell'].includes(r.offer_kind))) {
-    return NextResponse.json({ error: 'Tahle rezervace negeneruje hodinový kredit' }, { status: 400 });
+  const owesSomething = rows.some((r) => ['hours', 'hours_upsell'].includes(r.offer_kind) || (r.coins_awarded ?? 0) > 0);
+  if (!owesSomething) {
+    return NextResponse.json({ error: 'Tahle rezervace nic negeneruje (bez hodin i mincí)' }, { status: 400 });
   }
   if (rows.some((r) => r.status === 'cancelled')) {
     return NextResponse.json({ error: 'Rezervace je zrušená' }, { status: 400 });
   }
   if (rows.some((r) => r.fulfilled_at)) {
-    return NextResponse.json({ error: 'Hodiny už byly připsány' }, { status: 409 });
+    return NextResponse.json({ error: 'Už bylo vyřízeno' }, { status: 409 });
   }
 
   const { data, error } = await admin
