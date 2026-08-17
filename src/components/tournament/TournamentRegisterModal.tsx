@@ -114,13 +114,13 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
           className="flex items-start justify-between px-5 pb-5 pt-7 md:px-8 md:pt-7"
         >
           <div>
-            <div className="font-mono text-cz-orange uppercase" style={{ fontSize: 10, letterSpacing: 3 }}>
+            <div className="font-mono text-cz-orange uppercase" style={{ fontSize: 16, letterSpacing: 3 }}>
               {t('title')}
             </div>
             <div className="font-display text-white uppercase" style={{ fontSize: 28, letterSpacing: 1, marginTop: 4 }}>
               {tournament.title}
             </div>
-            <div className="font-mono text-cz-gray-mid" style={{ fontSize: 11, marginTop: 4 }}>
+            <div className="font-mono text-cz-gray-light" style={{ fontSize: 16, marginTop: 4 }}>
               {tournament.game} · {slotsLeft} {slotsLeft === 1 ? 'místo' : 'míst'} zbývá
             </div>
           </div>
@@ -141,14 +141,14 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
               style={{ padding: '32px 0' }}
             >
               <span className="text-white" style={{ fontSize: 40 }}>✓</span>
-              <p className="font-body text-white" style={{ fontSize: 15, lineHeight: 1.7, marginTop: 16, maxWidth: 340 }}>
+              <p className="font-body text-white" style={{ fontSize: 19, lineHeight: 1.7, marginTop: 16, maxWidth: 340 }}>
                 {t('success')}
               </p>
             </div>
             <button
               onClick={onClose}
               className="w-full bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors rounded-[2px] border-none cursor-pointer"
-              style={{ fontSize: 15, letterSpacing: 2, padding: 13 }}
+              style={{ fontSize: 16, letterSpacing: 2, padding: 13 }}
             >
               {t('close')}
             </button>
@@ -159,7 +159,7 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Team name – full width */}
               <div className="flex flex-col gap-2" style={{ gridColumn: '1 / -1' }}>
-                <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+                <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
                   {t('teamName')}
                 </label>
                 <input
@@ -170,13 +170,13 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
                   maxLength={100}
                   placeholder={t('teamPlaceholder')}
                   className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors"
-                  style={{ padding: '10px 14px', fontSize: 14, border: '1px solid #2A2A2A' }}
+                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
                 />
               </div>
 
               {/* Captain name */}
               <div className="flex flex-col gap-2">
-                <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+                <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
                   {t('captainName')}
                 </label>
                 <input
@@ -187,13 +187,13 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
                   maxLength={100}
                   placeholder={t('captainPlaceholder')}
                   className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors"
-                  style={{ padding: '10px 14px', fontSize: 14, border: '1px solid #2A2A2A' }}
+                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
                 />
               </div>
 
               {/* Discord */}
               <div className="flex flex-col gap-2">
-                <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+                <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
                   {t('discord')}
                 </label>
                 <input
@@ -203,13 +203,13 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
                   maxLength={100}
                   placeholder={t('discordPlaceholder')}
                   className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors"
-                  style={{ padding: '10px 14px', fontSize: 14, border: '1px solid #2A2A2A' }}
+                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
                 />
               </div>
 
               {/* Email – full width */}
               <div className="flex flex-col gap-2" style={{ gridColumn: '1 / -1' }}>
-                <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+                <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
                   {t('email')}
                 </label>
                 <input
@@ -219,15 +219,15 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
                   required
                   placeholder={t('emailPlaceholder')}
                   className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors"
-                  style={{ padding: '10px 14px', fontSize: 14, border: '1px solid #2A2A2A' }}
+                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
                 />
               </div>
 
               {/* Player names textarea – full width */}
               <div className="flex flex-col gap-2" style={{ gridColumn: '1 / -1' }}>
-                <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+                <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
                   {t('players')}
-                  <span className="ml-2 normal-case font-body text-cz-gray-mid" style={{ fontSize: 11, letterSpacing: 0 }}>
+                  <span className="ml-2 normal-case font-body text-cz-gray-light" style={{ fontSize: 16, letterSpacing: 0 }}>
                     — {t('playersHint')}
                   </span>
                 </label>
@@ -237,13 +237,13 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
                   rows={3}
                   placeholder={t('playersPlaceholder')}
                   className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors resize-none"
-                  style={{ padding: '10px 14px', fontSize: 14, border: '1px solid #2A2A2A' }}
+                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
                 />
               </div>
             </div>
 
             {error && (
-              <p className="font-mono text-red-400" style={{ fontSize: 11, letterSpacing: 1, marginTop: 12 }}>
+              <p className="font-mono text-red-400" style={{ fontSize: 16, letterSpacing: 1, marginTop: 12 }}>
                 {error}
               </p>
             )}
@@ -253,15 +253,15 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
                 type="submit"
                 disabled={submitting}
                 className="flex-1 bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:not-disabled:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer disabled:opacity-50"
-                style={{ fontSize: 15, letterSpacing: 2, padding: 13 }}
+                style={{ fontSize: 16, letterSpacing: 2, padding: 13 }}
               >
                 {submitting ? '...' : t('submit')}
               </button>
               <button
                 type="button"
                 onClick={onClose}
-                className="font-display uppercase text-cz-gray-mid hover:text-white transition-colors rounded-[2px] cursor-pointer"
-                style={{ fontSize: 15, letterSpacing: 2, padding: '13px 24px', border: '1px solid #2A2A2A', background: 'transparent' }}
+                className="font-display uppercase text-cz-gray-light hover:text-white transition-colors rounded-[2px] cursor-pointer"
+                style={{ fontSize: 16, letterSpacing: 2, padding: '13px 24px', border: '1px solid #2A2A2A', background: 'transparent' }}
               >
                 {t('close')}
               </button>

@@ -220,14 +220,14 @@ export default function SettingsClient({
         <h1 className="font-display text-white uppercase" style={{ fontSize: 36, letterSpacing: 2 }}>
           NASTAVENÍ
         </h1>
-        <p className="font-mono text-cz-gray-mid" style={{ fontSize: 11, letterSpacing: 2, marginTop: 4 }}>
+        <p className="font-mono text-cz-gray-light" style={{ fontSize: 16, letterSpacing: 2, marginTop: 4 }}>
           SPRÁVA UŽIVATELŮ A STANIC
         </p>
       </div>
 
       {/* Hero image */}
       <div style={{ marginBottom: 48 }}>
-        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 3, marginBottom: 20 }}>
+        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 20 }}>
           HERO OBRÁZEK
         </div>
 
@@ -248,7 +248,7 @@ export default function SettingsClient({
             )}
 
             <div className="flex flex-col gap-3">
-              <p className="font-body text-cz-gray-light" style={{ fontSize: 13, lineHeight: 1.5 }}>
+              <p className="font-body text-cz-gray-light" style={{ fontSize: 19, lineHeight: 1.5 }}>
                 Obrázek postavy zobrazený v hero sekci na hlavní stránce. Doporučený formát: PNG s průhledným pozadím.
               </p>
 
@@ -267,7 +267,7 @@ export default function SettingsClient({
                 onClick={() => heroInputRef.current?.click()}
                 disabled={uploadingHero}
                 className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 rounded-[2px] disabled:opacity-50 self-start"
-                style={{ fontSize: 12, letterSpacing: 2, padding: '10px 24px' }}
+                style={{ fontSize: 16, letterSpacing: 2, padding: '10px 24px' }}
               >
                 {uploadingHero ? 'NAHRÁVÁM...' : 'NAHRÁT NOVÝ OBRÁZEK'}
               </button>
@@ -275,7 +275,7 @@ export default function SettingsClient({
               {heroMsg && (
                 <p
                   className="font-mono"
-                  style={{ fontSize: 11, color: heroMsg.startsWith('Chyba') ? '#ef4444' : '#22c55e' }}
+                  style={{ fontSize: 17, color: heroMsg.startsWith('Chyba') ? '#ef4444' : '#22c55e' }}
                 >
                   {heroMsg}
                 </p>
@@ -287,7 +287,7 @@ export default function SettingsClient({
 
       {/* Private events image */}
       <div style={{ marginBottom: 48 }}>
-        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 3, marginBottom: 20 }}>
+        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 20 }}>
           OBRÁZEK PRIVÁTNÍCH AKCÍ
         </div>
 
@@ -308,7 +308,7 @@ export default function SettingsClient({
             )}
 
             <div className="flex flex-col gap-3">
-              <p className="font-body text-cz-gray-light" style={{ fontSize: 13, lineHeight: 1.5 }}>
+              <p className="font-body text-cz-gray-light" style={{ fontSize: 19, lineHeight: 1.5 }}>
                 Obrázek zobrazený v sekci privátních akcí (teambuilding, oslavy) na hlavní stránce.
               </p>
 
@@ -327,7 +327,7 @@ export default function SettingsClient({
                 onClick={() => privateEventsInputRef.current?.click()}
                 disabled={uploadingPrivateEvents}
                 className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 rounded-[2px] disabled:opacity-50 self-start"
-                style={{ fontSize: 12, letterSpacing: 2, padding: '10px 24px' }}
+                style={{ fontSize: 16, letterSpacing: 2, padding: '10px 24px' }}
               >
                 {uploadingPrivateEvents ? 'NAHRÁVÁM...' : 'NAHRÁT NOVÝ OBRÁZEK'}
               </button>
@@ -335,7 +335,7 @@ export default function SettingsClient({
               {privateEventsMsg && (
                 <p
                   className="font-mono"
-                  style={{ fontSize: 11, color: privateEventsMsg.startsWith('Chyba') ? '#ef4444' : '#22c55e' }}
+                  style={{ fontSize: 17, color: privateEventsMsg.startsWith('Chyba') ? '#ef4444' : '#22c55e' }}
                 >
                   {privateEventsMsg}
                 </p>
@@ -347,7 +347,7 @@ export default function SettingsClient({
 
       {/* Stream settings */}
       <div style={{ marginBottom: 48 }}>
-        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 3, marginBottom: 20 }}>
+        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 20 }}>
           ŽIVÝ PŘENOS
         </div>
 
@@ -355,14 +355,14 @@ export default function SettingsClient({
           <div className="flex flex-col gap-5">
             {/* Toggle */}
             <div className="flex items-center justify-between">
-              <span className="font-body text-cz-gray-light" style={{ fontSize: 13 }}>
+              <span className="font-body text-cz-gray-light" style={{ fontSize: 17 }}>
                 Zobrazit stream na hlavní stránce
               </span>
               <button
                 onClick={toggleStreamVisible}
                 className="font-mono uppercase rounded-[2px] transition-colors"
                 style={{
-                  fontSize: 9,
+                  fontSize: 16,
                   letterSpacing: 1,
                   padding: '4px 12px',
                   color: streamVisible ? '#22c55e' : '#ef4444',
@@ -375,7 +375,7 @@ export default function SettingsClient({
 
             {/* URL input */}
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+              <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
                 TWITCH URL NEBO NÁZEV KANÁLU
               </label>
               <div className="flex items-center gap-3">
@@ -385,18 +385,18 @@ export default function SettingsClient({
                   onChange={(e) => setStreamUrl(e.target.value)}
                   placeholder="https://twitch.tv/channelname"
                   className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange flex-1"
-                  style={{ padding: '10px 14px', fontSize: 13, border: '1px solid #2A2A2A' }}
+                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
                 />
                 <button
                   onClick={handleStreamSave}
                   disabled={savingStream}
                   className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 rounded-[2px] disabled:opacity-50 flex-shrink-0"
-                  style={{ fontSize: 12, letterSpacing: 2, padding: '10px 24px' }}
+                  style={{ fontSize: 16, letterSpacing: 2, padding: '10px 24px' }}
                 >
                   {savingStream ? '...' : 'ULOŽIT'}
                 </button>
               </div>
-              <p className="font-mono text-cz-gray-mid" style={{ fontSize: 10, letterSpacing: 1 }}>
+              <p className="font-mono text-cz-gray-light" style={{ fontSize: 17, letterSpacing: 1 }}>
                 Zadejte celý odkaz (https://twitch.tv/nazev) nebo jen název kanálu
               </p>
             </div>
@@ -404,7 +404,7 @@ export default function SettingsClient({
             {streamMsg && (
               <p
                 className="font-mono"
-                style={{ fontSize: 11, color: streamMsg.startsWith('Chyba') ? '#ef4444' : '#22c55e' }}
+                style={{ fontSize: 17, color: streamMsg.startsWith('Chyba') ? '#ef4444' : '#22c55e' }}
               >
                 {streamMsg}
               </p>
@@ -415,7 +415,7 @@ export default function SettingsClient({
 
       {/* Coins per payment */}
       <div style={{ marginBottom: 48 }}>
-        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 3, marginBottom: 20 }}>
+        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 20 }}>
           MINCE ZA PLATBU KARTOU
         </div>
 
@@ -423,7 +423,7 @@ export default function SettingsClient({
           <div className="flex flex-col gap-5">
             {/* Coins amount input */}
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+              <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
                 POČET MINCÍ PŘI PLATBĚ KARTOU
               </label>
               <div className="flex items-center gap-3">
@@ -433,13 +433,13 @@ export default function SettingsClient({
                   onChange={(e) => setCoinsAmount(e.target.value)}
                   min={0}
                   className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange flex-1"
-                  style={{ padding: '10px 14px', fontSize: 13, border: '1px solid #2A2A2A' }}
+                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
                 />
                 <button
                   onClick={handleCoinsSave}
                   disabled={savingCoins}
                   className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 rounded-[2px] disabled:opacity-50 flex-shrink-0"
-                  style={{ fontSize: 12, letterSpacing: 2, padding: '10px 24px' }}
+                  style={{ fontSize: 16, letterSpacing: 2, padding: '10px 24px' }}
                 >
                   {savingCoins ? '...' : 'ULOŽIT'}
                 </button>
@@ -449,7 +449,7 @@ export default function SettingsClient({
             {coinsMsg && (
               <p
                 className="font-mono"
-                style={{ fontSize: 11, color: coinsMsg.startsWith('Chyba') ? '#ef4444' : '#22c55e' }}
+                style={{ fontSize: 17, color: coinsMsg.startsWith('Chyba') ? '#ef4444' : '#22c55e' }}
               >
                 {coinsMsg}
               </p>
@@ -460,7 +460,7 @@ export default function SettingsClient({
 
       {/* Staff accounts */}
       <div style={{ marginBottom: 48 }}>
-        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 3, marginBottom: 20 }}>
+        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 20 }}>
           UŽIVATELÉ ADMIN PANELU
         </div>
 
@@ -469,7 +469,7 @@ export default function SettingsClient({
             <thead>
               <tr style={{ borderBottom: '1px solid #2A2A2A' }}>
                 {['E-MAIL', 'JMÉNO', 'ROLE', 'OD', ''].map((h) => (
-                  <th key={h} className="font-mono text-cz-gray-mid uppercase text-left" style={{ padding: '12px 16px', fontSize: 10, letterSpacing: 2 }}>
+                  <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '12px 16px', fontSize: 16, letterSpacing: 2 }}>
                     {h}
                   </th>
                 ))}
@@ -478,17 +478,17 @@ export default function SettingsClient({
             <tbody>
               {profiles.map((p) => (
                 <tr key={p.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                  <td className="font-body text-white" style={{ padding: '12px 16px', fontSize: 13 }}>
+                  <td className="font-body text-white" style={{ padding: '12px 16px', fontSize: 17 }}>
                     {p.email}
                   </td>
-                  <td className="font-body text-cz-gray-light" style={{ padding: '12px 16px', fontSize: 13 }}>
+                  <td className="font-body text-cz-gray-light" style={{ padding: '12px 16px', fontSize: 17 }}>
                     {p.display_name || '—'}
                   </td>
                   <td style={{ padding: '12px 16px' }}>
                     <span
                       className="font-mono uppercase rounded-[2px]"
                       style={{
-                        fontSize: 9,
+                        fontSize: 16,
                         letterSpacing: 1,
                         padding: '3px 8px',
                         color: p.role === 'owner' ? '#E84A1A' : '#888',
@@ -498,7 +498,7 @@ export default function SettingsClient({
                       {p.role === 'owner' ? 'MAJITEL' : 'RECEPCE'}
                     </span>
                   </td>
-                  <td className="font-mono text-cz-gray-mid" style={{ padding: '12px 16px', fontSize: 11 }}>
+                  <td className="font-mono text-cz-gray-light" style={{ padding: '12px 16px', fontSize: 17 }}>
                     {new Date(p.created_at).toLocaleDateString('cs-CZ')}
                   </td>
                   <td style={{ padding: '12px 16px' }}>
@@ -507,7 +507,7 @@ export default function SettingsClient({
                         onClick={() => handleRemove(p.id)}
                         disabled={removing === p.id}
                         className="font-mono text-red-400 uppercase hover:underline disabled:opacity-50"
-                        style={{ fontSize: 10, letterSpacing: 1 }}
+                        style={{ fontSize: 16, letterSpacing: 1 }}
                       >
                         {removing === p.id ? '...' : 'ODEBRAT'}
                       </button>
@@ -525,7 +525,7 @@ export default function SettingsClient({
           className="flex items-end gap-3"
         >
           <div className="flex flex-col gap-2">
-            <label className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 2 }}>
+            <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
               POZVAT NOVÉHO ZAMĚSTNANCE
             </label>
             <input
@@ -535,14 +535,14 @@ export default function SettingsClient({
               placeholder="email@example.com"
               required
               className="bg-cz-black-mid text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange"
-              style={{ padding: '10px 14px', fontSize: 13, border: '1px solid #2A2A2A', width: 300 }}
+              style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A', width: 300 }}
             />
           </div>
           <button
             type="submit"
             disabled={inviting}
             className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark rounded-[2px] disabled:opacity-50"
-            style={{ fontSize: 12, letterSpacing: 2, padding: '10px 24px' }}
+            style={{ fontSize: 16, letterSpacing: 2, padding: '10px 24px' }}
           >
             {inviting ? '...' : 'ODESLAT POZVÁNKU'}
           </button>
@@ -550,7 +550,7 @@ export default function SettingsClient({
         {inviteMsg && (
           <p
             className="font-mono"
-            style={{ fontSize: 11, marginTop: 10, color: inviteMsg.startsWith('Chyba') ? '#ef4444' : '#22c55e' }}
+            style={{ fontSize: 17, marginTop: 10, color: inviteMsg.startsWith('Chyba') ? '#ef4444' : '#22c55e' }}
           >
             {inviteMsg}
           </p>
@@ -559,14 +559,14 @@ export default function SettingsClient({
 
       {/* Station management */}
       <div>
-        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 11, letterSpacing: 3, marginBottom: 20 }}>
+        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 20 }}>
           SPRÁVA STANIC
         </div>
 
         <div className="grid gap-6" style={{ gridTemplateColumns: '1fr 1fr' }}>
           {/* PC */}
           <div>
-            <div className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 2, marginBottom: 12 }}>
+            <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, marginBottom: 12 }}>
               PC STANICE
             </div>
             <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A' }}>
@@ -576,7 +576,7 @@ export default function SettingsClient({
                   className="flex items-center justify-between"
                   style={{ padding: '10px 16px', borderBottom: '1px solid rgba(255,255,255,0.04)' }}
                 >
-                  <span className="font-mono text-white" style={{ fontSize: 12 }}>
+                  <span className="font-mono text-white" style={{ fontSize: 17 }}>
                     {s.label}
                   </span>
                   <button
@@ -584,7 +584,7 @@ export default function SettingsClient({
                     disabled={toggling === s.id}
                     className="font-mono uppercase rounded-[2px] transition-colors disabled:opacity-50"
                     style={{
-                      fontSize: 9,
+                      fontSize: 16,
                       letterSpacing: 1,
                       padding: '3px 10px',
                       color: s.is_active ? '#22c55e' : '#ef4444',
@@ -600,7 +600,7 @@ export default function SettingsClient({
 
           {/* PS5 */}
           <div>
-            <div className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 2, marginBottom: 12 }}>
+            <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, marginBottom: 12 }}>
               PS5 STANICE
             </div>
             <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A' }}>
@@ -610,7 +610,7 @@ export default function SettingsClient({
                   className="flex items-center justify-between"
                   style={{ padding: '10px 16px', borderBottom: '1px solid rgba(255,255,255,0.04)' }}
                 >
-                  <span className="font-mono text-white" style={{ fontSize: 12 }}>
+                  <span className="font-mono text-white" style={{ fontSize: 17 }}>
                     {s.label}
                   </span>
                   <button
@@ -618,7 +618,7 @@ export default function SettingsClient({
                     disabled={toggling === s.id}
                     className="font-mono uppercase rounded-[2px] transition-colors disabled:opacity-50"
                     style={{
-                      fontSize: 9,
+                      fontSize: 16,
                       letterSpacing: 1,
                       padding: '3px 10px',
                       color: s.is_active ? '#22c55e' : '#ef4444',

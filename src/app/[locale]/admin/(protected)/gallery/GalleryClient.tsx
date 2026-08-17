@@ -125,22 +125,22 @@ export default function GalleryClient() {
       <div className="flex items-center justify-between" style={{ marginBottom: 40 }}>
         <div>
           <h1 className="font-display text-white uppercase" style={{ fontSize: 36, letterSpacing: 2 }}>GALERIE</h1>
-          <p className="font-mono text-cz-gray-mid" style={{ fontSize: 11, letterSpacing: 2, marginTop: 4 }}>
+          <p className="font-mono text-cz-gray-light" style={{ fontSize: 16, letterSpacing: 2, marginTop: 4 }}>
             {images.length} FOTOGRAFIÍ · {images.filter((i) => i.is_active).length} AKTIVNÍCH
           </p>
         </div>
 
         {/* Display type selector */}
         <div className="flex items-center gap-2">
-          <span className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 9, letterSpacing: 2, marginRight: 4 }}>TYP ZOBRAZENÍ</span>
+          <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, marginRight: 4 }}>TYP ZOBRAZENÍ</span>
           {DISPLAY_TYPES.map((dt) => (
             <button
               key={dt.value}
               onClick={() => updateDisplayType(dt.value)}
               className="font-mono uppercase rounded-[2px] transition-colors"
               style={{
-                fontSize: 10, letterSpacing: 2, padding: '6px 14px',
-                color:      displayType === dt.value ? '#fff' : '#555',
+                fontSize: 16, letterSpacing: 2, padding: '6px 14px',
+                color:      displayType === dt.value ? '#fff' : '#888888',
                 background: displayType === dt.value ? '#E84A1A' : 'transparent',
                 border:     `1px solid ${displayType === dt.value ? '#E84A1A' : '#2A2A2A'}`,
               }}
@@ -174,11 +174,11 @@ export default function GalleryClient() {
           onChange={(e) => e.target.files && handleFiles(Array.from(e.target.files))}
         />
         {uploading ? (
-          <p className="font-mono text-cz-orange uppercase" style={{ fontSize: 12, letterSpacing: 3 }}>NAHRÁVÁNÍ...</p>
+          <p className="font-mono text-cz-orange uppercase" style={{ fontSize: 16, letterSpacing: 3 }}>NAHRÁVÁNÍ...</p>
         ) : (
           <>
             <div className="font-display text-white uppercase" style={{ fontSize: 18, letterSpacing: 2 }}>+ PŘIDAT FOTOGRAFIE</div>
-            <p className="font-mono text-cz-gray-mid" style={{ fontSize: 10, letterSpacing: 2, marginTop: 8 }}>
+            <p className="font-mono text-cz-gray-light" style={{ fontSize: 16, letterSpacing: 2, marginTop: 8 }}>
               PŘETÁHNĚTE SOUBORY NEBO KLIKNĚTE · JPG, PNG, WEBP
             </p>
           </>
@@ -187,9 +187,9 @@ export default function GalleryClient() {
 
       {/* Image grid */}
       {loading ? (
-        <p className="font-mono text-cz-gray-mid text-center" style={{ fontSize: 12, padding: 40 }}>NAČÍTÁNÍ...</p>
+        <p className="font-mono text-cz-gray-light text-center" style={{ fontSize: 17, padding: 40 }}>NAČÍTÁNÍ...</p>
       ) : sorted.length === 0 ? (
-        <p className="font-mono text-cz-gray-mid text-center uppercase" style={{ fontSize: 12, letterSpacing: 3, padding: 40 }}>Žádné fotografie</p>
+        <p className="font-mono text-cz-gray-light text-center uppercase" style={{ fontSize: 16, letterSpacing: 3, padding: 40 }}>Žádné fotografie</p>
       ) : (
         <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
           {sorted.map((img, idx) => (
@@ -211,13 +211,13 @@ export default function GalleryClient() {
                     onClick={() => move(img, 'up')}
                     disabled={idx === 0}
                     className="font-mono text-white rounded-[2px] disabled:opacity-20 hover:bg-white/20 transition-colors"
-                    style={{ fontSize: 11, padding: '2px 6px', background: 'rgba(0,0,0,0.6)' }}
+                    style={{ fontSize: 16, padding: '2px 6px', background: 'rgba(0,0,0,0.6)' }}
                   >↑</button>
                   <button
                     onClick={() => move(img, 'down')}
                     disabled={idx === sorted.length - 1}
                     className="font-mono text-white rounded-[2px] disabled:opacity-20 hover:bg-white/20 transition-colors"
-                    style={{ fontSize: 11, padding: '2px 6px', background: 'rgba(0,0,0,0.6)' }}
+                    style={{ fontSize: 16, padding: '2px 6px', background: 'rgba(0,0,0,0.6)' }}
                   >↓</button>
                 </div>
               </div>
@@ -235,17 +235,17 @@ export default function GalleryClient() {
                       autoFocus
                       placeholder="Popis..."
                       className="flex-1 bg-cz-black text-white font-body rounded-[2px] focus:outline-none"
-                      style={{ fontSize: 11, padding: '4px 8px', border: '1px solid #E84A1A' }}
+                      style={{ fontSize: 19, padding: '4px 8px', border: '1px solid #E84A1A' }}
                     />
-                    <button onClick={() => saveCaption(img.id)} className="font-mono text-cz-orange" style={{ fontSize: 10 }}>✓</button>
+                    <button onClick={() => saveCaption(img.id)} className="font-mono text-cz-orange" style={{ fontSize: 16 }}>✓</button>
                   </div>
                 ) : (
                   <button
                     onClick={() => { setEditId(img.id); setEditCaption(img.caption ?? ''); }}
-                    className="text-left font-body text-cz-gray-mid hover:text-white transition-colors truncate"
-                    style={{ fontSize: 11 }}
+                    className="text-left font-body text-cz-gray-light hover:text-white transition-colors truncate"
+                    style={{ fontSize: 17 }}
                   >
-                    {img.caption || <span className="italic text-cz-gray-mid" style={{ fontSize: 10 }}>+ přidat popis</span>}
+                    {img.caption || <span className="italic text-cz-gray-light" style={{ fontSize: 17 }}>+ přidat popis</span>}
                   </button>
                 )}
 
@@ -254,7 +254,7 @@ export default function GalleryClient() {
                     onClick={() => toggleActive(img)}
                     className="font-mono uppercase rounded-[2px] transition-colors"
                     style={{
-                      fontSize: 9, letterSpacing: 1, padding: '3px 8px',
+                      fontSize: 16, letterSpacing: 1, padding: '3px 8px',
                       color:      img.is_active ? '#22c55e' : '#888',
                       background: img.is_active ? '#22c55e20' : '#88888820',
                     }}
@@ -264,7 +264,7 @@ export default function GalleryClient() {
                   <button
                     onClick={() => deleteImage(img)}
                     className="font-mono text-red-400 uppercase hover:underline"
-                    style={{ fontSize: 9, letterSpacing: 1 }}
+                    style={{ fontSize: 16, letterSpacing: 1 }}
                   >
                     SMAZAT
                   </button>

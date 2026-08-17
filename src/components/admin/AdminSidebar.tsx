@@ -9,6 +9,7 @@ import type { AdminProfile } from '@/lib/admin/auth';
 const NAV = [
   { href: '/admin',             label: 'DASHBOARD',  exact: true },
   { href: '/admin/bookings',    label: 'REZERVACE' },
+  { href: '/admin/credits',     label: 'KREDITY',    badge: true },
   { href: '/admin/tournaments', label: 'TURNAJE' },
   { href: '/admin/gallery',     label: 'GALERIE' },
   { href: '/admin/games',       label: 'HRY' },
@@ -29,9 +30,11 @@ const ROLE_LABEL: Record<string, string> = {
 export default function AdminSidebar({
   profile,
   locale,
+  unfulfilledCreditsCount = 0,
 }: {
   profile: AdminProfile;
   locale: string;
+  unfulfilledCreditsCount?: number;
 }) {
   const pathname = usePathname();
 
@@ -64,10 +67,10 @@ export default function AdminSidebar({
       >
         <Logo size={30} />
         <div>
-          <div className="font-display text-white uppercase" style={{ fontSize: 15, letterSpacing: 1 }}>
+          <div className="font-display text-white uppercase" style={{ fontSize: 16, letterSpacing: 1 }}>
             CLUTCH ZONE
           </div>
-          <div className="font-mono text-cz-orange uppercase" style={{ fontSize: 9, letterSpacing: 3 }}>
+          <div className="font-mono text-cz-orange uppercase" style={{ fontSize: 16, letterSpacing: 3 }}>
             ADMIN
           </div>
         </div>
@@ -84,7 +87,7 @@ export default function AdminSidebar({
               className="flex items-center gap-3 rounded-[2px] font-mono uppercase transition-colors duration-100"
               style={{
                 padding: '9px 12px',
-                fontSize: 11,
+                fontSize: 16,
                 letterSpacing: 2,
                 color: active ? '#E84A1A' : '#888888',
                 background: active ? 'rgba(232,74,26,0.08)' : 'transparent',
@@ -97,6 +100,14 @@ export default function AdminSidebar({
                 />
               )}
               {item.label}
+              {item.badge && unfulfilledCreditsCount > 0 && (
+                <span
+                  className="font-mono text-white bg-cz-orange rounded-full flex items-center justify-center tabular-nums"
+                  style={{ minWidth: 20, height: 20, fontSize: 13, padding: '0 5px', marginLeft: 'auto' }}
+                >
+                  {unfulfilledCreditsCount}
+                </span>
+              )}
             </Link>
           );
         })}
@@ -112,13 +123,13 @@ export default function AdminSidebar({
           <div className="min-w-0">
             <div
               className="font-body text-white truncate"
-              style={{ fontSize: 13, fontWeight: 500 }}
+              style={{ fontSize: 17, fontWeight: 500 }}
             >
               {profile.display_name || profile.email}
             </div>
             <div
               className="font-mono uppercase"
-              style={{ fontSize: 9, letterSpacing: 2, color: STATUS_DOT[profile.role] }}
+              style={{ fontSize: 16, letterSpacing: 2, color: STATUS_DOT[profile.role] }}
             >
               {ROLE_LABEL[profile.role]}
             </div>
@@ -126,8 +137,8 @@ export default function AdminSidebar({
         </div>
         <button
           onClick={handleLogout}
-          className="font-mono text-cz-gray-mid uppercase hover:text-white transition-colors"
-          style={{ fontSize: 10, letterSpacing: 2 }}
+          className="font-mono text-cz-gray-light uppercase hover:text-white transition-colors"
+          style={{ fontSize: 16, letterSpacing: 2 }}
         >
           ODHLÁSIT SE →
         </button>

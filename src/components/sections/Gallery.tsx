@@ -36,13 +36,13 @@ function MobileGallery({ images }: { images: GalleryImage[] }) {
       >
         {images.map((img) => (
           <SwiperSlide key={img.id}>
-            <div className="relative overflow-hidden rounded-[2px]" style={{ aspectRatio: '4/3' }}>
+            <div className="relative overflow-hidden rounded-[4px]" style={{ aspectRatio: '4/3' }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img loading="lazy" decoding="async" src={img.url} alt={img.caption || ''} className="w-full h-full object-cover" />
               {img.caption && (
                 <div
                   className="absolute bottom-0 left-0 right-0 font-body text-white"
-                  style={{ padding: '12px 14px', background: 'linear-gradient(transparent, rgba(0,0,0,0.72))', fontSize: 12 }}
+                  style={{ padding: '12px 14px', background: 'linear-gradient(transparent, rgba(0,0,0,0.72))', fontSize: 17 }}
                 >
                   {img.caption}
                 </div>
@@ -84,7 +84,7 @@ function Carousel({ images }: { images: GalleryImage[] }) {
           {img.caption && (
             <div
               className="absolute bottom-0 left-0 right-0 font-body text-white"
-              style={{ padding: '24px 40px', background: 'linear-gradient(transparent, rgba(0,0,0,0.7))', fontSize: 14 }}
+              style={{ padding: '24px 40px', background: 'linear-gradient(transparent, rgba(0,0,0,0.7))', fontSize: 17 }}
             >
               {img.caption}
             </div>
@@ -135,7 +135,7 @@ function Masonry({ images }: { images: GalleryImage[] }) {
           {img.caption && (
             <div
               className="absolute bottom-0 left-0 right-0 font-body text-white"
-              style={{ padding: '16px', background: 'linear-gradient(transparent, rgba(0,0,0,0.65))', fontSize: 12 }}
+              style={{ padding: '16px', background: 'linear-gradient(transparent, rgba(0,0,0,0.65))', fontSize: 17 }}
             >
               {img.caption}
             </div>
@@ -161,7 +161,7 @@ function Mosaic({ images }: { images: GalleryImage[] }) {
           {img.caption && (
             <div
               className="absolute bottom-0 left-0 right-0 font-body text-white opacity-0 hover:opacity-100 transition-opacity duration-300"
-              style={{ padding: '16px', background: 'linear-gradient(transparent, rgba(0,0,0,0.7))', fontSize: 12 }}
+              style={{ padding: '16px', background: 'linear-gradient(transparent, rgba(0,0,0,0.7))', fontSize: 17 }}
             >
               {img.caption}
             </div>
@@ -181,15 +181,15 @@ export default function Gallery({ images, displayType }: Props) {
   return (
     <section
       id="galerie"
-      className="bg-cz-black py-14 md:py-[120px]"
+      className="bg-cz-black py-14 md:py-[104px]"
       style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
     >
       {/* Heading */}
       <Reveal className="max-w-[1440px] mx-auto px-6 mb-8 md:px-16 md:mb-12">
-        <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}>
+        <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}>
           {t('eyebrow')}
         </span>
-        <h2 className="font-display text-white uppercase" style={{ fontSize: 'clamp(32px, 5vw, 60px)', letterSpacing: 1.5, lineHeight: 0.95 }}>
+        <h2 className="font-display text-white uppercase" style={{ fontSize: 52, letterSpacing: 1.5, lineHeight: 0.98 }}>
           {t('heading')}
         </h2>
       </Reveal>

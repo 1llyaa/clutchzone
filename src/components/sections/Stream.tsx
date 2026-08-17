@@ -34,7 +34,7 @@ export default function Stream({ streamUrl }: Props) {
   return (
     <section
       id="stream"
-      className="relative bg-cz-black px-6 py-20 md:px-16 md:py-[120px]"
+      className="relative bg-cz-black px-6 py-14 md:px-16 md:py-[104px]"
       style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
     >
       {/* Grid overlay */}
@@ -53,7 +53,7 @@ export default function Stream({ streamUrl }: Props) {
         {/* Section header */}
         <Reveal>
           <div style={{ marginBottom: 48 }}>
-            <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}>
+            <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}>
               {t('eyebrow')}
             </span>
             <h2
@@ -90,13 +90,13 @@ export default function Stream({ streamUrl }: Props) {
 
         {/* Channel link */}
         <div className="flex items-center gap-3" style={{ marginTop: 16 }}>
-          <span className="rounded-full bg-red-500 animate-flicker flex-shrink-0" style={{ width: 8, height: 8 }} />
+          <span className="rounded-full bg-cz-orange animate-flicker flex-shrink-0" style={{ width: 9, height: 9 }} />
           <a
             href={`https://twitch.tv/${channel}`}
             target="_blank"
             rel="noopener noreferrer"
             className="font-mono text-cz-gray-light uppercase hover:text-cz-orange transition-colors"
-            style={{ fontSize: 11, letterSpacing: 2 }}
+            style={{ fontSize: 16, letterSpacing: 2 }}
           >
             twitch.tv/{channel}
           </a>

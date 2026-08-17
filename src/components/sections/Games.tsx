@@ -15,8 +15,8 @@ interface Game {
 
 const PLATFORM_COLOR: Record<string, string> = {
   pc:   '#E84A1A',
-  ps5:  '#60a5fa',
-  both: '#a78bfa',
+  ps5:  '#2A2A2A',
+  both: '#2A2A2A',
 };
 
 function GameCard({ game }: { game: Game }) {
@@ -25,7 +25,7 @@ function GameCard({ game }: { game: Game }) {
   return (
     <article
       className="relative flex-shrink-0 overflow-hidden cursor-pointer"
-      style={{ width: 220, height: 330, borderRadius: 2 }}
+      style={{ width: 220, height: 330, borderRadius: 4 }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -45,14 +45,14 @@ function GameCard({ game }: { game: Game }) {
           className="w-full h-full flex items-center justify-center"
           style={{ background: 'linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%)' }}
         >
-          <span className="font-display text-cz-gray-mid uppercase" style={{ fontSize: 12, letterSpacing: 3 }}>NO IMAGE</span>
+          <span className="font-display text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3 }}>NO IMAGE</span>
         </div>
       )}
 
       {/* Platform badge */}
       <div
         className="absolute top-3 left-3 font-mono uppercase rounded-[2px]"
-        style={{ fontSize: 8, letterSpacing: 2, padding: '3px 7px', color: '#fff', background: PLATFORM_COLOR[game.platform] ?? '#E84A1A' }}
+        style={{ fontSize: 16, letterSpacing: 2, padding: '3px 7px', color: '#fff', background: PLATFORM_COLOR[game.platform] ?? '#E84A1A' }}
       >
         {game.platform === 'both' ? 'PC + PS5' : game.platform.toUpperCase()}
       </div>
@@ -74,15 +74,15 @@ function GameCard({ game }: { game: Game }) {
         }}
       >
         {game.genre && (
-          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 9, letterSpacing: 3, marginBottom: 6 }}>
+          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 6 }}>
             {game.genre}
           </span>
         )}
-        <h3 className="font-display text-white uppercase" style={{ fontSize: 20, letterSpacing: 1, lineHeight: 1.1, marginBottom: game.description ? 10 : 0 }}>
+        <h3 className="font-display text-white uppercase" style={{ fontSize: 26, letterSpacing: 1, lineHeight: 1.1, marginBottom: game.description ? 8 : 0 }}>
           {game.title}
         </h3>
         {game.description && (
-          <p className="font-body text-cz-gray-light" style={{ fontSize: 12, lineHeight: 1.6 }}>
+          <p className="font-body text-cz-gray-light" style={{ fontSize: 19, lineHeight: 1.6 }}>
             {game.description.length > 90 ? `${game.description.slice(0, 90)}…` : game.description}
           </p>
         )}
@@ -115,16 +115,16 @@ export default function Games({ games }: { games: Game[] }) {
   return (
     <section
       id="herna"
-      className="bg-cz-black py-20 md:py-[120px]"
+      className="bg-cz-black py-14 md:py-[104px]"
       style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
     >
       {/* Heading */}
-      <Reveal className="max-w-[1440px] mx-auto flex items-end justify-between px-6 pb-10 md:px-16 md:pb-12">
+      <Reveal className="max-w-[1440px] mx-auto flex items-end justify-between px-6 pb-8 md:px-16 md:pb-[40px]">
         <div>
-          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}>
+          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}>
             {t('eyebrow')}
           </span>
-          <h2 className="font-display text-white uppercase" style={{ fontSize: 'clamp(36px, 5vw, 60px)', letterSpacing: 1.5, lineHeight: 0.95 }}>
+          <h2 className="font-display text-white uppercase" style={{ fontSize: 52, letterSpacing: 1.5, lineHeight: 0.98 }}>
             {t('heading')}
           </h2>
         </div>
@@ -135,7 +135,7 @@ export default function Games({ games }: { games: Game[] }) {
             onClick={() => scroll('left')}
             disabled={!canLeft}
             className="font-display text-white rounded-[2px] transition-all disabled:opacity-20 hover:bg-cz-orange hover:text-white"
-            style={{ fontSize: 20, width: 44, height: 44, border: '1px solid #2A2A2A', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{ fontSize: 20, width: 44, height: 44, border: '1.5px solid #2A2A2A', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           >
             ←
           </button>
@@ -143,7 +143,7 @@ export default function Games({ games }: { games: Game[] }) {
             onClick={() => scroll('right')}
             disabled={!canRight}
             className="font-display text-white rounded-[2px] transition-all disabled:opacity-20 hover:bg-cz-orange hover:text-white"
-            style={{ fontSize: 20, width: 44, height: 44, border: '1px solid #2A2A2A', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{ fontSize: 20, width: 44, height: 44, border: '1.5px solid #2A2A2A', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           >
             →
           </button>

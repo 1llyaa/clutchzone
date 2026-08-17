@@ -1,109 +1,135 @@
 'use client';
 
-import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import type { BookingForm } from '@/types';
+
+interface ContactInfo {
+  name: string;
+  email: string;
+  phone: string;
+  discord: string;
+  clutchzoneAccount: string;
+  noAccountYet: boolean;
+}
 
 interface Props {
-  form: BookingForm;
-  setForm: (f: BookingForm) => void;
+  contact: ContactInfo;
+  onChange: (c: ContactInfo) => void;
+  requireClutchzoneAccount: boolean;
   onBack: () => void;
-  onSubmit: () => Promise<void>;
-  error: string;
+  onNext: () => void;
 }
 
 function Field({
-  label, value, onChange, placeholder, type = 'text', required = true,
+  label, value, onChange, placeholder, type = 'text', required = true, optionalHint, hint, disabled = false,
 }: {
   label: string; value: string; onChange: (v: string) => void;
-  placeholder: string; type?: string; required?: boolean;
+  placeholder: string; type?: string; required?: boolean; optionalHint?: string; hint?: string; disabled?: boolean;
 }) {
   return (
     <div>
-      <label className="font-mono text-cz-gray-light uppercase block" style={{ fontSize: 10, letterSpacing: 3, marginBottom: 8 }}>
-        {label}{!required && <span className="text-cz-gray-mid"> (nepovinné)</span>}
+      <label className="font-mono text-cz-gray-light uppercase block" style={{ fontSize: 12, letterSpacing: 2.5, marginBottom: 8 }}>
+        {label}{!required && <span className="text-cz-gray-light"> {optionalHint}</span>}
       </label>
       <input
         type={type}
         value={value}
         placeholder={placeholder}
+        disabled={disabled}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-cz-black border border-cz-gray-dark rounded-cz text-white font-body placeholder:text-cz-gray-mid focus:border-cz-orange outline-none transition-colors"
-        style={{ padding: '12px 16px', fontSize: 14 }}
+        className="w-full bg-cz-black border border-cz-gray-dark rounded-cz text-white font-body placeholder:text-cz-gray-light focus:border-cz-orange outline-none transition-colors"
+        style={{ padding: '12px 16px', fontSize: 16, opacity: disabled ? 0.4 : 1, cursor: disabled ? 'not-allowed' : 'text' }}
       />
+      {hint && <p className="font-mono text-cz-gray-light" style={{ fontSize: 12, letterSpacing: 1, marginTop: 6 }}>{hint}</p>}
     </div>
   );
 }
 
-export default function StepContact({ form, setForm, onBack, onSubmit, error }: Props) {
+export default function StepContact({ contact, onChange, requireClutchzoneAccount, onBack, onNext }: Props) {
   const t = useTranslations('booking');
-  const [loading, setLoading] = useState(false);
-
+  const accountNeeded = requireClutchzoneAccount && !contact.noAccountYet;
   const valid =
-    form.customerName.trim().length >= 2 &&
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.customerEmail) &&
-    form.customerPhone.trim().length >= 9;
+    contact.name.trim().length >= 2 &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email) &&
+    contact.phone.trim().length >= 9 &&
+    (!accountNeeded || contact.clutchzoneAccount.trim().length >= 2);
 
-  async function handleSubmit() {
-    if (!valid || loading) return;
-    setLoading(true);
-    await onSubmit();
-    setLoading(false);
-  }
+  const set = (patch: Partial<ContactInfo>) => onChange({ ...contact, ...patch });
 
   return (
     <div className="flex flex-col gap-4" style={{ marginTop: 8 }}>
-      {/* Order summary */}
-      <div
-        className="flex items-center justify-between rounded-cz border border-cz-gray-dark"
-        style={{ padding: '14px 18px', background: '#0A0A0A' }}
-      >
-        <span className="font-mono text-cz-gray-light" style={{ fontSize: 11, letterSpacing: 1 }}>
-          {form.stationType?.toUpperCase()} · {form.option?.label} · {form.date} {form.startTime}
-        </span>
-        <span className="font-display text-cz-orange" style={{ fontSize: 24, letterSpacing: 1 }}>
-          {form.option?.amount} Kč
-        </span>
-      </div>
+      <Field label={t('nameField')} value={contact.name} onChange={(v) => set({ name: v })} placeholder="Jan Novák" />
+      <Field label={t('emailField')} value={contact.email} onChange={(v) => set({ email: v })} placeholder="jan@email.cz" type="email" />
+      <Field label={t('phoneField')} value={contact.phone} onChange={(v) => set({ phone: v })} placeholder="+420 123 456 789" type="tel" />
 
-      <p className="font-mono text-cz-gray-mid" style={{ fontSize: 10, letterSpacing: 1, marginTop: -4 }}>
-        {t('priceApprox')}
-      </p>
-
-      <Field label={t('name')} value={form.customerName} onChange={(v) => setForm({ ...form, customerName: v })} placeholder={t('namePlaceholder')} />
-      <Field label={t('email')} value={form.customerEmail} onChange={(v) => setForm({ ...form, customerEmail: v })} placeholder={t('emailPlaceholder')} type="email" />
-      <Field label={t('phone')} value={form.customerPhone} onChange={(v) => setForm({ ...form, customerPhone: v })} placeholder={t('phonePlaceholder')} type="tel" />
-      <Field label={t('discord')} value={form.customerDiscord} onChange={(v) => setForm({ ...form, customerDiscord: v })} placeholder={t('discordPlaceholder')} required={false} />
-
-      {error && (
-        <p className="font-mono text-cz-orange" style={{ fontSize: 11, letterSpacing: 1 }}>
-          {error}
-        </p>
+      {requireClutchzoneAccount && (
+        <div>
+          <Field
+            label={t('clutchzoneAccountLabel')}
+            value={contact.clutchzoneAccount}
+            onChange={(v) => set({ clutchzoneAccount: v })}
+            placeholder={t('clutchzoneAccountPlaceholder')}
+            required={accountNeeded}
+            disabled={contact.noAccountYet}
+            hint={accountNeeded ? t('clutchzoneAccountHint') : undefined}
+          />
+          <div
+            onClick={() => set({ noAccountYet: !contact.noAccountYet, clutchzoneAccount: contact.noAccountYet ? contact.clutchzoneAccount : '' })}
+            style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 10, cursor: 'pointer' }}
+          >
+            <div
+              style={{
+                width: 16,
+                height: 16,
+                flexShrink: 0,
+                border: `1.5px solid ${contact.noAccountYet ? '#E84A1A' : '#555555'}`,
+                background: contact.noAccountYet ? '#E84A1A' : 'transparent',
+                borderRadius: 2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 11,
+                color: '#fff',
+              }}
+            >
+              {contact.noAccountYet ? '✓' : ''}
+            </div>
+            <span className="font-mono text-cz-gray-light" style={{ fontSize: 13, letterSpacing: 1 }}>
+              {t('noAccountYetLabel')}
+            </span>
+          </div>
+          {contact.noAccountYet && (
+            <p className="font-mono text-cz-gray-light" style={{ fontSize: 12, letterSpacing: 1, marginTop: 6 }}>
+              {t('noAccountYetNote')}
+            </p>
+          )}
+        </div>
       )}
+
+      <Field label={t('discordField')} value={contact.discord} onChange={(v) => set({ discord: v })} placeholder="uživatel#0000" required={false} optionalHint={t('optionalHint')} />
 
       <div className="flex gap-3" style={{ marginTop: 4 }}>
         <button
           onClick={onBack}
           className="font-display uppercase rounded-[2px] cursor-pointer"
-          style={{ fontSize: 15, letterSpacing: 2, padding: '11px 24px', background: 'transparent', border: '1.5px solid #2A2A2A', color: '#888' }}
+          style={{ fontSize: 16, letterSpacing: 2, padding: '11px 24px', background: 'transparent', border: '1.5px solid #2A2A2A', color: '#888' }}
         >
           {t('back')}
         </button>
         <button
-          onClick={handleSubmit}
-          disabled={!valid || loading}
+          onClick={onNext}
+          disabled={!valid}
           className="font-display uppercase rounded-[2px] flex-1 transition-colors"
           style={{
-            fontSize: 15,
+            fontSize: 16,
             letterSpacing: 2,
             padding: '11px 24px',
-            background: valid && !loading ? '#E84A1A' : '#2A2A2A',
+            background: valid ? '#E84A1A' : '#2A2A2A',
             border: 'none',
-            color: valid && !loading ? '#fff' : '#555',
-            cursor: valid && !loading ? 'pointer' : 'not-allowed',
+            color: valid ? '#fff' : '#888888',
+            cursor: valid ? 'pointer' : 'not-allowed',
           }}
         >
-          {loading ? '...' : t('confirm')}
+          {t('continueToPayment')}
         </button>
       </div>
     </div>

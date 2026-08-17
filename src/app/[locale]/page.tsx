@@ -3,7 +3,8 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import Hero from '@/components/sections/Hero';
 import Features from '@/components/sections/Features';
-import Pricing from '@/components/sections/Pricing';
+import PriceCalculator from '@/components/pricing/PriceCalculator';
+import { getPricingConfig } from '@/lib/pricing/config-server';
 import Stream from '@/components/sections/Stream';
 import Tournaments from '@/components/sections/Tournaments';
 import Games from '@/components/sections/Games';
@@ -83,29 +84,17 @@ async function fetchSiteSettings() {
   return Object.fromEntries((data ?? []).map((r) => [r.key, r.value])) as Record<string, string>;
 }
 
-async function fetchPricing() {
-  const admin = createAdminClient();
-  const [pc, ps5, tiers] = await Promise.all([
-    admin.from('pc_duration_prices').select('duration_h, amount').order('duration_h'),
-    admin.from('ps5_duration_prices').select('duration_h, amount').order('duration_h'),
-    admin.from('pricing_tiers').select('tier, amount').in('tier', ['happy_hour', 'evening_pass', 'weekend_pass']),
-  ]);
-  return {
-    pcPrices:       pc.data ?? [],
-    ps5Prices:      ps5.data ?? [],
-    packageAmounts: Object.fromEntries((tiers.data ?? []).map((t) => [t.tier, t.amount])) as Record<string, number>,
-  };
-}
-
 export default async function HomePage() {
-  const [tournaments, gallery, games, pricing, siteSettings, availability] = await Promise.all([
+  const [tournaments, gallery, games, pricingConfig, siteSettings, availability] = await Promise.all([
     fetchTournaments(),
     fetchGallery(),
     fetchGames(),
-    fetchPricing(),
+    getPricingConfig(),
     fetchSiteSettings(),
     fetchStationAvailability(),
   ]);
+
+  const pcHourPrice = pricingConfig.hourTiers.find((t) => t.stationType === 'pc' && t.hours === 1)?.amount;
 
   return (
     <>
@@ -115,11 +104,11 @@ export default async function HomePage() {
           heroImage={siteSettings.hero_image}
           stationsFree={availability.free}
           stationsTotal={availability.total}
-          pcHourPrice={pricing.pcPrices.find((p) => p.duration_h === 1)?.amount}
+          pcHourPrice={pcHourPrice}
         />
         <Features />
         <Games games={games} />
-        <Pricing pcPrices={pricing.pcPrices} ps5Prices={pricing.ps5Prices} packageAmounts={pricing.packageAmounts} />
+        <PriceCalculator config={pricingConfig} />
         {siteSettings.stream_visible === 'true' && siteSettings.stream_url && (
           <Stream streamUrl={siteSettings.stream_url} />
         )}

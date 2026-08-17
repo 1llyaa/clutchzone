@@ -14,44 +14,44 @@ export default function Features() {
   return (
     <section
       id="herna"
-      className="relative bg-cz-black px-6 py-14 md:px-16 md:py-[120px]"
+      className="relative bg-cz-black px-6 py-14 md:px-16 md:py-[104px]"
       style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
     >
       <div className="max-w-[1440px] mx-auto">
-        <Reveal className="mb-8 md:mb-16">
+        <Reveal className="mb-8 md:mb-[40px]">
           <span
             className="font-mono text-cz-orange uppercase block"
-            style={{ fontSize: 11, letterSpacing: 4, marginBottom: 10 }}
+            style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}
           >
             {t('eyebrow')}
           </span>
           <h2
             className="font-display text-white uppercase"
-            style={{ fontSize: 'clamp(32px, 5vw, 60px)', letterSpacing: 1.5, lineHeight: 0.95 }}
+            style={{ fontSize: 52, letterSpacing: 1.5, lineHeight: 0.98 }}
           >
             {t('heading')}
           </h2>
         </Reveal>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: 20 }}>
           {cards.map((card, i) => (
             <Reveal key={card.no} delay={i * 70}>
               <div
                 className="group flex flex-col h-full bg-cz-black-mid border border-cz-gray-dark rounded-cz cz-card-lift hover:border-cz-orange"
-                style={{ padding: 'clamp(20px, 4vw, 32px) clamp(18px, 3vw, 28px)' }}
+                style={{ padding: 32 }}
               >
-                <span className="font-mono text-cz-orange" style={{ fontSize: 13, letterSpacing: 2 }}>
+                <span className="font-mono text-cz-orange" style={{ fontSize: 16, letterSpacing: 2 }}>
                   {card.no}
                 </span>
                 <h3
-                  className="font-display text-white uppercase mt-5 md:mt-8"
-                  style={{ fontSize: 'clamp(22px, 3vw, 30px)', letterSpacing: 1 }}
+                  className="font-display text-white uppercase"
+                  style={{ fontSize: 28, letterSpacing: 1, marginTop: 22 }}
                 >
                   {card.title}
                 </h3>
                 <p
                   className="font-body text-cz-gray-light mt-3"
-                  style={{ fontWeight: 300, fontSize: 'clamp(13px, 1.5vw, 15px)', lineHeight: 1.65 }}
+                  style={{ fontWeight: 300, fontSize: 'clamp(16px, 1.8vw, 17px)', lineHeight: 1.65 }}
                 >
                   {card.desc}
                 </p>

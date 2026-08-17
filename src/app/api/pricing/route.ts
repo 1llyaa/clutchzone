@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import { fetchPriceConfig } from '@/lib/utils/pricing-server';
+import { getPricingConfig } from '@/lib/pricing/config-server';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const prices = await fetchPriceConfig();
-  return NextResponse.json(prices);
+  const config = await getPricingConfig();
+  return NextResponse.json(config);
 }

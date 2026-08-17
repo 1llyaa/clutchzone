@@ -1,16 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { getDurationOptions } from '@/lib/utils/pricing';
-import { fetchPriceConfig } from '@/lib/utils/pricing-server';
+import { getPricingConfig } from '@/lib/pricing/config-server';
+import { calculatePricing, reservedHoursOnSite } from '@/lib/pricing/engine';
+import type { CalcInput } from '@/lib/pricing/types';
 import { sendBookingNotification, sendBookingConfirmation } from '@/lib/email';
 import { z } from 'zod';
 
 const BookingSchema = z.object({
   stationType: z.enum(['pc', 'ps5']),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  startTime: z.string().regex(/^\d{2}:\d{2}$/),
-  durationMinutes: z.number().int().min(60).max(720),
-  packageLabel: z.string(),
+  startHour: z.number().int().min(0).max(27),
+  durationHours: z.number().int().min(1).max(24),
+  stationsCount: z.number().int().min(1).max(20),
+  offerKind: z.enum(['hours', 'hours_upsell', 'pass']),
+  offerId: z.string().min(1),
+  expectedAmount: z.number().int().min(0),
+  termsAccepted: z.boolean(),
+  clutchzoneAccount: z.string().trim().optional(),
+  paymentMethod: z.enum(['online', 'onsite']),
+  paysWithCredit: z.boolean().optional().default(false),
   customerName: z.string().min(2),
   customerEmail: z.string().email(),
   customerPhone: z.string().min(9),
@@ -27,29 +35,54 @@ function generateReference(): string {
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const parsed = BookingSchema.safeParse(body);
-
   if (!parsed.success) {
     return NextResponse.json({ error: 'Neplatné údaje', details: parsed.error.flatten() }, { status: 400 });
   }
-
   const data = parsed.data;
-  const supabase = createAdminClient();
 
-  // Compute the price server-side from DB prices — never trust the client.
-  // This also validates that the requested time/duration is a real offering
-  // (within opening hours, valid duration, pass eligibility).
-  const prices = await fetchPriceConfig();
-  const validOptions = getDurationOptions(data.stationType, data.startTime, data.date, prices);
-  const option = validOptions.find(
-    (o) => o.label === data.packageLabel && o.duration_minutes === data.durationMinutes,
-  );
-
-  if (!option) {
-    return NextResponse.json({ error: 'Neplatná kombinace času a délky rezervace' }, { status: 400 });
+  if (!data.termsAccepted) {
+    return NextResponse.json({ error: 'Bez souhlasu s podmínkami nemůžeme rezervaci dokončit.' }, { status: 400 });
   }
 
-  // Find all active stations of the requested type
-  const { data: stations, error: stErr } = await supabase
+  // Revalidate everything server-side over the SAME engine + live DB data —
+  // never trust stationType/date/hours/offer/price coming from the client.
+  const config = await getPricingConfig();
+  const dow = new Date(data.date + 'T12:00:00').getDay();
+  const dayType = config.dayTypes.find((g) => g.days.includes(dow));
+  if (!dayType) {
+    return NextResponse.json({ error: 'V tento den je zavřeno' }, { status: 400 });
+  }
+
+  const calcInput: CalcInput = {
+    stationType: data.stationType,
+    dayTypeKey: dayType.key,
+    startHour: data.startHour,
+    durationHours: data.durationHours,
+    stationsCount: data.stationsCount,
+  };
+  const result = calculatePricing(calcInput, config);
+  const offer = result?.all.find((o) => o.id === data.offerId && o.kind === data.offerKind);
+
+  if (!offer) {
+    return NextResponse.json(
+      { error: 'Tahle nabídka už neplatí, ceník se mezitím změnil.', currentOffer: result?.recommended ?? null },
+      { status: 409 },
+    );
+  }
+  if (offer.totalAmount !== data.expectedAmount) {
+    return NextResponse.json(
+      { error: 'Cena se mezitím změnila.', currentAmount: offer.totalAmount },
+      { status: 409 },
+    );
+  }
+
+  const reservedHours = reservedHoursOnSite(offer, calcInput, dayType);
+  const startTime = `${String(data.startHour % 24).padStart(2, '0')}:00`;
+  const durationMinutes = reservedHours * 60;
+
+  const admin = createAdminClient();
+
+  const { data: stations, error: stErr } = await admin
     .from('stations')
     .select('id, label')
     .eq('type', data.stationType)
@@ -59,83 +92,112 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Žádné stanice nejsou k dispozici' }, { status: 503 });
   }
 
-  // Find existing bookings that overlap our time window
-  const { data: bookings } = await supabase
+  const { data: existing } = await admin
     .from('bookings')
     .select('station_id, start_time, duration_minutes')
     .in('station_id', stations.map((s) => s.id))
     .neq('status', 'cancelled')
     .eq('date', data.date);
 
-  const [sh, sm] = data.startTime.split(':').map(Number);
+  const [sh, sm] = startTime.split(':').map(Number);
   const ourStart = sh * 60 + sm;
-  const ourEnd = ourStart + data.durationMinutes;
+  const ourEnd = ourStart + durationMinutes;
 
   const occupiedIds = new Set<string>();
-  for (const b of bookings ?? []) {
+  for (const b of existing ?? []) {
     const [bh, bm] = (b.start_time as string).split(':').map(Number);
     const bStart = bh * 60 + bm;
     const bEnd = bStart + b.duration_minutes;
-    if (bStart < ourEnd && bEnd > ourStart) {
-      occupiedIds.add(b.station_id);
-    }
+    if (bStart < ourEnd && bEnd > ourStart) occupiedIds.add(b.station_id);
   }
 
-  const freeStation = stations.find((s) => !occupiedIds.has(s.id));
-  if (!freeStation) {
-    return NextResponse.json({ error: 'Všechny stanice jsou obsazeny v tomto čase' }, { status: 409 });
+  const free = stations.filter((s) => !occupiedIds.has(s.id));
+  if (free.length < data.stationsCount) {
+    return NextResponse.json(
+      { error: `Jen ${free.length} ${free.length === 1 ? 'stanice je volná' : 'stanic je volných'} v tomto čase.`, available: free.length },
+      { status: 409 },
+    );
   }
 
-  // Get pricing_id (use 'standard' as the reference tier for now)
-  const { data: pricing } = await supabase
-    .from('pricing_tiers')
-    .select('id')
-    .eq('tier', 'standard')
-    .single();
-
+  const chosen = free.slice(0, data.stationsCount);
+  const groupId = crypto.randomUUID();
   const reference = generateReference();
 
-  const { data: inserted, error: insertErr } = await supabase
-    .from('bookings')
-    .insert({
-      reference,
-      station_id: freeStation.id,
-      pricing_id: pricing?.id,
-      customer_name: data.customerName,
-      customer_email: data.customerEmail,
-      customer_phone: data.customerPhone,
-      customer_discord: data.customerDiscord ?? null,
-      date: data.date,
-      start_time: data.startTime,
-      duration_minutes: data.durationMinutes,
-      total_price: option.amount,
-      status: 'confirmed',
-    })
-    .select('id')
+  const { data: termsSetting } = await admin
+    .from('site_settings')
+    .select('value')
+    .eq('key', 'terms_version')
     .single();
 
+  const rows = chosen.map((s) => ({
+    reference,
+    station_id: s.id,
+    pricing_id: null,
+    booking_group_id: groupId,
+    stations_count: data.stationsCount,
+    time_pass_id: offer.passId,
+    offer_kind: offer.kind,
+    // Paying with already-banked credit consumes it on the spot (staff
+    // deducts from ggLeap in person) — it never itself banks new hours,
+    // so it must never show up in the admin "needs crediting" queue.
+    credit_hours: offer.kind === 'pass' || data.paysWithCredit ? null : offer.hoursCovered,
+    pays_with_credit: data.paysWithCredit,
+    clutchzone_account: data.clutchzoneAccount?.trim() || null,
+    customer_name: data.customerName,
+    customer_email: data.customerEmail,
+    customer_phone: data.customerPhone,
+    customer_discord: data.customerDiscord || null,
+    date: data.date,
+    start_time: startTime,
+    duration_minutes: durationMinutes,
+    total_price: offer.amountPerStation,
+    payment_method: data.paymentMethod,
+    status: 'confirmed' as const,
+    terms_accepted_at: new Date().toISOString(),
+    terms_version: termsSetting?.value ?? null,
+  }));
+
+  // Single multi-row INSERT — atomic: either every station lands or none
+  // does, so a same-instant race on the same station rolls the whole
+  // request back instead of partially booking.
+  const { data: inserted, error: insertErr } = await admin
+    .from('bookings')
+    .insert(rows)
+    .select('id, station_id');
+
   if (insertErr) {
-    // Could be a race-condition constraint violation
-    if (insertErr.code === '23505') {
-      return NextResponse.json({ error: 'Všechny stanice jsou obsazeny v tomto čase' }, { status: 409 });
+    if (insertErr.code === '23P01') {
+      return NextResponse.json({ error: 'Někdo tě právě předběhl, zkus to prosím znovu.' }, { status: 409 });
     }
     return NextResponse.json({ error: 'Chyba při vytváření rezervace' }, { status: 500 });
   }
 
-  // Notify admin + confirm to customer — must never block or fail the booking
+  const stationLabels = chosen.map((s) => s.label);
+
   const emailData = {
     reference,
-    stationLabel: freeStation.label,
+    stationLabel: stationLabels.join(', '),
     customerName: data.customerName,
     customerEmail: data.customerEmail,
     customerPhone: data.customerPhone,
     date: data.date,
-    startTime: data.startTime,
-    durationMinutes: data.durationMinutes,
-    totalPrice: option.amount,
+    startTime,
+    durationMinutes,
+    totalPrice: offer.totalAmount,
+    offerLabel: offer.label,
+    isCredit: offer.isCredit,
+    creditExpiryMonths: config.creditExpiryMonths,
+    clutchzoneAccount: data.clutchzoneAccount?.trim() || null,
   };
   sendBookingNotification(emailData).catch(() => {});
   sendBookingConfirmation(emailData).catch(() => {});
 
-  return NextResponse.json({ id: inserted!.id, reference, stationLabel: freeStation.label });
+  return NextResponse.json({
+    id: groupId,
+    reference,
+    stationLabels,
+    totalAmount: offer.totalAmount,
+    isCredit: offer.isCredit,
+    firstBookingRowId: inserted?.[0]?.id ?? null,
+  });
 }

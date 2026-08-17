@@ -66,7 +66,7 @@ export default async function AdminDashboard() {
         <h1 className="font-display text-white uppercase" style={{ fontSize: 36, letterSpacing: 2 }}>
           DASHBOARD
         </h1>
-        <p className="font-mono text-cz-gray-mid" style={{ fontSize: 11, letterSpacing: 2, marginTop: 4 }}>
+        <p className="font-mono text-cz-gray-light" style={{ fontSize: 16, letterSpacing: 2, marginTop: 4 }}>
           {new Date().toLocaleDateString('cs-CZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).toUpperCase()}
         </p>
       </div>
@@ -79,14 +79,14 @@ export default async function AdminDashboard() {
             className="bg-cz-black-mid rounded-cz"
             style={{ padding: '24px 28px', border: '1px solid #2A2A2A' }}
           >
-            <div className="font-mono text-cz-gray-mid uppercase" style={{ fontSize: 10, letterSpacing: 2, marginBottom: 12 }}>
+            <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, marginBottom: 12 }}>
               {card.label}
             </div>
             <div className="font-display text-white" style={{ fontSize: 40, lineHeight: 1, letterSpacing: 1 }}>
               {card.value}
             </div>
             {card.sub && (
-              <div className="font-mono text-cz-gray-light" style={{ fontSize: 11, marginTop: 8 }}>
+              <div className="font-mono text-cz-gray-light" style={{ fontSize: 17, marginTop: 8 }}>
                 {card.sub}
               </div>
             )}
@@ -106,7 +106,7 @@ export default async function AdminDashboard() {
           <a
             href={`/${locale}/admin/bookings`}
             className="font-mono text-cz-orange uppercase hover:underline"
-            style={{ fontSize: 10, letterSpacing: 2 }}
+            style={{ fontSize: 16, letterSpacing: 2 }}
           >
             ZOBRAZIT VŠE →
           </a>
@@ -119,8 +119,8 @@ export default async function AdminDashboard() {
                 {['REFERENCE', 'ZÁKAZNÍK', 'STANICE', 'DATUM', 'ČAS', 'CELKEM', 'STATUS'].map((h) => (
                   <th
                     key={h}
-                    className="font-mono text-cz-gray-mid uppercase text-left"
-                    style={{ padding: '12px 16px', fontSize: 10, letterSpacing: 2 }}
+                    className="font-mono text-cz-gray-light uppercase text-left"
+                    style={{ padding: '12px 16px', fontSize: 16, letterSpacing: 2 }}
                   >
                     {h}
                   </th>
@@ -130,7 +130,7 @@ export default async function AdminDashboard() {
             <tbody>
               {stats.recent.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="font-mono text-cz-gray-mid text-center" style={{ padding: 32, fontSize: 12 }}>
+                  <td colSpan={7} className="font-mono text-cz-gray-light text-center" style={{ padding: 32, fontSize: 17 }}>
                     Žádné rezervace
                   </td>
                 </tr>
@@ -140,29 +140,29 @@ export default async function AdminDashboard() {
                     key={b.id}
                     style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
                   >
-                    <td className="font-mono text-cz-orange" style={{ padding: '12px 16px', fontSize: 12 }}>
+                    <td className="font-mono text-cz-orange" style={{ padding: '12px 16px', fontSize: 17 }}>
                       {b.reference}
                     </td>
-                    <td className="font-body text-white" style={{ padding: '12px 16px', fontSize: 13 }}>
+                    <td className="font-body text-white" style={{ padding: '12px 16px', fontSize: 17 }}>
                       {b.customer_name}
                     </td>
-                    <td className="font-mono text-cz-gray-light" style={{ padding: '12px 16px', fontSize: 12 }}>
+                    <td className="font-mono text-cz-gray-light" style={{ padding: '12px 16px', fontSize: 17 }}>
                       {b.stations?.[0]?.label ?? '—'}
                     </td>
-                    <td className="font-mono text-cz-gray-light" style={{ padding: '12px 16px', fontSize: 12 }}>
+                    <td className="font-mono text-cz-gray-light" style={{ padding: '12px 16px', fontSize: 17 }}>
                       {new Date(b.date).toLocaleDateString('cs-CZ')}
                     </td>
-                    <td className="font-mono text-cz-gray-light" style={{ padding: '12px 16px', fontSize: 12 }}>
+                    <td className="font-mono text-cz-gray-light" style={{ padding: '12px 16px', fontSize: 17 }}>
                       {b.start_time?.slice(0, 5)}
                     </td>
-                    <td className="font-body text-white" style={{ padding: '12px 16px', fontSize: 13 }}>
+                    <td className="font-body text-white" style={{ padding: '12px 16px', fontSize: 17 }}>
                       {b.total_price} Kč
                     </td>
                     <td style={{ padding: '12px 16px' }}>
                       <span
                         className="font-mono uppercase rounded-[2px]"
                         style={{
-                          fontSize: 9,
+                          fontSize: 16,
                           letterSpacing: 1,
                           padding: '3px 8px',
                           color: STATUS_COLOR[b.status] ?? '#888',
