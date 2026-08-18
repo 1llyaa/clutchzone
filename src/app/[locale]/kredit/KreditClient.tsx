@@ -216,7 +216,7 @@ export default function KreditClient({ hourTiers, creditExpiryMonths }: Props) {
               </label>
             </div>
 
-            <div style={{ background: '#1A1A1A', border: '1px solid #2A2A2A', padding: '12px 14px', marginTop: 18, fontFamily: "'Inter',sans-serif", fontSize: 19, lineHeight: 1.75, color: '#FFFFFF' }}>
+            <div style={{ background: '#1A1A1A', border: '1px solid #2A2A2A', padding: '12px 14px', marginTop: 18, fontFamily: "'Inter',sans-serif", ...bodyText, lineHeight: 1.75, color: '#FFFFFF' }}>
               {t('creditExpiryNote', { months: creditExpiryMonths })}
             </div>
 

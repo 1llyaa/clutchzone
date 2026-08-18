@@ -46,11 +46,11 @@ export default function StepPayment({ offer, termsAccepted, onToggleConsent, con
       </Button>
 
       <div className="flex items-center gap-2 justify-center">
-        <span className="font-mono text-cz-orange" style={{ ...labelText, letterSpacing: 1 }}>{t('coinsAmount', { amount: coinsAmount })}</span>
+        <span className="font-mono text-cz-orange" style={{ ...secondaryText, letterSpacing: 1 }}>{t('coinsAmount', { amount: coinsAmount })}</span>
         <Tooltip content={t('coinsTooltipNew')}>
           <span
             className="font-mono text-cz-gray-light rounded-full border border-cz-gray-dark inline-flex items-center justify-center"
-            style={{ width: 18, height: 18, fontSize: 13, lineHeight: 1, cursor: 'help' }}
+            style={{ width: 20, height: 20, ...labelText, lineHeight: 1, cursor: 'help' }}
           >
             i
           </span>
