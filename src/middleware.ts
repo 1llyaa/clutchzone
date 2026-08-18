@@ -12,8 +12,9 @@ export default async function middleware(request: NextRequest) {
     const pathname = request.nextUrl.pathname;
     const isRedirect = response.status === 307 || response.status === 308;
     const isMaintenancePage = pathname.includes('/maintenance');
+    const isOgImage = pathname.endsWith('/opengraph-image');
 
-    if (!isRedirect && !isMaintenancePage) {
+    if (!isRedirect && !isMaintenancePage && !isOgImage) {
       const expected = await expectedMaintenanceToken();
       const cookie = request.cookies.get(MAINTENANCE_COOKIE)?.value;
 
