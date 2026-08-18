@@ -5,11 +5,9 @@ import DatePicker from '@/components/ui/DatePicker';
 import PriceCalculator from '@/components/pricing/PriceCalculator';
 import { nextDatesForDayType } from '@/lib/pricing/dates';
 import { offerDisplayLabel } from '@/lib/pricing/offerLabel';
+import { DAY_ABBR, formatDayTypeLabel, type DayLocale } from '@/lib/pricing/dayLabel';
 import { labelText, secondaryText } from '@/lib/typography';
 import type { CalcInput, DayTypeGroup, Offer, PricingConfig } from '@/lib/pricing/types';
-
-const DAY_NAMES_SHORT_CS = ['NE', 'PO', 'ÚT', 'ST', 'ČT', 'PÁ', 'SO'];
-const DAY_NAMES_SHORT_EN = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
 function formatDateLabel(iso: string): string {
   const d = new Date(iso + 'T12:00:00');
@@ -47,8 +45,9 @@ export default function StepSummaryDate({
 }: Props) {
   const t = useTranslations('booking');
   const tc = useTranslations('calculator');
-  const locale = useLocale() === 'en' ? 'en' : 'cs';
-  const dayNames = locale === 'en' ? DAY_NAMES_SHORT_EN : DAY_NAMES_SHORT_CS;
+  const rawLocale = useLocale();
+  const locale = (['cs', 'en', 'de', 'ua'].includes(rawLocale) ? rawLocale : 'cs') as DayLocale;
+  const dayNames = DAY_ABBR[locale];
 
   if (!calcInput || !offer) {
     return <PriceCalculator config={config} variant="compact" onOfferChosen={onOfferChosen} />;
@@ -68,7 +67,7 @@ export default function StepSummaryDate({
     <div className="flex flex-col gap-5" style={{ marginTop: 8 }}>
       <div style={{ background: '#0A0A0A', border: '1px solid var(--color-cz-gray-dark)', padding: 20 }}>
         <div className="font-mono" style={{ ...labelText, letterSpacing: 1.5, color: 'var(--color-cz-white-soft)', textTransform: 'uppercase' }}>
-          {calcInput.stationType === 'pc' ? tc('pc') : tc('ps5')} · {dayType?.label} · {String(calcInput.startHour % 24).padStart(2, '0')}:00 ·{' '}
+          {calcInput.stationType === 'pc' ? tc('pc') : tc('ps5')} · {dayType ? formatDayTypeLabel(dayType.days, locale) : ''} · {String(calcInput.startHour % 24).padStart(2, '0')}:00 ·{' '}
           {hours} {hoursWord} · {stations} {stationsWord}
         </div>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 16, marginTop: 14 }}>

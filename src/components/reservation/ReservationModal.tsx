@@ -103,7 +103,7 @@ export default function ReservationModal() {
     }
     return {
       activeOffer: res.recommended,
-      dateWarning: t('dayTypeChangedWarning', { label: res.recommended.label, amount: res.recommended.totalAmount }),
+      dateWarning: t('dayTypeChangedWarning', { label: offerDisplayLabel(res.recommended, tc), amount: res.recommended.totalAmount }),
     };
   }, [config, calcInput, offer, date, t]);
 
