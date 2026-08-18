@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 import type { PricingConfig } from '@/lib/pricing/types';
+import { labelText } from '@/lib/typography';
 
 function formatTime(t: string): string {
   return t.slice(0, 5);
@@ -38,7 +39,7 @@ export default function FullPriceTable({ config }: { config: PricingConfig }) {
         <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 28, letterSpacing: 1, color: '#FFFFFF', textTransform: 'uppercase' }}>
           {t('fullPriceTable')}
         </span>
-        <span style={{ fontFamily: "'Space Mono',monospace", fontSize: 13, letterSpacing: 2, color: '#E84A1A' }}>{open ? '−' : '+'}</span>
+        <span style={{ fontFamily: "'Space Mono',monospace", ...labelText, letterSpacing: 2, color: '#E84A1A' }}>{open ? '−' : '+'}</span>
       </button>
       {open && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 32, marginTop: 32, minWidth: 0 }}>
@@ -47,7 +48,7 @@ export default function FullPriceTable({ config }: { config: PricingConfig }) {
               <div
                 style={{
                   fontFamily: "'Space Mono',monospace",
-                  fontSize: 13,
+                  ...labelText,
                   letterSpacing: 2.5,
                   color: '#E84A1A',
                   textTransform: 'uppercase',
@@ -61,8 +62,8 @@ export default function FullPriceTable({ config }: { config: PricingConfig }) {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {table.rows.map((r) => (
                   <div key={r.label} style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 16, padding: '8px 0', borderBottom: '1px solid #2A2A2A' }}>
-                    <span style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 1.5, color: '#E8E8E8', textTransform: 'uppercase' }}>{r.label}</span>
-                    <span style={{ fontFamily: "'Inter',sans-serif", fontWeight: 500, fontSize: 16, color: '#FFFFFF', whiteSpace: 'nowrap' }}>{r.value}</span>
+                    <span style={{ fontFamily: "'Space Mono',monospace", ...labelText, letterSpacing: 1.5, color: '#E8E8E8', textTransform: 'uppercase' }}>{r.label}</span>
+                    <span className="font-body" style={{ fontWeight: 500, fontSize: 16, color: '#FFFFFF', whiteSpace: 'nowrap' }}>{r.value}</span>
                   </div>
                 ))}
               </div>

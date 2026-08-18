@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { HourTier, StationType } from '@/lib/pricing/types';
+import { labelText, secondaryText } from '@/lib/typography';
 
 interface Props {
   hourTiers: HourTier[];
@@ -91,9 +92,9 @@ function Table({ stationType, tiers, onUpdate, onCreate }: { stationType: Statio
         {stationType === 'pc' ? 'GAMING PC' : 'PS5'}
       </div>
       {nonMonotonic.length > 0 && (
-        <div style={{ background: 'rgba(232,74,26,0.08)', border: '1px solid rgba(232,74,26,0.35)', borderRadius: 2, padding: '12px 16px', marginBottom: 12 }}>
+        <div style={{ background: 'rgba(232,74,26,0.08)', border: '1px solid rgba(232,74,26,0.35)', borderRadius: 'var(--radius-control)', padding: '12px 16px', marginBottom: 12 }}>
           {nonMonotonic.map((msg) => (
-            <p key={msg} className="font-mono" style={{ fontSize: 15, letterSpacing: 0.5, color: '#E84A1A', margin: 0 }}>⚠ {msg}</p>
+            <p key={msg} className="font-mono" style={{ ...secondaryText, letterSpacing: 0.5, color: '#E84A1A', margin: 0 }}>⚠ {msg}</p>
           ))}
         </div>
       )}
@@ -102,7 +103,7 @@ function Table({ stationType, tiers, onUpdate, onCreate }: { stationType: Statio
           <thead>
             <tr style={{ borderBottom: '1px solid #2A2A2A' }}>
               {['HODIN', 'CENA', 'KČ/H', 'ÚSPORA VS 1H', 'AKTIVNÍ', ''].map((h) => (
-                <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '10px 14px', fontSize: 15, letterSpacing: 1.5 }}>{h}</th>
+                <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '10px 14px', ...labelText, letterSpacing: 1.5 }}>{h}</th>
               ))}
             </tr>
           </thead>
@@ -121,18 +122,18 @@ function Table({ stationType, tiers, onUpdate, onCreate }: { stationType: Statio
                     <div className="flex items-center gap-2">
                       <input type="number" value={d.amount} onChange={(e) => setDrafts((p) => ({ ...p, [t.id]: { ...d, amount: Number(e.target.value) } }))}
                         className="bg-cz-black text-white font-mono rounded-[2px]" style={{ padding: '6px 10px', fontSize: 17, border: '1px solid #2A2A2A', width: 90 }} />
-                      <span className="font-mono text-cz-gray-light" style={{ fontSize: 15 }}>Kč</span>
+                      <span className="font-mono text-cz-gray-light" style={{ ...secondaryText }}>Kč</span>
                     </div>
                   </td>
                   <td className="font-mono text-cz-gray-light" style={{ padding: '8px 14px', fontSize: 16 }}>{perHour}</td>
-                  <td className="font-mono" style={{ padding: '8px 14px', fontSize: 16, color: savings > 0 ? '#E84A1A' : '#555' }}>{savings > 0 ? `−${savings} Kč` : '—'}</td>
+                  <td className="font-mono" style={{ padding: '8px 14px', fontSize: 16, color: savings > 0 ? '#E84A1A' : 'var(--color-cz-gray-light)' }}>{savings > 0 ? `−${savings} Kč` : '—'}</td>
                   <td style={{ padding: '8px 14px' }}>
-                    <button onClick={() => toggleActive(t)} disabled={saving === t.id} className="font-mono uppercase" style={{ fontSize: 15, letterSpacing: 1, color: t.isActive ? '#E84A1A' : '#888', background: 'transparent', border: `1px solid ${t.isActive ? '#E84A1A' : '#2A2A2A'}`, borderRadius: 2, padding: '4px 10px', cursor: 'pointer' }}>
+                    <button onClick={() => toggleActive(t)} disabled={saving === t.id} className="font-mono uppercase" style={{ ...labelText, letterSpacing: 1, color: t.isActive ? '#E84A1A' : '#888', background: 'transparent', border: `1px solid ${t.isActive ? '#E84A1A' : '#2A2A2A'}`, borderRadius: 'var(--radius-control)', padding: '4px 10px', cursor: 'pointer' }}>
                       {t.isActive ? 'AKTIVNÍ' : 'VYPNUTO'}
                     </button>
                   </td>
                   <td style={{ padding: '8px 14px' }}>
-                    <button onClick={() => save(t)} disabled={saving === t.id} className="font-mono text-cz-orange uppercase hover:underline disabled:opacity-50" style={{ fontSize: 15, letterSpacing: 1 }}>
+                    <button onClick={() => save(t)} disabled={saving === t.id} className="font-mono text-cz-orange uppercase hover:underline disabled:opacity-50" style={{ ...labelText, letterSpacing: 1 }}>
                       {saving === t.id ? '...' : 'ULOŽIT'}
                     </button>
                   </td>
@@ -150,7 +151,7 @@ function Table({ stationType, tiers, onUpdate, onCreate }: { stationType: Statio
               </td>
               <td colSpan={3} />
               <td style={{ padding: '10px 14px' }}>
-                <button onClick={create} disabled={creating} className="font-mono text-cz-orange uppercase hover:underline disabled:opacity-50" style={{ fontSize: 15, letterSpacing: 1 }}>
+                <button onClick={create} disabled={creating} className="font-mono text-cz-orange uppercase hover:underline disabled:opacity-50" style={{ ...labelText, letterSpacing: 1 }}>
                   {creating ? '...' : '+ PŘIDAT'}
                 </button>
               </td>
@@ -158,7 +159,7 @@ function Table({ stationType, tiers, onUpdate, onCreate }: { stationType: Statio
           </tbody>
         </table>
       </div>
-      {error && <p className="font-mono" style={{ fontSize: 15, color: '#E84A1A', marginTop: 8 }}>{error}</p>}
+      {error && <p className="font-mono" style={{ ...secondaryText, color: '#E84A1A', marginTop: 8 }}>{error}</p>}
     </div>
   );
 }

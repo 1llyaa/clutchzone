@@ -34,6 +34,7 @@
   --radius-control: 2px;
 
   --shadow-cta-glow: 0 0 18px rgba(232, 74, 26, 0.35);
+  --shadow-ambient-glow: 0 0 60px rgba(232, 74, 26, 0.08);
   --shadow-float-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
   --shadow-float-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
 

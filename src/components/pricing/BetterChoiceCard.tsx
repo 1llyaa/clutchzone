@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import type { Offer } from '@/lib/pricing/types';
+import { labelText } from '@/lib/typography';
 
 interface Props {
   offer: Offer;
@@ -28,10 +29,10 @@ export default function BetterChoiceCard({ offer, recommended, onApply }: Props)
       }}
     >
       <div style={{ flex: 1 }}>
-        <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 13, letterSpacing: 2, color: '#E84A1A', textTransform: 'uppercase', marginBottom: 8 }}>
+        <div style={{ fontFamily: "'Space Mono',monospace", ...labelText, letterSpacing: 2, color: '#E84A1A', textTransform: 'uppercase', marginBottom: 8 }}>
           {t('betterChoice')}
         </div>
-        <div style={{ fontFamily: "'Inter',sans-serif", fontSize: 16, lineHeight: 1.75, color: '#E8E8E8' }}>
+        <div className="font-body" style={{ fontSize: 16, lineHeight: 1.75, color: '#E8E8E8' }}>
           {t('betterChoiceMoreHours', { label: offer.label, hours: hoursText, price: priceText })}
         </div>
       </div>
@@ -47,7 +48,7 @@ export default function BetterChoiceCard({ offer, recommended, onApply }: Props)
           border: '1px solid #E84A1A',
           padding: '10px 18px',
           cursor: 'pointer',
-          borderRadius: 2,
+          borderRadius: 'var(--radius-control)',
         }}
       >
         {t('use')}
