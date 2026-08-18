@@ -65,7 +65,7 @@ export default function RezervacePage() {
       <Navbar />
       <main className="flex items-center justify-center" style={{ minHeight: '60vh', padding: '64px 16px' }}>
         <div className="flex flex-col items-center text-center gap-5">
-          <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 13, letterSpacing: 2.5 }}>
+          <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 16, letterSpacing: 2.5 }}>
             {t('eyebrow')}
           </span>
           <h1 className="font-display text-white uppercase" style={{ fontSize: 'clamp(32px, 5vw, 48px)', letterSpacing: 1 }}>

@@ -239,7 +239,7 @@ export default function AdminNotifications({ locale }: { locale: string }) {
       {panelOpen && (
         <div
           className="fixed bottom-[76px] right-5 z-[95] bg-cz-black-mid rounded-cz overflow-hidden animate-menu-in flex flex-col"
-          style={{ width: 380, maxWidth: 'min(380px, 92vw)', maxHeight: 480, border: '1px solid #2A2A2A', boxShadow: '0 16px 48px rgba(0,0,0,0.6)' }}
+          style={{ width: 380, maxWidth: 'min(380px, 92vw)', maxHeight: 480, border: '1px solid #2A2A2A', boxShadow: 'var(--shadow-float-lg)' }}
         >
           <div className="flex items-center justify-between" style={{ padding: '14px 16px', borderBottom: '1px solid #2A2A2A' }}>
             <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
@@ -288,7 +288,7 @@ export default function AdminNotifications({ locale }: { locale: string }) {
             key={t.id}
             onClick={() => goToEntry(t)}
             className="text-left bg-cz-black-mid rounded-cz animate-menu-in cursor-pointer hover:bg-cz-black-light transition-colors duration-150"
-            style={{ border: '1px solid #E84A1A', padding: '14px 16px', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}
+            style={{ border: '1px solid #E84A1A', padding: '14px 16px', boxShadow: 'var(--shadow-float-lg)' }}
           >
             <div className="flex items-center gap-2" style={{ marginBottom: 4 }}>
               <span className="rounded-full bg-cz-orange animate-flicker flex-shrink-0" style={{ width: 7, height: 7 }} />

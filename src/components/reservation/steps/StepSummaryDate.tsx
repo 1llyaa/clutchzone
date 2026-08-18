@@ -144,12 +144,12 @@ export default function StepSummaryDate({
 
       {dateWarning && (
         <div
+          className="font-body"
           style={{
             background: 'rgba(232,74,26,0.08)',
             border: '1px solid rgba(232,74,26,0.4)',
             borderLeft: '2px solid #E84A1A',
             padding: '12px 16px',
-            fontFamily: "'Inter',sans-serif",
             fontSize: 16,
             lineHeight: 1.75,
             color: '#E8E8E8',
