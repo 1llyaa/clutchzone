@@ -5,6 +5,9 @@ import { getCountries, getCountryCallingCode, parsePhoneNumberFromString, AsYouT
 import type { CountryCode } from 'libphonenumber-js';
 import { labelText, secondaryText, bodyText } from '@/lib/typography';
 
+const SEARCH_PLACEHOLDER = { cs: 'Hledat zemi…', en: 'Search country…', de: 'Land suchen…', ua: 'Пошук країни…' };
+const NO_RESULTS = { cs: 'Nic nenalezeno', en: 'No results', de: 'Keine Ergebnisse', ua: 'Нічого не знайдено' };
+
 function flagEmoji(iso2: string): string {
   return iso2
     .toUpperCase()
@@ -15,7 +18,7 @@ interface Props {
   label: string;
   value: string;
   onChange: (v: string) => void;
-  locale: 'cs' | 'en';
+  locale: 'cs' | 'en' | 'de' | 'ua';
   defaultCountry?: CountryCode;
   placeholder?: string;
 }
@@ -148,7 +151,7 @@ export default function PhoneField({ label, value, onChange, locale, defaultCoun
               autoFocus
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder={locale === 'en' ? 'Search country…' : 'Hledat zemi…'}
+              placeholder={SEARCH_PLACEHOLDER[locale]}
               className="text-white placeholder:text-cz-gray-light outline-none"
               style={{ background: 'transparent', border: 'none', borderBottom: '1px solid var(--color-cz-gray-dark)', padding: '10px 14px', ...bodyText }}
             />
@@ -179,7 +182,7 @@ export default function PhoneField({ label, value, onChange, locale, defaultCoun
               ))}
               {filtered.length === 0 && (
                 <div style={{ padding: '10px 14px', color: '#888888', ...secondaryText }}>
-                  {locale === 'en' ? 'No results' : 'Nic nenalezeno'}
+                  {NO_RESULTS[locale]}
                 </div>
               )}
             </div>

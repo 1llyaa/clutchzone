@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { Link } from '@/navigation';
 import type { Offer } from '@/lib/pricing/types';
+import { offerDisplayLabel } from '@/lib/pricing/offerLabel';
 import { labelText, secondaryText } from '@/lib/typography';
 import SavingsBadge from './SavingsBadge';
 
@@ -79,7 +80,7 @@ export default function OfferCard({
       </div>
 
       <div className="font-display" style={{ fontSize: 28, letterSpacing: 1, color: '#FFFFFF', textTransform: 'uppercase', marginTop: 16 }}>
-        {offer.label}
+        {offerDisplayLabel(offer, t)}
       </div>
 
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginTop: 8 }}>
@@ -177,7 +178,7 @@ export default function OfferCard({
               >
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="font-display" style={{ fontSize: 20, letterSpacing: 1, color: '#FFFFFF', textTransform: 'uppercase' }}>
-                    {a.label}
+                    {offerDisplayLabel(a, t)}
                   </div>
                   <div className="font-mono" style={{ ...labelText, letterSpacing: 1, marginTop: 6, color: a.isCredit ? 'var(--color-cz-orange)' : '#888888', textTransform: 'uppercase' }}>
                     {a.isCredit ? t('timeTagAltCredit') : t('timeTagAlt', { window: a.timeWindowLabel ?? t('timeTagDefault') })} · {a.effectiveHourly} KČ/H

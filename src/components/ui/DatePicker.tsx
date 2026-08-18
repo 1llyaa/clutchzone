@@ -4,15 +4,19 @@ import { useEffect, useRef, useState } from 'react';
 
 const MONTH_NAMES_CS = ['LEDEN', 'ÚNOR', 'BŘEZEN', 'DUBEN', 'KVĚTEN', 'ČERVEN', 'ČERVENEC', 'SRPEN', 'ZÁŘÍ', 'ŘÍJEN', 'LISTOPAD', 'PROSINEC'];
 const MONTH_NAMES_EN = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
+const MONTH_NAMES_DE = ['JANUAR', 'FEBRUAR', 'MÄRZ', 'APRIL', 'MAI', 'JUNI', 'JULI', 'AUGUST', 'SEPTEMBER', 'OKTOBER', 'NOVEMBER', 'DEZEMBER'];
+const MONTH_NAMES_UA = ['СІЧЕНЬ', 'ЛЮТИЙ', 'БЕРЕЗЕНЬ', 'КВІТЕНЬ', 'ТРАВЕНЬ', 'ЧЕРВЕНЬ', 'ЛИПЕНЬ', 'СЕРПЕНЬ', 'ВЕРЕСЕНЬ', 'ЖОВТЕНЬ', 'ЛИСТОПАД', 'ГРУДЕНЬ'];
 const DAY_NAMES_CS = ['PO', 'ÚT', 'ST', 'ČT', 'PÁ', 'SO', 'NE'];
 const DAY_NAMES_EN = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+const DAY_NAMES_DE = ['MO', 'DI', 'MI', 'DO', 'FR', 'SA', 'SO'];
+const DAY_NAMES_UA = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'НД'];
 
 interface Props {
   value: string | null;
   onChange: (iso: string) => void;
   min?: string;
   max?: string;
-  locale?: 'cs' | 'en';
+  locale?: 'cs' | 'en' | 'de' | 'ua';
   placeholder?: string;
 }
 
@@ -64,8 +68,10 @@ export default function DatePicker({ value, onChange, min, max, locale = 'cs', p
     return () => document.removeEventListener('mousedown', onClick);
   }, [open]);
 
-  const monthNames = locale === 'en' ? MONTH_NAMES_EN : MONTH_NAMES_CS;
-  const dayNames = locale === 'en' ? DAY_NAMES_EN : DAY_NAMES_CS;
+  const MONTH_NAMES = { cs: MONTH_NAMES_CS, en: MONTH_NAMES_EN, de: MONTH_NAMES_DE, ua: MONTH_NAMES_UA };
+  const DAY_NAMES = { cs: DAY_NAMES_CS, en: DAY_NAMES_EN, de: DAY_NAMES_DE, ua: DAY_NAMES_UA };
+  const monthNames = MONTH_NAMES[locale];
+  const dayNames = DAY_NAMES[locale];
 
   const startWeekday = (new Date(viewY, viewM, 1).getDay() + 6) % 7;
   const daysInMonth = new Date(viewY, viewM + 1, 0).getDate();

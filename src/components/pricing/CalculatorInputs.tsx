@@ -2,6 +2,7 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import { dayTypeCloseHour, dayTypeOpenHour } from '@/lib/pricing/dayTypes';
+import { formatDayTypeLabel, type DayLocale } from '@/lib/pricing/dayLabel';
 import type { DayTypeGroup, PricingConfig, StationType } from '@/lib/pricing/types';
 import { labelText, secondaryText } from '@/lib/typography';
 
@@ -60,7 +61,8 @@ export default function CalculatorInputs({
   maxStations = MAX_STATIONS,
 }: Props) {
   const t = useTranslations('calculator');
-  const locale = useLocale() === 'en' ? 'en' : 'cs';
+  const rawLocale = useLocale();
+  const locale = (['cs', 'en', 'de', 'ua'].includes(rawLocale) ? rawLocale : 'cs') as DayLocale;
 
   const closeHour = Math.round(dayTypeCloseHour(dayType));
   const openHour = Math.round(dayTypeOpenHour(dayType));
@@ -96,7 +98,7 @@ export default function CalculatorInputs({
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {config.dayTypes.map((d) => (
             <button key={d.key} className="font-display" style={pillStyle(d.key === dayType.key)} onClick={() => onDayType(d.key)}>
-              {d.label}
+              {formatDayTypeLabel(d.days, locale)}
             </button>
           ))}
         </div>
@@ -119,7 +121,7 @@ export default function CalculatorInputs({
         {activePassesForStation.length > 0 && (
           <div className="font-mono" style={{ display: 'flex', alignItems: 'center', gap: 8, ...secondaryText, letterSpacing: 1.5, color: 'var(--color-cz-white-soft)', marginTop: 12 }}>
             <span className="rounded-full" style={{ width: 5, height: 5, background: 'var(--color-cz-orange)', display: 'inline-block' }} />
-            {t('cheaperTime', { names: activePassesForStation.map((p) => (locale === 'en' ? p.nameEn : p.nameCs)).join(' · ') })}
+            {t('cheaperTime', { names: activePassesForStation.map((p) => (locale === 'en' || locale === 'de' || locale === 'ua' ? p.nameEn : p.nameCs)).join(' · ') })}
           </div>
         )}
       </div>

@@ -50,6 +50,11 @@
   --animate-step-in: cz-step-in 220ms cubic-bezier(0.2, 0, 0, 1) both;
 }
 
+[data-locale="ua"] {
+  --font-display: 'Oswald', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
 @keyframes cz-flicker {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.55; }

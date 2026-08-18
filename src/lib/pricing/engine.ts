@@ -28,12 +28,6 @@ function parseTimeToHours(t: string): number {
   return h + m / 60;
 }
 
-function hoursWordCs(n: number): string {
-  if (n === 1) return 'HODINA';
-  if (n >= 2 && n <= 4) return 'HODINY';
-  return 'HODIN';
-}
-
 interface Combo {
   totalHours: number;
   amount: number;
@@ -111,7 +105,7 @@ function buildHoursOffer(
     id: `${kind}:${combo.totalHours}`,
     kind,
     passId: null,
-    label: `${combo.totalHours} ${hoursWordCs(combo.totalHours)}`,
+    label: String(combo.totalHours),
     totalAmount,
     amountPerStation: combo.amount,
     hoursCovered: combo.totalHours,
