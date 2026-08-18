@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 import { routing } from '../i18n/routing';
-import { MAINTENANCE_COOKIE, expectedMaintenanceToken } from '@/lib/maintenance';
+import { MAINTENANCE_COOKIE, expectedMaintenanceToken, resolveOrigin } from '@/lib/maintenance';
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -19,8 +19,7 @@ export default async function middleware(request: NextRequest) {
 
       if (!expected || cookie !== expected) {
         const locale = pathname.split('/')[1] || routing.defaultLocale;
-        const url = request.nextUrl.clone();
-        url.pathname = `/${locale}/maintenance`;
+        const url = new URL(`/${locale}/maintenance`, resolveOrigin(request));
         url.searchParams.set('from', pathname);
         return NextResponse.redirect(url);
       }

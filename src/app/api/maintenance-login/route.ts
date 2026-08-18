@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { MAINTENANCE_COOKIE, maintenanceToken } from '@/lib/maintenance';
+import { MAINTENANCE_COOKIE, maintenanceToken, resolveOrigin } from '@/lib/maintenance';
 
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 
@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
   const expectedUser = process.env.MAINTENANCE_USER;
   const expectedPass = process.env.MAINTENANCE_PASS;
 
-  const url = request.nextUrl.clone();
+  const url = new URL(request.nextUrl.pathname, resolveOrigin(request));
 
   if (!expectedUser || !expectedPass || user !== expectedUser || pass !== expectedPass) {
     url.pathname = `/${locale}/maintenance`;
