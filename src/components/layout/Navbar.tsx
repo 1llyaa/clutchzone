@@ -45,7 +45,7 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               className="font-body font-medium text-cz-white-soft uppercase hover:text-white transition-[color] duration-200 ease-out cz-link-underline"
-              style={{ fontSize: 16, letterSpacing: 1.5 }}
+              style={{ fontSize: 16, letterSpacing: 1.5, whiteSpace: 'nowrap' }}
             >
               {link.label}
             </a>
@@ -54,7 +54,7 @@ export default function Navbar() {
               key={link.href}
               href={`/${link.href}`}
               className="font-body font-medium text-cz-white-soft uppercase hover:text-white transition-[color] duration-200 ease-out cz-link-underline"
-              style={{ fontSize: 16, letterSpacing: 1.5 }}
+              style={{ fontSize: 16, letterSpacing: 1.5, whiteSpace: 'nowrap' }}
             >
               {link.label}
             </Link>
@@ -62,7 +62,7 @@ export default function Navbar() {
         )}
 
         <div className="flex items-center gap-2 ml-2">
-          {(['cs', 'en'] as const).map((l, i) => (
+          {(['cs', 'en', 'de', 'ua'] as const).map((l, i) => (
             <span key={l} className="flex items-center gap-2">
               {i > 0 && <span className="text-cz-gray-dark font-mono text-base">|</span>}
               <button
@@ -142,7 +142,7 @@ export default function Navbar() {
             ),
           )}
           <div className="flex items-center gap-3 mt-4 mb-4">
-            {(['cs', 'en'] as const).map((l) => (
+            {(['cs', 'en', 'de', 'ua'] as const).map((l) => (
               <button
                 key={l}
                 onClick={() => { switchLocale(l); setMenuOpen(false); }}
