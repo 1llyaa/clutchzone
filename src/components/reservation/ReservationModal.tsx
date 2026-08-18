@@ -7,6 +7,7 @@ import Button from '@/components/ui/Button';
 import { useReservation } from './ReservationContext';
 import { track } from '@/lib/analytics/track';
 import { calculatePricing, reservedHoursOnSite } from '@/lib/pricing/engine';
+import { offerDisplayLabel } from '@/lib/pricing/offerLabel';
 import { dayTypeForDate } from '@/lib/pricing/dates';
 import type { CalcInput, Offer, PricingConfig } from '@/lib/pricing/types';
 import { labelText, secondaryText } from '@/lib/typography';
@@ -34,6 +35,7 @@ interface BookingResult {
 
 export default function ReservationModal() {
   const t = useTranslations('booking');
+  const tc = useTranslations('calculator');
   const locale = useLocale();
   const { isOpen, prefill, close } = useReservation();
   const [config, setConfig] = useState<PricingConfig | null>(null);
@@ -316,7 +318,7 @@ export default function ReservationModal() {
                   date={date ?? ''}
                   startTime={calcInput ? `${String(calcInput.startHour % 24).padStart(2, '0')}:00` : ''}
                   totalAmount={result.totalAmount}
-                  offerLabel={effectiveOffer?.label ?? ''}
+                  offerLabel={effectiveOffer ? offerDisplayLabel(effectiveOffer, tc) : ''}
                   isCredit={result.isCredit}
                   creditExpiryMonths={config.creditExpiryMonths}
                   onClose={handleClose}

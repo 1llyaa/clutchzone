@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import DatePicker from '@/components/ui/DatePicker';
 import PriceCalculator from '@/components/pricing/PriceCalculator';
 import { nextDatesForDayType } from '@/lib/pricing/dates';
+import { offerDisplayLabel } from '@/lib/pricing/offerLabel';
 import { labelText, secondaryText } from '@/lib/typography';
 import type { CalcInput, DayTypeGroup, Offer, PricingConfig } from '@/lib/pricing/types';
 
@@ -72,7 +73,7 @@ export default function StepSummaryDate({
         </div>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 16, marginTop: 14 }}>
           <span className="font-display" style={{ fontSize: 26, letterSpacing: 1, color: '#FFFFFF', textTransform: 'uppercase' }}>
-            {shownOffer.label}
+            {offerDisplayLabel(shownOffer, tc)}
           </span>
           <span className="font-display" style={{ fontSize: 34, color: '#FFFFFF' }}>
             {shownOffer.totalAmount} <span className="font-mono" style={{ ...secondaryText, letterSpacing: 1.5, color: 'var(--color-cz-white-soft)' }}>KČ</span>
