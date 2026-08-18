@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Plus } from '@phosphor-icons/react';
 import Button from '@/components/ui/Button';
 import ImagePlaceholder from '@/components/ui/ImagePlaceholder';
+import { isAllowedImageHost } from '@/lib/images';
 
 interface Game {
   id: string;
@@ -166,10 +167,10 @@ export default function GamesClient() {
       {loading ? (
         <p className="font-mono text-cz-gray-light text-center" style={{ padding: 40, fontSize: 17 }}>NAČÍTÁNÍ...</p>
       ) : (
-        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A' }}>
+        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid var(--color-cz-gray-dark)' }}>
           <table className="w-full">
             <thead>
-              <tr style={{ borderBottom: '1px solid #2A2A2A' }}>
+              <tr style={{ borderBottom: '1px solid var(--color-cz-gray-dark)' }}>
                 {['', 'NÁZEV', 'ŽÁNR', 'PLATFORMA', 'STATUS', ''].map((h) => (
                   <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '12px 16px', fontSize: 16, letterSpacing: 2 }}>{h}</th>
                 ))}
@@ -183,16 +184,24 @@ export default function GamesClient() {
                   {/* Thumbnail */}
                   <td style={{ padding: '8px 16px', width: 52 }}>
                     {g.cover_url ? (
-                      <Image src={g.cover_url} alt={g.title} width={36} height={52} style={{ objectFit: 'cover', borderRadius: 2 }} />
+                      isAllowedImageHost(g.cover_url) ? (
+                        <Image src={g.cover_url} alt={g.title} width={36} height={52} style={{ objectFit: 'cover', borderRadius: 2 }} />
+                      ) : (
+                        // Free-text "COVER URL" field can point at any host — next/image
+                        // throws for hosts outside next.config.ts's remotePatterns, so
+                        // fall back to a plain <img> for anything not on *.supabase.co.
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={g.cover_url} alt={g.title} width={36} height={52} style={{ objectFit: 'cover', borderRadius: 2 }} />
+                      )
                     ) : (
-                      <div style={{ width: 36, height: 52, background: '#2A2A2A', borderRadius: 2 }} />
+                      <div style={{ width: 36, height: 52, background: 'var(--color-cz-gray-dark)', borderRadius: 2 }} />
                     )}
                   </td>
                   <td className="font-body text-white" style={{ padding: '12px 16px', fontSize: 17, fontWeight: 500 }}>{g.title}</td>
                   <td className="font-mono text-cz-gray-light" style={{ padding: '12px 16px', fontSize: 17 }}>{g.genre || '—'}</td>
                   <td style={{ padding: '12px 16px' }}>
                     <span
-                      className="font-mono uppercase rounded-[2px]"
+                      className="font-mono uppercase rounded-control"
                       style={{ fontSize: 16, letterSpacing: 1, padding: '3px 8px', color: '#fff', background: PLATFORM_COLOR[g.platform] ?? 'var(--color-cz-orange)' }}
                     >
                       {PLATFORM_LABEL[g.platform]}
@@ -201,7 +210,7 @@ export default function GamesClient() {
                   <td style={{ padding: '12px 16px' }}>
                     <button
                       onClick={() => toggleActive(g)}
-                      className="font-mono uppercase rounded-[2px]"
+                      className="font-mono uppercase rounded-control"
                       style={{
                         fontSize: 16, letterSpacing: 1, padding: '3px 8px',
                         color: g.is_active ? 'var(--color-cz-success)' : '#888',
@@ -231,7 +240,7 @@ export default function GamesClient() {
       {/* Add / Edit modal */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.75)' }} onClick={() => setShowForm(false)}>
-          <div className="bg-cz-black-mid rounded-cz w-full max-w-xl overflow-auto" style={{ maxHeight: '90vh', padding: 40, border: '1px solid #2A2A2A' }} onClick={(e) => e.stopPropagation()}>
+          <div className="bg-cz-black-mid rounded-cz w-full max-w-xl overflow-auto" style={{ maxHeight: '90vh', padding: 40, border: '1px solid var(--color-cz-gray-dark)' }} onClick={(e) => e.stopPropagation()}>
             <h2 className="font-display text-white uppercase" style={{ fontSize: 24, letterSpacing: 2, marginBottom: 28 }}>
               {editing ? 'UPRAVIT HRU' : 'PŘIDAT HRU'}
             </h2>
@@ -239,15 +248,18 @@ export default function GamesClient() {
             <div className="flex gap-6">
               {/* Cover upload */}
               <div
-                className="flex-shrink-0 flex flex-col items-center justify-center rounded-[2px] cursor-pointer overflow-hidden"
-                style={{ width: 120, height: 172, border: '2px dashed #2A2A2A', background: '#111', position: 'relative' }}
+                className="flex-shrink-0 flex flex-col items-center justify-center rounded-control cursor-pointer overflow-hidden"
+                style={{ width: 120, height: 172, border: '2px dashed var(--color-cz-gray-dark)', background: '#111', position: 'relative' }}
                 onClick={() => fileInputRef.current?.click()}
               >
                 {coverPreview ? (
-                  coverFile ? (
-                    // Local file just picked, not uploaded yet — coverPreview is a
-                    // blob: URL (URL.createObjectURL). next/image can't load blob:
-                    // URLs, so this specific case keeps a raw <img>.
+                  coverFile || !isAllowedImageHost(coverPreview) ? (
+                    // Two cases fall back to a raw <img> here: (1) a local file just
+                    // picked, not uploaded yet — coverPreview is a blob: URL
+                    // (URL.createObjectURL), which next/image can't load; (2) editing
+                    // an existing game whose cover_url is a free-text URL outside
+                    // next.config.ts's remotePatterns (only *.supabase.co) — next/image
+                    // throws at render for any other host.
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={coverPreview} alt="" className="w-full h-full object-cover" />
                   ) : (
@@ -273,8 +285,8 @@ export default function GamesClient() {
                       value={form[key as keyof typeof form]}
                       onChange={(e) => setForm((p) => ({ ...p, [key]: e.target.value }))}
                       placeholder={placeholder}
-                      className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange"
-                      style={{ padding: '8px 12px', fontSize: 19, border: '1px solid #2A2A2A' }}
+                      className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange"
+                      style={{ padding: '8px 12px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
                     />
                   </div>
                 ))}
@@ -306,8 +318,8 @@ export default function GamesClient() {
                 onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
                 rows={3}
                 placeholder="Krátký popis hry..."
-                className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange resize-none"
-                style={{ padding: '8px 12px', fontSize: 19, border: '1px solid #2A2A2A' }}
+                className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange resize-none"
+                style={{ padding: '8px 12px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
               />
             </div>
 

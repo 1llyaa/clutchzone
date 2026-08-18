@@ -7,6 +7,7 @@ import { CaretLeft, CaretRight } from '@phosphor-icons/react';
 import Button from '@/components/ui/Button';
 import ImagePlaceholder from '@/components/ui/ImagePlaceholder';
 import Reveal from '@/components/ui/Reveal';
+import { isAllowedImageHost } from '@/lib/images';
 
 interface Game {
   id: string;
@@ -33,23 +34,37 @@ function GameCard({ game }: { game: Game }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Cover image */}
+      {/* Cover image — the admin's "COVER URL" field accepts any external
+          URL, but next/image throws at render for hosts outside
+          next.config.ts's remotePatterns (only *.supabase.co). Fall back to
+          a plain <img> for anything else so an off-allowlist URL can't crash
+          this section. */}
       {game.cover_url ? (
-        <Image
-          src={game.cover_url}
-          alt={game.title}
-          fill
-          sizes="220px"
-          className="object-cover"
-          style={{ transform: hovered ? 'scale(1.06)' : 'scale(1)', transition: 'transform 0.5s ease', willChange: 'transform' }}
-        />
+        isAllowedImageHost(game.cover_url) ? (
+          <Image
+            src={game.cover_url}
+            alt={game.title}
+            fill
+            sizes="220px"
+            className="object-cover"
+            style={{ transform: hovered ? 'scale(1.06)' : 'scale(1)', transition: 'transform 0.5s ease', willChange: 'transform' }}
+          />
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={game.cover_url}
+            alt={game.title}
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ transform: hovered ? 'scale(1.06)' : 'scale(1)', transition: 'transform 0.5s ease', willChange: 'transform' }}
+          />
+        )
       ) : (
         <ImagePlaceholder label="NO IMAGE" />
       )}
 
       {/* Platform badge */}
       <div
-        className="absolute top-3 left-3 font-mono uppercase rounded-[2px]"
+        className="absolute top-3 left-3 font-mono uppercase rounded-control"
         style={{ fontSize: 16, letterSpacing: 2, padding: '3px 7px', color: '#fff', background: PLATFORM_COLOR[game.platform] ?? 'var(--color-cz-orange)' }}
       >
         {game.platform === 'both' ? 'PC + PS5' : game.platform.toUpperCase()}
