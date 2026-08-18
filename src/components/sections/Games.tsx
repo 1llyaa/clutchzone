@@ -128,11 +128,11 @@ export default function Games({ games }: { games: Game[] }) {
   return (
     <section
       id="herna"
-      className="bg-cz-black py-14 md:py-[104px]"
+      className="bg-cz-black px-6 py-14 md:px-16 md:py-[104px]"
       style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
     >
       {/* Heading */}
-      <Reveal className="max-w-[1440px] mx-auto flex items-end justify-between px-6 pb-8 md:px-16 md:pb-[40px]">
+      <Reveal className="max-w-[1440px] mx-auto flex items-end justify-between pb-8 md:pb-[40px]">
         <div>
           <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}>
             {t('eyebrow')}
@@ -170,7 +170,7 @@ export default function Games({ games }: { games: Game[] }) {
         <div
           ref={scrollRef}
           onScroll={onScroll}
-          className="max-w-[1440px] mx-auto px-6 md:px-16"
+          className="max-w-[1440px] mx-auto"
           style={{
             display: 'flex',
             gap: 12,

@@ -46,8 +46,8 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
 
       {/* Content */}
       <div
-        className="relative z-10 grid items-center mx-auto px-6 py-16 md:px-16 md:py-[120px] lg:grid-cols-[1.15fr_0.85fr]"
-        style={{ gap: 48, maxWidth: 1440 }}
+        className="relative z-10 grid items-center mx-auto max-w-[1440px] px-6 py-16 md:px-16 md:py-[120px] lg:grid-cols-[1.15fr_0.85fr]"
+        style={{ gap: 48 }}
       >
         {/* Left */}
         <div>

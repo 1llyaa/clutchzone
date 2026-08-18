@@ -202,7 +202,7 @@ export default function PriceCalculator({ config, variant = 'full', onOfferChose
           WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 0%, #000, transparent 80%)',
         }}
       />
-      <div className="relative max-w-[1200px] mx-auto">
+      <div className="relative max-w-[1440px] mx-auto">
         <Reveal>
           <div style={{ marginBottom: 40 }}>
             <span className="font-mono text-cz-orange uppercase block" style={{ ...labelText, letterSpacing: 2.5, marginBottom: 12 }}>

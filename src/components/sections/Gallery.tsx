@@ -183,11 +183,11 @@ export default function Gallery({ images, displayType }: Props) {
   return (
     <section
       id="galerie"
-      className="bg-cz-black py-14 md:py-[104px]"
+      className="bg-cz-black px-6 py-14 md:px-16 md:py-[104px]"
       style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
     >
       {/* Heading */}
-      <Reveal className="max-w-[1440px] mx-auto px-6 mb-8 md:px-16 md:mb-12">
+      <Reveal className="max-w-[1440px] mx-auto mb-8 md:mb-12">
         <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}>
           {t('eyebrow')}
         </span>
@@ -197,13 +197,14 @@ export default function Gallery({ images, displayType }: Props) {
       </Reveal>
 
       <Reveal delay={100}>
-        {/* Mobile: Swiper (all modes) */}
-        <div className="md:hidden">
+        {/* Mobile: Swiper (all modes) — the swiper itself still needs its own px-6 for the
+            peeking-slide effect, since this section's own padding doesn't reach into it. */}
+        <div className="md:hidden -mx-6">
           <MobileGallery images={images} />
         </div>
 
-        {/* Desktop: configured layout */}
-        <div className={`hidden md:block ${displayType === 'carousel' ? '' : 'px-16'}`}>
+        {/* Desktop: configured layout — same max-w-1440 frame as the heading above */}
+        <div className="hidden md:block max-w-[1440px] mx-auto">
           {displayType === 'carousel' && <Carousel images={images} />}
           {displayType === 'masonry'  && <Masonry  images={images} />}
           {displayType === 'mosaic'   && <Mosaic   images={images} />}
