@@ -34,13 +34,13 @@ export default function Tooltip({ content, children }: TooltipProps) {
         <span
           id={id}
           role="tooltip"
-          className="absolute font-mono text-white rounded-[2px] pointer-events-none"
+          className="absolute font-mono text-white rounded-control pointer-events-none"
           style={{
             bottom: 'calc(100% + 8px)',
             left: '50%',
             transform: 'translateX(-50%)',
             background: '#0A0A0A',
-            border: '1px solid #2A2A2A',
+            border: '1px solid var(--color-cz-gray-dark)',
             padding: '6px 10px',
             fontSize: 17,
             letterSpacing: 0.5,

@@ -40,12 +40,12 @@ export default function ImagePlaceholder({
           ? {
               width: width ?? '100%',
               height: height ?? '100%',
-              background: 'linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%)',
+              background: 'linear-gradient(135deg, #1a1a1a 0%, var(--color-cz-gray-dark) 100%)',
             }
           : undefined
       }
     >
-      {uploadable && <Plus size={24} className="text-cz-gray-light" weight="regular" />}
+      {uploadable && <Plus size={24} className="text-cz-gray-light" weight="bold" />}
       <span
         className={`${font === 'display' ? 'font-display' : 'font-mono'} text-cz-gray-light uppercase`}
         style={{ fontSize: 16, letterSpacing }}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Warning } from '@phosphor-icons/react';
 import type { HourTier, StationType } from '@/lib/pricing/types';
 import { labelText, secondaryText } from '@/lib/typography';
 
@@ -94,14 +95,16 @@ function Table({ stationType, tiers, onUpdate, onCreate }: { stationType: Statio
       {nonMonotonic.length > 0 && (
         <div style={{ background: 'rgba(232,74,26,0.08)', border: '1px solid rgba(232,74,26,0.35)', borderRadius: 'var(--radius-control)', padding: '12px 16px', marginBottom: 12 }}>
           {nonMonotonic.map((msg) => (
-            <p key={msg} className="font-mono" style={{ ...secondaryText, letterSpacing: 0.5, color: '#E84A1A', margin: 0 }}>⚠ {msg}</p>
+            <p key={msg} className="font-mono flex items-center gap-1.5" style={{ ...secondaryText, letterSpacing: 0.5, color: 'var(--color-cz-orange)', margin: 0 }}>
+              <Warning size={16} weight="bold" /> {msg}
+            </p>
           ))}
         </div>
       )}
-      <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A' }}>
+      <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid var(--color-cz-gray-dark)' }}>
         <table className="w-full">
           <thead>
-            <tr style={{ borderBottom: '1px solid #2A2A2A' }}>
+            <tr style={{ borderBottom: '1px solid var(--color-cz-gray-dark)' }}>
               {['HODIN', 'CENA', 'KČ/H', 'ÚSPORA VS 1H', 'AKTIVNÍ', ''].map((h) => (
                 <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '10px 14px', ...labelText, letterSpacing: 1.5 }}>{h}</th>
               ))}
@@ -116,19 +119,19 @@ function Table({ stationType, tiers, onUpdate, onCreate }: { stationType: Statio
                 <tr key={t.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', opacity: t.isActive ? 1 : 0.5 }}>
                   <td style={{ padding: '8px 14px' }}>
                     <input type="number" value={d.hours} onChange={(e) => setDrafts((p) => ({ ...p, [t.id]: { ...d, hours: Number(e.target.value) } }))}
-                      className="bg-cz-black text-white font-mono rounded-[2px]" style={{ padding: '6px 10px', fontSize: 17, border: '1px solid #2A2A2A', width: 64 }} />
+                      className="bg-cz-black text-white font-mono rounded-control" style={{ padding: '6px 10px', fontSize: 17, border: '1px solid var(--color-cz-gray-dark)', width: 64 }} />
                   </td>
                   <td style={{ padding: '8px 14px' }}>
                     <div className="flex items-center gap-2">
                       <input type="number" value={d.amount} onChange={(e) => setDrafts((p) => ({ ...p, [t.id]: { ...d, amount: Number(e.target.value) } }))}
-                        className="bg-cz-black text-white font-mono rounded-[2px]" style={{ padding: '6px 10px', fontSize: 17, border: '1px solid #2A2A2A', width: 90 }} />
+                        className="bg-cz-black text-white font-mono rounded-control" style={{ padding: '6px 10px', fontSize: 17, border: '1px solid var(--color-cz-gray-dark)', width: 90 }} />
                       <span className="font-mono text-cz-gray-light" style={{ ...secondaryText }}>Kč</span>
                     </div>
                   </td>
                   <td className="font-mono text-cz-gray-light" style={{ padding: '8px 14px', fontSize: 16 }}>{perHour}</td>
-                  <td className="font-mono" style={{ padding: '8px 14px', fontSize: 16, color: savings > 0 ? '#E84A1A' : 'var(--color-cz-gray-light)' }}>{savings > 0 ? `−${savings} Kč` : '—'}</td>
+                  <td className="font-mono" style={{ padding: '8px 14px', fontSize: 16, color: savings > 0 ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-light)' }}>{savings > 0 ? `−${savings} Kč` : '—'}</td>
                   <td style={{ padding: '8px 14px' }}>
-                    <button onClick={() => toggleActive(t)} disabled={saving === t.id} className="font-mono uppercase" style={{ ...labelText, letterSpacing: 1, color: t.isActive ? '#E84A1A' : '#888', background: 'transparent', border: `1px solid ${t.isActive ? '#E84A1A' : '#2A2A2A'}`, borderRadius: 'var(--radius-control)', padding: '4px 10px', cursor: 'pointer' }}>
+                    <button onClick={() => toggleActive(t)} disabled={saving === t.id} className="font-mono uppercase" style={{ ...labelText, letterSpacing: 1, color: t.isActive ? 'var(--color-cz-orange)' : '#888', background: 'transparent', border: `1px solid ${t.isActive ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-dark)'}`, borderRadius: 'var(--radius-control)', padding: '4px 10px', cursor: 'pointer' }}>
                       {t.isActive ? 'AKTIVNÍ' : 'VYPNUTO'}
                     </button>
                   </td>
@@ -143,11 +146,11 @@ function Table({ stationType, tiers, onUpdate, onCreate }: { stationType: Statio
             <tr>
               <td style={{ padding: '10px 14px' }}>
                 <input type="number" placeholder="h" value={newHours} onChange={(e) => setNewHours(e.target.value)}
-                  className="bg-cz-black text-white font-mono rounded-[2px] placeholder:text-cz-gray-dark" style={{ padding: '6px 10px', fontSize: 17, border: '1px solid #2A2A2A', width: 64 }} />
+                  className="bg-cz-black text-white font-mono rounded-control placeholder:text-cz-gray-dark" style={{ padding: '6px 10px', fontSize: 17, border: '1px solid var(--color-cz-gray-dark)', width: 64 }} />
               </td>
               <td style={{ padding: '10px 14px' }}>
                 <input type="number" placeholder="Kč" value={newAmount} onChange={(e) => setNewAmount(e.target.value)}
-                  className="bg-cz-black text-white font-mono rounded-[2px] placeholder:text-cz-gray-dark" style={{ padding: '6px 10px', fontSize: 17, border: '1px solid #2A2A2A', width: 90 }} />
+                  className="bg-cz-black text-white font-mono rounded-control placeholder:text-cz-gray-dark" style={{ padding: '6px 10px', fontSize: 17, border: '1px solid var(--color-cz-gray-dark)', width: 90 }} />
               </td>
               <td colSpan={3} />
               <td style={{ padding: '10px 14px' }}>
@@ -159,7 +162,7 @@ function Table({ stationType, tiers, onUpdate, onCreate }: { stationType: Statio
           </tbody>
         </table>
       </div>
-      {error && <p className="font-mono" style={{ ...secondaryText, color: '#E84A1A', marginTop: 8 }}>{error}</p>}
+      {error && <p className="font-mono" style={{ ...secondaryText, color: 'var(--color-cz-orange)', marginTop: 8 }}>{error}</p>}
     </div>
   );
 }

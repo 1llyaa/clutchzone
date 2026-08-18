@@ -83,8 +83,8 @@ export default function StepContact({ contact, onChange, requireClutchzoneAccoun
                 width: 16,
                 height: 16,
                 flexShrink: 0,
-                border: `1.5px solid ${contact.noAccountYet ? '#E84A1A' : '#555555'}`,
-                background: contact.noAccountYet ? '#E84A1A' : 'transparent',
+                border: `1.5px solid ${contact.noAccountYet ? 'var(--color-cz-orange)' : '#555555'}`,
+                background: contact.noAccountYet ? 'var(--color-cz-orange)' : 'transparent',
                 borderRadius: 'var(--radius-control)',
                 display: 'flex',
                 alignItems: 'center',
@@ -111,20 +111,20 @@ export default function StepContact({ contact, onChange, requireClutchzoneAccoun
       <div className="flex gap-3" style={{ marginTop: 4 }}>
         <button
           onClick={onBack}
-          className="font-display uppercase rounded-[2px] cursor-pointer"
-          style={{ fontSize: 16, letterSpacing: 2, padding: '11px 24px', background: 'transparent', border: '1.5px solid #2A2A2A', color: '#888' }}
+          className="font-display uppercase rounded-control cursor-pointer"
+          style={{ fontSize: 16, letterSpacing: 2, padding: '11px 24px', background: 'transparent', border: '1.5px solid var(--color-cz-gray-dark)', color: '#888' }}
         >
           {t('back')}
         </button>
         <button
           onClick={onNext}
           disabled={!valid}
-          className="font-display uppercase rounded-[2px] flex-1 transition-colors"
+          className="font-display uppercase rounded-control flex-1 transition-colors"
           style={{
             fontSize: 16,
             letterSpacing: 2,
             padding: '11px 24px',
-            background: valid ? '#E84A1A' : '#2A2A2A',
+            background: valid ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-dark)',
             border: 'none',
             color: valid ? '#fff' : '#888888',
             cursor: valid ? 'pointer' : 'not-allowed',

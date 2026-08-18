@@ -56,7 +56,7 @@ export default function PricingClient({
 
       <ImpactPanel dayTypes={draftDayTypes} isDirty={isDirty} />
 
-      <div className="flex gap-8" style={{ borderBottom: '1px solid #2A2A2A', marginBottom: 28 }}>
+      <div className="flex gap-8" style={{ borderBottom: '1px solid var(--color-cz-gray-dark)', marginBottom: 28 }}>
         {TABS.map((t) => (
           <button
             key={t.key}
@@ -64,8 +64,8 @@ export default function PricingClient({
             className="font-mono uppercase"
             style={{
               fontSize: 16, letterSpacing: 2, padding: '0 0 14px', background: 'transparent', border: 'none', cursor: 'pointer',
-              color: tab === t.key ? '#E84A1A' : '#888888',
-              borderBottom: tab === t.key ? '2px solid #E84A1A' : '2px solid transparent',
+              color: tab === t.key ? 'var(--color-cz-orange)' : '#888888',
+              borderBottom: tab === t.key ? '2px solid var(--color-cz-orange)' : '2px solid transparent',
               marginBottom: -1,
             }}
           >

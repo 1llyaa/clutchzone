@@ -214,7 +214,7 @@ export default function PriceCalculator({ config, variant = 'full', onOfferChose
             >
               {t('heading')}
             </h2>
-            <div style={{ width: 64, height: 2, background: '#E84A1A', marginTop: 24 }} />
+            <div style={{ width: 64, height: 2, background: 'var(--color-cz-orange)', marginTop: 24 }} />
           </div>
         </Reveal>
 

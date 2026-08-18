@@ -77,7 +77,7 @@ export default function StepPayment({ offer, termsAccepted, onToggleConsent, con
           padding: '12px 14px',
           marginTop: 6,
           borderRadius: 'var(--radius-control)',
-          border: `1px solid ${consentError ? '#E84A1A' : '#2A2A2A'}`,
+          border: `1px solid ${consentError ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-dark)'}`,
           background: '#0A0A0A',
           cursor: 'pointer',
         }}
@@ -88,8 +88,8 @@ export default function StepPayment({ offer, termsAccepted, onToggleConsent, con
             height: 20,
             flexShrink: 0,
             marginTop: 2,
-            border: `1.5px solid ${termsAccepted || consentError ? '#E84A1A' : '#555555'}`,
-            background: termsAccepted ? '#E84A1A' : 'transparent',
+            border: `1.5px solid ${termsAccepted || consentError ? 'var(--color-cz-orange)' : '#555555'}`,
+            background: termsAccepted ? 'var(--color-cz-orange)' : 'transparent',
             borderRadius: 'var(--radius-control)',
             display: 'flex',
             alignItems: 'center',
@@ -99,7 +99,7 @@ export default function StepPayment({ offer, termsAccepted, onToggleConsent, con
         >
           {termsAccepted && <Check weight="bold" size={14} />}
         </div>
-        <div className="font-body" style={{ ...bodyText, color: consentError ? '#E84A1A' : '#E8E8E8' }}>
+        <div className="font-body" style={{ ...bodyText, color: consentError ? 'var(--color-cz-orange)' : 'var(--color-cz-white-soft)' }}>
           {t('agreeTermsPrefix')}{' '}
           <a href="/terms" target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} style={{ textDecoration: 'underline' }}>{t('termsLink')}</a>{' '}
           {t('andAcknowledge')}{' '}

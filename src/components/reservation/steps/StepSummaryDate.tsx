@@ -64,23 +64,24 @@ export default function StepSummaryDate({
 
   return (
     <div className="flex flex-col gap-5" style={{ marginTop: 8 }}>
-      <div style={{ background: '#0A0A0A', border: '1px solid #2A2A2A', padding: 20 }}>
-        <div style={{ fontFamily: "'Space Mono',monospace", ...labelText, letterSpacing: 1.5, color: '#E8E8E8', textTransform: 'uppercase' }}>
+      <div style={{ background: '#0A0A0A', border: '1px solid var(--color-cz-gray-dark)', padding: 20 }}>
+        <div className="font-mono" style={{ ...labelText, letterSpacing: 1.5, color: 'var(--color-cz-white-soft)', textTransform: 'uppercase' }}>
           {calcInput.stationType === 'pc' ? tc('pc') : tc('ps5')} · {dayType?.label} · {String(calcInput.startHour % 24).padStart(2, '0')}:00 ·{' '}
           {hours} {hoursWord} · {stations} {stationsWord}
         </div>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 16, marginTop: 14 }}>
-          <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 26, letterSpacing: 1, color: '#FFFFFF', textTransform: 'uppercase' }}>
+          <span className="font-display" style={{ fontSize: 26, letterSpacing: 1, color: '#FFFFFF', textTransform: 'uppercase' }}>
             {shownOffer.label}
           </span>
-          <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 34, color: '#FFFFFF' }}>
-            {shownOffer.totalAmount} <span style={{ fontFamily: "'Space Mono',monospace", ...secondaryText, letterSpacing: 1.5, color: '#E8E8E8' }}>KČ</span>
+          <span className="font-display" style={{ fontSize: 34, color: '#FFFFFF' }}>
+            {shownOffer.totalAmount} <span className="font-mono" style={{ ...secondaryText, letterSpacing: 1.5, color: 'var(--color-cz-white-soft)' }}>KČ</span>
           </span>
         </div>
         <div style={{ textAlign: 'right', marginTop: 10 }}>
           <button
             onClick={onEditCalculator}
-            style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: "'Space Mono',monospace", ...labelText, letterSpacing: 2, color: '#E84A1A', textTransform: 'uppercase' }}
+            className="font-mono"
+            style={{ background: 'transparent', border: 'none', cursor: 'pointer', ...labelText, letterSpacing: 2, color: 'var(--color-cz-orange)', textTransform: 'uppercase' }}
           >
             {t('editCalculator')}
           </button>
@@ -88,7 +89,7 @@ export default function StepSummaryDate({
       </div>
 
       <div>
-        <div style={{ fontFamily: "'Space Mono',monospace", ...labelText, letterSpacing: 2.5, color: '#E8E8E8', textTransform: 'uppercase', marginBottom: 10 }}>
+        <div className="font-mono" style={{ ...labelText, letterSpacing: 2.5, color: 'var(--color-cz-white-soft)', textTransform: 'uppercase', marginBottom: 10 }}>
           {t('pickDate')}
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8 }}>
@@ -99,12 +100,12 @@ export default function StepSummaryDate({
               <button
                 key={d}
                 onClick={() => onDate(d)}
+                className="font-mono"
                 style={{
                   padding: '10px 6px',
-                  border: `1px solid ${active ? '#E84A1A' : '#2A2A2A'}`,
+                  border: `1px solid ${active ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-dark)'}`,
                   background: active ? 'rgba(232,74,26,0.12)' : '#111111',
-                  color: active ? '#FFFFFF' : '#E8E8E8',
-                  fontFamily: "'Space Mono',monospace",
+                  color: active ? '#FFFFFF' : 'var(--color-cz-white-soft)',
                   ...labelText,
                   letterSpacing: 1,
                   cursor: 'pointer',
@@ -128,13 +129,13 @@ export default function StepSummaryDate({
       </div>
 
       {availability && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: "'Space Mono',monospace", ...labelText, letterSpacing: 1, color: '#E8E8E8', textTransform: 'uppercase' }}>
+        <div className="font-mono" style={{ display: 'flex', alignItems: 'center', gap: 8, ...labelText, letterSpacing: 1, color: 'var(--color-cz-white-soft)', textTransform: 'uppercase' }}>
           <span
             className="rounded-full"
             style={{
               width: 6,
               height: 6,
-              background: availability.available >= calcInput.stationsCount ? '#E84A1A' : '#888888',
+              background: availability.available >= calcInput.stationsCount ? 'var(--color-cz-orange)' : '#888888',
               display: 'inline-block',
             }}
           />
@@ -148,11 +149,11 @@ export default function StepSummaryDate({
           style={{
             background: 'rgba(232,74,26,0.08)',
             border: '1px solid rgba(232,74,26,0.4)',
-            borderLeft: '2px solid #E84A1A',
+            borderLeft: '2px solid var(--color-cz-orange)',
             padding: '12px 16px',
             fontSize: 16,
             lineHeight: 1.75,
-            color: '#E8E8E8',
+            color: 'var(--color-cz-white-soft)',
           }}
         >
           {dateWarning}
@@ -162,14 +163,14 @@ export default function StepSummaryDate({
       <button
         onClick={onNext}
         disabled={!canProceed}
+        className="font-display"
         style={{
           width: '100%',
           height: 56,
-          background: canProceed ? '#E84A1A' : '#2A2A2A',
-          border: `1.5px solid ${canProceed ? '#E84A1A' : '#2A2A2A'}`,
+          background: canProceed ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-dark)',
+          border: `1.5px solid ${canProceed ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-dark)'}`,
           borderRadius: 'var(--radius-control)',
           color: canProceed ? '#FFFFFF' : '#888888',
-          fontFamily: "'Bebas Neue',sans-serif",
           fontSize: 18,
           letterSpacing: 1.5,
           lineHeight: 1,

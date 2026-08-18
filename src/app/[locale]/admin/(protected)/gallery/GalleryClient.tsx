@@ -159,7 +159,7 @@ export default function GalleryClient() {
         style={{
           marginBottom: 32,
           padding: '40px 24px',
-          border: `2px dashed ${dragOver ? '#E84A1A' : '#2A2A2A'}`,
+          border: `2px dashed ${dragOver ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-dark)'}`,
           background: dragOver ? 'rgba(232,74,26,0.05)' : 'transparent',
         }}
       >
@@ -196,7 +196,7 @@ export default function GalleryClient() {
             <div
               key={img.id}
               className="bg-cz-black-mid rounded-cz overflow-hidden flex flex-col"
-              style={{ border: `1px solid ${img.is_active ? '#2A2A2A' : '#1a1a1a'}`, opacity: img.is_active ? 1 : 0.5 }}
+              style={{ border: `1px solid ${img.is_active ? 'var(--color-cz-gray-dark)' : '#1a1a1a'}`, opacity: img.is_active ? 1 : 0.5 }}
             >
               {/* Thumbnail */}
               <div className="relative" style={{ aspectRatio: '4/3', background: '#111' }}>
@@ -211,13 +211,13 @@ export default function GalleryClient() {
                   <button
                     onClick={() => move(img, 'up')}
                     disabled={idx === 0}
-                    className="font-mono text-white rounded-[2px] disabled:opacity-20 hover:bg-white/20 transition-colors"
+                    className="font-mono text-white rounded-control disabled:opacity-20 hover:bg-white/20 transition-colors"
                     style={{ fontSize: 16, padding: '2px 6px', background: 'rgba(0,0,0,0.6)' }}
                   >↑</button>
                   <button
                     onClick={() => move(img, 'down')}
                     disabled={idx === sorted.length - 1}
-                    className="font-mono text-white rounded-[2px] disabled:opacity-20 hover:bg-white/20 transition-colors"
+                    className="font-mono text-white rounded-control disabled:opacity-20 hover:bg-white/20 transition-colors"
                     style={{ fontSize: 16, padding: '2px 6px', background: 'rgba(0,0,0,0.6)' }}
                   >↓</button>
                 </div>
@@ -235,8 +235,8 @@ export default function GalleryClient() {
                       onKeyDown={(e) => { if (e.key === 'Enter') saveCaption(img.id); if (e.key === 'Escape') setEditId(null); }}
                       autoFocus
                       placeholder="Popis..."
-                      className="flex-1 bg-cz-black text-white font-body rounded-[2px] focus:outline-none"
-                      style={{ fontSize: 19, padding: '4px 8px', border: '1px solid #E84A1A' }}
+                      className="flex-1 bg-cz-black text-white font-body rounded-control focus:outline-none"
+                      style={{ fontSize: 19, padding: '4px 8px', border: '1px solid var(--color-cz-orange)' }}
                     />
                     <button onClick={() => saveCaption(img.id)} aria-label="Uložit" className="text-cz-orange">
                       <Check size={16} weight="bold" />
@@ -255,7 +255,7 @@ export default function GalleryClient() {
                 <div className="flex items-center justify-between" style={{ marginTop: 'auto' }}>
                   <button
                     onClick={() => toggleActive(img)}
-                    className="font-mono uppercase rounded-[2px] transition-colors"
+                    className="font-mono uppercase rounded-control transition-colors"
                     style={{
                       fontSize: 16, letterSpacing: 1, padding: '3px 8px',
                       color:      img.is_active ? 'var(--color-cz-success)' : '#888',

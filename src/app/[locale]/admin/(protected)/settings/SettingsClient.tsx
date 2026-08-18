@@ -233,12 +233,12 @@ export default function SettingsClient({
           HERO OBRÁZEK
         </div>
 
-        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A', padding: 24 }}>
+        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid var(--color-cz-gray-dark)', padding: 24 }}>
           <div className="flex items-start gap-6">
             {heroImage && (
               <div
-                className="relative flex-shrink-0 rounded-[2px] overflow-hidden"
-                style={{ width: 120, height: 160, background: '#0A0A0A', border: '1px solid #2A2A2A' }}
+                className="relative flex-shrink-0 rounded-control overflow-hidden"
+                style={{ width: 120, height: 160, background: '#0A0A0A', border: '1px solid var(--color-cz-gray-dark)' }}
               >
                 <Image
                   src={heroImage}
@@ -294,12 +294,12 @@ export default function SettingsClient({
           OBRÁZEK PRIVÁTNÍCH AKCÍ
         </div>
 
-        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A', padding: 24 }}>
+        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid var(--color-cz-gray-dark)', padding: 24 }}>
           <div className="flex items-start gap-6">
             {privateEventsImage && (
               <div
-                className="relative flex-shrink-0 rounded-[2px] overflow-hidden"
-                style={{ width: 160, height: 120, background: '#0A0A0A', border: '1px solid #2A2A2A' }}
+                className="relative flex-shrink-0 rounded-control overflow-hidden"
+                style={{ width: 160, height: 120, background: '#0A0A0A', border: '1px solid var(--color-cz-gray-dark)' }}
               >
                 <Image
                   src={privateEventsImage}
@@ -355,7 +355,7 @@ export default function SettingsClient({
           ŽIVÝ PŘENOS
         </div>
 
-        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A', padding: 24 }}>
+        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid var(--color-cz-gray-dark)', padding: 24 }}>
           <div className="flex flex-col gap-5">
             {/* Toggle */}
             <div className="flex items-center justify-between">
@@ -364,7 +364,7 @@ export default function SettingsClient({
               </span>
               <button
                 onClick={toggleStreamVisible}
-                className="font-mono uppercase rounded-[2px] transition-colors"
+                className="font-mono uppercase rounded-control transition-colors"
                 style={{
                   fontSize: 16,
                   letterSpacing: 1,
@@ -390,8 +390,8 @@ export default function SettingsClient({
                   value={streamUrl}
                   onChange={(e) => setStreamUrl(e.target.value)}
                   placeholder="https://twitch.tv/channelname"
-                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange flex-1"
-                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
+                  className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange flex-1"
+                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
                 />
                 <Button onClick={handleStreamSave} disabled={savingStream} size="sm" className="flex-shrink-0">
                   {savingStream ? '...' : 'ULOŽIT'}
@@ -420,7 +420,7 @@ export default function SettingsClient({
           MINCE ZA PLATBU KARTOU
         </div>
 
-        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A', padding: 24 }}>
+        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid var(--color-cz-gray-dark)', padding: 24 }}>
           <div className="flex flex-col gap-5">
             {/* Coins amount input */}
             <div className="flex flex-col gap-2">
@@ -433,8 +433,8 @@ export default function SettingsClient({
                   value={coinsAmount}
                   onChange={(e) => setCoinsAmount(e.target.value)}
                   min={0}
-                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange flex-1"
-                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
+                  className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange flex-1"
+                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
                 />
                 <Button onClick={handleCoinsSave} disabled={savingCoins} size="sm" className="flex-shrink-0">
                   {savingCoins ? '...' : 'ULOŽIT'}
@@ -460,10 +460,10 @@ export default function SettingsClient({
           UŽIVATELÉ ADMIN PANELU
         </div>
 
-        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A', marginBottom: 20 }}>
+        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid var(--color-cz-gray-dark)', marginBottom: 20 }}>
           <table className="w-full">
             <thead>
-              <tr style={{ borderBottom: '1px solid #2A2A2A' }}>
+              <tr style={{ borderBottom: '1px solid var(--color-cz-gray-dark)' }}>
                 {['E-MAIL', 'JMÉNO', 'ROLE', 'OD', ''].map((h) => (
                   <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '12px 16px', fontSize: 16, letterSpacing: 2 }}>
                     {h}
@@ -482,12 +482,12 @@ export default function SettingsClient({
                   </td>
                   <td style={{ padding: '12px 16px' }}>
                     <span
-                      className="font-mono uppercase rounded-[2px]"
+                      className="font-mono uppercase rounded-control"
                       style={{
                         fontSize: 16,
                         letterSpacing: 1,
                         padding: '3px 8px',
-                        color: p.role === 'owner' ? '#E84A1A' : '#888',
+                        color: p.role === 'owner' ? 'var(--color-cz-orange)' : '#888',
                         background: p.role === 'owner' ? 'rgba(232,74,26,0.15)' : '#88888820',
                       }}
                     >
@@ -530,8 +530,8 @@ export default function SettingsClient({
               onChange={(e) => setInviteEmail(e.target.value)}
               placeholder="email@example.com"
               required
-              className="bg-cz-black-mid text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange"
-              style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A', width: 300 }}
+              className="bg-cz-black-mid text-white font-body rounded-control focus:outline-none focus:border-cz-orange"
+              style={{ padding: '10px 14px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)', width: 300 }}
             />
           </div>
           <Button disabled={inviting} size="sm">
@@ -560,7 +560,7 @@ export default function SettingsClient({
             <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, marginBottom: 12 }}>
               PC STANICE
             </div>
-            <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A' }}>
+            <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid var(--color-cz-gray-dark)' }}>
               {pcStations.map((s) => (
                 <div
                   key={s.id}
@@ -573,7 +573,7 @@ export default function SettingsClient({
                   <button
                     onClick={() => toggleStation(s.id, s.is_active)}
                     disabled={toggling === s.id}
-                    className="font-mono uppercase rounded-[2px] transition-colors disabled:opacity-50"
+                    className="font-mono uppercase rounded-control transition-colors disabled:opacity-50"
                     style={{
                       fontSize: 16,
                       letterSpacing: 1,
@@ -596,7 +596,7 @@ export default function SettingsClient({
             <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, marginBottom: 12 }}>
               PS5 STANICE
             </div>
-            <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A' }}>
+            <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid var(--color-cz-gray-dark)' }}>
               {ps5Stations.map((s) => (
                 <div
                   key={s.id}
@@ -609,7 +609,7 @@ export default function SettingsClient({
                   <button
                     onClick={() => toggleStation(s.id, s.is_active)}
                     disabled={toggling === s.id}
-                    className="font-mono uppercase rounded-[2px] transition-colors disabled:opacity-50"
+                    className="font-mono uppercase rounded-control transition-colors disabled:opacity-50"
                     style={{
                       fontSize: 16,
                       letterSpacing: 1,

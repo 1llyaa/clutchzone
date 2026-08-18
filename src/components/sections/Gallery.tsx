@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
 import { CaretLeft, CaretRight } from '@phosphor-icons/react';
+import Button from '@/components/ui/Button';
 import Reveal from '@/components/ui/Reveal';
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -94,29 +95,19 @@ function Carousel({ images }: { images: GalleryImage[] }) {
 
       {images.length > 1 && (
         <>
-          <button
-            onClick={prev}
-            aria-label="Předchozí"
-            className="absolute left-6 top-1/2 -translate-y-1/2 flex items-center justify-center text-white hover:text-cz-orange transition-colors"
-            style={{ background: 'rgba(0,0,0,0.5)', padding: '8px 16px', borderRadius: 2 }}
-          >
-            <CaretLeft size={24} weight="bold" />
-          </button>
-          <button
-            onClick={next}
-            aria-label="Další"
-            className="absolute right-6 top-1/2 -translate-y-1/2 flex items-center justify-center text-white hover:text-cz-orange transition-colors"
-            style={{ background: 'rgba(0,0,0,0.5)', padding: '8px 16px', borderRadius: 2 }}
-          >
-            <CaretRight size={24} weight="bold" />
-          </button>
+          <Button variant="ghost" iconOnly onClick={prev} aria-label="Předchozí" className="absolute left-6 top-1/2 -translate-y-1/2">
+            <CaretLeft size={20} weight="bold" />
+          </Button>
+          <Button variant="ghost" iconOnly onClick={next} aria-label="Další" className="absolute right-6 top-1/2 -translate-y-1/2">
+            <CaretRight size={20} weight="bold" />
+          </Button>
           <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2">
             {images.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setIdx(i)}
                 className="rounded-full transition-all"
-                style={{ width: i === idx ? 20 : 6, height: 6, background: i === idx ? '#E84A1A' : 'rgba(255,255,255,0.4)' }}
+                style={{ width: i === idx ? 20 : 6, height: 6, background: i === idx ? 'var(--color-cz-orange)' : 'rgba(255,255,255,0.4)' }}
               />
             ))}
           </div>

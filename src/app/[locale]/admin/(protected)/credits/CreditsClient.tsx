@@ -36,7 +36,7 @@ function withdrawalLabel(paidAt: string): { text: string; color: string } {
   deadline.setDate(deadline.getDate() + 14);
   const daysLeft = Math.ceil((deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
   if (daysLeft <= 0) return { text: 'vypršela', color: 'var(--color-cz-gray-light)' };
-  return { text: `zbývá ${daysLeft} ${daysLeft === 1 ? 'den' : daysLeft < 5 ? 'dny' : 'dní'}`, color: '#E84A1A' };
+  return { text: `zbývá ${daysLeft} ${daysLeft === 1 ? 'den' : daysLeft < 5 ? 'dny' : 'dní'}`, color: 'var(--color-cz-orange)' };
 }
 function fulfillUrl(entry: QueueEntry): string {
   return entry.source === 'kredit' ? `/api/admin/credits/${entry.id}/fulfill` : `/api/admin/bookings/${entry.id}/fulfill`;
@@ -80,18 +80,18 @@ export default function CreditsClient({ entries, showAll }: { entries: QueueEntr
         <button
           onClick={toggleFilter}
           className="font-mono uppercase"
-          style={{ ...labelText, letterSpacing: 1.5, padding: '8px 16px', background: 'transparent', border: '1px solid #2A2A2A', borderRadius: 'var(--radius-control)', color: '#888', cursor: 'pointer' }}
+          style={{ ...labelText, letterSpacing: 1.5, padding: '8px 16px', background: 'transparent', border: '1px solid var(--color-cz-gray-dark)', borderRadius: 'var(--radius-control)', color: '#888', cursor: 'pointer' }}
         >
           {showAll ? 'ZOBRAZIT JEN NEPŘIPSANÉ' : 'ZOBRAZIT VŠE'}
         </button>
       </div>
 
-      {error && <p className="font-mono" style={{ ...secondaryText, color: '#E84A1A', marginBottom: 16 }}>{error}</p>}
+      {error && <p className="font-mono" style={{ ...secondaryText, color: 'var(--color-cz-orange)', marginBottom: 16 }}>{error}</p>}
 
-      <div className="bg-cz-black-mid rounded-cz overflow-x-auto" style={{ border: '1px solid #2A2A2A' }}>
+      <div className="bg-cz-black-mid rounded-cz overflow-x-auto" style={{ border: '1px solid var(--color-cz-gray-dark)' }}>
         <table className="w-full">
           <thead>
-            <tr style={{ borderBottom: '1px solid #2A2A2A' }}>
+            <tr style={{ borderBottom: '1px solid var(--color-cz-gray-dark)' }}>
               {['ZDROJ', 'REFERENCE', 'ZÁKAZNÍK', 'POLOŽKY', 'ČÁSTKA', 'MINCE', 'ZAPLACENO', 'PLATNOST DO', 'STAV', 'LHŮTA NA ODSTOUPENÍ', 'KDO/KDY PŘIPSAL', 'SOUHLAS'].map(th)}
             </tr>
           </thead>
@@ -106,7 +106,7 @@ export default function CreditsClient({ entries, showAll }: { entries: QueueEntr
                   <td style={{ padding: '10px 14px' }}>
                     <span
                       className="font-mono uppercase"
-                      style={{ ...labelText, letterSpacing: 1, color: e.source === 'kredit' ? '#E84A1A' : '#888', background: e.source === 'kredit' ? 'rgba(232,74,26,0.12)' : '#1A1A1A', border: `1px solid ${e.source === 'kredit' ? 'rgba(232,74,26,0.3)' : '#2A2A2A'}`, borderRadius: 'var(--radius-control)', padding: '3px 8px' }}
+                      style={{ ...labelText, letterSpacing: 1, color: e.source === 'kredit' ? 'var(--color-cz-orange)' : '#888', background: e.source === 'kredit' ? 'rgba(232,74,26,0.12)' : '#1A1A1A', border: `1px solid ${e.source === 'kredit' ? 'rgba(232,74,26,0.3)' : 'var(--color-cz-gray-dark)'}`, borderRadius: 'var(--radius-control)', padding: '3px 8px' }}
                     >
                       {e.source === 'kredit' ? 'NÁKUP' : 'REZERVACE'}
                     </span>
@@ -115,13 +115,13 @@ export default function CreditsClient({ entries, showAll }: { entries: QueueEntr
                   <td style={{ padding: '10px 14px' }}>
                     <div className="font-body text-white" style={{ ...secondaryText }}>{e.customerName}</div>
                     <div className="font-mono text-cz-gray-light" style={{ ...secondaryText }}>{e.customerEmail}{e.customerPhone ? ` · ${e.customerPhone}` : ''}</div>
-                    <div className="font-mono" style={{ ...secondaryText, color: e.clutchzoneAccount ? '#888' : '#E84A1A' }}>
+                    <div className="font-mono" style={{ ...secondaryText, color: e.clutchzoneAccount ? '#888' : 'var(--color-cz-orange)' }}>
                       {e.clutchzoneAccount ?? 'nemá zatím účet'}
                     </div>
                   </td>
                   <td className="font-mono text-cz-gray-light" style={{ padding: '10px 14px', ...secondaryText }}>{e.description}</td>
                   <td className="font-mono text-white" style={{ padding: '10px 14px', ...secondaryText }}>{e.amount} Kč</td>
-                  <td className="font-mono" style={{ padding: '10px 14px', ...secondaryText, color: e.coinsAwarded ? '#E84A1A' : 'var(--color-cz-gray-light)' }}>{e.coinsAwarded || '—'}</td>
+                  <td className="font-mono" style={{ padding: '10px 14px', ...secondaryText, color: e.coinsAwarded ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-light)' }}>{e.coinsAwarded || '—'}</td>
                   <td className="font-mono text-cz-gray-light" style={{ padding: '10px 14px', ...secondaryText }}>{formatDate(e.paidAt)}</td>
                   <td className="font-mono text-cz-gray-light" style={{ padding: '10px 14px', ...secondaryText }}>{e.needsCredit ? formatDate(e.expiresAt) : '—'}</td>
                   <td style={{ padding: '10px 14px' }}>
@@ -134,7 +134,7 @@ export default function CreditsClient({ entries, showAll }: { entries: QueueEntr
                         onClick={() => fulfill(e)}
                         disabled={fulfilling === e.id}
                         className="font-mono uppercase"
-                        style={{ ...labelText, letterSpacing: 1, color: '#E84A1A', background: 'transparent', border: '1px solid #E84A1A', borderRadius: 'var(--radius-control)', padding: '4px 10px', cursor: 'pointer' }}
+                        style={{ ...labelText, letterSpacing: 1, color: 'var(--color-cz-orange)', background: 'transparent', border: '1px solid var(--color-cz-orange)', borderRadius: 'var(--radius-control)', padding: '4px 10px', cursor: 'pointer' }}
                       >
                         {fulfilling === e.id ? '...' : e.needsCredit ? 'PŘIPSAT HODINY' : 'PŘIPSAT MINCE'}
                       </button>

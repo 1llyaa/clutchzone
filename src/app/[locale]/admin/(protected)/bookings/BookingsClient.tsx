@@ -35,8 +35,8 @@ const TILE_BG: Record<string, string> = {
   inactive: '#0f0f0f',
 };
 const TILE_BORDER: Record<string, string> = {
-  free:     '#2A2A2A',
-  occupied: '#E84A1A',
+  free:     'var(--color-cz-gray-dark)',
+  occupied: 'var(--color-cz-orange)',
   inactive: '#1a1a1a',
 };
 
@@ -233,8 +233,8 @@ export default function BookingsClient({
               type="date"
               value={localFrom}
               onChange={(e) => handleFromChange(e.target.value)}
-              className="bg-cz-black-mid text-white font-mono rounded-[2px] focus:outline-none focus:border-cz-orange"
-              style={{ padding: '8px 12px', fontSize: 19, border: '1px solid #2A2A2A', colorScheme: 'dark' }}
+              className="bg-cz-black-mid text-white font-mono rounded-control focus:outline-none focus:border-cz-orange"
+              style={{ padding: '8px 12px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)', colorScheme: 'dark' }}
             />
           </div>
           <div className="font-mono text-cz-gray-light" style={{ fontSize: 16, marginTop: 16 }}>–</div>
@@ -245,8 +245,8 @@ export default function BookingsClient({
               value={localTo}
               min={localFrom}
               onChange={(e) => handleToChange(e.target.value)}
-              className="bg-cz-black-mid text-white font-mono rounded-[2px] focus:outline-none focus:border-cz-orange"
-              style={{ padding: '8px 12px', fontSize: 19, border: '1px solid #2A2A2A', colorScheme: 'dark' }}
+              className="bg-cz-black-mid text-white font-mono rounded-control focus:outline-none focus:border-cz-orange"
+              style={{ padding: '8px 12px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)', colorScheme: 'dark' }}
             />
           </div>
           {!isSingleDay && (
@@ -278,11 +278,11 @@ export default function BookingsClient({
               return (
                 <div
                   key={s.id}
-                  className="rounded-[2px] flex flex-col items-center justify-center"
+                  className="rounded-control flex flex-col items-center justify-center"
                   style={{ padding: '10px 4px', background: TILE_BG[state], border: `1px solid ${TILE_BORDER[state]}` }}
                 >
                   <span className="font-mono text-white" style={{ fontSize: 17, letterSpacing: 1 }}>{s.label}</span>
-                  <span className="font-mono uppercase" style={{ fontSize: 16, letterSpacing: 1, marginTop: 3, color: state === 'occupied' ? '#E84A1A' : '#888888' }}>
+                  <span className="font-mono uppercase" style={{ fontSize: 16, letterSpacing: 1, marginTop: 3, color: state === 'occupied' ? 'var(--color-cz-orange)' : '#888888' }}>
                     {state === 'occupied' ? 'OBSAZENO' : state === 'inactive' ? 'INACTIVE' : 'VOLNÉ'}
                   </span>
                 </div>
@@ -299,11 +299,11 @@ export default function BookingsClient({
               return (
                 <div
                   key={s.id}
-                  className="rounded-[2px] flex flex-col items-center justify-center"
+                  className="rounded-control flex flex-col items-center justify-center"
                   style={{ padding: '10px 20px', background: TILE_BG[state], border: `1px solid ${TILE_BORDER[state]}` }}
                 >
                   <span className="font-mono text-white" style={{ fontSize: 17, letterSpacing: 1 }}>{s.label}</span>
-                  <span className="font-mono uppercase" style={{ fontSize: 16, letterSpacing: 1, marginTop: 3, color: state === 'occupied' ? '#E84A1A' : '#888888' }}>
+                  <span className="font-mono uppercase" style={{ fontSize: 16, letterSpacing: 1, marginTop: 3, color: state === 'occupied' ? 'var(--color-cz-orange)' : '#888888' }}>
                     {state === 'occupied' ? 'OBSAZENO' : 'VOLNÉ'}
                   </span>
                 </div>
@@ -314,10 +314,10 @@ export default function BookingsClient({
       )}
 
       {/* Booking table */}
-      <div className="bg-cz-black-mid rounded-cz overflow-x-auto" style={{ border: '1px solid #2A2A2A' }}>
+      <div className="bg-cz-black-mid rounded-cz overflow-x-auto" style={{ border: '1px solid var(--color-cz-gray-dark)' }}>
         <table className="w-full">
           <thead>
-            <tr style={{ borderBottom: '1px solid #2A2A2A' }}>
+            <tr style={{ borderBottom: '1px solid var(--color-cz-gray-dark)' }}>
               {[
                 'REFERENCE', 'ZÁKAZNÍK', 'KONTAKT', 'STANICE', 'POČET STANIC', 'VARIANTA',
                 ...(!isSingleDay ? ['DATUM'] : []),
@@ -363,7 +363,7 @@ export default function BookingsClient({
                   <td className="font-body text-white" style={{ padding: '12px 14px', fontSize: 17 }}>{b.total_price} Kč</td>
                   <td style={{ padding: '12px 14px' }}>
                     <span
-                      className="font-mono uppercase rounded-[2px]"
+                      className="font-mono uppercase rounded-control"
                       style={{
                         fontSize: 16, letterSpacing: 1, padding: '3px 8px',
                         color: PAYMENT_COLOR(b),
@@ -380,7 +380,7 @@ export default function BookingsClient({
                   </td>
                   <td style={{ padding: '12px 14px' }}>
                     <span
-                      className="font-mono uppercase rounded-[2px]"
+                      className="font-mono uppercase rounded-control"
                       style={{ fontSize: 16, letterSpacing: 1, padding: '3px 8px', color: STATUS_COLOR[b.status] ?? '#888', background: `color-mix(in srgb, ${STATUS_COLOR[b.status] ?? '#888'} 12.5%, transparent)` }}
                     >
                       {STATUS_LABEL[b.status] ?? b.status}
@@ -401,8 +401,8 @@ export default function BookingsClient({
       {/* Detail panel */}
       {selected && (
         <div className="fixed inset-0 z-50 flex items-center justify-end" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={() => setSelected(null)}>
-          <div className="bg-cz-black-mid h-full flex flex-col" style={{ width: 400, maxWidth: 'min(400px, 92vw)', borderLeft: '1px solid #2A2A2A' }} onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between" style={{ padding: '24px 28px', borderBottom: '1px solid #2A2A2A' }}>
+          <div className="bg-cz-black-mid h-full flex flex-col" style={{ width: 400, maxWidth: 'min(400px, 92vw)', borderLeft: '1px solid var(--color-cz-gray-dark)' }} onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between" style={{ padding: '24px 28px', borderBottom: '1px solid var(--color-cz-gray-dark)' }}>
               <div>
                 <div className="font-mono text-cz-orange" style={{ fontSize: 17 }}>{selected.reference}</div>
                 <div className="font-display text-white uppercase" style={{ fontSize: 20 }}>DETAIL REZERVACE</div>
@@ -437,7 +437,7 @@ export default function BookingsClient({
               ))}
             </div>
 
-            <div className="flex flex-col gap-3" style={{ padding: '20px 28px', borderTop: '1px solid #2A2A2A' }}>
+            <div className="flex flex-col gap-3" style={{ padding: '20px 28px', borderTop: '1px solid var(--color-cz-gray-dark)' }}>
               {selected.status !== 'cancelled' && selected.status !== 'completed' && (
                 <div className="flex gap-3">
                   <Button
@@ -451,8 +451,8 @@ export default function BookingsClient({
                   <button
                     disabled={updating}
                     onClick={() => updateStatus(selected.groupKey, 'cancelled')}
-                    className="flex-1 font-display uppercase rounded-[2px] hover:border-red-500 hover:text-red-400 transition-colors disabled:opacity-50"
-                    style={{ fontSize: 16, letterSpacing: 2, padding: '10px 0', border: '1px solid #2A2A2A', color: '#888', background: 'transparent' }}
+                    className="flex-1 font-display uppercase rounded-control hover:border-red-500 hover:text-red-400 transition-colors disabled:opacity-50"
+                    style={{ fontSize: 16, letterSpacing: 2, padding: '10px 0', border: '1px solid var(--color-cz-gray-dark)', color: '#888', background: 'transparent' }}
                   >
                     ZRUŠIT
                   </button>
@@ -461,7 +461,7 @@ export default function BookingsClient({
               <button
                 disabled={deleting}
                 onClick={() => deleteBooking(selected.groupKey)}
-                className="w-full font-display uppercase rounded-[2px] hover:bg-red-500 hover:border-red-500 hover:text-white transition-colors disabled:opacity-50"
+                className="w-full font-display uppercase rounded-control hover:bg-red-500 hover:border-red-500 hover:text-white transition-colors disabled:opacity-50"
                 style={{ fontSize: 16, letterSpacing: 2, padding: '10px 0', border: '1px solid var(--color-cz-danger)', color: 'var(--color-cz-danger)', background: 'transparent' }}
               >
                 {deleting ? '...' : 'SMAZAT REZERVACI'}

@@ -31,38 +31,38 @@ export default function FullPriceTable({ config }: { config: PricingConfig }) {
   ].filter((table) => table.rows.length > 0);
 
   return (
-    <div style={{ maxWidth: 1200, margin: '80px auto 0', borderTop: '1px solid #2A2A2A', paddingTop: 24 }}>
+    <div style={{ maxWidth: 1200, margin: '80px auto 0', borderTop: '1px solid var(--color-cz-gray-dark)', paddingTop: 24 }}>
       <button
         style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', background: 'transparent', border: 'none', padding: 0, cursor: 'pointer' }}
         onClick={() => setOpen((v) => !v)}
       >
-        <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 28, letterSpacing: 1, color: '#FFFFFF', textTransform: 'uppercase' }}>
+        <span className="font-display" style={{ fontSize: 28, letterSpacing: 1, color: '#FFFFFF', textTransform: 'uppercase' }}>
           {t('fullPriceTable')}
         </span>
-        <span style={{ fontFamily: "'Space Mono',monospace", ...labelText, letterSpacing: 2, color: '#E84A1A' }}>{open ? '−' : '+'}</span>
+        <span className="font-mono" style={{ ...labelText, letterSpacing: 2, color: 'var(--color-cz-orange)' }}>{open ? '−' : '+'}</span>
       </button>
       {open && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 32, marginTop: 32, minWidth: 0 }}>
           {tables.map((table) => (
-            <div key={table.title} style={{ minWidth: 0, background: '#111111', border: '1px solid #2A2A2A', padding: 24 }}>
+            <div key={table.title} style={{ minWidth: 0, background: '#111111', border: '1px solid var(--color-cz-gray-dark)', padding: 24 }}>
               <div
+                className="font-mono"
                 style={{
-                  fontFamily: "'Space Mono',monospace",
                   ...labelText,
                   letterSpacing: 2.5,
-                  color: '#E84A1A',
+                  color: 'var(--color-cz-orange)',
                   textTransform: 'uppercase',
                   marginBottom: 16,
                   paddingBottom: 12,
-                  borderBottom: '1px solid #2A2A2A',
+                  borderBottom: '1px solid var(--color-cz-gray-dark)',
                 }}
               >
                 {table.title}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {table.rows.map((r) => (
-                  <div key={r.label} style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 16, padding: '8px 0', borderBottom: '1px solid #2A2A2A' }}>
-                    <span style={{ fontFamily: "'Space Mono',monospace", ...labelText, letterSpacing: 1.5, color: '#E8E8E8', textTransform: 'uppercase' }}>{r.label}</span>
+                  <div key={r.label} style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 16, padding: '8px 0', borderBottom: '1px solid var(--color-cz-gray-dark)' }}>
+                    <span className="font-mono" style={{ ...labelText, letterSpacing: 1.5, color: 'var(--color-cz-white-soft)', textTransform: 'uppercase' }}>{r.label}</span>
                     <span className="font-body" style={{ fontWeight: 500, fontSize: 16, color: '#FFFFFF', whiteSpace: 'nowrap' }}>{r.value}</span>
                   </div>
                 ))}

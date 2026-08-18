@@ -2,6 +2,8 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
+import { X } from '@phosphor-icons/react';
+import Button from '@/components/ui/Button';
 import { useReservation } from './ReservationContext';
 import { track } from '@/lib/analytics/track';
 import { calculatePricing, reservedHoursOnSite } from '@/lib/pricing/engine';
@@ -247,21 +249,17 @@ export default function ReservationModal() {
               {step <= 3 ? STEP_TITLES[stepIndex] : t('doneStepLabel')}
             </span>
           </div>
-          <button
-            onClick={handleClose}
-            className="font-mono text-cz-gray-light hover:text-white transition-colors bg-transparent border-none cursor-pointer"
-            style={{ fontSize: 20, lineHeight: 1 }}
-          >
-            ✕
-          </button>
+          <Button variant="ghost" iconOnly onClick={handleClose} aria-label={t('close')}>
+            <X size={20} weight="bold" />
+          </Button>
         </div>
 
         {step <= 3 && (
           <div className="flex items-center gap-2" style={{ padding: '16px 32px 0' }}>
             {[1, 2, 3].map((s) => (
               <div key={s} className="flex items-center gap-2">
-                <span className="rounded-full" style={{ width: 8, height: 8, background: s <= step ? '#E84A1A' : '#2A2A2A', transition: 'background 0.2s' }} />
-                {s < 3 && <span style={{ width: 24, height: 1, background: s < step ? '#E84A1A' : '#2A2A2A' }} />}
+                <span className="rounded-full" style={{ width: 8, height: 8, background: s <= step ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-dark)', transition: 'background 0.2s' }} />
+                {s < 3 && <span style={{ width: 24, height: 1, background: s < step ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-dark)' }} />}
               </div>
             ))}
           </div>

@@ -180,16 +180,16 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
       </div>
 
       {deleteError && (
-        <div className="font-mono text-red-400 rounded-[2px]" style={{ fontSize: 17, padding: '10px 16px', background: 'color-mix(in srgb, var(--color-cz-danger) 8%, transparent)', border: '1px solid var(--color-cz-danger)', marginBottom: 16 }}>
+        <div className="font-mono text-red-400 rounded-control" style={{ fontSize: 17, padding: '10px 16px', background: 'color-mix(in srgb, var(--color-cz-danger) 8%, transparent)', border: '1px solid var(--color-cz-danger)', marginBottom: 16 }}>
           Smazání selhalo: {deleteError}
         </div>
       )}
 
       {/* Table */}
-      <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A' }}>
+      <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid var(--color-cz-gray-dark)' }}>
         <table className="w-full">
           <thead>
-            <tr style={{ borderBottom: '1px solid #2A2A2A' }}>
+            <tr style={{ borderBottom: '1px solid var(--color-cz-gray-dark)' }}>
               {['DATUM', 'NÁZEV', 'HRA', 'FORMÁT', 'PRIZE POOL', 'SLOTY', 'STATUS', ''].map((h) => (
                 <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '12px 16px', fontSize: 16, letterSpacing: 2 }}>{h}</th>
               ))}
@@ -222,7 +222,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                 </td>
                 <td style={{ padding: '12px 16px' }}>
                   <div className="flex items-center gap-2">
-                    <div style={{ height: 4, width: 80, background: '#2A2A2A', borderRadius: 2 }}>
+                    <div style={{ height: 4, width: 80, background: 'var(--color-cz-gray-dark)', borderRadius: 2 }}>
                       <div className="bg-cz-orange" style={{ height: 4, borderRadius: 2, width: `${Math.min(100, (t.filled_slots / t.max_slots) * 100)}%` }} />
                     </div>
                     <span className="font-mono text-cz-gray-light" style={{ fontSize: 17 }}>{t.filled_slots}/{t.max_slots}</span>
@@ -231,7 +231,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                 <td style={{ padding: '12px 16px' }}>
                   <button
                     onClick={(e) => { e.stopPropagation(); toggleActive(t); }}
-                    className="font-mono uppercase rounded-[2px]"
+                    className="font-mono uppercase rounded-control"
                     style={{
                       fontSize: 16, letterSpacing: 1, padding: '3px 8px',
                       color: t.is_active ? 'var(--color-cz-success)' : '#888',
@@ -258,9 +258,9 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
 
       {/* Detail / Registrations panel */}
       {detail && (
-        <div ref={panelRef} className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ marginTop: 24, border: '1px solid #E84A1A', scrollMarginTop: 24 }}>
+        <div ref={panelRef} className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ marginTop: 24, border: '1px solid var(--color-cz-orange)', scrollMarginTop: 24 }}>
           {/* Panel header */}
-          <div className="flex items-center justify-between" style={{ padding: '20px 28px', borderBottom: '1px solid #2A2A2A' }}>
+          <div className="flex items-center justify-between" style={{ padding: '20px 28px', borderBottom: '1px solid var(--color-cz-gray-dark)' }}>
             <div>
               <div className="font-mono text-cz-orange uppercase" style={{ fontSize: 16, letterSpacing: 3 }}>REGISTRACE</div>
               <div className="font-display text-white uppercase" style={{ fontSize: 22, letterSpacing: 1 }}>{detail.title}</div>
@@ -278,7 +278,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
           </div>
 
           {detail.description && (
-            <div style={{ padding: '16px 28px', borderBottom: '1px solid #2A2A2A' }}>
+            <div style={{ padding: '16px 28px', borderBottom: '1px solid var(--color-cz-gray-dark)' }}>
               <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, marginBottom: 6 }}>POPIS</div>
               <p className="font-body text-cz-white-soft" style={{ fontSize: 19, lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{detail.description}</p>
             </div>
@@ -307,7 +307,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                           {reg.team_name}
                         </span>
                         <span
-                          className="font-mono uppercase rounded-[2px]"
+                          className="font-mono uppercase rounded-control"
                           style={{
                             fontSize: 16, letterSpacing: 1, padding: '2px 8px',
                             color: REG_STATUS_COLOR[reg.status] ?? '#888',
@@ -340,8 +340,8 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                             {reg.player_names.map((name, idx) => (
                               <span
                                 key={idx}
-                                className="font-mono text-cz-gray-light rounded-[2px]"
-                                style={{ fontSize: 17, padding: '3px 10px', background: '#1a1a1a', border: '1px solid #2A2A2A' }}
+                                className="font-mono text-cz-gray-light rounded-control"
+                                style={{ fontSize: 17, padding: '3px 10px', background: '#1a1a1a', border: '1px solid var(--color-cz-gray-dark)' }}
                               >
                                 {name}
                               </span>
@@ -361,7 +361,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                         <button
                           onClick={() => updateRegStatus(reg.id, 'confirmed')}
                           disabled={regActing === reg.id}
-                          className="font-mono uppercase rounded-[2px] disabled:opacity-50 hover:bg-green-500/20 transition-colors"
+                          className="font-mono uppercase rounded-control disabled:opacity-50 hover:bg-green-500/20 transition-colors"
                           style={{ fontSize: 16, letterSpacing: 1, padding: '4px 10px', color: 'var(--color-cz-success)', border: '1px solid var(--color-cz-success)', background: 'transparent' }}
                         >
                           POTVRDIT
@@ -371,7 +371,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                         <button
                           onClick={() => updateRegStatus(reg.id, 'cancelled')}
                           disabled={regActing === reg.id}
-                          className="font-mono uppercase rounded-[2px] disabled:opacity-50 hover:bg-yellow-500/10 transition-colors"
+                          className="font-mono uppercase rounded-control disabled:opacity-50 hover:bg-yellow-500/10 transition-colors"
                           style={{ fontSize: 16, letterSpacing: 1, padding: '4px 10px', color: 'var(--color-cz-warning)', border: '1px solid var(--color-cz-warning)', background: 'transparent' }}
                         >
                           ZRUŠIT
@@ -380,7 +380,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                       <button
                         onClick={() => deleteReg(reg.id)}
                         disabled={regActing === reg.id}
-                        className="font-mono uppercase rounded-[2px] disabled:opacity-50 hover:bg-red-500/10 transition-colors"
+                        className="font-mono uppercase rounded-control disabled:opacity-50 hover:bg-red-500/10 transition-colors"
                         style={{ fontSize: 16, letterSpacing: 1, padding: '4px 10px', color: 'var(--color-cz-danger)', border: '1px solid var(--color-cz-danger)', background: 'transparent' }}
                       >
                         SMAZAT
@@ -397,7 +397,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
       {/* Create / Edit form modal */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.7)' }} onClick={() => setShowForm(false)}>
-          <div className="bg-cz-black-mid rounded-cz w-full max-w-lg" style={{ padding: 40, border: '1px solid #2A2A2A' }} onClick={(e) => e.stopPropagation()}>
+          <div className="bg-cz-black-mid rounded-cz w-full max-w-lg" style={{ padding: 40, border: '1px solid var(--color-cz-gray-dark)' }} onClick={(e) => e.stopPropagation()}>
             <h2 className="font-display text-white uppercase" style={{ fontSize: 24, letterSpacing: 2, marginBottom: 28 }}>
               {editing ? 'UPRAVIT TURNAJ' : 'NOVÝ TURNAJ'}
             </h2>
@@ -417,8 +417,8 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                     type={type}
                     value={form[key as keyof typeof form] ?? ''}
                     onChange={(e) => setForm((prev) => ({ ...prev, [key]: e.target.value || null }))}
-                    className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange"
-                    style={{ padding: '9px 12px', fontSize: 19, border: '1px solid #2A2A2A', colorScheme: type === 'date' ? 'dark' : undefined }}
+                    className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange"
+                    style={{ padding: '9px 12px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)', colorScheme: type === 'date' ? 'dark' : undefined }}
                   />
                 </div>
               ))}
@@ -429,8 +429,8 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                   onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value || null }))}
                   rows={4}
                   placeholder="Pravidla, formát, harmonogram…"
-                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange resize-none"
-                  style={{ padding: '9px 12px', fontSize: 19, border: '1px solid #2A2A2A' }}
+                  className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange resize-none"
+                  style={{ padding: '9px 12px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
                 />
               </div>
             </div>

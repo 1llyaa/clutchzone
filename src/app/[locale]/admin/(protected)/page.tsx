@@ -77,7 +77,7 @@ export default async function AdminDashboard() {
           <div
             key={card.label}
             className="bg-cz-black-mid rounded-cz"
-            style={{ padding: '24px 28px', border: '1px solid #2A2A2A' }}
+            style={{ padding: '24px 28px', border: '1px solid var(--color-cz-gray-dark)' }}
           >
             <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, marginBottom: 12 }}>
               {card.label}
@@ -112,10 +112,10 @@ export default async function AdminDashboard() {
           </a>
         </div>
 
-        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A' }}>
+        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid var(--color-cz-gray-dark)' }}>
           <table className="w-full">
             <thead>
-              <tr style={{ borderBottom: '1px solid #2A2A2A' }}>
+              <tr style={{ borderBottom: '1px solid var(--color-cz-gray-dark)' }}>
                 {['REFERENCE', 'ZÁKAZNÍK', 'STANICE', 'DATUM', 'ČAS', 'CELKEM', 'STATUS'].map((h) => (
                   <th
                     key={h}
@@ -160,7 +160,7 @@ export default async function AdminDashboard() {
                     </td>
                     <td style={{ padding: '12px 16px' }}>
                       <span
-                        className="font-mono uppercase rounded-[2px]"
+                        className="font-mono uppercase rounded-control"
                         style={{
                           fontSize: 16,
                           letterSpacing: 1,
