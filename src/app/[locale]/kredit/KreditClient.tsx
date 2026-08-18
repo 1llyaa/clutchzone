@@ -175,7 +175,7 @@ export default function KreditClient({ hourTiers, creditExpiryMonths }: Props) {
             <div style={{ fontFamily: "'Space Mono',monospace", ...labelText, letterSpacing: 2.5, color: '#E8E8E8', textTransform: 'uppercase', marginBottom: 18 }}>{t('summary')}</div>
 
             {cartLines.length === 0 ? (
-              <p style={{ fontFamily: "'Inter',sans-serif", ...secondaryText, color: '#888888' }}>{t('emptyCart')}</p>
+              <p className="font-body" style={{ ...secondaryText, color: '#888888' }}>{t('emptyCart')}</p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {cartLines.map((l) => (
@@ -216,7 +216,7 @@ export default function KreditClient({ hourTiers, creditExpiryMonths }: Props) {
               </label>
             </div>
 
-            <div style={{ background: '#1A1A1A', border: '1px solid #2A2A2A', padding: '12px 14px', marginTop: 18, fontFamily: "'Inter',sans-serif", ...bodyText, lineHeight: 1.75, color: '#FFFFFF' }}>
+            <div className="font-body" style={{ background: '#1A1A1A', border: '1px solid #2A2A2A', padding: '12px 14px', marginTop: 18, ...bodyText, lineHeight: 1.75, color: '#FFFFFF' }}>
               {t('creditExpiryNote', { months: creditExpiryMonths })}
             </div>
 
@@ -227,7 +227,7 @@ export default function KreditClient({ hourTiers, creditExpiryMonths }: Props) {
               <div style={{ width: 20, height: 20, flexShrink: 0, marginTop: 2, border: `1.5px solid ${termsAccepted || consentError ? '#E84A1A' : '#555555'}`, background: termsAccepted ? '#E84A1A' : 'transparent', borderRadius: 'var(--radius-control)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
                 {termsAccepted && <Check weight="bold" size={14} />}
               </div>
-              <div style={{ fontFamily: "'Inter',sans-serif", ...bodyText, color: consentError ? '#E84A1A' : '#E8E8E8' }}>
+              <div className="font-body" style={{ ...bodyText, color: consentError ? '#E84A1A' : '#E8E8E8' }}>
                 {t('agreeTermsPrefix')}{' '}
                 <a href="/terms" target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} style={{ textDecoration: 'underline' }}>{t('termsLink')}</a>{' '}
                 {t('andAcknowledge')}{' '}
@@ -245,7 +245,7 @@ export default function KreditClient({ hourTiers, creditExpiryMonths }: Props) {
             </Button>
             {error && <p style={{ fontFamily: "'Space Mono',monospace", ...labelText, color: '#E84A1A', marginTop: 8 }}>{error}</p>}
 
-            <p style={{ fontFamily: "'Inter',sans-serif", ...secondaryText, color: '#888888', marginTop: 14 }}>
+            <p className="font-body" style={{ ...secondaryText, color: '#888888', marginTop: 14 }}>
               {t('creditFootnote')}
             </p>
           </div>
