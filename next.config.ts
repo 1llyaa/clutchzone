@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '**.supabase.co', pathname: '/storage/v1/object/**' },
+      {
+        protocol: 'https',
+        hostname: 'supabasekong-alfa5ntltxm2x4650331a8mr.clutchzone.club',
+        pathname: '/storage/v1/object/**',
+      },
     ],
   },
 };
