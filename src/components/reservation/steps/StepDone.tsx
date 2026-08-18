@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import Button from '@/components/ui/Button';
 import { labelText, secondaryText, bodyText } from '@/lib/typography';
 
 interface Props {
@@ -63,13 +64,9 @@ export default function StepDone({ reference, stationLabels, date, startTime, to
         {t('confirmationSentNote')}
       </p>
 
-      <button
-        onClick={onClose}
-        className="w-full bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors rounded-[2px] border-none cursor-pointer"
-        style={{ fontSize: 17, letterSpacing: 2, padding: '14px' }}
-      >
+      <Button type="button" onClick={onClose} className="w-full">
         {t('close')}
-      </button>
+      </Button>
     </div>
   );
 }

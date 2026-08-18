@@ -105,11 +105,11 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
     >
       <div
         className="relative bg-cz-black-mid rounded-cz w-full max-w-lg overflow-y-auto animate-modal-in"
-        style={{ border: '1px solid #2A2A2A', maxHeight: '90dvh' }}
+        style={{ border: '1px solid var(--color-cz-gray-dark)', maxHeight: '90dvh' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Orange top bar */}
-        <span className="absolute top-0 left-0 right-0" style={{ height: 2, background: '#E84A1A' }} />
+        <span className="absolute top-0 left-0 right-0" style={{ height: 2, background: 'var(--color-cz-orange)' }} />
 
         {/* Header */}
         <div
@@ -163,8 +163,8 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
                   required
                   maxLength={100}
                   placeholder={t('teamPlaceholder')}
-                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors"
-                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
+                  className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange transition-colors"
+                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
                 />
               </div>
 
@@ -180,8 +180,8 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
                   required
                   maxLength={100}
                   placeholder={t('captainPlaceholder')}
-                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors"
-                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
+                  className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange transition-colors"
+                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
                 />
               </div>
 
@@ -196,8 +196,8 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
                   onChange={field('captain_discord')}
                   maxLength={100}
                   placeholder={t('discordPlaceholder')}
-                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors"
-                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
+                  className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange transition-colors"
+                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
                 />
               </div>
 
@@ -212,8 +212,8 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
                   onChange={field('captain_email')}
                   required
                   placeholder={t('emailPlaceholder')}
-                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors"
-                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
+                  className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange transition-colors"
+                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
                 />
               </div>
 
@@ -230,8 +230,8 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
                   onChange={field('players_raw')}
                   rows={3}
                   placeholder={t('playersPlaceholder')}
-                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors resize-none"
-                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
+                  className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange transition-colors resize-none"
+                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
                 />
               </div>
             </div>
@@ -243,14 +243,9 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
             )}
 
             <div className="flex gap-3" style={{ marginTop: 20 }}>
-              <button
-                type="submit"
-                disabled={submitting}
-                className="flex-1 bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:not-disabled:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer disabled:opacity-50"
-                style={{ fontSize: 16, letterSpacing: 2, padding: 13 }}
-              >
+              <Button type="submit" disabled={submitting} size="sm" className="flex-1">
                 {submitting ? '...' : t('submit')}
-              </button>
+              </Button>
               <Button type="button" variant="ghost" size="sm" onClick={onClose}>
                 {t('close')}
               </Button>

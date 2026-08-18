@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 import Logo from '@/components/ui/Logo';
+import Button from '@/components/ui/Button';
 
 export default function AdminLoginPage() {
   const [email, setEmail]       = useState('');
@@ -42,7 +43,7 @@ export default function AdminLoginPage() {
     >
       <div
         className="w-full max-w-sm bg-cz-black-mid rounded-cz"
-        style={{ padding: '40px 32px', border: '1px solid #2A2A2A' }}
+        style={{ padding: '40px 32px', border: '1px solid var(--color-cz-gray-dark)' }}
       >
         <div className="flex flex-col items-center" style={{ marginBottom: 36 }}>
           <Logo size={44} />
@@ -68,8 +69,8 @@ export default function AdminLoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
               autoComplete="email"
-              className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors"
-              style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
+              className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange transition-colors"
+              style={{ padding: '10px 14px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
             />
           </div>
 
@@ -86,8 +87,8 @@ export default function AdminLoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
               autoComplete="current-password"
-              className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors"
-              style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
+              className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange transition-colors"
+              style={{ padding: '10px 14px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
             />
           </div>
 
@@ -97,14 +98,9 @@ export default function AdminLoginPage() {
             </p>
           )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors rounded-[2px] border-none cursor-pointer disabled:opacity-50"
-            style={{ fontSize: 16, letterSpacing: 2, padding: '13px 0', marginTop: 8 }}
-          >
+          <Button type="submit" disabled={loading} size="sm" className="w-full mt-2">
             {loading ? '...' : 'PŘIHLÁSIT SE'}
-          </button>
+          </Button>
         </form>
       </div>
     </div>

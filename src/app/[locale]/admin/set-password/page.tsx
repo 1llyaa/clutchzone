@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 import { useRouter, useParams } from 'next/navigation';
 import Logo from '@/components/ui/Logo';
+import Button from '@/components/ui/Button';
 
 export default function SetPasswordPage() {
   const router   = useRouter();
@@ -56,7 +57,7 @@ export default function SetPasswordPage() {
 
   return (
     <div className="min-h-screen bg-cz-black flex items-center justify-center" style={{ padding: 24 }}>
-      <div className="w-full max-w-sm bg-cz-black-mid rounded-cz" style={{ padding: '40px 32px', border: '1px solid #2A2A2A' }}>
+      <div className="w-full max-w-sm bg-cz-black-mid rounded-cz" style={{ padding: '40px 32px', border: '1px solid var(--color-cz-gray-dark)' }}>
         <div className="flex flex-col items-center" style={{ marginBottom: 32 }}>
           <Logo size={44} />
           <div className="font-display text-white uppercase" style={{ fontSize: 22, letterSpacing: 2, marginTop: 10 }}>
@@ -83,8 +84,8 @@ export default function SetPasswordPage() {
               required
               minLength={8}
               autoComplete="new-password"
-              className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors"
-              style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
+              className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange transition-colors"
+              style={{ padding: '10px 14px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
             />
           </div>
 
@@ -99,8 +100,8 @@ export default function SetPasswordPage() {
               required
               minLength={8}
               autoComplete="new-password"
-              className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors"
-              style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
+              className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange transition-colors"
+              style={{ padding: '10px 14px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
             />
           </div>
 
@@ -110,14 +111,9 @@ export default function SetPasswordPage() {
             </p>
           )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors rounded-[2px] border-none cursor-pointer disabled:opacity-50"
-            style={{ fontSize: 16, letterSpacing: 2, padding: '13px 0', marginTop: 8 }}
-          >
+          <Button type="submit" disabled={loading} size="sm" className="w-full mt-2">
             {loading ? '...' : 'ULOŽIT A POKRAČOVAT'}
-          </button>
+          </Button>
         </form>
       </div>
     </div>

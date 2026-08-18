@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import Button from '@/components/ui/Button';
 import { useReservation } from '@/components/reservation/ReservationContext';
 
 interface Props {
@@ -82,20 +83,17 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
           </p>
 
           <div className="flex flex-wrap gap-4" style={{ marginTop: 36 }}>
-            <button
-              onClick={() => open()}
-              className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer"
-              style={{ fontSize: 'clamp(16px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(12px, 2vw, 16px) clamp(24px, 4vw, 40px)' }}
-            >
+            <Button type="button" size="responsive" onClick={() => open()}>
               {t('ctaPrimary')}
-            </button>
-            <button
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="responsive"
               onClick={() => document.getElementById('cenik')?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-transparent text-white font-display uppercase hover:text-cz-orange hover:border-cz-orange active:scale-[0.96] transition-[color,border-color,scale] duration-150 ease-out rounded-[2px] cursor-pointer"
-              style={{ fontSize: 'clamp(16px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(11px, 2vw, 15px) clamp(24px, 4vw, 40px)', border: '1.5px solid rgba(255,255,255,0.15)' }}
             >
               {t('ctaSecondary')}
-            </button>
+            </Button>
           </div>
 
           <div
@@ -121,7 +119,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
           {/* Mobile: station counter */}
           {stationsFree != null && stationsTotal != null && (
             <div
-              className="flex lg:hidden items-center bg-cz-black-mid border border-cz-gray-dark rounded-[2px] self-start"
+              className="flex lg:hidden items-center bg-cz-black-mid border border-cz-gray-dark rounded-control self-start"
               style={{ padding: '10px 16px', gap: 10, marginTop: 24 }}
             >
               <span
@@ -204,7 +202,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
           {/* Status badge */}
           {stationsFree != null && stationsTotal != null && (
             <div
-              className="absolute flex items-center bg-cz-black-mid border border-cz-gray-dark rounded-[2px]"
+              className="absolute flex items-center bg-cz-black-mid border border-cz-gray-dark rounded-control"
               style={{ bottom: '6%', left: 0, padding: '12px 16px', gap: 10 }}
             >
               <span

@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import Button from '@/components/ui/Button';
 
 export default function KreditCancelledPage() {
   const t = useTranslations('kredit');
@@ -21,13 +22,9 @@ export default function KreditCancelledPage() {
               {t('cancelledMessage')}
             </p>
             <div className="flex flex-col items-center gap-3 w-full">
-              <Link
-                href={`/${locale}/kredit`}
-                className="w-full bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors rounded-[2px] border-none cursor-pointer inline-block text-center"
-                style={{ fontSize: 17, letterSpacing: 2, padding: '14px' }}
-              >
+              <Button href={`/${locale}/kredit`} className="w-full text-center">
                 {t('tryAgain')}
-              </Link>
+              </Button>
               <Link href={`/${locale}`} className="font-mono text-cz-gray-light hover:text-white transition-colors" style={{ fontSize: 17, letterSpacing: 1 }}>
                 {t('backHome')}
               </Link>

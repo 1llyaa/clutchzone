@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/navigation';
+import Button from '@/components/ui/Button';
 
 const STORAGE_KEY = 'cz_cookie_ack';
 
@@ -28,7 +29,7 @@ export default function CookieBar() {
   return (
     <div
       className="fixed bottom-0 left-0 right-0 z-[100] bg-cz-black-mid flex flex-wrap items-center justify-between"
-      style={{ borderTop: '1px solid #2A2A2A', padding: '16px 24px', gap: 16 }}
+      style={{ borderTop: '1px solid var(--color-cz-gray-dark)', padding: '16px 24px', gap: 16 }}
     >
       <p className="font-body text-cz-gray-light" style={{ fontSize: 19, lineHeight: 1.6, maxWidth: 640, margin: 0 }}>
         {t('text')}{' '}
@@ -36,13 +37,9 @@ export default function CookieBar() {
           {t('link')}
         </Link>
       </p>
-      <button
-        onClick={dismiss}
-        className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer flex-shrink-0"
-        style={{ fontSize: 16, letterSpacing: 1.5, padding: '10px 24px' }}
-      >
+      <Button type="button" onClick={dismiss} size="sm" className="flex-shrink-0">
         {t('ack')}
-      </button>
+      </Button>
     </div>
   );
 }

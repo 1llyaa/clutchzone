@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
-import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import Button from '@/components/ui/Button';
 import { track } from '@/lib/analytics/track';
 
 interface OrderStatus {
@@ -120,13 +120,9 @@ export default function KreditSuccessPage() {
               </p>
             )}
 
-            <Link
-              href={`/${locale}`}
-              className="w-full bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors rounded-[2px] border-none cursor-pointer inline-block text-center"
-              style={{ fontSize: 17, letterSpacing: 2, padding: '14px' }}
-            >
+            <Button href={`/${locale}`} className="w-full text-center">
               {t('backHome')}
-            </Link>
+            </Button>
           </div>
         </div>
       </main>

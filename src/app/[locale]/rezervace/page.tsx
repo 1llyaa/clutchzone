@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import Button from '@/components/ui/Button';
 import { useReservation } from '@/components/reservation/ReservationContext';
 import { calculatePricing } from '@/lib/pricing/engine';
 import type { CalcInput, PricingConfig, StationType } from '@/lib/pricing/types';
@@ -71,13 +72,9 @@ export default function RezervacePage() {
           <h1 className="font-display text-white uppercase" style={{ fontSize: 'clamp(32px, 5vw, 48px)', letterSpacing: 1 }}>
             {t('heading')}
           </h1>
-          <button
-            onClick={() => open()}
-            className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors rounded-[2px] border-none cursor-pointer"
-            style={{ fontSize: 17, letterSpacing: 2, padding: '14px 32px' }}
-          >
+          <Button type="button" onClick={() => open()}>
             {t('openButton')}
-          </button>
+          </Button>
         </div>
       </main>
       <Footer />

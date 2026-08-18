@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { Check } from '@phosphor-icons/react';
+import Button from '@/components/ui/Button';
 import Reveal from '@/components/ui/Reveal';
 
 const EMPTY = { name: '', email: '', message: '' };
@@ -81,11 +83,12 @@ export default function Contact() {
         <div className="bg-cz-black-mid rounded-cz border border-cz-gray-dark" style={{ padding: 'clamp(24px, 4vw, 40px)' }}>
           {done ? (
             <div className="flex flex-col items-center text-center" style={{ padding: '40px 0' }}>
-              <span style={{ fontSize: 44 }}>✓</span>
+              <Check size={44} weight="bold" className="text-white" />
               <p className="font-body text-white" style={{ fontSize: 16, lineHeight: 1.7, marginTop: 20, maxWidth: 320 }}>
                 {t('success')}
               </p>
               <button
+                type="button"
                 onClick={() => setDone(false)}
                 className="font-mono text-cz-orange uppercase hover:underline"
                 style={{ fontSize: 16, letterSpacing: 2, marginTop: 24 }}
@@ -106,7 +109,7 @@ export default function Contact() {
                   required
                   maxLength={100}
                   placeholder={t('namePlaceholder')}
-                  className="bg-cz-black text-white font-body border border-cz-gray-dark rounded-[2px] focus:outline-none focus:border-cz-orange transition-[border-color] duration-150 ease-out"
+                  className="bg-cz-black text-white font-body border border-cz-gray-dark rounded-control focus:outline-none focus:border-cz-orange transition-[border-color] duration-150 ease-out"
                   style={{ padding: '11px 14px', fontSize: 19 }}
                 />
               </div>
@@ -121,7 +124,7 @@ export default function Contact() {
                   onChange={field('email')}
                   required
                   placeholder={t('emailPlaceholder')}
-                  className="bg-cz-black text-white font-body border border-cz-gray-dark rounded-[2px] focus:outline-none focus:border-cz-orange transition-[border-color] duration-150 ease-out"
+                  className="bg-cz-black text-white font-body border border-cz-gray-dark rounded-control focus:outline-none focus:border-cz-orange transition-[border-color] duration-150 ease-out"
                   style={{ padding: '11px 14px', fontSize: 19 }}
                 />
               </div>
@@ -137,7 +140,7 @@ export default function Contact() {
                   maxLength={2000}
                   rows={5}
                   placeholder={t('messagePlaceholder')}
-                  className="bg-cz-black text-white font-body border border-cz-gray-dark rounded-[2px] focus:outline-none focus:border-cz-orange transition-[border-color] duration-150 ease-out resize-none"
+                  className="bg-cz-black text-white font-body border border-cz-gray-dark rounded-control focus:outline-none focus:border-cz-orange transition-[border-color] duration-150 ease-out resize-none"
                   style={{ padding: '11px 14px', fontSize: 19 }}
                 />
               </div>
@@ -146,14 +149,9 @@ export default function Contact() {
                 <p className="font-mono text-cz-danger" style={{ fontSize: 17, letterSpacing: 1 }}>{error}</p>
               )}
 
-              <button
-                type="submit"
-                disabled={submitting}
-                className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:not-disabled:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer disabled:opacity-50"
-                style={{ fontSize: 19, letterSpacing: 2, padding: '14px 0', marginTop: 4 }}
-              >
+              <Button type="submit" disabled={submitting} className="w-full mt-1">
                 {submitting ? '...' : t('submit')}
-              </button>
+              </Button>
             </form>
           )}
         </div>
