@@ -1,9 +1,10 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
+import DatePicker from '@/components/ui/DatePicker';
 import PriceCalculator from '@/components/pricing/PriceCalculator';
 import { nextDatesForDayType } from '@/lib/pricing/dates';
-import { labelText, secondaryText, bodyText } from '@/lib/typography';
+import { labelText, secondaryText } from '@/lib/typography';
 import type { CalcInput, DayTypeGroup, Offer, PricingConfig } from '@/lib/pricing/types';
 
 const DAY_NAMES_SHORT_CS = ['NE', 'PO', 'ÚT', 'ST', 'ČT', 'PÁ', 'SO'];
@@ -118,14 +119,9 @@ export default function StepSummaryDate({
             );
           })}
         </div>
-        <input
-          type="date"
-          min={today}
-          value={date ?? ''}
-          onChange={(e) => onDate(e.target.value)}
-          className="w-full bg-cz-black border border-cz-gray-dark rounded-cz font-mono text-white"
-          style={{ padding: '10px 14px', ...bodyText, letterSpacing: 1, colorScheme: 'dark', marginTop: 10 }}
-        />
+        <div style={{ marginTop: 10 }}>
+          <DatePicker value={date} onChange={onDate} min={today} locale={locale} />
+        </div>
       </div>
 
       {availability && (

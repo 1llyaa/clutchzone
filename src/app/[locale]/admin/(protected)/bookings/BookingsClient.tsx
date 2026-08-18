@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { X } from '@phosphor-icons/react';
 import Button from '@/components/ui/Button';
+import DatePicker from '@/components/ui/DatePicker';
 
 const STATUS_LABEL: Record<string, string> = {
   confirmed: 'Potvrzeno',
@@ -229,25 +230,16 @@ export default function BookingsClient({
         <div className="flex items-center gap-3">
           <div className="flex flex-col gap-1">
             <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>OD</label>
-            <input
-              type="date"
-              value={localFrom}
-              onChange={(e) => handleFromChange(e.target.value)}
-              className="bg-cz-black-mid text-white font-mono rounded-control focus:outline-none focus:border-cz-orange"
-              style={{ padding: '8px 12px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)', colorScheme: 'dark' }}
-            />
+            <div style={{ width: 140 }}>
+              <DatePicker value={localFrom} onChange={handleFromChange} locale="cs" />
+            </div>
           </div>
           <div className="font-mono text-cz-gray-light" style={{ fontSize: 16, marginTop: 16 }}>–</div>
           <div className="flex flex-col gap-1">
             <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>DO</label>
-            <input
-              type="date"
-              value={localTo}
-              min={localFrom}
-              onChange={(e) => handleToChange(e.target.value)}
-              className="bg-cz-black-mid text-white font-mono rounded-control focus:outline-none focus:border-cz-orange"
-              style={{ padding: '8px 12px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)', colorScheme: 'dark' }}
-            />
+            <div style={{ width: 140 }}>
+              <DatePicker value={localTo} onChange={handleToChange} min={localFrom} locale="cs" />
+            </div>
           </div>
           {!isSingleDay && (
             <button
