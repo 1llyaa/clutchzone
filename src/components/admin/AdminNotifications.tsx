@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { createBrowserClient } from '@supabase/ssr';
+import { Bell } from '@phosphor-icons/react';
 
 interface BookingRow {
   id: string;
@@ -209,8 +210,8 @@ export default function AdminNotifications({ locale }: { locale: string }) {
         {permission === 'default' && (
           <button
             onClick={enableSystemNotifications}
-            className="flex items-center gap-2 bg-cz-black-mid font-mono text-cz-white-soft uppercase rounded-[2px] cursor-pointer hover:border-cz-orange transition-[border-color] duration-150"
-            style={{ fontSize: 16, letterSpacing: 1.5, padding: '13px 14px', border: '1px solid #2A2A2A' }}
+            className="flex items-center gap-2 bg-cz-black-mid font-mono text-cz-white-soft uppercase rounded-control cursor-pointer hover:border-cz-orange transition-[border-color] duration-150"
+            style={{ fontSize: 16, letterSpacing: 1.5, padding: '13px 14px', border: '1px solid var(--color-cz-gray-dark)' }}
           >
             <span className="rounded-full bg-cz-orange" style={{ width: 6, height: 6 }} />
             POVOLIT NOTIFIKACE
@@ -219,13 +220,10 @@ export default function AdminNotifications({ locale }: { locale: string }) {
         <button
           onClick={() => { setPanelOpen((o) => !o); if (!panelOpen) markAllRead(); }}
           aria-label="Notifikace"
-          className="relative flex items-center justify-center bg-cz-black-mid rounded-[2px] cursor-pointer hover:border-cz-orange transition-[border-color] duration-150"
-          style={{ width: 44, height: 44, border: '1px solid #2A2A2A' }}
+          className="relative flex items-center justify-center bg-cz-black-mid rounded-control cursor-pointer hover:border-cz-orange transition-[border-color] duration-150"
+          style={{ width: 44, height: 44, border: '1px solid var(--color-cz-gray-dark)' }}
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E8E8E8" strokeWidth="1.5">
-            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-            <path d="M13.7 21a2 2 0 0 1-3.4 0" />
-          </svg>
+          <Bell size={20} weight="bold" className="text-cz-white-soft" />
           {unread > 0 && (
             <span
               className="absolute font-mono text-white bg-cz-orange rounded-full flex items-center justify-center tabular-nums"
@@ -241,9 +239,9 @@ export default function AdminNotifications({ locale }: { locale: string }) {
       {panelOpen && (
         <div
           className="fixed bottom-[76px] right-5 z-[95] bg-cz-black-mid rounded-cz overflow-hidden animate-menu-in flex flex-col"
-          style={{ width: 380, maxHeight: 480, border: '1px solid #2A2A2A', boxShadow: '0 16px 48px rgba(0,0,0,0.6)' }}
+          style={{ width: 380, maxWidth: 'min(380px, 92vw)', maxHeight: 480, border: '1px solid var(--color-cz-gray-dark)', boxShadow: 'var(--shadow-float-lg)' }}
         >
-          <div className="flex items-center justify-between" style={{ padding: '14px 16px', borderBottom: '1px solid #2A2A2A' }}>
+          <div className="flex items-center justify-between" style={{ padding: '14px 16px', borderBottom: '1px solid var(--color-cz-gray-dark)' }}>
             <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
               HISTORIE NOTIFIKACÍ
             </span>
@@ -284,13 +282,13 @@ export default function AdminNotifications({ locale }: { locale: string }) {
       )}
 
       {/* Toast stack — click goes to bookings for that date; sits above the bell */}
-      <div className="fixed bottom-[76px] right-5 z-[100] flex flex-col gap-2" style={{ maxWidth: 380 }}>
+      <div className="fixed bottom-[76px] right-5 z-[100] flex flex-col gap-2" style={{ maxWidth: 'min(380px, 92vw)' }}>
         {toasts.map((t) => (
           <button
             key={t.id}
             onClick={() => goToEntry(t)}
             className="text-left bg-cz-black-mid rounded-cz animate-menu-in cursor-pointer hover:bg-cz-black-light transition-colors duration-150"
-            style={{ border: '1px solid #E84A1A', padding: '14px 16px', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}
+            style={{ border: '1px solid var(--color-cz-orange)', padding: '14px 16px', boxShadow: 'var(--shadow-float-lg)' }}
           >
             <div className="flex items-center gap-2" style={{ marginBottom: 4 }}>
               <span className="rounded-full bg-cz-orange animate-flicker flex-shrink-0" style={{ width: 7, height: 7 }} />

@@ -1,6 +1,8 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { Check } from '@phosphor-icons/react';
+import { labelText, secondaryText, bodyText } from '@/lib/typography';
 
 interface ContactInfo {
   name: string;
@@ -27,7 +29,7 @@ function Field({
 }) {
   return (
     <div>
-      <label className="font-mono text-cz-gray-light uppercase block" style={{ fontSize: 12, letterSpacing: 2.5, marginBottom: 8 }}>
+      <label className="font-mono text-cz-gray-light uppercase block" style={{ ...labelText, letterSpacing: 2.5, marginBottom: 8 }}>
         {label}{!required && <span className="text-cz-gray-light"> {optionalHint}</span>}
       </label>
       <input
@@ -37,9 +39,9 @@ function Field({
         disabled={disabled}
         onChange={(e) => onChange(e.target.value)}
         className="w-full bg-cz-black border border-cz-gray-dark rounded-cz text-white font-body placeholder:text-cz-gray-light focus:border-cz-orange outline-none transition-colors"
-        style={{ padding: '12px 16px', fontSize: 16, opacity: disabled ? 0.4 : 1, cursor: disabled ? 'not-allowed' : 'text' }}
+        style={{ padding: '12px 16px', ...bodyText, opacity: disabled ? 0.4 : 1, cursor: disabled ? 'not-allowed' : 'text' }}
       />
-      {hint && <p className="font-mono text-cz-gray-light" style={{ fontSize: 12, letterSpacing: 1, marginTop: 6 }}>{hint}</p>}
+      {hint && <p className="font-body text-cz-gray-light" style={{ ...secondaryText, marginTop: 6 }}>{hint}</p>}
     </div>
   );
 }
@@ -81,24 +83,23 @@ export default function StepContact({ contact, onChange, requireClutchzoneAccoun
                 width: 16,
                 height: 16,
                 flexShrink: 0,
-                border: `1.5px solid ${contact.noAccountYet ? '#E84A1A' : '#555555'}`,
-                background: contact.noAccountYet ? '#E84A1A' : 'transparent',
-                borderRadius: 2,
+                border: `1.5px solid ${contact.noAccountYet ? 'var(--color-cz-orange)' : '#555555'}`,
+                background: contact.noAccountYet ? 'var(--color-cz-orange)' : 'transparent',
+                borderRadius: 'var(--radius-control)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: 11,
                 color: '#fff',
               }}
             >
-              {contact.noAccountYet ? '✓' : ''}
+              {contact.noAccountYet && <Check weight="bold" size={11} />}
             </div>
-            <span className="font-mono text-cz-gray-light" style={{ fontSize: 13, letterSpacing: 1 }}>
+            <span className="font-body text-cz-gray-light" style={{ ...secondaryText }}>
               {t('noAccountYetLabel')}
             </span>
           </div>
           {contact.noAccountYet && (
-            <p className="font-mono text-cz-gray-light" style={{ fontSize: 12, letterSpacing: 1, marginTop: 6 }}>
+            <p className="font-body text-cz-gray-light" style={{ ...bodyText, marginTop: 6 }}>
               {t('noAccountYetNote')}
             </p>
           )}
@@ -110,20 +111,20 @@ export default function StepContact({ contact, onChange, requireClutchzoneAccoun
       <div className="flex gap-3" style={{ marginTop: 4 }}>
         <button
           onClick={onBack}
-          className="font-display uppercase rounded-[2px] cursor-pointer"
-          style={{ fontSize: 16, letterSpacing: 2, padding: '11px 24px', background: 'transparent', border: '1.5px solid #2A2A2A', color: '#888' }}
+          className="font-display uppercase rounded-control cursor-pointer"
+          style={{ fontSize: 16, letterSpacing: 2, padding: '11px 24px', background: 'transparent', border: '1.5px solid var(--color-cz-gray-dark)', color: '#888' }}
         >
           {t('back')}
         </button>
         <button
           onClick={onNext}
           disabled={!valid}
-          className="font-display uppercase rounded-[2px] flex-1 transition-colors"
+          className="font-display uppercase rounded-control flex-1 transition-colors"
           style={{
             fontSize: 16,
             letterSpacing: 2,
             padding: '11px 24px',
-            background: valid ? '#E84A1A' : '#2A2A2A',
+            background: valid ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-dark)',
             border: 'none',
             color: valid ? '#fff' : '#888888',
             cursor: valid ? 'pointer' : 'not-allowed',

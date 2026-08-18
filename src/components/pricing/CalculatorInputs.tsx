@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from 'next-intl';
 import { dayTypeCloseHour, dayTypeOpenHour } from '@/lib/pricing/dayTypes';
 import type { DayTypeGroup, PricingConfig, StationType } from '@/lib/pricing/types';
+import { labelText, secondaryText } from '@/lib/typography';
 
 interface Props {
   config: PricingConfig;
@@ -30,14 +31,13 @@ function formatHour(h: number): string {
 function pillStyle(active: boolean): React.CSSProperties {
   return {
     height: 40,
-    border: `1px solid ${active ? '#E84A1A' : '#2A2A2A'}`,
+    border: `1px solid ${active ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-dark)'}`,
     background: active ? 'rgba(232,74,26,0.12)' : '#111111',
-    color: active ? '#FFFFFF' : '#E8E8E8',
-    fontFamily: "'Bebas Neue',sans-serif",
-    fontSize: 15,
+    color: active ? '#FFFFFF' : 'var(--color-cz-white-soft)',
+    ...labelText,
     letterSpacing: 1,
     cursor: 'pointer',
-    borderRadius: 2,
+    borderRadius: 'var(--radius-control)',
     padding: '0 14px',
     position: 'relative',
     whiteSpace: 'nowrap',
@@ -80,22 +80,22 @@ export default function CalculatorInputs({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 28, minWidth: 0 }}>
       <div style={{ minWidth: 0 }}>
-        <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 2.5, color: '#E8E8E8', textTransform: 'uppercase', marginBottom: 10 }}>
+        <div className="font-mono" style={{ ...labelText, letterSpacing: 2.5, color: 'var(--color-cz-white-soft)', textTransform: 'uppercase', marginBottom: 10 }}>
           {t('stationTypeLabel')}
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-          <button style={pillStyle(stationType === 'pc')} onClick={() => onStationType('pc')}>{t('pc')}</button>
-          <button style={pillStyle(stationType === 'ps5')} onClick={() => onStationType('ps5')}>{t('ps5')}</button>
+          <button className="font-display" style={pillStyle(stationType === 'pc')} onClick={() => onStationType('pc')}>{t('pc')}</button>
+          <button className="font-display" style={pillStyle(stationType === 'ps5')} onClick={() => onStationType('ps5')}>{t('ps5')}</button>
         </div>
       </div>
 
       <div>
-        <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 2.5, color: '#E8E8E8', textTransform: 'uppercase', marginBottom: 10 }}>
+        <div className="font-mono" style={{ ...labelText, letterSpacing: 2.5, color: 'var(--color-cz-white-soft)', textTransform: 'uppercase', marginBottom: 10 }}>
           {t('dayLabel')}
         </div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {config.dayTypes.map((d) => (
-            <button key={d.key} style={pillStyle(d.key === dayType.key)} onClick={() => onDayType(d.key)}>
+            <button key={d.key} className="font-display" style={pillStyle(d.key === dayType.key)} onClick={() => onDayType(d.key)}>
               {d.label}
             </button>
           ))}
@@ -103,43 +103,43 @@ export default function CalculatorInputs({
       </div>
 
       <div>
-        <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 2.5, color: '#E8E8E8', textTransform: 'uppercase', marginBottom: 10 }}>
+        <div className="font-mono" style={{ ...labelText, letterSpacing: 2.5, color: 'var(--color-cz-white-soft)', textTransform: 'uppercase', marginBottom: 10 }}>
           {t('hourLabel')}
         </div>
         <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
           {hourSlots.map((h) => (
-            <button key={h} style={pillStyle(h === startHour)} onClick={() => onStartHour(h)}>
+            <button key={h} className="font-display" style={pillStyle(h === startHour)} onClick={() => onStartHour(h)}>
               {formatHour(h)}
               {hourHasPass(h) && (
-                <span style={{ position: 'absolute', top: 5, right: 6, width: 5, height: 5, borderRadius: 100, background: '#E84A1A' }} />
+                <span className="rounded-full" style={{ position: 'absolute', top: 5, right: 6, width: 5, height: 5, background: 'var(--color-cz-orange)' }} />
               )}
             </button>
           ))}
         </div>
         {activePassesForStation.length > 0 && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 1.5, color: '#E8E8E8', marginTop: 12 }}>
-            <span style={{ width: 5, height: 5, borderRadius: 100, background: '#E84A1A', display: 'inline-block' }} />
+          <div className="font-mono" style={{ display: 'flex', alignItems: 'center', gap: 8, ...secondaryText, letterSpacing: 1.5, color: 'var(--color-cz-white-soft)', marginTop: 12 }}>
+            <span className="rounded-full" style={{ width: 5, height: 5, background: 'var(--color-cz-orange)', display: 'inline-block' }} />
             {t('cheaperTime', { names: activePassesForStation.map((p) => (locale === 'en' ? p.nameEn : p.nameCs)).join(' · ') })}
           </div>
         )}
       </div>
 
       <div>
-        <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 2.5, color: '#E8E8E8', textTransform: 'uppercase', marginBottom: 10 }}>
+        <div className="font-mono" style={{ ...labelText, letterSpacing: 2.5, color: 'var(--color-cz-white-soft)', textTransform: 'uppercase', marginBottom: 10 }}>
           {t('durationLabel')}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid #2A2A2A', background: '#111111', padding: '12px 16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid var(--color-cz-gray-dark)', background: '#111111', padding: '12px 16px' }}>
           <button
-            style={{ width: 40, height: 40, border: '1px solid #2A2A2A', background: '#1A1A1A', color: '#FFFFFF', fontSize: 18, cursor: 'pointer', borderRadius: 2 }}
+            style={{ width: 40, height: 40, border: '1px solid var(--color-cz-gray-dark)', background: '#1A1A1A', color: '#FFFFFF', fontSize: 18, cursor: 'pointer', borderRadius: 'var(--radius-control)' }}
             onClick={() => onDurationHours(Math.max(1, durationHours - 1))}
           >
             −
           </button>
-          <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 32, letterSpacing: 1, color: '#FFFFFF', textTransform: 'uppercase' }}>
+          <div className="font-display" style={{ fontSize: 32, letterSpacing: 1, color: '#FFFFFF', textTransform: 'uppercase' }}>
             {durationHours}H
           </div>
           <button
-            style={{ width: 40, height: 40, border: '1px solid #2A2A2A', background: '#1A1A1A', color: '#FFFFFF', fontSize: 18, cursor: 'pointer', borderRadius: 2 }}
+            style={{ width: 40, height: 40, border: '1px solid var(--color-cz-gray-dark)', background: '#1A1A1A', color: '#FFFFFF', fontSize: 18, cursor: 'pointer', borderRadius: 'var(--radius-control)' }}
             onClick={() => onDurationHours(Math.min(MAX_DURATION, durationHours + 1))}
           >
             +
@@ -155,35 +155,35 @@ export default function CalculatorInputs({
           style={{ width: '100%', marginTop: 16 }}
         />
         {fitNote && (
-          <div style={{ fontFamily: "'Inter',sans-serif", fontSize: 16, lineHeight: 1.75, color: '#E8E8E8', background: '#111111', borderLeft: '2px solid #E84A1A', padding: '10px 14px', marginTop: 12 }}>
+          <div className="font-body" style={{ fontSize: 16, lineHeight: 1.75, color: 'var(--color-cz-white-soft)', background: '#111111', borderLeft: '2px solid var(--color-cz-orange)', padding: '10px 14px', marginTop: 12 }}>
             {fitNote}
           </div>
         )}
       </div>
 
       <div>
-        <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, letterSpacing: 2.5, color: '#E8E8E8', textTransform: 'uppercase', marginBottom: 10 }}>
+        <div className="font-mono" style={{ ...labelText, letterSpacing: 2.5, color: 'var(--color-cz-white-soft)', textTransform: 'uppercase', marginBottom: 10 }}>
           {t('stationsLabel')}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid #2A2A2A', background: '#111111', padding: '12px 16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid var(--color-cz-gray-dark)', background: '#111111', padding: '12px 16px' }}>
           <button
-            style={{ width: 40, height: 40, border: '1px solid #2A2A2A', background: '#1A1A1A', color: '#FFFFFF', fontSize: 18, cursor: 'pointer', borderRadius: 2 }}
+            style={{ width: 40, height: 40, border: '1px solid var(--color-cz-gray-dark)', background: '#1A1A1A', color: '#FFFFFF', fontSize: 18, cursor: 'pointer', borderRadius: 'var(--radius-control)' }}
             onClick={() => onStationsCount(Math.max(1, stationsCount - 1))}
           >
             −
           </button>
-          <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 32, letterSpacing: 1, color: '#FFFFFF', textTransform: 'uppercase' }}>
+          <div className="font-display" style={{ fontSize: 32, letterSpacing: 1, color: '#FFFFFF', textTransform: 'uppercase' }}>
             {stationsCount}
           </div>
           <button
-            style={{ width: 40, height: 40, border: '1px solid #2A2A2A', background: '#1A1A1A', color: '#FFFFFF', fontSize: 18, cursor: 'pointer', borderRadius: 2 }}
+            style={{ width: 40, height: 40, border: '1px solid var(--color-cz-gray-dark)', background: '#1A1A1A', color: '#FFFFFF', fontSize: 18, cursor: 'pointer', borderRadius: 'var(--radius-control)' }}
             onClick={() => onStationsCount(Math.min(maxStations, stationsCount + 1))}
           >
             +
           </button>
         </div>
         {stationsCount >= maxStations && (
-          <div style={{ fontFamily: "'Inter',sans-serif", fontSize: 16, color: '#888888', marginTop: 12 }}>
+          <div className="font-body" style={{ fontSize: 16, color: '#888888', marginTop: 12 }}>
             {t('morePrivate', { max: maxStations })} <a href="#privatni">{t('privateEventsLink')}</a>
           </div>
         )}

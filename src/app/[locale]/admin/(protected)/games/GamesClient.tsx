@@ -2,6 +2,11 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
+import Image from 'next/image';
+import { Plus } from '@phosphor-icons/react';
+import Button from '@/components/ui/Button';
+import ImagePlaceholder from '@/components/ui/ImagePlaceholder';
+import { isAllowedImageHost } from '@/lib/images';
 
 interface Game {
   id: string;
@@ -16,6 +21,12 @@ interface Game {
 }
 
 const PLATFORM_LABEL: Record<string, string> = { pc: 'PC', ps5: 'PS5', both: 'PC + PS5' };
+// Matches the public site's canonical Games.tsx PLATFORM_COLOR scheme (pc: orange, ps5/both: gray).
+const PLATFORM_COLOR: Record<string, string> = {
+  pc:   'var(--color-cz-orange)',
+  ps5:  'var(--color-cz-gray-dark)',
+  both: 'var(--color-cz-gray-dark)',
+};
 
 const EMPTY_FORM = { title: '', genre: '', description: '', platform: 'pc', cover_url: '' };
 
@@ -147,23 +158,19 @@ export default function GamesClient() {
             {games.length} HER · {games.filter((g) => g.is_active).length} AKTIVNÍCH
           </p>
         </div>
-        <button
-          onClick={openCreate}
-          className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors rounded-[2px]"
-          style={{ fontSize: 16, letterSpacing: 2, padding: '10px 24px' }}
-        >
-          + PŘIDAT HRU
-        </button>
+        <Button onClick={openCreate} size="sm" className="inline-flex items-center gap-2">
+          <Plus size={16} weight="bold" /> PŘIDAT HRU
+        </Button>
       </div>
 
       {/* Table */}
       {loading ? (
         <p className="font-mono text-cz-gray-light text-center" style={{ padding: 40, fontSize: 17 }}>NAČÍTÁNÍ...</p>
       ) : (
-        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A' }}>
+        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid var(--color-cz-gray-dark)' }}>
           <table className="w-full">
             <thead>
-              <tr style={{ borderBottom: '1px solid #2A2A2A' }}>
+              <tr style={{ borderBottom: '1px solid var(--color-cz-gray-dark)' }}>
                 {['', 'NÁZEV', 'ŽÁNR', 'PLATFORMA', 'STATUS', ''].map((h) => (
                   <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '12px 16px', fontSize: 16, letterSpacing: 2 }}>{h}</th>
                 ))}
@@ -177,21 +184,39 @@ export default function GamesClient() {
                   {/* Thumbnail */}
                   <td style={{ padding: '8px 16px', width: 52 }}>
                     {g.cover_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={g.cover_url} alt={g.title} style={{ width: 36, height: 52, objectFit: 'cover', borderRadius: 2 }} />
+                      isAllowedImageHost(g.cover_url) ? (
+                        <Image src={g.cover_url} alt={g.title} width={36} height={52} style={{ objectFit: 'cover', borderRadius: 2 }} />
+                      ) : (
+                        // Free-text "COVER URL" field can point at any host — next/image
+                        // throws for hosts outside next.config.ts's remotePatterns, so
+                        // fall back to a plain <img> for anything not on *.supabase.co.
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={g.cover_url} alt={g.title} width={36} height={52} style={{ objectFit: 'cover', borderRadius: 2 }} />
+                      )
                     ) : (
-                      <div style={{ width: 36, height: 52, background: '#2A2A2A', borderRadius: 2 }} />
+                      <div style={{ width: 36, height: 52, background: 'var(--color-cz-gray-dark)', borderRadius: 2 }} />
                     )}
                   </td>
                   <td className="font-body text-white" style={{ padding: '12px 16px', fontSize: 17, fontWeight: 500 }}>{g.title}</td>
                   <td className="font-mono text-cz-gray-light" style={{ padding: '12px 16px', fontSize: 17 }}>{g.genre || '—'}</td>
                   <td style={{ padding: '12px 16px' }}>
-                    <span className="font-mono uppercase rounded-[2px]" style={{ fontSize: 16, letterSpacing: 1, padding: '3px 8px', color: g.platform === 'ps5' ? '#60a5fa' : '#E84A1A', background: g.platform === 'ps5' ? '#60a5fa20' : '#E84A1A20' }}>
+                    <span
+                      className="font-mono uppercase rounded-control"
+                      style={{ fontSize: 16, letterSpacing: 1, padding: '3px 8px', color: '#fff', background: PLATFORM_COLOR[g.platform] ?? 'var(--color-cz-orange)' }}
+                    >
                       {PLATFORM_LABEL[g.platform]}
                     </span>
                   </td>
                   <td style={{ padding: '12px 16px' }}>
-                    <button onClick={() => toggleActive(g)} className="font-mono uppercase rounded-[2px]" style={{ fontSize: 16, letterSpacing: 1, padding: '3px 8px', color: g.is_active ? '#22c55e' : '#888', background: g.is_active ? '#22c55e20' : '#88888820' }}>
+                    <button
+                      onClick={() => toggleActive(g)}
+                      className="font-mono uppercase rounded-control"
+                      style={{
+                        fontSize: 16, letterSpacing: 1, padding: '3px 8px',
+                        color: g.is_active ? 'var(--color-cz-success)' : '#888',
+                        background: g.is_active ? 'color-mix(in srgb, var(--color-cz-success) 12.5%, transparent)' : '#88888820',
+                      }}
+                    >
                       {g.is_active ? 'AKTIVNÍ' : 'SKRYTÉ'}
                     </button>
                   </td>
@@ -215,7 +240,7 @@ export default function GamesClient() {
       {/* Add / Edit modal */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.75)' }} onClick={() => setShowForm(false)}>
-          <div className="bg-cz-black-mid rounded-cz w-full max-w-xl overflow-auto" style={{ maxHeight: '90vh', padding: 40, border: '1px solid #2A2A2A' }} onClick={(e) => e.stopPropagation()}>
+          <div className="bg-cz-black-mid rounded-cz w-full max-w-xl overflow-auto" style={{ maxHeight: '90vh', padding: 40, border: '1px solid var(--color-cz-gray-dark)' }} onClick={(e) => e.stopPropagation()}>
             <h2 className="font-display text-white uppercase" style={{ fontSize: 24, letterSpacing: 2, marginBottom: 28 }}>
               {editing ? 'UPRAVIT HRU' : 'PŘIDAT HRU'}
             </h2>
@@ -223,18 +248,25 @@ export default function GamesClient() {
             <div className="flex gap-6">
               {/* Cover upload */}
               <div
-                className="flex-shrink-0 flex flex-col items-center justify-center rounded-[2px] cursor-pointer overflow-hidden"
-                style={{ width: 120, height: 172, border: '2px dashed #2A2A2A', background: '#111', position: 'relative' }}
+                className="flex-shrink-0 flex flex-col items-center justify-center rounded-control cursor-pointer overflow-hidden"
+                style={{ width: 120, height: 172, border: '2px dashed var(--color-cz-gray-dark)', background: '#111', position: 'relative' }}
                 onClick={() => fileInputRef.current?.click()}
               >
                 {coverPreview ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={coverPreview} alt="" className="w-full h-full object-cover" />
+                  coverFile || !isAllowedImageHost(coverPreview) ? (
+                    // Two cases fall back to a raw <img> here: (1) a local file just
+                    // picked, not uploaded yet — coverPreview is a blob: URL
+                    // (URL.createObjectURL), which next/image can't load; (2) editing
+                    // an existing game whose cover_url is a free-text URL outside
+                    // next.config.ts's remotePatterns (only *.supabase.co) — next/image
+                    // throws at render for any other host.
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={coverPreview} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <Image src={coverPreview} alt="" fill sizes="120px" className="object-cover" />
+                  )
                 ) : (
-                  <div className="flex flex-col items-center gap-2 p-3 text-center">
-                    <span className="font-mono text-cz-gray-light" style={{ fontSize: 24 }}>+</span>
-                    <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>COVER</span>
-                  </div>
+                  <ImagePlaceholder label="COVER" uploadable ownBox={false} font="mono" letterSpacing={2} className="p-3 text-center" />
                 )}
                 <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleFileSelect(e.target.files?.[0] ?? null)} />
               </div>
@@ -253,8 +285,8 @@ export default function GamesClient() {
                       value={form[key as keyof typeof form]}
                       onChange={(e) => setForm((p) => ({ ...p, [key]: e.target.value }))}
                       placeholder={placeholder}
-                      className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange"
-                      style={{ padding: '8px 12px', fontSize: 19, border: '1px solid #2A2A2A' }}
+                      className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange"
+                      style={{ padding: '8px 12px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
                     />
                   </div>
                 ))}
@@ -264,15 +296,14 @@ export default function GamesClient() {
                   <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>PLATFORMA</label>
                   <div className="flex gap-2">
                     {[{ value: 'pc', label: 'PC' }, { value: 'ps5', label: 'PS5' }, { value: 'both', label: 'PC + PS5' }].map((opt) => (
-                      <button
+                      <Button
                         key={opt.value}
-                        type="button"
                         onClick={() => setForm((p) => ({ ...p, platform: opt.value }))}
-                        className="font-mono uppercase rounded-[2px] transition-colors"
-                        style={{ fontSize: 16, letterSpacing: 1, padding: '6px 14px', color: form.platform === opt.value ? '#fff' : '#888888', background: form.platform === opt.value ? '#E84A1A' : 'transparent', border: `1px solid ${form.platform === opt.value ? '#E84A1A' : '#2A2A2A'}` }}
+                        variant={form.platform === opt.value ? 'primary' : 'ghost'}
+                        size="xs"
                       >
                         {opt.label}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </div>
@@ -287,18 +318,18 @@ export default function GamesClient() {
                 onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
                 rows={3}
                 placeholder="Krátký popis hry..."
-                className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange resize-none"
-                style={{ padding: '8px 12px', fontSize: 19, border: '1px solid #2A2A2A' }}
+                className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange resize-none"
+                style={{ padding: '8px 12px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
               />
             </div>
 
             <div className="flex gap-3" style={{ marginTop: 24 }}>
-              <button onClick={handleSave} disabled={saving || !form.title.trim()} className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark rounded-[2px] disabled:opacity-50" style={{ fontSize: 16, letterSpacing: 2, padding: '11px 28px' }}>
+              <Button onClick={handleSave} disabled={saving || !form.title.trim()} size="sm">
                 {saving ? '...' : 'ULOŽIT'}
-              </button>
-              <button onClick={() => setShowForm(false)} className="font-display uppercase text-cz-gray-light hover:text-white rounded-[2px]" style={{ fontSize: 16, letterSpacing: 2, padding: '11px 28px', border: '1px solid #2A2A2A', background: 'transparent' }}>
+              </Button>
+              <Button onClick={() => setShowForm(false)} variant="ghost" size="sm">
                 ZRUŠIT
-              </button>
+              </Button>
             </div>
           </div>
         </div>

@@ -1,6 +1,8 @@
 'use client';
 
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import Button from '@/components/ui/Button';
 import { useReservation } from '@/components/reservation/ReservationContext';
 
 interface Props {
@@ -44,8 +46,8 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
 
       {/* Content */}
       <div
-        className="relative z-10 grid items-center mx-auto px-6 py-20 pb-28 md:px-16 md:py-[72px] md:pb-[120px] lg:grid-cols-[1.15fr_0.85fr]"
-        style={{ gap: 48, maxWidth: 1440 }}
+        className="relative z-10 grid items-center mx-auto max-w-[1440px] px-6 py-16 md:px-16 md:py-[120px] lg:grid-cols-[1.15fr_0.85fr]"
+        style={{ gap: 48 }}
       >
         {/* Left */}
         <div>
@@ -75,26 +77,23 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
 
           <p
             className="font-body text-cz-white-soft"
-            style={{ fontWeight: 300, fontSize: 'clamp(16px, 2vw, 19px)', lineHeight: 1.7, maxWidth: 480, marginTop: 28 }}
+            style={{ fontSize: 'clamp(16px, 2vw, 19px)', lineHeight: 1.7, maxWidth: 480, marginTop: 28 }}
           >
             {t('subhead')}
           </p>
 
           <div className="flex flex-wrap gap-4" style={{ marginTop: 36 }}>
-            <button
-              onClick={() => open()}
-              className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer"
-              style={{ fontSize: 'clamp(16px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(12px, 2vw, 16px) clamp(24px, 4vw, 40px)' }}
-            >
+            <Button type="button" size="responsive" onClick={() => open()}>
               {t('ctaPrimary')}
-            </button>
-            <button
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="responsive"
               onClick={() => document.getElementById('cenik')?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-transparent text-white font-display uppercase hover:text-cz-orange hover:border-cz-orange active:scale-[0.96] transition-[color,border-color,scale] duration-150 ease-out rounded-[2px] cursor-pointer"
-              style={{ fontSize: 'clamp(16px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(11px, 2vw, 15px) clamp(24px, 4vw, 40px)', border: '1.5px solid rgba(255,255,255,0.15)' }}
             >
               {t('ctaSecondary')}
-            </button>
+            </Button>
           </div>
 
           <div
@@ -110,7 +109,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
                 <div className="font-display text-white" style={{ fontSize: 40, lineHeight: 1 }}>
                   {stat.value}
                 </div>
-                <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, marginTop: 6 }}>
+                <div className="font-mono text-cz-white-soft uppercase" style={{ fontSize: 16, letterSpacing: 2, marginTop: 6 }}>
                   {stat.label}
                 </div>
               </div>
@@ -120,12 +119,12 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
           {/* Mobile: station counter */}
           {stationsFree != null && stationsTotal != null && (
             <div
-              className="flex lg:hidden items-center bg-cz-black-mid rounded-[2px] self-start"
-              style={{ border: '1px solid #2A2A2A', padding: '10px 16px', gap: 10, marginTop: 24 }}
+              className="flex lg:hidden items-center bg-cz-black-mid border border-cz-gray-dark rounded-control self-start"
+              style={{ padding: '10px 16px', gap: 10, marginTop: 24 }}
             >
               <span
                 className="rounded-full animate-flicker flex-shrink-0"
-                style={{ width: 8, height: 8, background: stationsFree > 0 ? '#E84A1A' : '#ef4444' }}
+                style={{ width: 8, height: 8, background: stationsFree > 0 ? 'var(--color-cz-orange)' : 'var(--color-cz-danger)' }}
               />
               <span className="font-mono text-cz-white-soft uppercase tabular-nums" style={{ fontSize: 16, letterSpacing: 1.5 }}>
                 {stationsFree} / {stationsTotal} {t('stationsFree')}
@@ -145,10 +144,8 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
             }}
           />
           <div className="relative animate-hero-char" style={{ animationDelay: '0.2s', opacity: 0 }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              fetchPriority="high"
-              decoding="async"
+            <Image
+              priority
               src={heroImage || '/terrorist_cs2.png'}
               alt="Hero Character"
               width={312}
@@ -157,6 +154,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
                 objectFit: 'contain',
                 maxHeight: 416,
                 width: 'auto',
+                height: 'auto',
                 filter: 'drop-shadow(0 0 30px rgba(232,74,26,0.3)) drop-shadow(0 16px 40px rgba(0,0,0,0.6))',
                 outline: 'none',
               }}
@@ -167,8 +165,8 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
         {/* Desktop: character graphic */}
         <div className="relative hidden lg:flex items-center justify-center" style={{ minHeight: 520 }}>
           {/* Corner accents */}
-          <span className="absolute" style={{ top: 0, left: '8%', width: 40, height: 40, borderTop: '1.5px solid #E84A1A', borderLeft: '1.5px solid #E84A1A' }} />
-          <span className="absolute" style={{ bottom: 0, right: '8%', width: 40, height: 40, borderBottom: '1.5px solid #E84A1A', borderRight: '1.5px solid #E84A1A' }} />
+          <span className="absolute border-t-[1.5px] border-l-[1.5px] border-cz-orange" style={{ top: 0, left: '8%', width: 40, height: 40 }} />
+          <span className="absolute border-b-[1.5px] border-r-[1.5px] border-cz-orange" style={{ bottom: 0, right: '8%', width: 40, height: 40 }} />
 
           {/* Glow behind character */}
           <div
@@ -183,10 +181,8 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
           {/* Character */}
           <div className="relative animate-hero-char" style={{ animationDelay: '0.2s', opacity: 0 }}>
             <div className="animate-hero-float">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                fetchPriority="high"
-                decoding="async"
+              <Image
+                priority
                 src={heroImage || '/terrorist_cs2.png'}
                 alt="Hero Character"
                 width={420}
@@ -195,6 +191,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
                   objectFit: 'contain',
                   maxHeight: 560,
                   width: 'auto',
+                  height: 'auto',
                   filter: 'drop-shadow(0 0 40px rgba(232,74,26,0.3)) drop-shadow(0 20px 60px rgba(0,0,0,0.6))',
                   outline: 'none',
                 }}
@@ -205,12 +202,12 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
           {/* Status badge */}
           {stationsFree != null && stationsTotal != null && (
             <div
-              className="absolute flex items-center bg-cz-black-mid rounded-[2px]"
-              style={{ bottom: '6%', left: 0, border: '1px solid #2A2A2A', padding: '12px 16px', gap: 10 }}
+              className="absolute flex items-center bg-cz-black-mid border border-cz-gray-dark rounded-control"
+              style={{ bottom: '6%', left: 0, padding: '12px 16px', gap: 10 }}
             >
               <span
                 className="rounded-full animate-flicker flex-shrink-0"
-                style={{ width: 8, height: 8, background: stationsFree > 0 ? '#E84A1A' : '#ef4444' }}
+                style={{ width: 8, height: 8, background: stationsFree > 0 ? 'var(--color-cz-orange)' : 'var(--color-cz-danger)' }}
               />
               <span className="font-mono text-cz-white-soft uppercase tabular-nums" style={{ fontSize: 16, letterSpacing: 1.5 }}>
                 {stationsFree} / {stationsTotal} {t('stationsFree')}

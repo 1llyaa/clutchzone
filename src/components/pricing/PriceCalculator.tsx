@@ -8,6 +8,7 @@ import { track } from '@/lib/analytics/track';
 import { dayTypeCloseHour, dayTypeOpenHour } from '@/lib/pricing/dayTypes';
 import { calculatePricing } from '@/lib/pricing/engine';
 import type { CalcInput, Offer, PricingConfig, StationType } from '@/lib/pricing/types';
+import { labelText } from '@/lib/typography';
 import BetterChoiceCard from './BetterChoiceCard';
 import CalculatorInputs from './CalculatorInputs';
 import FullPriceTable from './FullPriceTable';
@@ -201,10 +202,10 @@ export default function PriceCalculator({ config, variant = 'full', onOfferChose
           WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 0%, #000, transparent 80%)',
         }}
       />
-      <div className="relative max-w-[1200px] mx-auto">
+      <div className="relative max-w-[1440px] mx-auto">
         <Reveal>
           <div style={{ marginBottom: 40 }}>
-            <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 13, letterSpacing: 2.5, marginBottom: 12 }}>
+            <span className="font-mono text-cz-orange uppercase block" style={{ ...labelText, letterSpacing: 2.5, marginBottom: 12 }}>
               {t('eyebrow')}
             </span>
             <h2
@@ -213,7 +214,7 @@ export default function PriceCalculator({ config, variant = 'full', onOfferChose
             >
               {t('heading')}
             </h2>
-            <div style={{ width: 64, height: 2, background: '#E84A1A', marginTop: 24 }} />
+            <div style={{ width: 64, height: 2, background: 'var(--color-cz-orange)', marginTop: 24 }} />
           </div>
         </Reveal>
 

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { OpeningHoursRow } from '@/lib/pricing/types';
+import { labelText, secondaryText } from '@/lib/typography';
 
 const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0];
 const CLOSE_TIME_RE = /^([01]\d|2[0-4]):([0-5]\d)$/;
@@ -50,12 +51,12 @@ export default function OpeningHoursTab({ openingHours, onUpdate }: { openingHou
   const rows = WEEK_ORDER.map((dow) => openingHours.find((r) => r.dayOfWeek === dow)).filter((r): r is OpeningHoursRow => !!r);
 
   return (
-    <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid #2A2A2A' }}>
+    <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid var(--color-cz-gray-dark)' }}>
       <table className="w-full">
         <thead>
-          <tr style={{ borderBottom: '1px solid #2A2A2A' }}>
+          <tr style={{ borderBottom: '1px solid var(--color-cz-gray-dark)' }}>
             {['DEN', 'ZAVŘENO', 'OTEVÍRÁ', 'ZAVÍRÁ', 'PŘESAHUJE PŮLNOC', ''].map((h) => (
-              <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '10px 14px', fontSize: 15, letterSpacing: 1.5 }}>{h}</th>
+              <th key={h} className="font-mono text-cz-gray-light uppercase text-left" style={{ padding: '10px 14px', ...labelText, letterSpacing: 1.5 }}>{h}</th>
             ))}
           </tr>
         </thead>
@@ -70,7 +71,7 @@ export default function OpeningHoursTab({ openingHours, onUpdate }: { openingHou
                 </td>
                 <td style={{ padding: '10px 14px' }}>
                   <input type="time" disabled={d.isClosed} value={d.openTime} onChange={(e) => setDrafts((p) => ({ ...p, [r.dayOfWeek]: { ...d, openTime: e.target.value } }))}
-                    className="bg-cz-black text-white font-mono rounded-[2px]" style={{ padding: '6px 10px', fontSize: 16, border: '1px solid #2A2A2A', colorScheme: 'dark', opacity: d.isClosed ? 0.4 : 1 }} />
+                    className="bg-cz-black text-white font-mono rounded-control" style={{ padding: '6px 10px', fontSize: 16, border: '1px solid var(--color-cz-gray-dark)', colorScheme: 'dark', opacity: d.isClosed ? 0.4 : 1 }} />
                 </td>
                 <td style={{ padding: '10px 14px' }}>
                   {/* plain text, not type="time" — the browser's time picker can't hold "24:00"
@@ -84,21 +85,21 @@ export default function OpeningHoursTab({ openingHours, onUpdate }: { openingHou
                     disabled={d.isClosed}
                     value={d.closeTime}
                     onChange={(e) => setDrafts((p) => ({ ...p, [r.dayOfWeek]: { ...d, closeTime: e.target.value } }))}
-                    className="bg-cz-black text-white font-mono rounded-[2px] placeholder:text-cz-gray-dark"
-                    style={{ padding: '6px 10px', fontSize: 16, border: '1px solid #2A2A2A', width: 76, opacity: d.isClosed ? 0.4 : 1 }}
+                    className="bg-cz-black text-white font-mono rounded-control placeholder:text-cz-gray-dark"
+                    style={{ padding: '6px 10px', fontSize: 16, border: '1px solid var(--color-cz-gray-dark)', width: 76, opacity: d.isClosed ? 0.4 : 1 }}
                   />
                   {d.closeTime === '24:00' && (
-                    <span className="font-mono text-cz-gray-light" style={{ fontSize: 12, letterSpacing: 0.5, marginLeft: 8 }}>půlnoc</span>
+                    <span className="font-mono text-cz-gray-light" style={{ ...secondaryText, letterSpacing: 0.5, marginLeft: 8 }}>půlnoc</span>
                   )}
                 </td>
                 <td style={{ padding: '10px 14px' }}>
                   <input type="checkbox" disabled={d.isClosed} checked={d.crossesMidnight} onChange={(e) => setDrafts((p) => ({ ...p, [r.dayOfWeek]: { ...d, crossesMidnight: e.target.checked } }))} />
                 </td>
                 <td style={{ padding: '10px 14px' }}>
-                  <button onClick={() => save(r)} disabled={saving === r.dayOfWeek} className="font-mono text-cz-orange uppercase hover:underline disabled:opacity-50" style={{ fontSize: 15, letterSpacing: 1 }}>
+                  <button onClick={() => save(r)} disabled={saving === r.dayOfWeek} className="font-mono text-cz-orange uppercase hover:underline disabled:opacity-50" style={{ ...labelText, letterSpacing: 1 }}>
                     {saving === r.dayOfWeek ? '...' : 'ULOŽIT'}
                   </button>
-                  {errors[r.dayOfWeek] && <p className="font-mono" style={{ fontSize: 13, color: '#E84A1A', marginTop: 4 }}>{errors[r.dayOfWeek]}</p>}
+                  {errors[r.dayOfWeek] && <p className="font-mono" style={{ ...secondaryText, color: 'var(--color-cz-orange)', marginTop: 4 }}>{errors[r.dayOfWeek]}</p>}
                 </td>
               </tr>
             );

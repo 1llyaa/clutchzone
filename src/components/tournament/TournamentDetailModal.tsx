@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { X } from '@phosphor-icons/react';
+import Button from '@/components/ui/Button';
 
 interface Tournament {
   id: string;
@@ -47,10 +49,10 @@ export default function TournamentDetailModal({ tournament, onClose, onRegister 
     >
       <div
         className="relative bg-cz-black-mid rounded-cz w-full max-w-lg overflow-y-auto animate-modal-in"
-        style={{ border: '1px solid #2A2A2A', maxHeight: '90dvh' }}
+        style={{ border: '1px solid var(--color-cz-gray-dark)', maxHeight: '90dvh' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <span className="absolute top-0 left-0 right-0" style={{ height: 2, background: '#E84A1A' }} />
+        <span className="absolute top-0 left-0 right-0" style={{ height: 2, background: 'var(--color-cz-orange)' }} />
 
         {/* Header */}
         <div className="flex items-start justify-between px-5 pb-5 pt-7 md:px-8 md:pt-7">
@@ -65,18 +67,14 @@ export default function TournamentDetailModal({ tournament, onClose, onRegister 
               {tournament.game} · {formatDate(tournament.date)}
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="font-mono text-cz-gray-mid hover:text-white transition-colors"
-            style={{ fontSize: 20, lineHeight: 1 }}
-          >
-            ×
-          </button>
+          <Button variant="ghost" iconOnly onClick={onClose} aria-label="Zavřít">
+            <X size={20} weight="bold" />
+          </Button>
         </div>
 
         <div className="px-5 pb-8 md:px-8">
           {/* Stats row */}
-          <div className="flex gap-8" style={{ marginBottom: 24, paddingBottom: 20, borderBottom: '1px solid #2A2A2A' }}>
+          <div className="flex gap-8" style={{ marginBottom: 24, paddingBottom: 20, borderBottom: '1px solid var(--color-cz-gray-dark)' }}>
             <div>
               <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>{t('prizePool')}</div>
               <div className="font-display text-white" style={{ fontSize: 24, marginTop: 2 }}>
@@ -100,21 +98,12 @@ export default function TournamentDetailModal({ tournament, onClose, onRegister 
           </p>
 
           <div className="flex gap-3">
-            <button
-              onClick={() => onRegister(tournament)}
-              disabled={isFull}
-              className="flex-1 bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:not-disabled:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-              style={{ fontSize: 16, letterSpacing: 2, padding: 13 }}
-            >
+            <Button type="button" onClick={() => onRegister(tournament)} disabled={isFull} size="sm" className="flex-1">
               {isFull ? 'PLNÝ' : t('detailCta')}
-            </button>
-            <button
-              onClick={onClose}
-              className="font-display uppercase text-cz-gray-light hover:text-white transition-colors rounded-[2px] cursor-pointer"
-              style={{ fontSize: 16, letterSpacing: 2, padding: '13px 24px', border: '1px solid #2A2A2A', background: 'transparent' }}
-            >
-              ×
-            </button>
+            </Button>
+            <Button variant="ghost" size="sm" onClick={onClose}>
+              {t('close')}
+            </Button>
           </div>
         </div>
       </div>

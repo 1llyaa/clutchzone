@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 import TournamentRegisterModal from '@/components/tournament/TournamentRegisterModal';
 import TournamentDetailModal from '@/components/tournament/TournamentDetailModal';
+import Button from '@/components/ui/Button';
 import Reveal from '@/components/ui/Reveal';
 
 interface Tournament {
@@ -37,20 +39,13 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
     >
       {/* Character peeking from right — behind content */}
       <div className="absolute right-0 top-0 bottom-0 pointer-events-none" style={{ width: 'clamp(120px, 20vw, 260px)', zIndex: 0 }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          loading="lazy"
-          decoding="async"
+        <Image
           src="/characters/apex.png"
           alt=""
           aria-hidden="true"
+          fill
+          sizes="260px"
           style={{
-            position: 'absolute',
-            bottom: 0,
-            right: -20,
-            height: '80%',
-            maxHeight: 480,
-            width: 'auto',
             objectFit: 'contain',
             objectPosition: 'bottom right',
             outline: 'none',
@@ -78,7 +73,7 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
 
         {tournaments.length === 0 ? (
           <Reveal>
-            <div className="font-mono text-cz-gray-light uppercase text-center" style={{ padding: '40px 0', borderTop: '1px solid #2A2A2A', fontSize: 16, letterSpacing: 3 }}>
+            <div className="font-mono text-cz-gray-light uppercase text-center border-t border-cz-gray-dark" style={{ padding: '40px 0', fontSize: 16, letterSpacing: 3 }}>
               ŽÁDNÉ NADCHÁZEJÍCÍ TURNAJE
             </div>
           </Reveal>
@@ -88,7 +83,7 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
               const isFull = row.filled_slots >= row.max_slots;
               return (
                 <Reveal key={row.id} delay={Math.min(i, 4) * 60}>
-                <div style={{ borderTop: '1px solid #2A2A2A' }}>
+                <div className="border-t border-cz-gray-dark">
                   {/* ── Desktop row (md+) ── */}
                   <div
                     className="hidden md:grid transition-colors duration-200 hover:bg-white/[0.02]"
@@ -103,7 +98,7 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
                       <div className="font-display text-cz-orange" style={{ fontSize: 40, lineHeight: 1 }}>{formatDate(row.date)}</div>
                       <span className="font-mono text-cz-gray-light block" style={{ fontSize: 16, letterSpacing: 2, marginTop: 2 }}>{new Date(row.date).getUTCFullYear()}</span>
                     </div>
-                    <span className="font-mono text-cz-gray-light uppercase justify-self-start" style={{ fontSize: 16, letterSpacing: 2, border: '1px solid #2A2A2A', borderRadius: 2, padding: '6px 10px' }}>
+                    <span className="font-mono text-cz-gray-light uppercase justify-self-start border border-cz-gray-dark" style={{ fontSize: 16, letterSpacing: 2, borderRadius: 2, padding: '6px 10px' }}>
                       {row.game}
                     </span>
                     <button
@@ -126,14 +121,14 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
                       </span>
                     </div>
                     <div className="flex justify-end">
-                      <button
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => !isFull && setSelected(row)}
                         disabled={isFull}
-                        className={`font-display uppercase transition-[color,border-color,scale] duration-200 ease-out rounded-[2px] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed active:not-disabled:scale-[0.96] ${!isFull ? 'hover:text-cz-orange hover:border-cz-orange' : ''}`}
-                        style={{ fontSize: 16, letterSpacing: 2, padding: '9px 22px', background: 'transparent', color: isFull ? '#888888' : '#fff', border: '1.5px solid #2A2A2A' }}
                       >
                         {isFull ? 'PLNÝ' : t('cta')}
-                      </button>
+                      </Button>
                     </div>
                   </div>
 
@@ -144,7 +139,7 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
                         <div className="font-display text-cz-orange" style={{ fontSize: 32, lineHeight: 1 }}>{formatDate(row.date)}</div>
                         <span className="font-mono text-cz-gray-light" style={{ fontSize: 16, letterSpacing: 2 }}>{new Date(row.date).getUTCFullYear()}</span>
                       </div>
-                      <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, border: '1px solid #2A2A2A', borderRadius: 2, padding: '4px 8px' }}>
+                      <span className="font-mono text-cz-gray-light uppercase border border-cz-gray-dark" style={{ fontSize: 16, letterSpacing: 2, borderRadius: 2, padding: '4px 8px' }}>
                         {row.game}
                       </span>
                     </div>
@@ -174,21 +169,21 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
                           </span>
                         </div>
                       </div>
-                      <button
+                      <Button
+                        variant={isFull ? 'ghost' : 'primary'}
+                        size="sm"
                         onClick={() => !isFull && setSelected(row)}
                         disabled={isFull}
-                        className="font-display uppercase rounded-[2px] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-[background-color,color,scale] duration-150 active:not-disabled:scale-[0.96]"
-                        style={{ fontSize: 16, letterSpacing: 2, padding: '10px 20px', background: isFull ? 'transparent' : '#E84A1A', color: '#fff', border: isFull ? '1.5px solid #2A2A2A' : 'none' }}
                       >
                         {isFull ? 'PLNÝ' : t('cta')}
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </div>
                 </Reveal>
               );
             })}
-            <div style={{ borderTop: '1px solid #2A2A2A' }} />
+            <div className="border-t border-cz-gray-dark" />
           </div>
         )}
       </div>

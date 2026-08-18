@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { X, Check } from '@phosphor-icons/react';
+import Button from '@/components/ui/Button';
 
 interface Tournament {
   id: string;
@@ -103,11 +105,11 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
     >
       <div
         className="relative bg-cz-black-mid rounded-cz w-full max-w-lg overflow-y-auto animate-modal-in"
-        style={{ border: '1px solid #2A2A2A', maxHeight: '90dvh' }}
+        style={{ border: '1px solid var(--color-cz-gray-dark)', maxHeight: '90dvh' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Orange top bar */}
-        <span className="absolute top-0 left-0 right-0" style={{ height: 2, background: '#E84A1A' }} />
+        <span className="absolute top-0 left-0 right-0" style={{ height: 2, background: 'var(--color-cz-orange)' }} />
 
         {/* Header */}
         <div
@@ -124,13 +126,9 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
               {tournament.game} · {slotsLeft} {slotsLeft === 1 ? 'místo' : 'míst'} zbývá
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="font-mono text-cz-gray-mid hover:text-white transition-colors"
-            style={{ fontSize: 20, lineHeight: 1 }}
-          >
-            ×
-          </button>
+          <Button variant="ghost" iconOnly onClick={onClose} aria-label={t('close')}>
+            <X size={20} weight="bold" />
+          </Button>
         </div>
 
         {done ? (
@@ -140,18 +138,14 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
               className="flex flex-col items-center text-center"
               style={{ padding: '32px 0' }}
             >
-              <span className="text-white" style={{ fontSize: 40 }}>✓</span>
+              <Check size={40} weight="bold" className="text-white" />
               <p className="font-body text-white" style={{ fontSize: 19, lineHeight: 1.7, marginTop: 16, maxWidth: 340 }}>
                 {t('success')}
               </p>
             </div>
-            <button
-              onClick={onClose}
-              className="w-full bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark transition-colors rounded-[2px] border-none cursor-pointer"
-              style={{ fontSize: 16, letterSpacing: 2, padding: 13 }}
-            >
+            <Button variant="primary" size="sm" className="w-full" onClick={onClose}>
               {t('close')}
-            </button>
+            </Button>
           </div>
         ) : (
           /* Registration form */
@@ -169,8 +163,8 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
                   required
                   maxLength={100}
                   placeholder={t('teamPlaceholder')}
-                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors"
-                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
+                  className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange transition-colors"
+                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
                 />
               </div>
 
@@ -186,8 +180,8 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
                   required
                   maxLength={100}
                   placeholder={t('captainPlaceholder')}
-                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors"
-                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
+                  className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange transition-colors"
+                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
                 />
               </div>
 
@@ -202,8 +196,8 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
                   onChange={field('captain_discord')}
                   maxLength={100}
                   placeholder={t('discordPlaceholder')}
-                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors"
-                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
+                  className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange transition-colors"
+                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
                 />
               </div>
 
@@ -218,8 +212,8 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
                   onChange={field('captain_email')}
                   required
                   placeholder={t('emailPlaceholder')}
-                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors"
-                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
+                  className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange transition-colors"
+                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
                 />
               </div>
 
@@ -236,8 +230,8 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
                   onChange={field('players_raw')}
                   rows={3}
                   placeholder={t('playersPlaceholder')}
-                  className="bg-cz-black text-white font-body rounded-[2px] focus:outline-none focus:border-cz-orange transition-colors resize-none"
-                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid #2A2A2A' }}
+                  className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange transition-colors resize-none"
+                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
                 />
               </div>
             </div>
@@ -249,22 +243,12 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
             )}
 
             <div className="flex gap-3" style={{ marginTop: 20 }}>
-              <button
-                type="submit"
-                disabled={submitting}
-                className="flex-1 bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:not-disabled:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] border-none cursor-pointer disabled:opacity-50"
-                style={{ fontSize: 16, letterSpacing: 2, padding: 13 }}
-              >
+              <Button type="submit" disabled={submitting} size="sm" className="flex-1">
                 {submitting ? '...' : t('submit')}
-              </button>
-              <button
-                type="button"
-                onClick={onClose}
-                className="font-display uppercase text-cz-gray-light hover:text-white transition-colors rounded-[2px] cursor-pointer"
-                style={{ fontSize: 16, letterSpacing: 2, padding: '13px 24px', border: '1px solid #2A2A2A', background: 'transparent' }}
-              >
+              </Button>
+              <Button type="button" variant="ghost" size="sm" onClick={onClose}>
                 {t('close')}
-              </button>
+              </Button>
             </div>
           </form>
         )}

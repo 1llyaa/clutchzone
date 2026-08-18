@@ -19,7 +19,7 @@ const NAV = [
 ];
 
 const STATUS_DOT: Record<string, string> = {
-  owner: '#E84A1A',
+  owner: 'var(--color-cz-orange)',
   staff: '#888888',
 };
 const ROLE_LABEL: Record<string, string> = {
@@ -58,12 +58,12 @@ export default function AdminSidebar({
   return (
     <aside
       className="fixed left-0 top-0 bottom-0 z-40 flex flex-col bg-cz-black-mid"
-      style={{ width: 240, borderRight: '1px solid #2A2A2A' }}
+      style={{ width: 240, maxWidth: 'min(240px, 92vw)', borderRight: '1px solid var(--color-cz-gray-dark)' }}
     >
       {/* Logo */}
       <div
         className="flex items-center gap-3"
-        style={{ padding: '22px 20px', borderBottom: '1px solid #2A2A2A' }}
+        style={{ padding: '22px 20px', borderBottom: '1px solid var(--color-cz-gray-dark)' }}
       >
         <Logo size={30} />
         <div>
@@ -84,26 +84,26 @@ export default function AdminSidebar({
             <Link
               key={item.href}
               href={`/${locale}${item.href}`}
-              className="flex items-center gap-3 rounded-[2px] font-mono uppercase transition-colors duration-100"
+              className="flex items-center gap-3 rounded-control font-mono uppercase transition-colors duration-100"
               style={{
                 padding: '9px 12px',
                 fontSize: 16,
                 letterSpacing: 2,
-                color: active ? '#E84A1A' : '#888888',
+                color: active ? 'var(--color-cz-orange)' : '#888888',
                 background: active ? 'rgba(232,74,26,0.08)' : 'transparent',
               }}
             >
               {active && (
                 <span
                   className="flex-shrink-0"
-                  style={{ width: 3, height: 12, background: '#E84A1A', borderRadius: 1 }}
+                  style={{ width: 3, height: 12, background: 'var(--color-cz-orange)', borderRadius: 1 }}
                 />
               )}
               {item.label}
               {item.badge && unfulfilledCreditsCount > 0 && (
                 <span
                   className="font-mono text-white bg-cz-orange rounded-full flex items-center justify-center tabular-nums"
-                  style={{ minWidth: 20, height: 20, fontSize: 13, padding: '0 5px', marginLeft: 'auto' }}
+                  style={{ minWidth: 24, height: 24, fontSize: 16, padding: '0 5px', marginLeft: 'auto' }}
                 >
                   {unfulfilledCreditsCount}
                 </span>
@@ -114,7 +114,7 @@ export default function AdminSidebar({
       </nav>
 
       {/* User info + logout */}
-      <div style={{ padding: '16px 20px', borderTop: '1px solid #2A2A2A' }}>
+      <div style={{ padding: '16px 20px', borderTop: '1px solid var(--color-cz-gray-dark)' }}>
         <div className="flex items-center gap-2" style={{ marginBottom: 10 }}>
           <span
             className="rounded-full flex-shrink-0"

@@ -2,6 +2,9 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
+import Image from 'next/image';
+import { Plus, Check } from '@phosphor-icons/react';
+import Button from '@/components/ui/Button';
 
 interface GalleryImage {
   id: string;
@@ -134,19 +137,14 @@ export default function GalleryClient() {
         <div className="flex items-center gap-2">
           <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, marginRight: 4 }}>TYP ZOBRAZENÍ</span>
           {DISPLAY_TYPES.map((dt) => (
-            <button
+            <Button
               key={dt.value}
               onClick={() => updateDisplayType(dt.value)}
-              className="font-mono uppercase rounded-[2px] transition-colors"
-              style={{
-                fontSize: 16, letterSpacing: 2, padding: '6px 14px',
-                color:      displayType === dt.value ? '#fff' : '#888888',
-                background: displayType === dt.value ? '#E84A1A' : 'transparent',
-                border:     `1px solid ${displayType === dt.value ? '#E84A1A' : '#2A2A2A'}`,
-              }}
+              variant={displayType === dt.value ? 'primary' : 'ghost'}
+              size="xs"
             >
               {dt.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -161,7 +159,7 @@ export default function GalleryClient() {
         style={{
           marginBottom: 32,
           padding: '40px 24px',
-          border: `2px dashed ${dragOver ? '#E84A1A' : '#2A2A2A'}`,
+          border: `2px dashed ${dragOver ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-dark)'}`,
           background: dragOver ? 'rgba(232,74,26,0.05)' : 'transparent',
         }}
       >
@@ -177,7 +175,9 @@ export default function GalleryClient() {
           <p className="font-mono text-cz-orange uppercase" style={{ fontSize: 16, letterSpacing: 3 }}>NAHRÁVÁNÍ...</p>
         ) : (
           <>
-            <div className="font-display text-white uppercase" style={{ fontSize: 18, letterSpacing: 2 }}>+ PŘIDAT FOTOGRAFIE</div>
+            <div className="font-display text-white uppercase flex items-center gap-2" style={{ fontSize: 18, letterSpacing: 2 }}>
+              <Plus size={18} weight="bold" /> PŘIDAT FOTOGRAFIE
+            </div>
             <p className="font-mono text-cz-gray-light" style={{ fontSize: 16, letterSpacing: 2, marginTop: 8 }}>
               PŘETÁHNĚTE SOUBORY NEBO KLIKNĚTE · JPG, PNG, WEBP
             </p>
@@ -196,27 +196,28 @@ export default function GalleryClient() {
             <div
               key={img.id}
               className="bg-cz-black-mid rounded-cz overflow-hidden flex flex-col"
-              style={{ border: `1px solid ${img.is_active ? '#2A2A2A' : '#1a1a1a'}`, opacity: img.is_active ? 1 : 0.5 }}
+              style={{ border: `1px solid ${img.is_active ? 'var(--color-cz-gray-dark)' : '#1a1a1a'}`, opacity: img.is_active ? 1 : 0.5 }}
             >
               {/* Thumbnail */}
               <div className="relative" style={{ aspectRatio: '4/3', background: '#111' }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={img.url}
                   alt={img.caption || ''}
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="(max-width: 1024px) 50vw, 25vw"
+                  className="object-cover"
                 />
                 <div className="absolute top-2 right-2 flex gap-1">
                   <button
                     onClick={() => move(img, 'up')}
                     disabled={idx === 0}
-                    className="font-mono text-white rounded-[2px] disabled:opacity-20 hover:bg-white/20 transition-colors"
+                    className="font-mono text-white rounded-control disabled:opacity-20 hover:bg-white/20 transition-colors"
                     style={{ fontSize: 16, padding: '2px 6px', background: 'rgba(0,0,0,0.6)' }}
                   >↑</button>
                   <button
                     onClick={() => move(img, 'down')}
                     disabled={idx === sorted.length - 1}
-                    className="font-mono text-white rounded-[2px] disabled:opacity-20 hover:bg-white/20 transition-colors"
+                    className="font-mono text-white rounded-control disabled:opacity-20 hover:bg-white/20 transition-colors"
                     style={{ fontSize: 16, padding: '2px 6px', background: 'rgba(0,0,0,0.6)' }}
                   >↓</button>
                 </div>
@@ -234,10 +235,12 @@ export default function GalleryClient() {
                       onKeyDown={(e) => { if (e.key === 'Enter') saveCaption(img.id); if (e.key === 'Escape') setEditId(null); }}
                       autoFocus
                       placeholder="Popis..."
-                      className="flex-1 bg-cz-black text-white font-body rounded-[2px] focus:outline-none"
-                      style={{ fontSize: 19, padding: '4px 8px', border: '1px solid #E84A1A' }}
+                      className="flex-1 bg-cz-black text-white font-body rounded-control focus:outline-none"
+                      style={{ fontSize: 19, padding: '4px 8px', border: '1px solid var(--color-cz-orange)' }}
                     />
-                    <button onClick={() => saveCaption(img.id)} className="font-mono text-cz-orange" style={{ fontSize: 16 }}>✓</button>
+                    <button onClick={() => saveCaption(img.id)} aria-label="Uložit" className="text-cz-orange">
+                      <Check size={16} weight="bold" />
+                    </button>
                   </div>
                 ) : (
                   <button
@@ -252,11 +255,11 @@ export default function GalleryClient() {
                 <div className="flex items-center justify-between" style={{ marginTop: 'auto' }}>
                   <button
                     onClick={() => toggleActive(img)}
-                    className="font-mono uppercase rounded-[2px] transition-colors"
+                    className="font-mono uppercase rounded-control transition-colors"
                     style={{
                       fontSize: 16, letterSpacing: 1, padding: '3px 8px',
-                      color:      img.is_active ? '#22c55e' : '#888',
-                      background: img.is_active ? '#22c55e20' : '#88888820',
+                      color:      img.is_active ? 'var(--color-cz-success)' : '#888',
+                      background: img.is_active ? 'color-mix(in srgb, var(--color-cz-success) 12.5%, transparent)' : '#88888820',
                     }}
                   >
                     {img.is_active ? 'AKTIVNÍ' : 'SKRYTÉ'}

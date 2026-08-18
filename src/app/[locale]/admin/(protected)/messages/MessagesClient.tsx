@@ -56,7 +56,7 @@ export default function MessagesClient({ messages }: { messages: Message[] }) {
         {/* List */}
         <div
           className="bg-cz-black-mid rounded-cz overflow-auto flex-shrink-0"
-          style={{ width: 380, border: '1px solid #2A2A2A' }}
+          style={{ width: 380, maxWidth: 'min(380px, 92vw)', border: '1px solid var(--color-cz-gray-dark)' }}
         >
           {messages.length === 0 ? (
             <div className="font-mono text-cz-gray-light text-center" style={{ padding: 40, fontSize: 17 }}>
@@ -70,9 +70,9 @@ export default function MessagesClient({ messages }: { messages: Message[] }) {
                 className="w-full text-left transition-colors hover:bg-white/5"
                 style={{
                   padding: '16px 20px',
-                  borderBottom: '1px solid #2A2A2A',
+                  borderBottom: '1px solid var(--color-cz-gray-dark)',
                   background: selected?.id === m.id ? 'rgba(232,74,26,0.08)' : 'transparent',
-                  borderLeft: selected?.id === m.id ? '2px solid #E84A1A' : '2px solid transparent',
+                  borderLeft: selected?.id === m.id ? '2px solid var(--color-cz-orange)' : '2px solid transparent',
                 }}
               >
                 <div className="flex items-center justify-between" style={{ marginBottom: 4 }}>
@@ -101,11 +101,11 @@ export default function MessagesClient({ messages }: { messages: Message[] }) {
         {selected ? (
           <div
             className="flex-1 bg-cz-black-mid rounded-cz flex flex-col"
-            style={{ border: '1px solid #2A2A2A' }}
+            style={{ border: '1px solid var(--color-cz-gray-dark)' }}
           >
             <div
               className="flex items-start justify-between"
-              style={{ padding: '24px 28px', borderBottom: '1px solid #2A2A2A' }}
+              style={{ padding: '24px 28px', borderBottom: '1px solid var(--color-cz-gray-dark)' }}
             >
               <div>
                 <div className="font-display text-white uppercase" style={{ fontSize: 22, letterSpacing: 1 }}>
@@ -145,7 +145,7 @@ export default function MessagesClient({ messages }: { messages: Message[] }) {
         ) : (
           <div
             className="flex-1 bg-cz-black-mid rounded-cz flex items-center justify-center"
-            style={{ border: '1px solid #2A2A2A' }}
+            style={{ border: '1px solid var(--color-cz-gray-dark)' }}
           >
             <p className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3 }}>
               VYBERTE ZPRÁVU

@@ -1,7 +1,9 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 import { useReservation } from '@/components/reservation/ReservationContext';
+import Button from '@/components/ui/Button';
 import Reveal from '@/components/ui/Reveal';
 
 export default function CtaBand() {
@@ -10,7 +12,7 @@ export default function CtaBand() {
 
   return (
     <section
-      className="relative bg-cz-black px-6 pb-20 md:px-16 md:pb-[104px]"
+      className="relative bg-cz-black px-6 py-14 md:px-16 md:py-[104px]"
     >
       <Reveal>
       <div
@@ -42,27 +44,26 @@ export default function CtaBand() {
         />
 
         {/* Character peeking from right */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          loading="lazy"
-          decoding="async"
-          src="/characters/red_hair.png"
-          alt=""
-          aria-hidden="true"
+        <div
           className="absolute bottom-0 right-0 pointer-events-none"
           style={{
             height: '115%',
-            width: 'auto',
-            maxWidth: 'clamp(140px, 30vw, 260px)',
-            objectFit: 'contain',
-            objectPosition: 'bottom right',
-            outline: 'none',
+            width: 'clamp(140px, 30vw, 260px)',
             maskImage: 'linear-gradient(to right, transparent 0%, black 40%), linear-gradient(to bottom, transparent 0%, black 20%), linear-gradient(to top, transparent 0%, black 18%)',
             WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 40%), linear-gradient(to bottom, transparent 0%, black 20%), linear-gradient(to top, transparent 0%, black 18%)',
             maskComposite: 'intersect, intersect',
             WebkitMaskComposite: 'source-in, source-in',
           }}
-        />
+        >
+          <Image
+            src="/characters/red_hair.png"
+            alt=""
+            aria-hidden="true"
+            fill
+            sizes="260px"
+            style={{ objectFit: 'contain', objectPosition: 'bottom right', outline: 'none' }}
+          />
+        </div>
 
         <div className="relative">
           <span
@@ -78,20 +79,15 @@ export default function CtaBand() {
             {t('heading')}
           </h2>
           <div className="flex gap-4 md:gap-5 justify-center flex-wrap">
-            <button
-              onClick={() => open()}
-              className="bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark hover:shadow-[0_0_18px_rgba(232,74,26,0.35)] active:scale-[0.96] transition-[background-color,scale,box-shadow] duration-150 ease-out rounded-[2px] border-none cursor-pointer"
-              style={{ fontSize: 'clamp(16px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(12px, 2vw, 16px) clamp(28px, 4vw, 44px)' }}
-            >
+            <Button variant="primary" onClick={() => open()}>
               {t('primary')}
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
               onClick={() => document.getElementById('kontakt')?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-transparent text-white font-display uppercase hover:text-cz-orange hover:border-cz-orange active:scale-[0.96] transition-[color,border-color,scale] duration-150 ease-out rounded-[2px] cursor-pointer"
-              style={{ fontSize: 'clamp(16px, 2vw, 19px)', letterSpacing: 2, padding: 'clamp(11px, 2vw, 15px) clamp(28px, 4vw, 44px)', border: '1.5px solid rgba(255,255,255,0.15)' }}
             >
               {t('secondary')}
-            </button>
+            </Button>
           </div>
         </div>
       </div>

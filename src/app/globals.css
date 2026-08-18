@@ -13,21 +13,30 @@
   --color-cz-white: #FFFFFF;
   --color-cz-white-soft: #E8E8E8;
 
+  --color-cz-success: #22c55e;
+  --color-cz-warning: #eab308;
+  --color-cz-danger: #ef4444;
+
   --font-display: 'Bebas Neue', sans-serif;
-  --font-body: 'Space Mono', monospace;
+  --font-body: 'Inter', sans-serif;
   --font-mono: 'Space Mono', monospace;
 
-  --text-label: 16px;
-  --text-secondary: 17px;
-  --text-body: 19px;
-  --text-lead: 22px;
-  --text-display-card: 32px;
-  --text-display-subsection: 40px;
-  --text-display-section: 64px;
-  --text-display-hero: 96px;
+  --text-label: 1rem;
+  --text-secondary: 1.0625rem;
+  --text-body: 1.1875rem;
+  --text-lead: 1.375rem;
+  --text-display-card: 2rem;
+  --text-display-subsection: 2.5rem;
+  --text-display-section: 4rem;
+  --text-display-hero: 6rem;
 
   --radius-cz: 4px;
-  --radius-pill: 100px;
+  --radius-control: 2px;
+
+  --shadow-cta-glow: 0 0 18px rgba(232, 74, 26, 0.35);
+  --shadow-ambient-glow: 0 0 60px rgba(232, 74, 26, 0.08);
+  --shadow-float-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --shadow-float-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
 
   --animate-flicker: cz-flicker 1.6s ease-in-out infinite;
   --animate-scroll-pulse: cz-scroll-pulse 2.2s ease-in-out infinite;

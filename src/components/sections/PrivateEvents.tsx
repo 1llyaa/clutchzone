@@ -1,6 +1,8 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
+import Button from '@/components/ui/Button';
 import Reveal from '@/components/ui/Reveal';
 
 interface Props {
@@ -20,14 +22,13 @@ export default function PrivateEvents({ image }: Props) {
 
         {/* Left — image */}
         <Reveal>
-          <div className="relative overflow-hidden rounded-cz" style={{ aspectRatio: '4/3', border: '1px solid #2A2A2A' }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              loading="lazy"
-              decoding="async"
+          <div className="relative overflow-hidden rounded-cz border border-cz-gray-dark" style={{ aspectRatio: '4/3' }}>
+            <Image
               src={image || '/terrorist_cs2.png'}
               alt=""
-              className="w-full h-full object-cover"
+              fill
+              sizes="(min-width: 768px) 50vw, 100vw"
+              className="object-cover"
             />
           </div>
         </Reveal>
@@ -37,7 +38,7 @@ export default function PrivateEvents({ image }: Props) {
           <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}>
             {t('eyebrow')}
           </span>
-          <h2 className="font-display text-white uppercase" style={{ fontSize: 52, letterSpacing: 1.5, lineHeight: 0.98, marginBottom: 20 }}>
+          <h2 className="font-display text-white uppercase" style={{ fontSize: 'clamp(2rem, 5vw, 3.25rem)', letterSpacing: 1.5, lineHeight: 0.98, marginBottom: 20 }}>
             {t('heading')}
           </h2>
           <p className="font-body text-cz-gray-light" style={{ fontSize: 19, lineHeight: 1.8, maxWidth: 460, marginBottom: 28 }}>
@@ -53,13 +54,9 @@ export default function PrivateEvents({ image }: Props) {
             </div>
           </div>
 
-          <a
-            href="#kontakt"
-            className="inline-block bg-cz-orange text-white font-display uppercase hover:bg-cz-orange-dark active:scale-[0.96] transition-[background-color,scale] duration-150 ease-out rounded-[2px] text-center"
-            style={{ fontSize: 16, letterSpacing: 2, padding: '14px 36px' }}
-          >
+          <Button href="#kontakt" size="sm">
             {t('cta')}
-          </a>
+          </Button>
         </Reveal>
       </div>
     </section>
