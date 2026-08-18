@@ -1,7 +1,9 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Check } from '@phosphor-icons/react';
+import { isValidPhoneNumber } from 'libphonenumber-js';
+import PhoneField from '@/components/ui/PhoneField';
 import { labelText, secondaryText, bodyText } from '@/lib/typography';
 
 interface ContactInfo {
@@ -48,11 +50,12 @@ function Field({
 
 export default function StepContact({ contact, onChange, requireClutchzoneAccount, onBack, onNext }: Props) {
   const t = useTranslations('booking');
+  const locale = useLocale() === 'en' ? 'en' : 'cs';
   const accountNeeded = requireClutchzoneAccount && !contact.noAccountYet;
   const valid =
     contact.name.trim().length >= 2 &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email) &&
-    contact.phone.trim().length >= 9 &&
+    isValidPhoneNumber(contact.phone) &&
     (!accountNeeded || contact.clutchzoneAccount.trim().length >= 2);
 
   const set = (patch: Partial<ContactInfo>) => onChange({ ...contact, ...patch });
@@ -61,7 +64,7 @@ export default function StepContact({ contact, onChange, requireClutchzoneAccoun
     <div className="flex flex-col gap-4" style={{ marginTop: 8 }}>
       <Field label={t('nameField')} value={contact.name} onChange={(v) => set({ name: v })} placeholder="Jan Novák" />
       <Field label={t('emailField')} value={contact.email} onChange={(v) => set({ email: v })} placeholder="jan@email.cz" type="email" />
-      <Field label={t('phoneField')} value={contact.phone} onChange={(v) => set({ phone: v })} placeholder="+420 123 456 789" type="tel" />
+      <PhoneField label={t('phoneField')} value={contact.phone} onChange={(v) => set({ phone: v })} locale={locale} placeholder="123 456 789" />
 
       {requireClutchzoneAccount && (
         <div>
