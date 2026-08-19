@@ -3,6 +3,8 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { labelText, secondaryText } from '@/lib/typography';
+import AdminPageContainer from '@/components/admin/AdminPageContainer';
+import Button from '@/components/ui/Button';
 
 export interface QueueEntry {
   id: string; // credit_orders.id OR booking_group_id
@@ -69,7 +71,7 @@ export default function CreditsClient({ entries, showAll }: { entries: QueueEntr
   );
 
   return (
-    <div style={{ padding: '40px 48px' }}>
+    <AdminPageContainer>
       <div className="flex items-center justify-between" style={{ marginBottom: 32 }}>
         <div>
           <h1 className="font-display text-white uppercase" style={{ fontSize: 36, letterSpacing: 2 }}>KREDITY</h1>
@@ -77,13 +79,14 @@ export default function CreditsClient({ entries, showAll }: { entries: QueueEntr
             HODINOVÝ KREDIT A MINCE Z KARETNÍCH PLATEB
           </p>
         </div>
-        <button
-          onClick={toggleFilter}
-          className="font-mono uppercase"
-          style={{ ...labelText, letterSpacing: 1.5, padding: '8px 16px', background: 'transparent', border: '1px solid var(--color-cz-gray-dark)', borderRadius: 'var(--radius-control)', color: '#888', cursor: 'pointer' }}
-        >
-          {showAll ? 'ZOBRAZIT JEN NEPŘIPSANÉ' : 'ZOBRAZIT VŠE'}
-        </button>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="xs" active={!showAll} onClick={() => !showAll || toggleFilter()}>
+            NEPŘIPSANÉ
+          </Button>
+          <Button variant="ghost" size="xs" active={showAll} onClick={() => showAll || toggleFilter()}>
+            VŠE
+          </Button>
+        </div>
       </div>
 
       {error && <p className="font-mono" style={{ ...secondaryText, color: 'var(--color-cz-orange)', marginBottom: 16 }}>{error}</p>}
@@ -106,7 +109,7 @@ export default function CreditsClient({ entries, showAll }: { entries: QueueEntr
                   <td style={{ padding: '10px 14px' }}>
                     <span
                       className="font-mono uppercase"
-                      style={{ ...labelText, letterSpacing: 1, color: e.source === 'kredit' ? 'var(--color-cz-orange)' : '#888', background: e.source === 'kredit' ? 'rgba(232,74,26,0.12)' : '#1A1A1A', border: `1px solid ${e.source === 'kredit' ? 'rgba(232,74,26,0.3)' : 'var(--color-cz-gray-dark)'}`, borderRadius: 'var(--radius-control)', padding: '3px 8px' }}
+                      style={{ ...labelText, letterSpacing: 1, color: e.source === 'kredit' ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-light)', background: e.source === 'kredit' ? 'rgba(232,74,26,0.12)' : '#1A1A1A', border: `1px solid ${e.source === 'kredit' ? 'rgba(232,74,26,0.3)' : 'var(--color-cz-gray-dark)'}`, borderRadius: 'var(--radius-control)', padding: '3px 8px' }}
                     >
                       {e.source === 'kredit' ? 'NÁKUP' : 'REZERVACE'}
                     </span>
@@ -115,7 +118,7 @@ export default function CreditsClient({ entries, showAll }: { entries: QueueEntr
                   <td style={{ padding: '10px 14px' }}>
                     <div className="font-body text-white" style={{ ...secondaryText }}>{e.customerName}</div>
                     <div className="font-mono text-cz-gray-light" style={{ ...secondaryText }}>{e.customerEmail}{e.customerPhone ? ` · ${e.customerPhone}` : ''}</div>
-                    <div className="font-mono" style={{ ...secondaryText, color: e.clutchzoneAccount ? '#888' : 'var(--color-cz-orange)' }}>
+                    <div className="font-mono" style={{ ...secondaryText, color: e.clutchzoneAccount ? 'var(--color-cz-gray-light)' : 'var(--color-cz-warning)' }}>
                       {e.clutchzoneAccount ?? 'nemá zatím účet'}
                     </div>
                   </td>
@@ -130,14 +133,20 @@ export default function CreditsClient({ entries, showAll }: { entries: QueueEntr
                     ) : e.fulfilledAt ? (
                       <span className="font-mono uppercase" style={{ ...labelText, letterSpacing: 1, color: 'var(--color-cz-success)' }}>VYŘÍZENO</span>
                     ) : (
-                      <button
+                      <Button
+                        variant="primary"
+                        size="xs"
                         onClick={() => fulfill(e)}
                         disabled={fulfilling === e.id}
-                        className="font-mono uppercase"
-                        style={{ ...labelText, letterSpacing: 1, color: 'var(--color-cz-orange)', background: 'transparent', border: '1px solid var(--color-cz-orange)', borderRadius: 'var(--radius-control)', padding: '4px 10px', cursor: 'pointer' }}
                       >
-                        {fulfilling === e.id ? '...' : e.needsCredit ? 'PŘIPSAT HODINY' : 'PŘIPSAT MINCE'}
-                      </button>
+                        {fulfilling === e.id
+                          ? '...'
+                          : e.needsCredit && e.coinsAwarded
+                            ? 'PŘIPSAT VŠE'
+                            : e.needsCredit
+                              ? 'PŘIPSAT HODINY'
+                              : 'PŘIPSAT MINCE'}
+                      </Button>
                     )}
                   </td>
                   <td className="font-mono" style={{ padding: '10px 14px', ...secondaryText, color: withdrawal.color }}>{withdrawal.text}</td>
@@ -153,6 +162,6 @@ export default function CreditsClient({ entries, showAll }: { entries: QueueEntr
           </tbody>
         </table>
       </div>
-    </div>
+    </AdminPageContainer>
   );
 }

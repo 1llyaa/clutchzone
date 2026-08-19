@@ -4,6 +4,7 @@ import { useState, useTransition, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus, X } from '@phosphor-icons/react';
 import Button from '@/components/ui/Button';
+import AdminPageContainer from '@/components/admin/AdminPageContainer';
 
 interface Tournament {
   id: string;
@@ -165,7 +166,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
   }
 
   return (
-    <div style={{ padding: '40px 48px' }}>
+    <AdminPageContainer>
       {/* Header */}
       <div className="flex items-center justify-between" style={{ marginBottom: 40 }}>
         <div>
@@ -241,13 +242,13 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
                     {t.is_active ? 'AKTIVNÍ' : 'INACTIVE'}
                   </button>
                 </td>
-                <td style={{ padding: '12px 16px' }}>
+                <td style={{ padding: '12px 16px' }} onClick={(e) => e.stopPropagation()}>
                   <div className="flex gap-3">
-                    <button onClick={(e) => { e.stopPropagation(); setDetail(detail?.id === t.id ? null : t); }} className="font-mono text-cz-orange uppercase hover:underline" style={{ fontSize: 16, letterSpacing: 1 }}>
+                    <button onClick={() => setDetail(detail?.id === t.id ? null : t)} className="font-mono text-cz-orange uppercase hover:underline" style={{ fontSize: 16, letterSpacing: 1 }}>
                       {detail?.id === t.id ? 'ZAVŘÍT' : 'DETAIL'}
                     </button>
-                    <button onClick={(e) => { e.stopPropagation(); openEdit(t); }} className="font-mono text-cz-gray-light uppercase hover:underline" style={{ fontSize: 16, letterSpacing: 1 }}>UPRAVIT</button>
-                    <button onClick={(e) => { e.stopPropagation(); handleDelete(t.id); }} disabled={deleting === t.id} className="font-mono text-red-400 uppercase hover:underline disabled:opacity-50" style={{ fontSize: 16, letterSpacing: 1 }}>SMAZAT</button>
+                    <button onClick={() => openEdit(t)} className="font-mono text-cz-gray-light uppercase hover:underline" style={{ fontSize: 16, letterSpacing: 1 }}>UPRAVIT</button>
+                    <Button onClick={() => handleDelete(t.id)} disabled={deleting === t.id} variant="danger" size="xs">SMAZAT</Button>
                   </div>
                 </td>
               </tr>
@@ -401,7 +402,7 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
             <h2 className="font-display text-white uppercase" style={{ fontSize: 24, letterSpacing: 2, marginBottom: 28 }}>
               {editing ? 'UPRAVIT TURNAJ' : 'NOVÝ TURNAJ'}
             </h2>
-            <div className="grid gap-4" style={{ gridTemplateColumns: '1fr 1fr' }}>
+            <div className="grid grid-cols-2 gap-4">
               {[
                 { label: 'NÁZEV',               key: 'title',                  type: 'text',   full: true },
                 { label: 'HRA',                  key: 'game',                   type: 'text' },
@@ -445,6 +446,6 @@ export default function TournamentsClient({ tournaments }: { tournaments: Tourna
           </div>
         </div>
       )}
-    </div>
+    </AdminPageContainer>
   );
 }

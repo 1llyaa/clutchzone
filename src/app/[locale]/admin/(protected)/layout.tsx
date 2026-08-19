@@ -44,7 +44,7 @@ export default async function ProtectedAdminLayout({
   return (
     <div className="min-h-screen bg-cz-black flex">
       <AdminSidebar profile={profile} locale={locale} unfulfilledCreditsCount={unfulfilledCreditsCount} />
-      <main className="flex-1 min-h-screen" style={{ marginLeft: 240 }}>
+      <main className="flex-1 min-h-screen min-w-0">
         {children}
       </main>
       <AdminNotifications locale={locale} />

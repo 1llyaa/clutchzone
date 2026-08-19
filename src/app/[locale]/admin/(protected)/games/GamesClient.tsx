@@ -3,10 +3,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 import Image from 'next/image';
-import { Plus } from '@phosphor-icons/react';
+import { Plus, ArrowUp, ArrowDown } from '@phosphor-icons/react';
 import Button from '@/components/ui/Button';
 import ImagePlaceholder from '@/components/ui/ImagePlaceholder';
 import { isAllowedImageHost } from '@/lib/images';
+import AdminPageContainer from '@/components/admin/AdminPageContainer';
 
 interface Game {
   id: string;
@@ -149,7 +150,7 @@ export default function GamesClient() {
   const sorted = [...games].sort((a, b) => a.sort_order - b.sort_order);
 
   return (
-    <div style={{ padding: '40px 48px' }}>
+    <AdminPageContainer>
       {/* Header */}
       <div className="flex items-center justify-between" style={{ marginBottom: 40 }}>
         <div>
@@ -223,11 +224,11 @@ export default function GamesClient() {
                   <td style={{ padding: '12px 16px' }}>
                     <div className="flex items-center gap-4">
                       <div className="flex gap-1">
-                        <button onClick={() => move(g, 'up')} disabled={idx === 0} className="font-mono text-cz-gray-light hover:text-white disabled:opacity-20" style={{ fontSize: 16 }}>↑</button>
-                        <button onClick={() => move(g, 'down')} disabled={idx === sorted.length - 1} className="font-mono text-cz-gray-light hover:text-white disabled:opacity-20" style={{ fontSize: 16 }}>↓</button>
+                        <button onClick={() => move(g, 'up')} disabled={idx === 0} className="text-cz-gray-light hover:text-white disabled:opacity-20" style={{ padding: '4px 8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><ArrowUp size={16} weight="bold" /></button>
+                        <button onClick={() => move(g, 'down')} disabled={idx === sorted.length - 1} className="text-cz-gray-light hover:text-white disabled:opacity-20" style={{ padding: '4px 8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><ArrowDown size={16} weight="bold" /></button>
                       </div>
                       <button onClick={() => openEdit(g)} className="font-mono text-cz-orange uppercase hover:underline" style={{ fontSize: 16, letterSpacing: 1 }}>UPRAVIT</button>
-                      <button onClick={() => deleteGame(g)} className="font-mono text-red-400 uppercase hover:underline" style={{ fontSize: 16, letterSpacing: 1 }}>SMAZAT</button>
+                      <Button onClick={() => deleteGame(g)} variant="danger" size="xs">SMAZAT</Button>
                     </div>
                   </td>
                 </tr>
@@ -334,6 +335,6 @@ export default function GamesClient() {
           </div>
         </div>
       )}
-    </div>
+    </AdminPageContainer>
   );
 }
