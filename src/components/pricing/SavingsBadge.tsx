@@ -15,7 +15,7 @@ export default function SavingsBadge({ amount }: { amount: number }) {
         fontSize: 16,
         fontWeight: 700,
         letterSpacing: 1,
-        color: 'var(--color-cz-orange)',
+        color: 'var(--color-cz-success)',
         marginTop: 12,
       }}
     >
