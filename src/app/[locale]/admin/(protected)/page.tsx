@@ -1,5 +1,7 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { getLocale } from 'next-intl/server';
+import { ArrowRight } from '@phosphor-icons/react/dist/ssr';
+import AdminPageContainer from '@/components/admin/AdminPageContainer';
 
 interface StatCard {
   label: string;
@@ -61,7 +63,7 @@ export default async function AdminDashboard() {
   ];
 
   return (
-    <div style={{ padding: '40px 48px' }}>
+    <AdminPageContainer>
       <div style={{ marginBottom: 40 }}>
         <h1 className="font-display text-white uppercase" style={{ fontSize: 36, letterSpacing: 2 }}>
           DASHBOARD
@@ -105,10 +107,11 @@ export default async function AdminDashboard() {
           </h2>
           <a
             href={`/${locale}/admin/bookings`}
-            className="font-mono text-cz-orange uppercase hover:underline"
+            className="font-mono text-cz-orange uppercase hover:underline inline-flex items-center gap-2"
             style={{ fontSize: 16, letterSpacing: 2 }}
           >
-            ZOBRAZIT VŠE →
+            ZOBRAZIT VŠE
+            <ArrowRight size={16} weight="bold" />
           </a>
         </div>
 
@@ -179,6 +182,6 @@ export default async function AdminDashboard() {
           </table>
         </div>
       </div>
-    </div>
+    </AdminPageContainer>
   );
 }

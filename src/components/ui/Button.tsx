@@ -4,7 +4,9 @@ import Link from 'next/link';
 
 interface ButtonProps {
   children: React.ReactNode;
-  variant?: 'primary' | 'ghost';
+  variant?: 'primary' | 'ghost' | 'danger';
+  /** Only meaningful when `variant="ghost"` — renders a visually "on" state for filter-toggle chip buttons (distinct from inactive ghost and from primary/danger mutating actions). No-op for `primary`/`danger`. Defaults to `false`. */
+  active?: boolean;
   /** `xs` is the dense admin table-row action size (edit/delete/save/cancel/toggle in table cells). `sm`/`md` are the marketing-site sizes. `responsive` uses clamp()-based fluid font-size/padding for large hero-style CTAs that need to scale smoothly between mobile and desktop instead of stepping at a breakpoint. */
   size?: 'xs' | 'sm' | 'md' | 'responsive';
   /** Square icon-only shape (~40x40px), no uppercase/letter-spacing text styling. */
@@ -22,6 +24,7 @@ interface ButtonProps {
 export default function Button({
   children,
   variant = 'primary',
+  active = false,
   size = 'md',
   iconOnly = false,
   type,
@@ -54,7 +57,11 @@ export default function Button({
   const variantClasses =
     variant === 'primary'
       ? 'bg-cz-orange text-white border-[1.5px] border-cz-orange disabled:opacity-60 disabled:hover:shadow-none hover:bg-cz-orange-dark hover:border-cz-orange-dark hover:shadow-cta-glow active:scale-[0.96]'
-      : 'bg-transparent text-white border-[1.5px] border-cz-gray-dark disabled:opacity-60 hover:text-cz-orange hover:border-cz-orange';
+      : variant === 'danger'
+        ? 'bg-cz-danger text-white border-[1.5px] border-cz-danger disabled:opacity-60 disabled:hover:brightness-100 hover:brightness-90 active:scale-[0.96]'
+        : active
+          ? 'bg-[rgba(232,74,26,0.08)] text-cz-orange border-[1.5px] border-cz-orange disabled:opacity-60'
+          : 'bg-transparent text-white border-[1.5px] border-cz-gray-dark disabled:opacity-60 hover:text-cz-orange hover:border-cz-orange';
 
   const classes = `${base} ${shapeClasses} ${cursor} ${variantClasses} ${className}`;
 

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { createBrowserClient } from '@supabase/ssr';
 import Image from 'next/image';
 import Button from '@/components/ui/Button';
+import AdminPageContainer from '@/components/admin/AdminPageContainer';
 
 interface Profile {
   id: string;
@@ -217,7 +218,7 @@ export default function SettingsClient({
   const ps5Stations = stations.filter((s) => s.type === 'ps5');
 
   return (
-    <div style={{ padding: '40px 48px' }}>
+    <AdminPageContainer>
       <div style={{ marginBottom: 40 }}>
         <h1 className="font-display text-white uppercase" style={{ fontSize: 36, letterSpacing: 2 }}>
           NASTAVENÍ
@@ -530,8 +531,8 @@ export default function SettingsClient({
               onChange={(e) => setInviteEmail(e.target.value)}
               placeholder="email@example.com"
               required
-              className="bg-cz-black-mid text-white font-body rounded-control focus:outline-none focus:border-cz-orange"
-              style={{ padding: '10px 14px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)', width: 300 }}
+              className="bg-cz-black-mid text-white font-body rounded-control focus:outline-none focus:border-cz-orange w-full"
+              style={{ padding: '10px 14px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)', maxWidth: 300 }}
             />
           </div>
           <Button disabled={inviting} size="sm">
@@ -628,6 +629,6 @@ export default function SettingsClient({
           </div>
         </div>
       </div>
-    </div>
+    </AdminPageContainer>
   );
 }

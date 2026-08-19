@@ -3,8 +3,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 import Image from 'next/image';
-import { Plus, Check } from '@phosphor-icons/react';
+import { Plus, Check, ArrowUp, ArrowDown } from '@phosphor-icons/react';
 import Button from '@/components/ui/Button';
+import AdminPageContainer from '@/components/admin/AdminPageContainer';
 
 interface GalleryImage {
   id: string;
@@ -123,7 +124,7 @@ export default function GalleryClient() {
   const sorted = [...images].sort((a, b) => a.sort_order - b.sort_order);
 
   return (
-    <div style={{ padding: '40px 48px' }}>
+    <AdminPageContainer>
       {/* Header */}
       <div className="flex items-center justify-between" style={{ marginBottom: 40 }}>
         <div>
@@ -213,13 +214,13 @@ export default function GalleryClient() {
                     disabled={idx === 0}
                     className="font-mono text-white rounded-control disabled:opacity-20 hover:bg-white/20 transition-colors"
                     style={{ fontSize: 16, padding: '2px 6px', background: 'rgba(0,0,0,0.6)' }}
-                  >↑</button>
+                  ><ArrowUp size={16} weight="bold" /></button>
                   <button
                     onClick={() => move(img, 'down')}
                     disabled={idx === sorted.length - 1}
                     className="font-mono text-white rounded-control disabled:opacity-20 hover:bg-white/20 transition-colors"
                     style={{ fontSize: 16, padding: '2px 6px', background: 'rgba(0,0,0,0.6)' }}
-                  >↓</button>
+                  ><ArrowDown size={16} weight="bold" /></button>
                 </div>
               </div>
 
@@ -277,6 +278,6 @@ export default function GalleryClient() {
           ))}
         </div>
       )}
-    </div>
+    </AdminPageContainer>
   );
 }
