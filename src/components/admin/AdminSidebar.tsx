@@ -57,7 +57,7 @@ export default function AdminSidebar({
 
   return (
     <aside
-      className="fixed left-0 top-0 bottom-0 z-40 flex flex-col bg-cz-black-mid"
+      className="flex-shrink-0 sticky top-0 h-screen flex flex-col bg-cz-black-mid"
       style={{ width: 240, maxWidth: 'min(240px, 92vw)', borderRight: '1px solid var(--color-cz-gray-dark)' }}
     >
       {/* Logo */}

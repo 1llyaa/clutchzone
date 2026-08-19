@@ -2,9 +2,10 @@
 
 import { useMemo, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { X } from '@phosphor-icons/react';
+import { X, Coins } from '@phosphor-icons/react';
 import Button from '@/components/ui/Button';
 import DatePicker from '@/components/ui/DatePicker';
+import AdminPageContainer from '@/components/admin/AdminPageContainer';
 
 const STATUS_LABEL: Record<string, string> = {
   confirmed: 'Potvrzeno',
@@ -16,7 +17,7 @@ const STATUS_COLOR: Record<string, string> = {
   confirmed: 'var(--color-cz-success)',
   pending:   'var(--color-cz-warning)',
   cancelled: 'var(--color-cz-danger)',
-  completed: '#888888',
+  completed: 'var(--color-cz-gray-light)',
 };
 function PAYMENT_LABEL(b: { payment_method: string; payment_status: string }): string {
   if (b.payment_method === 'online') {
@@ -28,7 +29,7 @@ function PAYMENT_COLOR(b: { payment_method: string; payment_status: string }): s
   if (b.payment_method === 'online') {
     return b.payment_status === 'paid' ? 'var(--color-cz-success)' : 'var(--color-cz-warning)';
   }
-  return '#888888';
+  return 'var(--color-cz-gray-light)';
 }
 const TILE_BG: Record<string, string> = {
   free:     '#1a1a1a',
@@ -214,7 +215,7 @@ export default function BookingsClient({
     : `${new Date(from).toLocaleDateString('cs-CZ')} – ${new Date(to).toLocaleDateString('cs-CZ')}`;
 
   return (
-    <div style={{ padding: '40px 48px' }}>
+    <AdminPageContainer>
       {/* Header */}
       <div className="flex items-center justify-between" style={{ marginBottom: 40 }}>
         <div>
@@ -230,14 +231,14 @@ export default function BookingsClient({
         <div className="flex items-center gap-3">
           <div className="flex flex-col gap-1">
             <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>OD</label>
-            <div style={{ width: 140 }}>
+            <div className="w-full" style={{ maxWidth: 140 }}>
               <DatePicker value={localFrom} onChange={handleFromChange} locale="cs" />
             </div>
           </div>
           <div className="font-mono text-cz-gray-light" style={{ fontSize: 16, marginTop: 16 }}>–</div>
           <div className="flex flex-col gap-1">
             <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>DO</label>
-            <div style={{ width: 140 }}>
+            <div className="w-full" style={{ maxWidth: 140 }}>
               <DatePicker value={localTo} onChange={handleToChange} min={localFrom} locale="cs" />
             </div>
           </div>
@@ -274,7 +275,7 @@ export default function BookingsClient({
                   style={{ padding: '10px 4px', background: TILE_BG[state], border: `1px solid ${TILE_BORDER[state]}` }}
                 >
                   <span className="font-mono text-white" style={{ fontSize: 17, letterSpacing: 1 }}>{s.label}</span>
-                  <span className="font-mono uppercase" style={{ fontSize: 16, letterSpacing: 1, marginTop: 3, color: state === 'occupied' ? 'var(--color-cz-orange)' : '#888888' }}>
+                  <span className="font-mono uppercase" style={{ fontSize: 16, letterSpacing: 1, marginTop: 3, color: state === 'occupied' ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-light)' }}>
                     {state === 'occupied' ? 'OBSAZENO' : state === 'inactive' ? 'INACTIVE' : 'VOLNÉ'}
                   </span>
                 </div>
@@ -295,7 +296,7 @@ export default function BookingsClient({
                   style={{ padding: '10px 20px', background: TILE_BG[state], border: `1px solid ${TILE_BORDER[state]}` }}
                 >
                   <span className="font-mono text-white" style={{ fontSize: 17, letterSpacing: 1 }}>{s.label}</span>
-                  <span className="font-mono uppercase" style={{ fontSize: 16, letterSpacing: 1, marginTop: 3, color: state === 'occupied' ? 'var(--color-cz-orange)' : '#888888' }}>
+                  <span className="font-mono uppercase" style={{ fontSize: 16, letterSpacing: 1, marginTop: 3, color: state === 'occupied' ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-light)' }}>
                     {state === 'occupied' ? 'OBSAZENO' : 'VOLNÉ'}
                   </span>
                 </div>
@@ -365,15 +366,16 @@ export default function BookingsClient({
                       {PAYMENT_LABEL(b)}
                     </span>
                     {b.coins_awarded > 0 && (
-                      <div className="font-mono text-cz-gray-light" style={{ fontSize: 17, marginTop: 4 }}>
-                        🪙 {b.coins_awarded}
+                      <div className="font-mono text-cz-gray-light flex items-center gap-1" style={{ fontSize: 17, marginTop: 4 }}>
+                        <Coins size={16} />
+                        {b.coins_awarded}
                       </div>
                     )}
                   </td>
                   <td style={{ padding: '12px 14px' }}>
                     <span
                       className="font-mono uppercase rounded-control"
-                      style={{ fontSize: 16, letterSpacing: 1, padding: '3px 8px', color: STATUS_COLOR[b.status] ?? '#888', background: `color-mix(in srgb, ${STATUS_COLOR[b.status] ?? '#888'} 12.5%, transparent)` }}
+                      style={{ fontSize: 16, letterSpacing: 1, padding: '3px 8px', color: STATUS_COLOR[b.status] ?? 'var(--color-cz-gray-light)', background: `color-mix(in srgb, ${STATUS_COLOR[b.status] ?? 'var(--color-cz-gray-light)'} 12.5%, transparent)` }}
                     >
                       {STATUS_LABEL[b.status] ?? b.status}
                     </span>
@@ -393,7 +395,7 @@ export default function BookingsClient({
       {/* Detail panel */}
       {selected && (
         <div className="fixed inset-0 z-50 flex items-center justify-end" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={() => setSelected(null)}>
-          <div className="bg-cz-black-mid h-full flex flex-col" style={{ width: 400, maxWidth: 'min(400px, 92vw)', borderLeft: '1px solid var(--color-cz-gray-dark)' }} onClick={(e) => e.stopPropagation()}>
+          <div className="bg-cz-black-mid h-full flex flex-col w-full" style={{ maxWidth: 'min(400px, 92vw)', borderLeft: '1px solid var(--color-cz-gray-dark)' }} onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between" style={{ padding: '24px 28px', borderBottom: '1px solid var(--color-cz-gray-dark)' }}>
               <div>
                 <div className="font-mono text-cz-orange" style={{ fontSize: 17 }}>{selected.reference}</div>
@@ -444,7 +446,7 @@ export default function BookingsClient({
                     disabled={updating}
                     onClick={() => updateStatus(selected.groupKey, 'cancelled')}
                     className="flex-1 font-display uppercase rounded-control hover:border-red-500 hover:text-red-400 transition-colors disabled:opacity-50"
-                    style={{ fontSize: 16, letterSpacing: 2, padding: '10px 0', border: '1px solid var(--color-cz-gray-dark)', color: '#888', background: 'transparent' }}
+                    style={{ fontSize: 16, letterSpacing: 2, padding: '10px 0', border: '1px solid var(--color-cz-gray-dark)', color: 'var(--color-cz-gray-light)', background: 'transparent' }}
                   >
                     ZRUŠIT
                   </button>
@@ -462,6 +464,6 @@ export default function BookingsClient({
           </div>
         </div>
       )}
-    </div>
+    </AdminPageContainer>
   );
 }

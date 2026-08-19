@@ -2,6 +2,8 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import AdminPageContainer from '@/components/admin/AdminPageContainer';
+import Button from '@/components/ui/Button';
 
 interface Message {
   id: string;
@@ -40,7 +42,7 @@ export default function MessagesClient({ messages }: { messages: Message[] }) {
   const unreadCount = messages.filter((m) => !m.is_read).length;
 
   return (
-    <div style={{ padding: '40px 48px' }}>
+    <AdminPageContainer>
       <div style={{ marginBottom: 40 }}>
         <h1 className="font-display text-white uppercase" style={{ fontSize: 36, letterSpacing: 2 }}>
           ZPRÁVY
@@ -55,8 +57,8 @@ export default function MessagesClient({ messages }: { messages: Message[] }) {
       <div className="flex gap-6" style={{ height: 'calc(100vh - 180px)', minHeight: 400 }}>
         {/* List */}
         <div
-          className="bg-cz-black-mid rounded-cz overflow-auto flex-shrink-0"
-          style={{ width: 380, maxWidth: 'min(380px, 92vw)', border: '1px solid var(--color-cz-gray-dark)' }}
+          className="bg-cz-black-mid rounded-cz overflow-auto flex-shrink-0 w-full max-w-[380px]"
+          style={{ border: '1px solid var(--color-cz-gray-dark)' }}
         >
           {messages.length === 0 ? (
             <div className="font-mono text-cz-gray-light text-center" style={{ padding: 40, fontSize: 17 }}>
@@ -126,14 +128,14 @@ export default function MessagesClient({ messages }: { messages: Message[] }) {
                 >
                   {selected.is_read ? 'OZNAČIT NEPŘEČTENÉ' : 'OZNAČIT PŘEČTENÉ'}
                 </button>
-                <button
+                <Button
                   onClick={() => deleteMessage(selected.id)}
                   disabled={acting}
-                  className="font-mono text-red-400 uppercase hover:underline disabled:opacity-50"
-                  style={{ fontSize: 16, letterSpacing: 2 }}
+                  variant="danger"
+                  size="xs"
                 >
                   SMAZAT
-                </button>
+                </Button>
               </div>
             </div>
             <div className="flex-1 overflow-auto" style={{ padding: 28 }}>
@@ -153,6 +155,6 @@ export default function MessagesClient({ messages }: { messages: Message[] }) {
           </div>
         )}
       </div>
-    </div>
+    </AdminPageContainer>
   );
 }
