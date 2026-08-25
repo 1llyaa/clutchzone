@@ -31,6 +31,19 @@ async function getHeroImageUrl() {
       .single();
     if (data?.value) return data.value as string;
   } catch {
+    // fall through to gallery fallback
+  }
+  try {
+    const admin = createAdminClient();
+    const { data } = await admin
+      .from('gallery_images')
+      .select('url')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true })
+      .limit(1)
+      .single();
+    if (data?.url) return data.url as string;
+  } catch {
     // fall through to bundled fallback
   }
   return `${SITE_URL}/terrorist_cs2.png`;
