@@ -21,18 +21,11 @@ async function loadGoogleFont(family: string, weight: number, text: string) {
   return null;
 }
 
+function toAbsoluteUrl(value: string) {
+  return /^https?:\/\//.test(value) ? value : `${SITE_URL}${value.startsWith('/') ? '' : '/'}${value}`;
+}
+
 async function getHeroImageUrl() {
-  try {
-    const admin = createAdminClient();
-    const { data } = await admin
-      .from('site_settings')
-      .select('value')
-      .eq('key', 'hero_image')
-      .single();
-    if (data?.value) return data.value as string;
-  } catch {
-    // fall through to gallery fallback
-  }
   try {
     const admin = createAdminClient();
     const { data } = await admin
@@ -42,7 +35,7 @@ async function getHeroImageUrl() {
       .order('sort_order', { ascending: true })
       .limit(1)
       .single();
-    if (data?.url) return data.url as string;
+    if (data?.url) return toAbsoluteUrl(data.url as string);
   } catch {
     // fall through to bundled fallback
   }
