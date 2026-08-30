@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { X } from '@phosphor-icons/react';
 import Button from '@/components/ui/Button';
 import { useReservation } from './ReservationContext';
+import { useGgLeapHours } from '@/lib/ggleap/useGgLeapHours';
 import { track } from '@/lib/analytics/track';
 import { calculatePricing, reservedHoursOnSite } from '@/lib/pricing/engine';
 import { offerDisplayLabel } from '@/lib/pricing/offerLabel';
@@ -225,9 +226,26 @@ export default function ReservationModal() {
     }
   }
 
+  const effectiveOffer = activeOffer ?? offer;
+
+  // ggLeap balance for the nickname typed on the contact step. Looked up only
+  // once the customer actually reaches the payment step, and never when they
+  // said they have no account yet.
+  const { state: hoursState, minutes: hoursMinutes } = useGgLeapHours(
+    contact.clutchzoneAccount,
+    isOpen && step === 3 && !contact.noAccountYet,
+  );
+
+  // What the booking would actually draw from that balance: the hours spent on
+  // site (surplus tier hours stay as credit), once per reserved station.
+  const requiredMinutes = useMemo(() => {
+    const dt = date && config ? dayTypeForDate(config.dayTypes, date) : null;
+    if (!effectiveOffer || !calcInput || !dt) return null;
+    return reservedHoursOnSite(effectiveOffer, calcInput, dt) * 60 * calcInput.stationsCount;
+  }, [effectiveOffer, calcInput, date, config]);
+
   if (!isOpen) return null;
 
-  const effectiveOffer = activeOffer ?? offer;
   const stepIndex = Math.min(step, 3) - 1;
 
   return (
@@ -309,6 +327,9 @@ export default function ReservationModal() {
                   error={submitError}
                   onConfirm={handleConfirm}
                   showCreditOption={effectiveOffer.kind !== 'pass'}
+                  hoursState={hoursState}
+                  hoursMinutes={hoursMinutes}
+                  requiredMinutes={requiredMinutes}
                 />
               )}
               {step === 4 && result && (

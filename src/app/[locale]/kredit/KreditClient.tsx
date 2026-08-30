@@ -4,6 +4,8 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 import { Check, Minus, Plus } from '@phosphor-icons/react';
 import Button from '@/components/ui/Button';
+import GgLeapHoursNote from '@/components/ui/GgLeapHoursNote';
+import { useGgLeapHours } from '@/lib/ggleap/useGgLeapHours';
 import { labelText, secondaryText, bodyText } from '@/lib/typography';
 import type { HourTier, StationType } from '@/lib/pricing/types';
 
@@ -38,6 +40,13 @@ export default function KreditClient({ hourTiers, creditExpiryMonths }: Props) {
   const [tab, setTab] = useState<StationType>('pc');
   const [cart, setCart] = useState<Record<string, number>>({});
   const [contact, setContact] = useState<Contact>(EMPTY_CONTACT);
+
+  // Debounced so typing a nickname fires one lookup, not one per keystroke.
+  const { state: hoursState, minutes: hoursMinutes } = useGgLeapHours(
+    contact.clutchzoneAccount,
+    !contact.noAccountYet,
+    600,
+  );
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [consentError, setConsentError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -215,6 +224,7 @@ export default function KreditClient({ hourTiers, creditExpiryMonths }: Props) {
                 <input type="checkbox" checked={contact.noAccountYet} onChange={(e) => setContact((c) => ({ ...c, noAccountYet: e.target.checked, clutchzoneAccount: e.target.checked ? '' : c.clutchzoneAccount }))} />
                 {t('noAccountYetLabel')}
               </label>
+              <GgLeapHoursNote state={hoursState} minutes={hoursMinutes} />
             </div>
 
             <div className="font-body" style={{ background: '#1A1A1A', border: '1px solid var(--color-cz-gray-dark)', padding: '12px 14px', marginTop: 18, ...bodyText, lineHeight: 1.75, color: '#FFFFFF' }}>

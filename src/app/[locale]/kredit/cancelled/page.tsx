@@ -1,14 +1,19 @@
-'use client';
-
-import { useLocale, useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import Button from '@/components/ui/Button';
 
-export default function KreditCancelledPage() {
-  const t = useTranslations('kredit');
-  const locale = useLocale();
+// Nothing on this page is interactive — `Button` is used with `href`, so it
+// renders a Link and no handler crosses the server/client boundary. Keeping it
+// a Server Component is what lets `Footer` load its own server data.
+export default async function KreditCancelledPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations('kredit');
 
   return (
     <>

@@ -7,7 +7,7 @@ async function fetchBookingsData(from: string, to: string) {
   const [bookingsRes, stationsRes, passesRes] = await Promise.all([
     admin
       .from('bookings')
-      .select('id, reference, customer_name, customer_email, customer_phone, customer_discord, date, start_time, duration_minutes, total_price, status, station_id, payment_method, payment_status, coins_awarded, booking_group_id, stations_count, time_pass_id, offer_kind, stations(label, type)')
+      .select('id, reference, customer_name, customer_email, customer_phone, customer_discord, clutchzone_account, date, start_time, duration_minutes, total_price, status, station_id, payment_method, payment_status, coins_awarded, booking_group_id, stations_count, time_pass_id, offer_kind, stations(label, type)')
       .gte('date', from)
       .lte('date', to)
       .order('date')

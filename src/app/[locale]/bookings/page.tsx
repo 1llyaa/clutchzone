@@ -1,21 +1,13 @@
-'use client';
-
-import { useEffect } from 'react';
-import { useReservation } from '@/components/reservation/ReservationContext';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import Hero from '@/components/sections/Hero';
+import OpenReservationOnMount from './OpenReservationOnMount';
 
 export default function BookingsPage() {
-  const { open } = useReservation();
-
-  useEffect(() => {
-    open();
-  }, []);
-
   return (
     <>
       <Navbar />
+      <OpenReservationOnMount />
       <main>
         <Hero />
       </main>
