@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { labelText, secondaryText } from '@/lib/typography';
 import AdminPageContainer from '@/components/admin/AdminPageContainer';
 import Button from '@/components/ui/Button';
+import GgLeapHoursCell from '@/components/admin/GgLeapHoursCell';
 
 export interface QueueEntry {
   id: string; // credit_orders.id OR booking_group_id
@@ -118,8 +119,9 @@ export default function CreditsClient({ entries, showAll }: { entries: QueueEntr
                   <td style={{ padding: '10px 14px' }}>
                     <div className="font-body text-white" style={{ ...secondaryText }}>{e.customerName}</div>
                     <div className="font-mono text-cz-gray-light" style={{ ...secondaryText }}>{e.customerEmail}{e.customerPhone ? ` · ${e.customerPhone}` : ''}</div>
-                    <div className="font-mono" style={{ ...secondaryText, color: e.clutchzoneAccount ? 'var(--color-cz-gray-light)' : 'var(--color-cz-warning)' }}>
+                    <div className="font-mono" style={{ display: 'flex', alignItems: 'center', gap: 8, ...secondaryText, color: e.clutchzoneAccount ? 'var(--color-cz-gray-light)' : 'var(--color-cz-warning)' }}>
                       {e.clutchzoneAccount ?? 'nemá zatím účet'}
+                      <GgLeapHoursCell username={e.clutchzoneAccount} />
                     </div>
                   </td>
                   <td className="font-mono text-cz-gray-light" style={{ padding: '10px 14px', ...secondaryText }}>{e.description}</td>

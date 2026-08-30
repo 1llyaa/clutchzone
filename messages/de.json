@@ -268,6 +268,13 @@
     "confirmationSentNote": "Wir haben dir eine Bestätigung per E-Mail gesendet. Komm 10 Minuten früher und zeige deinen Referenzcode am Empfang.",
     "loadingPricing": "Preise werden geladen…"
   },
+  "ggleap": {
+    "checking": "Konto wird geprüft…",
+    "hours": "Auf deinem ggLeap-Konto hast du noch {hours}.",
+    "notEnough": "Reicht nicht für die ganze Buchung",
+    "notFound": "Diesen Namen haben wir in ggLeap nicht gefunden — prüfe ihn oder fahre mit der Zahlung fort.",
+    "unavailable": "Dein Stundenguthaben konnten wir gerade nicht prüfen."
+  },
   "calculator": {
     "eyebrow": "// BERECHNE DEINEN PREIS",
     "heading": "WIE VIEL WIRD ES KOSTEN",

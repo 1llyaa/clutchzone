@@ -268,6 +268,13 @@
     "confirmationSentNote": "Potvrzení jsme poslali na tvůj e-mail. Přijď 10 minut před začátkem a ukaž referenční kód na recepci.",
     "loadingPricing": "Načítám ceník…"
   },
+  "ggleap": {
+    "checking": "Ověřuji účet…",
+    "hours": "Na účtu ggLeap máš {hours}.",
+    "notEnough": "Na celou rezervaci to nestačí",
+    "notFound": "Tuhle přezdívku jsme v ggLeap nenašli — zkontroluj ji, nebo pokračuj v platbě.",
+    "unavailable": "Zůstatek hodin se nám teď nepodařilo ověřit."
+  },
   "calculator": {
     "eyebrow": "// SPOČÍTEJ SI CENU",
     "heading": "KOLIK TĚ TO BUDE STÁT",

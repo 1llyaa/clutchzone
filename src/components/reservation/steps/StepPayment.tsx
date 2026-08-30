@@ -5,7 +5,9 @@ import { useEffect, useState } from 'react';
 import { Check } from '@phosphor-icons/react';
 import Tooltip from '@/components/ui/Tooltip';
 import Button from '@/components/ui/Button';
+import GgLeapHoursNote from '@/components/ui/GgLeapHoursNote';
 import { labelText, secondaryText, bodyText } from '@/lib/typography';
+import type { GgLeapHoursState } from '@/lib/ggleap/useGgLeapHours';
 import type { Offer } from '@/lib/pricing/types';
 
 interface Props {
@@ -17,9 +19,12 @@ interface Props {
   error: string;
   onConfirm: (method: 'online' | 'onsite' | 'credit') => void;
   showCreditOption: boolean;
+  hoursState: GgLeapHoursState;
+  hoursMinutes: number | null;
+  requiredMinutes: number | null;
 }
 
-export default function StepPayment({ offer, termsAccepted, onToggleConsent, consentError, loading, error, onConfirm, showCreditOption }: Props) {
+export default function StepPayment({ offer, termsAccepted, onToggleConsent, consentError, loading, error, onConfirm, showCreditOption, hoursState, hoursMinutes, requiredMinutes }: Props) {
   const t = useTranslations('booking');
   const [coinsAmount, setCoinsAmount] = useState(50);
 
@@ -40,6 +45,8 @@ export default function StepPayment({ offer, termsAccepted, onToggleConsent, con
           {offer.totalAmount} <span className="font-mono text-cz-gray-light" style={{ ...secondaryText }}>KČ</span>
         </span>
       </div>
+
+      <GgLeapHoursNote state={hoursState} minutes={hoursMinutes} requiredMinutes={requiredMinutes} />
 
       <Button variant="primary" size="md" className="w-full" onClick={() => onConfirm('online')} disabled={loading}>
         {loading ? '...' : t('payNowCta')}

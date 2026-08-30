@@ -6,6 +6,7 @@ import { X, Coins } from '@phosphor-icons/react';
 import Button from '@/components/ui/Button';
 import DatePicker from '@/components/ui/DatePicker';
 import AdminPageContainer from '@/components/admin/AdminPageContainer';
+import GgLeapHoursCell from '@/components/admin/GgLeapHoursCell';
 
 const STATUS_LABEL: Record<string, string> = {
   confirmed: 'Potvrzeno',
@@ -49,6 +50,7 @@ interface Booking {
   customer_email: string;
   customer_phone: string | null;
   customer_discord: string | null;
+  clutchzone_account: string | null;
   date: string;
   start_time: string;
   duration_minutes: number;
@@ -72,6 +74,7 @@ interface GroupedBooking {
   customer_email: string;
   customer_phone: string | null;
   customer_discord: string | null;
+  clutchzone_account: string | null;
   date: string;
   start_time: string;
   duration_minutes: number;
@@ -116,6 +119,7 @@ function groupBookings(bookings: Booking[], passNameById: Record<string, string>
       customer_email: first.customer_email,
       customer_phone: first.customer_phone,
       customer_discord: first.customer_discord,
+      clutchzone_account: first.clutchzone_account,
       date: first.date,
       start_time: first.start_time,
       duration_minutes: first.duration_minutes,
@@ -429,6 +433,14 @@ export default function BookingsClient({
                   <div className="font-body text-white" style={{ fontSize: 17 }}>{value}</div>
                 </div>
               ))}
+
+              <div style={{ marginBottom: 16 }}>
+                <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, marginBottom: 4 }}>ggLeap účet</div>
+                <div className="font-body text-white flex items-center gap-3" style={{ fontSize: 17 }}>
+                  {selected.clutchzone_account || '—'}
+                  <GgLeapHoursCell username={selected.clutchzone_account} />
+                </div>
+              </div>
             </div>
 
             <div className="flex flex-col gap-3" style={{ padding: '20px 28px', borderTop: '1px solid var(--color-cz-gray-dark)' }}>
