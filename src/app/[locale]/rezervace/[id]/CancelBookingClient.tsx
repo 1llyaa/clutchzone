@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/navigation';
 import Button from '@/components/ui/Button';
+import type { CancellationSettlement } from '@/lib/bookings/cancellation';
 
 type Booking = {
   groupId: string;
@@ -12,9 +13,10 @@ type Booking = {
   startTime: string;
   stationLabels: string[];
   totalPrice: number;
-  creditHours: number;
+  settlement: CancellationSettlement;
   paid: boolean;
   paysWithCredit: boolean;
+  paymentMethod: string;
   minutesBeforeStart: number;
   withinFreeWindow: boolean;
   alreadyCancelled: boolean;
@@ -23,6 +25,8 @@ type Booking = {
 type Outcome = {
   status: 'cancelled' | 'already_cancelled';
   creditHours: number;
+  refundRequested?: boolean;
+  refundAmount?: number;
   /** Credit was due but the ledger row didn't land — staff must be contacted. */
   creditUnrecorded?: boolean;
 };
@@ -46,9 +50,11 @@ export default function CancelBookingClient({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Credit only flows back when money moved and we're inside the free window.
-  // `creditHours` already arrives zeroed by the server when it doesn't.
-  const willEarnCredit = booking.withinFreeWindow && booking.creditHours > 0;
+  // The server already decided what comes back; the UI only phrases it.
+  const willEarnCredit = booking.settlement.kind === 'credit' && booking.settlement.hours > 0;
+  // A pass is refunded in money, and cancelling here *is* the written request
+  // VOP §3.4.1 asks for — so there is no opt-in checkbox, only a statement.
+  const willBeRefunded = booking.settlement.kind === 'refund';
 
   // Hours come off the account only for time actually played, so a credit
   // booking has nothing at stake either way. Every other case turns on whether
@@ -57,14 +63,20 @@ export default function CancelBookingClient({
   const noteKey = booking.paysWithCredit
     ? 'creditBookingNote'
     : !booking.paid
-      ? 'unpaidNote'
+      ? // An unpaid card booking is not "pay on arrival" — it is a hold that
+        // lapses on its own if the payment never lands.
+        booking.paymentMethod === 'online'
+        ? 'awaitingPaymentNote'
+        : 'unpaidNote'
       : booking.minutesBeforeStart <= 0
         ? 'startedNote'
         : !booking.withinFreeWindow
           ? 'lateNote'
-          : willEarnCredit
-            ? 'freeWindowNote'
-            : 'freeWindowNoCreditNote';
+          : willBeRefunded
+            ? 'freeWindowRefundNote'
+            : willEarnCredit
+              ? 'freeWindowNote'
+              : 'freeWindowNoCreditNote';
 
   async function cancel() {
     setBusy(true);
@@ -86,6 +98,8 @@ export default function CancelBookingClient({
       setOutcome({
         status: data.status,
         creditHours: data.creditHours ?? 0,
+        refundRequested: data.refundRequested,
+        refundAmount: data.refundAmount ?? 0,
         creditUnrecorded: data.creditUnrecorded,
       });
     } catch {
@@ -147,12 +161,14 @@ export default function CancelBookingClient({
           <p className="font-body text-cz-white-soft" style={{ fontSize: 19, lineHeight: 1.8 }}>
             {outcome.status === 'already_cancelled' ? t('alreadyCancelled') : t('cancelled')}
           </p>
-          {outcome.creditHours > 0 && (
+          {/* A pass refund owes money with zero credit hours, so this must not
+              be gated on creditHours the way it used to be. */}
+          {(outcome.refundRequested || outcome.creditHours > 0) && (
             <p
               className="font-body text-cz-gray-light"
               style={{ fontSize: 19, lineHeight: 1.8, marginTop: 12 }}
             >
-              {refundRequested
+              {outcome.refundRequested
                 ? t('refundRequestedNote')
                 : t('creditNote', { hours: outcome.creditHours })}
             </p>
@@ -169,7 +185,7 @@ export default function CancelBookingClient({
       ) : (
         <div style={{ marginTop: 28 }}>
           <p className="font-body text-cz-gray-light" style={{ fontSize: 19, lineHeight: 1.8 }}>
-            {t(noteKey, { minutes: windowMinutes })}
+            {t(noteKey, { minutes: windowMinutes, amount: booking.totalPrice })}
           </p>
 
           {willEarnCredit && (

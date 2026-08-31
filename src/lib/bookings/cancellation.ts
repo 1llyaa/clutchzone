@@ -5,6 +5,7 @@ export type CancellableBooking = {
   groupId: string;
   reference: string;
   customerName: string;
+  customerEmail: string;
   date: string;
   startTime: string;
   durationMinutes: number;
@@ -12,6 +13,12 @@ export type CancellableBooking = {
   totalPrice: number;
   creditHours: number;
   paysWithCredit: boolean;
+  /**
+   * A time pass is a flat price for a window (Happy Hours, Evening Pass…), not
+   * a bundle of hours. It banks nothing, so `creditHours` is 0 and there is no
+   * hour count to hand back on cancellation.
+   */
+  isPass: boolean;
   status: string;
   /**
    * Whether money has actually arrived. False for "zaplatím v klubu" bookings
@@ -28,28 +35,39 @@ export type CancellableBooking = {
 };
 
 /**
- * How many hours the club owes back for a cancellation.
+ * What the club owes back for a cancellation — hours, money, or nothing.
  *
- * Money has to have actually come in, otherwise cancelling mints credit out of
- * nothing. Three ways it hasn't:
- *  - `paid` is false — a "zaplatím v klubu" booking never paid on site, or an
- *    online one where checkout was abandoned;
- *  - `paysWithCredit` — banked ggLeap hours, and those only come off the
- *    account for time actually played, so nothing was ever taken;
- *  - outside the free window — a late cancel or no-show forfeits (VOP §3.4.2).
- *
- * The booking still cancels in all three; only the credit line is withheld.
+ * VOP §3.4.1 promises the paid amount back on a timely cancellation without
+ * carving out any offer type, so the only question is what form it takes. The
+ * three shapes are mutually exclusive, which is why this returns one value
+ * rather than a credit figure and a refund flag that could both be set.
  */
-export function creditHoursOwedFor(booking: {
+export type CancellationSettlement =
+  | { kind: 'credit'; hours: number }
+  | { kind: 'refund'; amount: number }
+  | { kind: 'none' };
+
+export function cancellationSettlementFor(booking: {
   withinFreeWindow: boolean;
   paid: boolean;
   paysWithCredit: boolean;
+  isPass: boolean;
   creditHours: number;
-}): number {
-  if (!booking.withinFreeWindow) return 0;
-  if (!booking.paid) return 0;
-  if (booking.paysWithCredit) return 0;
-  return booking.creditHours;
+  totalPrice: number;
+}): CancellationSettlement {
+  // A late cancel or no-show forfeits (VOP §3.4.2).
+  if (!booking.withinFreeWindow) return { kind: 'none' };
+  // Money has to have actually come in, otherwise cancelling mints credit out
+  // of nothing — a "zaplatím v klubu" booking never paid on site, or an online
+  // one whose checkout was abandoned.
+  if (!booking.paid) return { kind: 'none' };
+  // Banked ggLeap hours come off the account only for time actually played, so
+  // nothing was ever taken and nothing goes back.
+  if (booking.paysWithCredit) return { kind: 'none' };
+  // A pass is a flat price for a time window, not hours — there is no hour
+  // count to credit, so it is settled in money instead.
+  if (booking.isPass) return { kind: 'refund', amount: booking.totalPrice };
+  return { kind: 'credit', hours: booking.creditHours };
 }
 
 export async function getCancellationWindowMinutes(): Promise<number> {
@@ -98,7 +116,7 @@ export async function loadBookingForCancellation(
   const { data: rows, error } = await admin
     .from('bookings')
     .select(
-      'booking_group_id, reference, customer_name, date, start_time, duration_minutes, total_price, credit_hours, pays_with_credit, status, payment_status, payment_method, stations(label)',
+      'booking_group_id, reference, customer_name, customer_email, date, start_time, duration_minutes, total_price, credit_hours, pays_with_credit, offer_kind, status, payment_status, payment_method, stations(label)',
     )
     .eq('booking_group_id', groupId);
 
@@ -108,12 +126,14 @@ export async function loadBookingForCancellation(
     booking_group_id: string;
     reference: string;
     customer_name: string;
+    customer_email: string;
     date: string;
     start_time: string;
     duration_minutes: number;
     total_price: number;
     credit_hours: number | null;
     pays_with_credit: boolean;
+    offer_kind: string | null;
     status: string;
     payment_status: string;
     payment_method: string;
@@ -134,6 +154,7 @@ export async function loadBookingForCancellation(
     groupId: first.booking_group_id,
     reference: first.reference,
     customerName: first.customer_name,
+    customerEmail: first.customer_email,
     date: first.date,
     startTime: first.start_time,
     durationMinutes: first.duration_minutes,
@@ -145,6 +166,7 @@ export async function loadBookingForCancellation(
       0,
     ),
     paysWithCredit: first.pays_with_credit,
+    isPass: first.offer_kind === 'pass',
     status: first.status,
     paid: first.payment_status === 'paid',
     paymentMethod: first.payment_method,

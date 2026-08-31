@@ -5,8 +5,9 @@ import { verifyToken } from '@/lib/cancel-token';
 import {
   loadBookingForCancellation,
   getCancellationWindowMinutes,
-  creditHoursOwedFor,
+  cancellationSettlementFor,
 } from '@/lib/bookings/cancellation';
+import { sendCancellationNotification } from '@/lib/email';
 
 const QuerySchema = z.object({
   token: z.string().min(1),
@@ -51,7 +52,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const windowMinutes = await getCancellationWindowMinutes();
   const withinFreeWindow = booking.minutesBeforeStart > windowMinutes;
 
-  const creditHoursOwed = creditHoursOwedFor({ ...booking, withinFreeWindow });
+  const settlement = cancellationSettlementFor({ ...booking, withinFreeWindow });
+  const creditHoursOwed = settlement.kind === 'credit' ? settlement.hours : 0;
 
   const { data: updated, error: updateErr } = await admin
     .from('bookings')
@@ -68,7 +70,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ status: 'already_cancelled', creditHours: 0 });
   }
 
-  const refundRequested = parsed.data.refundRequested && creditHoursOwed > 0;
+  // A pass has no hours to give back, so a timely cancellation is settled in
+  // money and the request is implicit — the customer confirmed it on a page
+  // that said so, which is the written request VOP §3.4.1 asks for. Otherwise
+  // it is the opt-out from credit, and only meaningful if credit is due.
+  const refundRequested =
+    settlement.kind === 'refund' || (parsed.data.refundRequested && creditHoursOwed > 0);
+  const refundAmount = settlement.kind === 'refund' ? settlement.amount : 0;
 
   const { error: ledgerErr } = await admin.from('booking_cancellations').insert({
     booking_group_id: groupId,
@@ -102,10 +110,32 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     });
   }
 
+  // Nothing in the admin UI reads booking_cancellations yet, so without this
+  // a refund the customer is owed would sit in a table nobody opens.
+  //
+  // The condition is "money came in and the cancellation was timely", not
+  // "we computed something to give back" — a paid, in-window cancellation that
+  // yields neither credit nor refund is an anomaly the customer was still told
+  // about, so staff has to see it rather than it vanishing silently.
+  if (booking.paid && !booking.paysWithCredit && withinFreeWindow) {
+    sendCancellationNotification({
+      reference: booking.reference,
+      customerName: booking.customerName,
+      customerEmail: booking.customerEmail,
+      date: booking.date,
+      startTime: booking.startTime,
+      stationLabel: booking.stationLabels.join(', '),
+      creditHoursOwed,
+      refundRequested,
+      refundAmount,
+    }).catch(() => {});
+  }
+
   return NextResponse.json({
     status: 'cancelled',
     creditHours: creditHoursOwed,
     withinFreeWindow,
     refundRequested,
+    refundAmount,
   });
 }

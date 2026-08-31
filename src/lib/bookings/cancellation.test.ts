@@ -1,36 +1,77 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { minutesUntil, creditHoursOwedFor } from './cancellation';
+import { minutesUntil, cancellationSettlementFor } from './cancellation';
 
-const base = { withinFreeWindow: true, paid: true, paysWithCredit: false, creditHours: 4 };
+const base = {
+  withinFreeWindow: true,
+  paid: true,
+  paysWithCredit: false,
+  isPass: false,
+  creditHours: 4,
+  totalPrice: 215,
+};
 
 test('credit is owed for a paid booking cancelled inside the free window', () => {
-  assert.equal(creditHoursOwedFor(base), 4);
+  assert.deepEqual(cancellationSettlementFor(base), { kind: 'credit', hours: 4 });
 });
 
 test('an unpaid "zaplatím v klubu" booking earns nothing — no money ever came in', () => {
-  assert.equal(creditHoursOwedFor({ ...base, paid: false }), 0);
+  assert.deepEqual(cancellationSettlementFor({ ...base, paid: false }), { kind: 'none' });
 });
 
 test('an abandoned online checkout earns nothing either', () => {
   // Same unpaid state as onsite: the row exists, Stripe never confirmed.
-  assert.equal(creditHoursOwedFor({ ...base, paid: false, creditHours: 10 }), 0);
+  assert.deepEqual(cancellationSettlementFor({ ...base, paid: false, creditHours: 10 }), {
+    kind: 'none',
+  });
 });
 
 test('paying with banked hours returns nothing — they come off only when played', () => {
-  assert.equal(creditHoursOwedFor({ ...base, paysWithCredit: true }), 0);
+  assert.deepEqual(cancellationSettlementFor({ ...base, paysWithCredit: true }), { kind: 'none' });
 });
 
 test('a late cancel forfeits even when fully paid (VOP §3.4.2)', () => {
-  assert.equal(creditHoursOwedFor({ ...base, withinFreeWindow: false }), 0);
+  assert.deepEqual(cancellationSettlementFor({ ...base, withinFreeWindow: false }), {
+    kind: 'none',
+  });
 });
 
-test('unpaid AND late still forfeits, without going negative', () => {
-  assert.equal(creditHoursOwedFor({ ...base, paid: false, withinFreeWindow: false }), 0);
+test('unpaid AND late still forfeits', () => {
+  assert.deepEqual(
+    cancellationSettlementFor({ ...base, paid: false, withinFreeWindow: false }),
+    { kind: 'none' },
+  );
 });
 
-test('a paid booking with no banked hours owes nothing to give back', () => {
-  assert.equal(creditHoursOwedFor({ ...base, creditHours: 0 }), 0);
+test('an offer that banks no hours yields no credit line', () => {
+  assert.deepEqual(cancellationSettlementFor({ ...base, creditHours: 0 }), {
+    kind: 'credit',
+    hours: 0,
+  });
+});
+
+test('a paid pass is settled in money, not hours — it banks nothing to give back', () => {
+  // Happy Hours: flat 165 Kč for the 14:00–17:00 window, credit_hours null.
+  // This used to fall through to a zero credit line, so the customer paid and
+  // got nothing despite cancelling in time, against VOP §3.4.1.
+  assert.deepEqual(
+    cancellationSettlementFor({ ...base, isPass: true, creditHours: 0, totalPrice: 165 }),
+    { kind: 'refund', amount: 165 },
+  );
+});
+
+test('a pass cancelled late forfeits like anything else', () => {
+  assert.deepEqual(
+    cancellationSettlementFor({ ...base, isPass: true, creditHours: 0, withinFreeWindow: false }),
+    { kind: 'none' },
+  );
+});
+
+test('an unpaid pass owes nothing back', () => {
+  assert.deepEqual(
+    cancellationSettlementFor({ ...base, isPass: true, creditHours: 0, paid: false }),
+    { kind: 'none' },
+  );
 });
 
 // Bookings store a naive local date + time and the club is in Europe/Prague,

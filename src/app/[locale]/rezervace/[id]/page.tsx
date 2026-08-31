@@ -3,7 +3,11 @@ import { getTranslations } from 'next-intl/server';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { verifyToken } from '@/lib/cancel-token';
-import { loadBookingForCancellation, getCancellationWindowMinutes } from '@/lib/bookings/cancellation';
+import {
+  loadBookingForCancellation,
+  getCancellationWindowMinutes,
+  cancellationSettlementFor,
+} from '@/lib/bookings/cancellation';
 import CancelBookingClient from './CancelBookingClient';
 
 export const metadata: Metadata = {
@@ -75,6 +79,9 @@ export default async function ManageBookingPage({
   }
 
   const windowMinutes = await getCancellationWindowMinutes();
+  // The same rule the API applies, evaluated once here rather than mirrored in
+  // the client — an earlier copy of it drifted and silently promised nothing.
+  const settlement = cancellationSettlementFor(booking);
 
   return (
     <Shell>
@@ -86,10 +93,10 @@ export default async function ManageBookingPage({
           startTime: booking.startTime,
           stationLabels: booking.stationLabels,
           totalPrice: booking.totalPrice,
-          // Mirrors the API's rule: nothing comes back unless money came in.
-          creditHours: booking.paid && !booking.paysWithCredit ? booking.creditHours : 0,
+          settlement,
           paid: booking.paid,
           paysWithCredit: booking.paysWithCredit,
+          paymentMethod: booking.paymentMethod,
           minutesBeforeStart: booking.minutesBeforeStart,
           withinFreeWindow: booking.withinFreeWindow,
           alreadyCancelled: booking.alreadyCancelled,

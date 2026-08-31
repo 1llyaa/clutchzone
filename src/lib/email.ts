@@ -346,6 +346,72 @@ export async function sendBookingPaymentReceipt(b: BookingReceiptEmailData): Pro
 }
 
 /**
+ * Admin notification — a customer cancelled and something is owed back.
+ *
+ * `booking_cancellations` is written on every cancellation, but no admin screen
+ * reads it yet, so this is the only thing that puts an owed refund or credit in
+ * front of staff.
+ */
+export async function sendCancellationNotification(c: {
+  reference: string;
+  customerName: string;
+  customerEmail: string;
+  date: string;
+  startTime: string;
+  stationLabel: string;
+  creditHoursOwed: number;
+  refundRequested: boolean;
+  refundAmount: number;
+}): Promise<void> {
+  const transport = getTransport();
+  const to = process.env.ADMIN_NOTIFY_EMAIL;
+  if (!transport || !to) return;
+
+  const action = c.refundRequested
+    ? `VRÁTIT ${c.refundAmount} Kč na platební kartu (Stripe dashboard)`
+    : c.creditHoursOwed > 0
+      ? `PŘIPSAT ${c.creditHoursOwed} h na Clutchzone account`
+      : // Paid, cancelled in time, yet nothing was computed to return — the
+        // customer was told they get their money back, so this needs a human.
+        'ZKONTROLOVAT RUČNĚ — zaplaceno a zrušeno včas, ale systém nespočítal, co vrátit';
+
+  const rows: [string, string][] = [
+    ['Akce', action],
+    ['Reference', c.reference],
+    ['Stanice', c.stationLabel],
+    ['Termín', `${c.date} ${c.startTime}`],
+    ['Jméno', c.customerName],
+    ['E-mail', c.customerEmail],
+  ];
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#111;color:#e8e8e8;padding:32px;border-top:3px solid #E84A1A">
+      <h2 style="margin:0 0 4px;color:#fff;text-transform:uppercase;letter-spacing:2px">Zrušená rezervace</h2>
+      <p style="margin:0 0 20px;color:#888;font-size:13px">Zákazník zrušil rezervaci včas — něco se mu vrací.</p>
+      <p style="margin:0 0 20px;padding:10px 14px;background:rgba(232,74,26,0.1);border:1px solid rgba(232,74,26,0.3);color:#ff8a5c;font-size:13px">${escapeHtml(action)}</p>
+      <table style="width:100%;border-collapse:collapse;font-size:14px">
+        ${rows.map(([k, v]) => `
+          <tr>
+            <td style="padding:8px 0;color:#888;border-bottom:1px solid #2a2a2a;width:110px">${k}</td>
+            <td style="padding:8px 0;color:#fff;border-bottom:1px solid #2a2a2a"><strong>${escapeHtml(v)}</strong></td>
+          </tr>`).join('')}
+      </table>
+    </div>`;
+
+  try {
+    await transport.sendMail({
+      from: process.env.SMTP_FROM ?? process.env.SMTP_USER,
+      to,
+      subject: `Zrušená rezervace ${c.reference} — ${c.refundRequested ? `vrátit ${c.refundAmount} Kč` : c.creditHoursOwed > 0 ? `připsat ${c.creditHoursOwed} h` : 'zkontrolovat ručně'}`,
+      html,
+      text: rows.map(([k, v]) => `${k}: ${v}`).join('\n'),
+    });
+  } catch (err) {
+    console.error('Cancellation notification email failed:', err);
+  }
+}
+
+/**
  * Admin alert — Stripe took money for a booking that was no longer live (an
  * expired hold, or one the customer had already cancelled). Nothing can be
  * done automatically, so staff has to refund it from the Stripe dashboard.
