@@ -1,6 +1,7 @@
 'use client';
 
 import type { AnalyticsEvent, AnalyticsEventProperties } from './events';
+import { hasAnalyticsConsent } from '@/lib/consent/state';
 
 const SESSION_STORAGE_KEY = 'cz_analytics_sid';
 
@@ -23,6 +24,9 @@ function getSessionId(): string | null {
 
 export function track<E extends AnalyticsEvent>(event: E, properties: AnalyticsEventProperties[E]): void {
   if (typeof window === 'undefined') return;
+  // Single choke point for the opt-in gate — call sites stay unaware of
+  // consent, so there's no way to add a new tracked event that skips it.
+  if (!hasAnalyticsConsent()) return;
   const sessionId = getSessionId();
   fetch('/api/analytics/track', {
     method: 'POST',
