@@ -32,6 +32,7 @@ interface BookingResult {
   stationLabels: string[];
   totalAmount: number;
   isCredit: boolean;
+  paysWithCredit: boolean;
 }
 
 export default function ReservationModal() {
@@ -191,6 +192,9 @@ export default function ReservationModal() {
           customerEmail: contact.email,
           customerPhone: contact.phone,
           customerDiscord: contact.discord.trim() || undefined,
+          // Decides which locale the confirmation email's cancellation link
+          // points at.
+          locale,
         }),
       });
       const data = await res.json();
@@ -217,7 +221,7 @@ export default function ReservationModal() {
       }
 
       track('reservation_completed', { kind: off.kind, stations: calcInput.stationsCount, amount: off.totalAmount });
-      setResult({ reference: data.reference, stationLabels: data.stationLabels, totalAmount: data.totalAmount, isCredit: data.isCredit });
+      setResult({ reference: data.reference, stationLabels: data.stationLabels, totalAmount: data.totalAmount, isCredit: data.isCredit, paysWithCredit: method === 'credit' });
       setStep(4);
       setLoading(false);
     } catch {
@@ -341,6 +345,7 @@ export default function ReservationModal() {
                   totalAmount={result.totalAmount}
                   offerLabel={effectiveOffer ? offerDisplayLabel(effectiveOffer, tc) : ''}
                   isCredit={result.isCredit}
+                  paysWithCredit={result.paysWithCredit}
                   creditExpiryMonths={config.creditExpiryMonths}
                   onClose={handleClose}
                 />

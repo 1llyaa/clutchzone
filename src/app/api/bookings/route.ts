@@ -4,6 +4,8 @@ import { getPricingConfig } from '@/lib/pricing/config-server';
 import { calculatePricing, reservedHoursOnSite } from '@/lib/pricing/engine';
 import type { CalcInput } from '@/lib/pricing/types';
 import { sendBookingNotification, sendBookingConfirmation } from '@/lib/email';
+import { buildCancelUrl } from '@/lib/cancel-token';
+import { getCancellationWindowMinutes } from '@/lib/bookings/cancellation';
 import { z } from 'zod';
 
 const BookingSchema = z.object({
@@ -23,6 +25,8 @@ const BookingSchema = z.object({
   customerEmail: z.string().email(),
   customerPhone: z.string().min(9),
   customerDiscord: z.string().optional(),
+  // Locale of the cancellation link in the confirmation email.
+  locale: z.enum(['cs', 'en', 'de', 'ua']).optional().default('cs'),
 });
 
 function generateReference(): string {
@@ -174,6 +178,16 @@ export async function POST(req: NextRequest) {
 
   const stationLabels = chosen.map((s) => s.label);
 
+  // Signing needs BOOKING_CANCEL_SECRET — if it's unset, the booking still
+  // succeeds and the email simply goes out without the self-service link.
+  let cancelUrl: string | null = null;
+  try {
+    cancelUrl = await buildCancelUrl(data.locale, groupId);
+  } catch (err) {
+    console.error('Cancellation link not signed:', err);
+  }
+  const cancellationWindowMinutes = await getCancellationWindowMinutes();
+
   const emailData = {
     reference,
     stationLabel: stationLabels.join(', '),
@@ -186,8 +200,11 @@ export async function POST(req: NextRequest) {
     totalPrice: offer.totalAmount,
     offerLabel: offer.label,
     isCredit: offer.isCredit,
+    paysWithCredit: data.paysWithCredit,
     creditExpiryMonths: config.creditExpiryMonths,
     clutchzoneAccount: data.clutchzoneAccount?.trim() || null,
+    cancelUrl,
+    cancellationWindowMinutes,
   };
   sendBookingNotification(emailData).catch(() => {});
   sendBookingConfirmation(emailData).catch(() => {});
