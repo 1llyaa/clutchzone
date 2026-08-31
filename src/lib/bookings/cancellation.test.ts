@@ -50,6 +50,28 @@ test('an offer that banks no hours yields no credit line', () => {
   });
 });
 
+test('asking for money instead of credit returns the amount paid, not zero', () => {
+  // The amount used to be derived separately from the flag, so opting out of
+  // credit on an hours booking produced a refund of 0 Kc.
+  assert.deepEqual(cancellationSettlementFor({ ...base, refundPreferred: true }), {
+    kind: 'refund',
+    amount: 215,
+  });
+});
+
+test('asking for money on a late cancel still forfeits', () => {
+  assert.deepEqual(
+    cancellationSettlementFor({ ...base, refundPreferred: true, withinFreeWindow: false }),
+    { kind: 'none' },
+  );
+});
+
+test('asking for money on an unpaid booking returns nothing', () => {
+  assert.deepEqual(cancellationSettlementFor({ ...base, refundPreferred: true, paid: false }), {
+    kind: 'none',
+  });
+});
+
 test('a paid pass is settled in money, not hours — it banks nothing to give back', () => {
   // Happy Hours: flat 165 Kč for the 14:00–17:00 window, credit_hours null.
   // This used to fall through to a zero credit line, so the customer paid and

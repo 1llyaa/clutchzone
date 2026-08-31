@@ -54,6 +54,12 @@ export function cancellationSettlementFor(booking: {
   isPass: boolean;
   creditHours: number;
   totalPrice: number;
+  /**
+   * The customer asked for the money back on the card instead of credit
+   * (VOP §3.4.1). Decided here rather than beside the call, so the amount can
+   * never disagree with the form the settlement takes.
+   */
+  refundPreferred?: boolean;
 }): CancellationSettlement {
   // A late cancel or no-show forfeits (VOP §3.4.2).
   if (!booking.withinFreeWindow) return { kind: 'none' };
@@ -65,8 +71,12 @@ export function cancellationSettlementFor(booking: {
   // nothing was ever taken and nothing goes back.
   if (booking.paysWithCredit) return { kind: 'none' };
   // A pass is a flat price for a time window, not hours — there is no hour
-  // count to credit, so it is settled in money instead.
-  if (booking.isPass) return { kind: 'refund', amount: booking.totalPrice };
+  // count to credit, so it is settled in money instead. The customer can also
+  // ask for money over credit on any offer, and either way what goes back is
+  // what they paid.
+  if (booking.isPass || booking.refundPreferred) {
+    return { kind: 'refund', amount: booking.totalPrice };
+  }
   return { kind: 'credit', hours: booking.creditHours };
 }
 

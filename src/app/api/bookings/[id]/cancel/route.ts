@@ -52,7 +52,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const windowMinutes = await getCancellationWindowMinutes();
   const withinFreeWindow = booking.minutesBeforeStart > windowMinutes;
 
-  const settlement = cancellationSettlementFor({ ...booking, withinFreeWindow });
+  const settlement = cancellationSettlementFor({
+    ...booking,
+    withinFreeWindow,
+    refundPreferred: parsed.data.refundRequested,
+  });
   const creditHoursOwed = settlement.kind === 'credit' ? settlement.hours : 0;
 
   const { data: updated, error: updateErr } = await admin
@@ -70,12 +74,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ status: 'already_cancelled', creditHours: 0 });
   }
 
-  // A pass has no hours to give back, so a timely cancellation is settled in
-  // money and the request is implicit — the customer confirmed it on a page
-  // that said so, which is the written request VOP §3.4.1 asks for. Otherwise
-  // it is the opt-out from credit, and only meaningful if credit is due.
-  const refundRequested =
-    settlement.kind === 'refund' || (parsed.data.refundRequested && creditHoursOwed > 0);
+  // Both the amount and the flag come from the settlement, so they cannot
+  // disagree — deriving them separately is what produced "VRÁTIT 0 Kč".
+  const refundRequested = settlement.kind === 'refund';
   const refundAmount = settlement.kind === 'refund' ? settlement.amount : 0;
 
   const { error: ledgerErr } = await admin.from('booking_cancellations').insert({
