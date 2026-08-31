@@ -6,6 +6,7 @@ import type { CalcInput } from '@/lib/pricing/types';
 import { sendBookingNotification, sendBookingConfirmation } from '@/lib/email';
 import { buildCancelUrl } from '@/lib/cancel-token';
 import { getCancellationWindowMinutes } from '@/lib/bookings/cancellation';
+import { getOnlineHoldMinutes, holdExpiryFrom, releaseExpiredHolds } from '@/lib/bookings/holds';
 import { z } from 'zod';
 
 const BookingSchema = z.object({
@@ -96,6 +97,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Žádné stanice nejsou k dispozici' }, { status: 503 });
   }
 
+  // Lapsed online holds must free their slot before we decide what is taken,
+  // otherwise an abandoned checkout keeps blocking the station.
+  await releaseExpiredHolds();
+
   const { data: existing } = await admin
     .from('bookings')
     .select('station_id, start_time, duration_minutes')
@@ -133,6 +138,13 @@ export async function POST(req: NextRequest) {
     .eq('key', 'terms_version')
     .single();
 
+  // "Pay by card" only holds the slot until the Stripe session expires — the
+  // customer is redirected out of the app and may never come back. Onsite and
+  // credit bookings are committed the moment they are made.
+  const isOnline = data.paymentMethod === 'online';
+  const holdMinutes = isOnline ? await getOnlineHoldMinutes() : 0;
+  const holdExpiresAt = isOnline ? holdExpiryFrom(holdMinutes) : null;
+
   const rows = chosen.map((s) => ({
     reference,
     station_id: s.id,
@@ -156,7 +168,10 @@ export async function POST(req: NextRequest) {
     duration_minutes: durationMinutes,
     total_price: offer.amountPerStation,
     payment_method: data.paymentMethod,
-    status: 'confirmed' as const,
+    // `pending` still blocks the slot exactly as `confirmed` does — the hold is
+    // real. It just carries an expiry, and the webhook promotes it on payment.
+    status: isOnline ? ('pending' as const) : ('confirmed' as const),
+    hold_expires_at: holdExpiresAt,
     terms_accepted_at: new Date().toISOString(),
     terms_version: termsSetting?.value ?? null,
   }));
@@ -205,8 +220,14 @@ export async function POST(req: NextRequest) {
     clutchzoneAccount: data.clutchzoneAccount?.trim() || null,
     cancelUrl,
     cancellationWindowMinutes,
+    paymentMethod: data.paymentMethod,
+    holdMinutes: isOnline ? holdMinutes : undefined,
   };
-  sendBookingNotification(emailData).catch(() => {});
+  // Staff is only told about an online booking once it is paid (the webhook
+  // sends it), the same way credit orders work — an unpaid hold may evaporate
+  // in minutes and is just noise in the inbox. Onsite and credit bookings are
+  // committed now, so they are announced now.
+  if (!isOnline) sendBookingNotification(emailData).catch(() => {});
   sendBookingConfirmation(emailData).catch(() => {});
 
   return NextResponse.json({

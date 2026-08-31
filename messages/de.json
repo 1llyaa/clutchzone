@@ -229,7 +229,7 @@
     "successUnconfirmedTitle": "ZAHLUNGSSTATUS AUSSTEHEND",
     "successUnconfirmedMessage": "Wir konnten deinen Zahlungsstatus noch nicht bestätigen. Deine Reservierung bleibt erhalten — falls die Zahlung erfolgreich war, werden die Coins bald gutgeschrieben, andernfalls kannst du bei Ankunft im Club bezahlen.",
     "cancelledTitle": "ZAHLUNG ABGEBROCHEN",
-    "cancelledMessage": "Deine Reservierung bleibt erhalten. Du kannst bei Ankunft im Club bezahlen oder die Zahlung erneut versuchen.",
+    "cancelledMessage": "Deine Reservierung hält den Platz noch kurze Zeit. Geht die Zahlung nicht bald ein, verfällt sie und die Station wird wieder freigegeben.",
     "tryAgain": "ZAHLUNG ERNEUT VERSUCHEN",
     "backHome": "ZURÜCK ZUR STARTSEITE",
     "monday": "Montags geschlossen. Bitte wähle einen anderen Tag.",

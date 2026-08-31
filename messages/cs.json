@@ -229,7 +229,7 @@
     "successUnconfirmedTitle": "STAV PLATBY SE OVĚŘUJE",
     "successUnconfirmedMessage": "Stav vaší platby se nepodařilo potvrdit. Vaše rezervace stále platí — pokud platba proběhla, mince budou brzy připsány, jinak můžete zaplatit v klubu při příchodu.",
     "cancelledTitle": "PLATBA ZRUŠENA",
-    "cancelledMessage": "Vaše rezervace stále platí. Zaplatit můžete v klubu při příchodu, nebo zkusit platbu znovu.",
+    "cancelledMessage": "Rezervace ti ještě chvíli drží místo. Pokud platba brzy nedorazí, automaticky propadne a stanice se uvolní.",
     "tryAgain": "ZKUSIT PLATBU ZNOVU",
     "backHome": "ZPĚT NA ÚVOD",
     "monday": "Pondělí je zavřeno. Vyberte jiný den.",

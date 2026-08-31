@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { releaseExpiredHolds } from '@/lib/bookings/holds';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
@@ -26,6 +27,10 @@ export async function GET(req: NextRequest) {
   }
 
   const stationIds = stations.map((s) => s.id);
+
+  // Unpaid online holds only free their slot when someone looks — there is no
+  // cron, so the reap happens here, before the occupancy read.
+  await releaseExpiredHolds();
 
   // Fetch all non-cancelled bookings for this date+stations, check overlap in JS
   const { data: bookings, error: bErr2 } = await supabase

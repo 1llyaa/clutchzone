@@ -229,7 +229,7 @@
     "successUnconfirmedTitle": "PAYMENT STATUS PENDING",
     "successUnconfirmedMessage": "We couldn't confirm your payment status yet. Your reservation is still held — if your payment went through, coins will be added shortly; otherwise you can pay at the club on arrival.",
     "cancelledTitle": "PAYMENT CANCELLED",
-    "cancelledMessage": "Your reservation is still held. You can pay at the club on arrival, or try the payment again.",
+    "cancelledMessage": "Your reservation is still holding the slot for a short while. If the payment doesn't arrive soon it will expire and the station will be released.",
     "tryAgain": "TRY PAYMENT AGAIN",
     "backHome": "BACK TO HOME",
     "monday": "Monday is closed. Please choose another day.",
