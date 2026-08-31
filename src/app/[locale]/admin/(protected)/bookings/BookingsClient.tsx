@@ -10,7 +10,9 @@ import GgLeapHoursCell from '@/components/admin/GgLeapHoursCell';
 
 const STATUS_LABEL: Record<string, string> = {
   confirmed: 'Potvrzeno',
-  pending:   'Čeká',
+  // Only online bookings land here: the slot is held, but the hold expires and
+  // releases itself if the card payment never arrives.
+  pending:   'Čeká na platbu',
   cancelled: 'Zrušeno',
   completed: 'Dokončeno',
 };
@@ -20,14 +22,16 @@ const STATUS_COLOR: Record<string, string> = {
   cancelled: 'var(--color-cz-danger)',
   completed: 'var(--color-cz-gray-light)',
 };
-type PaymentFields = { payment_method: string; payment_status: string; pays_with_credit: boolean };
+type PaymentFields = { payment_method: string; payment_status: string; pays_with_credit: boolean; status: string };
 
 function PAYMENT_LABEL(b: PaymentFields): string {
   // Credit bookings ride on payment_method 'onsite' but nothing is ever due —
   // hours come off the ggLeap account for time actually played.
   if (b.pays_with_credit) return 'KREDIT';
   if (b.payment_method === 'online') {
-    return b.payment_status === 'paid' ? 'ONLINE · ZAPLACENO' : 'ONLINE · NEZAPLACENO';
+    if (b.payment_status === 'paid') return 'ONLINE · ZAPLACENO';
+    // A live hold, not an outstanding debt — it lapses on its own.
+    return b.status === 'pending' ? 'ONLINE · ČEKÁ NA PLATBU' : 'ONLINE · NEZAPLACENO';
   }
   return b.payment_status === 'paid' ? 'V KLUBU · ZAPLACENO' : 'V KLUBU · NEZAPLACENO';
 }
@@ -446,7 +450,11 @@ export default function BookingsClient({
                 ['Platba', selected.pays_with_credit
                   ? 'Kredit — hodiny z účtu, nic se neplatí'
                   : selected.payment_method === 'online'
-                    ? (selected.payment_status === 'paid' ? 'Online · zaplaceno' : 'Online · nezaplaceno')
+                    ? (selected.payment_status === 'paid'
+                        ? 'Online · zaplaceno'
+                        : selected.status === 'pending'
+                          ? 'Online · čeká na platbu (rezervace propadne)'
+                          : 'Online · nezaplaceno')
                     : (selected.payment_status === 'paid' ? 'V klubu · zaplaceno' : 'V klubu · nezaplaceno')],
                 ['Mince k připsání', selected.coins_awarded > 0 ? `${selected.coins_awarded}` : '—'],
               ].map(([label, value]) => (
@@ -466,11 +474,12 @@ export default function BookingsClient({
             </div>
 
             <div className="flex flex-col gap-3" style={{ padding: '20px 28px', borderTop: '1px solid var(--color-cz-gray-dark)' }}>
-              {/* Online payments are settled by the Stripe webhook and credit
-                  bookings never owe anything — only on-site cash needs staff. */}
-              {!selected.pays_with_credit &&
-                selected.payment_method !== 'online' &&
-                selected.status !== 'cancelled' && (
+              {/* Credit bookings never owe anything — hours come off the ggLeap
+                  account for time played. Online ones are normally settled by
+                  the Stripe webhook, but staff needs the manual override for
+                  when it never lands, otherwise the booking is stuck unpaid.
+                  Marking paid sends the customer their payment receipt. */}
+              {!selected.pays_with_credit && selected.status !== 'cancelled' && (
                   <Button
                     disabled={updating}
                     variant="ghost"

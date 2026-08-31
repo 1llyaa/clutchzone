@@ -130,6 +130,17 @@ GDPR čl. 2 zmiňuje kamerový systém podmínečně („Pokud je v pobočce pou
 ### C9. Informace o cenách při slevách — chybí
 Pokud web zobrazuje slevy nebo přeškrtnuté ceny, platí § 12a zákona o ochraně spotřebitele: jako cena před slevou musí být uvedena **nejnižší cena za posledních 30 dnů**. Ve VOP (čl. 4) o tom není zmínka.
 
+### C10. Doklad o zakoupení — ověřit rozsah
+Provozovatel **není plátcem DPH**, takže povinnost vystavovat daňový doklad nevzniká a EET je od 1. 1. 2024 zrušena. Zůstává § 16 zákona o ochraně spotřebitele: **na žádost zákazníka** vydat doklad o zakoupení s datem prodeje, označením služby, cenou a identifikací prodávajícího.
+
+Technicky je to nyní pokryto e-mailem **„Platba přijata"** (viz D), který se odesílá až v okamžiku, kdy peníze skutečně dorazí — u karty po potvrzení od Stripe, u platby v klubu ve chvíli, kdy obsluha rezervaci označí jako zaplacenou. Obsahuje všechny čtyři náležitosti.
+
+**K ověření právníkem:**
+1. Zda e-mail v této podobě jako doklad o zakoupení obstojí, nebo zda je u plateb v klubu potřeba vydávat doklad i fyzicky na místě.
+2. Zda VOP čl. 4.6 (který o dokladu mluví) odpovídá tomu, jak to teď reálně funguje.
+
+Samostatně: všechny e-maily zákazníkům nově nesou identifikaci podnikatele (jméno, IČO, sídlo) podle § 435 obč. zák. Tato patička **záměrně neuvádí právní formu ani rejstřík**, dokud nebude vyřešena nesrovnalost A1 / B.
+
 ---
 
 ## D. Co bylo nasazeno technicky
@@ -139,6 +150,13 @@ Pro úplnost — na webu je funkční:
 - **Samoobslužné zrušení rezervace** odkazem z potvrzovacího e-mailu, v souladu s čl. 3.4 (15 minut). Při včasném zrušení se eviduje kredit k připsání; při pozdním zrušení nebo nedostavení se rezervace propadá.
 - **Odstoupení od nákupu kreditu do 14 dnů** odkazem z potvrzovacího e-mailu, s automatickým vrácením peněz na platební kartu. **Chybí k tomu text ve VOP — viz C2.**
 - **Cookies lišta se souhlasem (opt-in)** — rovnocenná tlačítka „Přijmout vše" / „Odmítnout", měření se bez souhlasu nespustí, souhlas lze kdykoli odvolat na `/cookies`. **Chybí k tomu právní text — viz C5.**
+- **Oddělené potvrzení rezervace a potvrzení platby.** Dříve chodil jediný e-mail „Rezervace potvrzena" hned po odeslání formuláře — tedy i tomu, kdo platbu kartou nikdy nedokončil. Nyní chodí:
+  - „Rezervace přijata / čeká na platbu" při vytvoření rezervace (u karty s upozorněním, že rezervace propadne, pokud platba nedorazí),
+  - „Platba přijata" až v okamžiku skutečné úhrady — slouží jako doklad o zakoupení, viz C10.
+
+  U rezervací hrazených hodinami z účtu se druhý e-mail neposílá, protože se neplatí penězi.
+- **Nezaplacené rezervace kartou už neblokují stanici natrvalo.** Drží místo po dobu platnosti platební relace (30 minut) a pak se automaticky uvolní.
+- **Obsluha může označit jako zaplaceno i rezervaci placenou kartou** — dřív to šlo jen u plateb v klubu, takže rezervaci, u které selhalo automatické potvrzení od Stripe, nebylo možné srovnat.
 - Dokumenty jsou dostupné ve čtyřech jazycích (CS, EN, DE, UA). **Závazná je česká verze**; ostatní jsou pracovní překlady a měly by projít kontrolou.
 
 ---
