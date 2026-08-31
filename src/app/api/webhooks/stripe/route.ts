@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createStripeClient } from '@/lib/stripe';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { sendCreditOrderNotification, sendCreditPurchaseConfirmation } from '@/lib/email';
+import { buildWithdrawUrl } from '@/lib/cancel-token';
 
 async function handleBookingPaid(admin: ReturnType<typeof createAdminClient>, groupId: string, coins: number, paymentIntentId: string | undefined) {
   const { error } = await admin
@@ -14,12 +15,19 @@ async function handleBookingPaid(admin: ReturnType<typeof createAdminClient>, gr
   }
 }
 
-async function handleCreditPaid(admin: ReturnType<typeof createAdminClient>, orderId: string, coins: number) {
+async function handleCreditPaid(
+  admin: ReturnType<typeof createAdminClient>,
+  orderId: string,
+  coins: number,
+  paymentIntentId: string | undefined,
+  locale: string,
+) {
   const { data: order, error } = await admin
     .from('credit_orders')
-    .update({ payment_status: 'paid', coins_awarded: coins })
+    // payment_intent_id is what a later 14-day withdrawal refunds against.
+    .update({ payment_status: 'paid', coins_awarded: coins, stripe_payment_intent_id: paymentIntentId })
     .eq('id', orderId)
-    .select('reference, customer_name, customer_email, total_amount, expires_at, clutchzone_account')
+    .select('id, reference, customer_name, customer_email, total_amount, expires_at, clutchzone_account')
     .single();
 
   if (error || !order) {
@@ -29,6 +37,15 @@ async function handleCreditPaid(admin: ReturnType<typeof createAdminClient>, ord
 
   const { data: items } = await admin.from('credit_order_items').select('station_type, hours, quantity').eq('order_id', orderId);
 
+  // Unsigned (missing secret) must not stop the confirmation email going out —
+  // the customer can still withdraw by writing in, per VOP §11.5.
+  let withdrawUrl: string | null = null;
+  try {
+    withdrawUrl = await buildWithdrawUrl(locale, orderId);
+  } catch (err) {
+    console.error('Withdrawal link not signed:', err);
+  }
+
   const emailData = {
     reference: order.reference,
     customerName: order.customer_name,
@@ -37,6 +54,7 @@ async function handleCreditPaid(admin: ReturnType<typeof createAdminClient>, ord
     expiresAt: order.expires_at,
     clutchzoneAccount: order.clutchzone_account,
     items: (items ?? []).map((i) => ({ stationType: i.station_type as 'pc' | 'ps5', hours: i.hours, quantity: i.quantity })),
+    withdrawUrl,
   };
   sendCreditOrderNotification(emailData).catch(() => {});
   sendCreditPurchaseConfirmation(emailData).catch(() => {});
@@ -64,7 +82,8 @@ export async function POST(request: NextRequest) {
 
     if (session.metadata?.kind === 'credit') {
       const orderId = session.metadata?.creditOrderId;
-      if (orderId) await handleCreditPaid(admin, orderId, coins);
+      const locale = session.metadata?.locale || 'cs';
+      if (orderId) await handleCreditPaid(admin, orderId, coins, paymentIntentId, locale);
     } else {
       // Metadata key is named bookingId for historical reasons — it now holds
       // the booking_group_id, since a checkout can cover several stations.

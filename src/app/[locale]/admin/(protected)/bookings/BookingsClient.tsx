@@ -20,17 +20,20 @@ const STATUS_COLOR: Record<string, string> = {
   cancelled: 'var(--color-cz-danger)',
   completed: 'var(--color-cz-gray-light)',
 };
-function PAYMENT_LABEL(b: { payment_method: string; payment_status: string }): string {
+type PaymentFields = { payment_method: string; payment_status: string; pays_with_credit: boolean };
+
+function PAYMENT_LABEL(b: PaymentFields): string {
+  // Credit bookings ride on payment_method 'onsite' but nothing is ever due —
+  // hours come off the ggLeap account for time actually played.
+  if (b.pays_with_credit) return 'KREDIT';
   if (b.payment_method === 'online') {
     return b.payment_status === 'paid' ? 'ONLINE · ZAPLACENO' : 'ONLINE · NEZAPLACENO';
   }
-  return 'V KLUBU';
+  return b.payment_status === 'paid' ? 'V KLUBU · ZAPLACENO' : 'V KLUBU · NEZAPLACENO';
 }
-function PAYMENT_COLOR(b: { payment_method: string; payment_status: string }): string {
-  if (b.payment_method === 'online') {
-    return b.payment_status === 'paid' ? 'var(--color-cz-success)' : 'var(--color-cz-warning)';
-  }
-  return 'var(--color-cz-gray-light)';
+function PAYMENT_COLOR(b: PaymentFields): string {
+  if (b.pays_with_credit) return 'var(--color-cz-gray-light)';
+  return b.payment_status === 'paid' ? 'var(--color-cz-success)' : 'var(--color-cz-warning)';
 }
 const TILE_BG: Record<string, string> = {
   free:     '#1a1a1a',
@@ -59,6 +62,7 @@ interface Booking {
   station_id: string;
   payment_method: string;
   payment_status: string;
+  pays_with_credit: boolean;
   coins_awarded: number;
   booking_group_id: string | null;
   stations_count: number | null;
@@ -82,6 +86,7 @@ interface GroupedBooking {
   status: string;
   payment_method: string;
   payment_status: string;
+  pays_with_credit: boolean;
   coins_awarded: number;
   stationLabels: string[];
   stationsCount: number;
@@ -127,6 +132,7 @@ function groupBookings(bookings: Booking[], passNameById: Record<string, string>
       status: first.status,
       payment_method: first.payment_method,
       payment_status: first.payment_status,
+      pays_with_credit: first.pays_with_credit,
       coins_awarded: rows.reduce((sum, r) => sum + (r.coins_awarded ?? 0), 0),
       stationLabels: rows.map((r) => r.stations?.label).filter((l): l is string => !!l),
       stationsCount: first.stations_count ?? rows.length,
@@ -190,6 +196,20 @@ export default function BookingsClient({
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status }),
+    });
+    setUpdating(false);
+    setSelected(null);
+    startTransition(() => router.refresh());
+  }
+
+  // Recording an on-site payment is what lets a later cancellation return
+  // credit — without it the booking looks unpaid and gets nothing back.
+  async function updatePaymentStatus(groupKey: string, payment_status: string) {
+    setUpdating(true);
+    await fetch(`/api/admin/bookings/${groupKey}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ payment_status }),
     });
     setUpdating(false);
     setSelected(null);
@@ -423,9 +443,11 @@ export default function BookingsClient({
                 ['Čas',       selected.start_time?.slice(0, 5)],
                 ['Délka',     `${Math.round(selected.duration_minutes / 60)} hodin`],
                 ['Celkem',    `${selected.total_price} Kč`],
-                ['Platba', selected.payment_method === 'online'
-                  ? (selected.payment_status === 'paid' ? 'Online · zaplaceno' : 'Online · nezaplaceno')
-                  : 'V klubu'],
+                ['Platba', selected.pays_with_credit
+                  ? 'Kredit — hodiny z účtu, nic se neplatí'
+                  : selected.payment_method === 'online'
+                    ? (selected.payment_status === 'paid' ? 'Online · zaplaceno' : 'Online · nezaplaceno')
+                    : (selected.payment_status === 'paid' ? 'V klubu · zaplaceno' : 'V klubu · nezaplaceno')],
                 ['Mince k připsání', selected.coins_awarded > 0 ? `${selected.coins_awarded}` : '—'],
               ].map(([label, value]) => (
                 <div key={label} style={{ marginBottom: 16 }}>
@@ -444,6 +466,28 @@ export default function BookingsClient({
             </div>
 
             <div className="flex flex-col gap-3" style={{ padding: '20px 28px', borderTop: '1px solid var(--color-cz-gray-dark)' }}>
+              {/* Online payments are settled by the Stripe webhook and credit
+                  bookings never owe anything — only on-site cash needs staff. */}
+              {!selected.pays_with_credit &&
+                selected.payment_method !== 'online' &&
+                selected.status !== 'cancelled' && (
+                  <Button
+                    disabled={updating}
+                    variant="ghost"
+                    active={selected.payment_status === 'paid'}
+                    onClick={() =>
+                      updatePaymentStatus(
+                        selected.groupKey,
+                        selected.payment_status === 'paid' ? 'unpaid' : 'paid',
+                      )
+                    }
+                    size="sm"
+                  >
+                    {selected.payment_status === 'paid'
+                      ? 'ZAPLACENO ✓ — ZRUŠIT OZNAČENÍ'
+                      : 'OZNAČIT JAKO ZAPLACENO'}
+                  </Button>
+                )}
               {selected.status !== 'cancelled' && selected.status !== 'completed' && (
                 <div className="flex gap-3">
                   <Button

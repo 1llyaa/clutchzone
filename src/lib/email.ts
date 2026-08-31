@@ -11,9 +11,16 @@ interface BookingEmailData {
   durationMinutes: number;
   totalPrice: number;
   offerLabel?: string;
+  /** The offer *banks* hours (an hour package was bought). */
   isCredit?: boolean;
+  /** The booking is *paid with* hours already on the account — nothing is due. */
+  paysWithCredit?: boolean;
   creditExpiryMonths?: number;
   clutchzoneAccount?: string | null;
+  /** Signed self-service cancellation link (VOP §3.4.3) — omitted if unsigned. */
+  cancelUrl?: string | null;
+  /** Free-cancellation window in minutes, for the copy around that link. */
+  cancellationWindowMinutes?: number;
 }
 
 // Escape user-supplied values before interpolating into email HTML.
@@ -58,7 +65,11 @@ export async function sendBookingNotification(b: BookingEmailData): Promise<void
     ['Nabídka', b.offerLabel ?? '—'],
     ['Datum', b.date],
     ['Čas', `${b.startTime} – ${endMin}`],
-    ['Cena', `${b.totalPrice} Kč`],
+    // Showing a price on a credit booking invites staff to collect money that
+    // isn't due.
+    b.paysWithCredit
+      ? ['Platba', 'Hodinami z účtu — nevybírat']
+      : ['Cena', `${b.totalPrice} Kč`],
     ['Jméno', b.customerName],
     ['E-mail', b.customerEmail],
     ['Telefon', b.customerPhone],
@@ -69,7 +80,13 @@ export async function sendBookingNotification(b: BookingEmailData): Promise<void
     <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#111;color:#e8e8e8;padding:32px;border-top:3px solid #E84A1A">
       <h2 style="margin:0 0 4px;color:#fff;text-transform:uppercase;letter-spacing:2px">Nová rezervace</h2>
       <p style="margin:0 0 24px;color:#888;font-size:13px">Clutch Zone — právě přišla nová rezervace.</p>
-      ${b.isCredit ? `<p style="margin:0 0 20px;padding:10px 14px;background:rgba(232,74,26,0.1);border:1px solid rgba(232,74,26,0.3);color:#ff8a5c;font-size:13px">Hodinový kredit — připiš na Clutchzone account při první návštěvě.</p>` : ''}
+      ${
+        b.paysWithCredit
+          ? `<p style="margin:0 0 20px;padding:10px 14px;background:rgba(232,74,26,0.1);border:1px solid rgba(232,74,26,0.3);color:#ff8a5c;font-size:13px">Platí hodinami z účtu — nic nevybírej, hodiny se strhnou podle odehraného času.</p>`
+          : b.isCredit
+            ? `<p style="margin:0 0 20px;padding:10px 14px;background:rgba(232,74,26,0.1);border:1px solid rgba(232,74,26,0.3);color:#ff8a5c;font-size:13px">Hodinový kredit — připiš na Clutchzone account při první návštěvě.</p>`
+            : ''
+      }
       <table style="width:100%;border-collapse:collapse;font-size:14px">
         ${rows.map(([k, v]) => `
           <tr>
@@ -111,13 +128,34 @@ export async function sendBookingConfirmation(b: BookingEmailData): Promise<void
     ['Nabídka', b.offerLabel ?? '—'],
     ['Datum', b.date],
     ['Čas', `${b.startTime} – ${endMin}`],
-    ['Cena', `${b.totalPrice} Kč`],
+    // Showing a price to someone paying with banked hours reads as money owed.
+    b.paysWithCredit
+      ? ['Platba', 'Hodinami z účtu — nic neplatíš']
+      : ['Cena', `${b.totalPrice} Kč`],
   ];
 
-  const creditNote = b.isCredit
-    ? `<p style="margin:0 0 20px;padding:12px 14px;background:rgba(232,74,26,0.08);border:1px solid rgba(232,74,26,0.25);color:#ff8a5c;font-size:13px;line-height:1.6">
+  // isCredit means the offer BANKS hours. Paying with hours already on the
+  // account banks nothing, so promising a top-up there contradicts the
+  // "nic neplatíš" line right above it.
+  const creditNote =
+    b.isCredit && !b.paysWithCredit
+      ? `<p style="margin:0 0 20px;padding:12px 14px;background:rgba(232,74,26,0.08);border:1px solid rgba(232,74,26,0.25);color:#ff8a5c;font-size:13px;line-height:1.6">
         Hodiny ti připíšeme na Clutchzone account při první návštěvě — ukaž tenhle kód na recepci.
         Platnost ${b.creditExpiryMonths ?? 3} měsíce od nákupu.
+      </p>`
+      : '';
+
+  // The URL is server-generated and HMAC-signed, so it is safe to embed as an
+  // href — but it still gets escaped, since it lands inside an HTML attribute.
+  const cancelWindow = b.cancellationWindowMinutes ?? 15;
+  // Deliberately doesn't promise credit back: at send time an onsite booking
+  // isn't paid yet and an online one hasn't cleared checkout, so what the
+  // customer gets depends on state we don't know here. The cancel page reads
+  // the live payment status and says what actually applies.
+  const cancelNote = b.cancelUrl
+    ? `<p style="margin:20px 0 0;padding-top:16px;border-top:1px solid #2a2a2a;color:#888;font-size:13px;line-height:1.6">
+        Nemůžeš dorazit? Rezervaci zrušíš bezplatně do ${cancelWindow} minut před začátkem.<br>
+        <a href="${escapeHtml(b.cancelUrl)}" style="color:#E84A1A">Zrušit rezervaci →</a>
       </p>`
     : '';
 
@@ -136,9 +174,14 @@ export async function sendBookingConfirmation(b: BookingEmailData): Promise<void
           </tr>`).join('')}
       </table>
       <p style="margin:24px 0 20px;color:#888;font-size:13px;line-height:1.6">
-        Přijďte 10 minut před začátkem a ukažte referenční kód na recepci. Cena uvedená výše je závazná.
+        ${
+          b.paysWithCredit
+            ? 'Přijďte 10 minut před začátkem a ukažte referenční kód na recepci. Nic neplatíte — hodiny se strhnou z účtu až podle odehraného času.'
+            : 'Přijďte 10 minut před začátkem a ukažte referenční kód na recepci. Cena uvedená výše je závazná.'
+        }
       </p>
       ${creditNote}
+      ${cancelNote}
     </div>`;
 
   try {
@@ -147,7 +190,7 @@ export async function sendBookingConfirmation(b: BookingEmailData): Promise<void
       to: b.customerEmail,
       subject: `Rezervace potvrzena ${b.reference} · Clutch Zone · ${b.date} ${b.startTime}`,
       html,
-      text: `Rezervace potvrzena: ${b.reference}\n${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\nPřijďte 10 minut před začátkem a ukažte referenční kód na recepci. Cena je závazná.${b.isCredit ? `\nHodiny ti připíšeme na Clutchzone account při první návštěvě.` : ''}`,
+      text: `Rezervace potvrzena: ${b.reference}\n${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\n${b.paysWithCredit ? 'Přijďte 10 minut před začátkem a ukažte referenční kód na recepci. Nic neplatíte — hodiny se strhnou z účtu až podle odehraného času.' : 'Přijďte 10 minut před začátkem a ukažte referenční kód na recepci. Cena je závazná.'}${b.isCredit && !b.paysWithCredit ? `\nHodiny ti připíšeme na Clutchzone account při první návštěvě.` : ''}${b.cancelUrl ? `\nZrušit rezervaci (bezplatně do ${cancelWindow} minut před začátkem): ${b.cancelUrl}` : ''}`.trim(),
     });
   } catch (err) {
     console.error('Booking confirmation email failed:', err);
@@ -162,6 +205,8 @@ interface CreditOrderEmailData {
   expiresAt: string; // YYYY-MM-DD
   clutchzoneAccount: string | null;
   items: { stationType: 'pc' | 'ps5'; hours: number; quantity: number }[];
+  /** Signed 14-day withdrawal link (VOP §11.3) — omitted if unsigned. */
+  withdrawUrl?: string | null;
 }
 
 function formatCzechDate(iso: string): string {
@@ -229,6 +274,17 @@ export async function sendCreditPurchaseConfirmation(o: CreditOrderEmailData): P
     ['Platnost do', formatCzechDate(o.expiresAt)],
   ];
 
+  // § 1829 obč. zák. requires an easily accessible way to withdraw within 14
+  // days for undated purchases like these — hence a button in the email, not
+  // just a form to print out.
+  const withdrawNote = o.withdrawUrl
+    ? `<p style="margin:20px 0 0;padding-top:16px;border-top:1px solid #2a2a2a;color:#888;font-size:13px;line-height:1.6">
+        Rozmyslel sis to? Od nákupu můžeš do 14 dnů odstoupit, pokud hodiny ještě nebyly čerpány —
+        peníze ti vrátíme zpět na kartu.<br>
+        <a href="${escapeHtml(o.withdrawUrl)}" style="color:#E84A1A">Odstoupit od smlouvy →</a>
+      </p>`
+    : '';
+
   const html = `
     <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#111;color:#e8e8e8;padding:32px;border-top:3px solid #E84A1A">
       <h2 style="margin:0 0 4px;color:#fff;text-transform:uppercase;letter-spacing:2px">Nákup kreditu potvrzen</h2>
@@ -247,6 +303,7 @@ export async function sendCreditPurchaseConfirmation(o: CreditOrderEmailData): P
         Hodiny ti připíšeme na Clutchzone account při první návštěvě — ukaž tenhle kód na recepci.
         Nevyužité hodiny po ${formatCzechDate(o.expiresAt)} propadají.
       </p>
+      ${withdrawNote}
     </div>`;
 
   try {
@@ -255,7 +312,7 @@ export async function sendCreditPurchaseConfirmation(o: CreditOrderEmailData): P
       to: o.customerEmail,
       subject: `Nákup kreditu potvrzen ${o.reference} · Clutch Zone`,
       html,
-      text: `Nákup kreditu potvrzen: ${o.reference}\n${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\nHodiny ti připíšeme na Clutchzone account při první návštěvě — ukaž tenhle kód na recepci.`,
+      text: `Nákup kreditu potvrzen: ${o.reference}\n${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\nHodiny ti připíšeme na Clutchzone account při první návštěvě — ukaž tenhle kód na recepci.${o.withdrawUrl ? `\nOdstoupení od smlouvy do 14 dnů: ${o.withdrawUrl}` : ''}`,
     });
   } catch (err) {
     console.error('Credit purchase confirmation email failed:', err);
