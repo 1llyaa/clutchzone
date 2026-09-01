@@ -12,7 +12,8 @@ import { offerDisplayLabel } from '@/lib/pricing/offerLabel';
 import { dayTypeForDate } from '@/lib/pricing/dates';
 import type { CalcInput, Offer, PricingConfig } from '@/lib/pricing/types';
 import { labelText, secondaryText } from '@/lib/typography';
-import StepSummaryDate from './steps/StepSummaryDate';
+import StepOffer from './steps/StepOffer';
+import StepDate from './steps/StepDate';
 import StepContact from './steps/StepContact';
 import StepPayment from './steps/StepPayment';
 import StepDone from './steps/StepDone';
@@ -55,7 +56,7 @@ export default function ReservationModal() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<BookingResult | null>(null);
 
-  const STEP_TITLES = [t('stepSummaryTitle'), t('stepContactTitle'), t('stepPaymentTitle')];
+  const STEP_TITLES = [t('stepOfferTitle'), t('stepSummaryTitle'), t('stepContactTitle'), t('stepPaymentTitle')];
 
   useEffect(() => {
     if (isOpen) track('reservation_step_reached', { step });
@@ -84,6 +85,7 @@ export default function ReservationModal() {
     if (found) {
       setCalcInput(input);
       setOffer(found);
+      setStep(2);
     }
   }, [isOpen, prefill, config, calcInput]);
 
@@ -154,11 +156,7 @@ export default function ReservationModal() {
   function handleOfferChosen(input: CalcInput, chosenOffer: Offer) {
     setCalcInput(input);
     setOffer(chosenOffer);
-  }
-
-  function handleEditCalculator() {
-    handleClose();
-    document.getElementById('cenik')?.scrollIntoView({ behavior: 'smooth' });
+    setStep(2);
   }
 
   async function handleConfirm(method: 'online' | 'onsite' | 'credit') {
@@ -222,7 +220,7 @@ export default function ReservationModal() {
 
       track('reservation_completed', { kind: off.kind, stations: calcInput.stationsCount, amount: off.totalAmount });
       setResult({ reference: data.reference, stationLabels: data.stationLabels, totalAmount: data.totalAmount, isCredit: data.isCredit, paysWithCredit: method === 'credit' });
-      setStep(4);
+      setStep(5);
       setLoading(false);
     } catch {
       setSubmitError(t('submitError'));
@@ -237,7 +235,7 @@ export default function ReservationModal() {
   // said they have no account yet.
   const { state: hoursState, minutes: hoursMinutes } = useGgLeapHours(
     contact.clutchzoneAccount,
-    isOpen && step === 3 && !contact.noAccountYet,
+    isOpen && step === 4 && !contact.noAccountYet,
   );
 
   // What the booking would actually draw from that balance: the hours spent on
@@ -250,7 +248,7 @@ export default function ReservationModal() {
 
   if (!isOpen) return null;
 
-  const stepIndex = Math.min(step, 3) - 1;
+  const stepIndex = Math.min(step, 4) - 1;
 
   return (
     <div
@@ -267,10 +265,10 @@ export default function ReservationModal() {
         <div className="flex items-center justify-between" style={{ padding: '28px 32px 0' }}>
           <div className="flex flex-col gap-1">
             <span className="font-mono text-cz-orange uppercase" style={{ ...labelText, letterSpacing: 3 }}>
-              {t('title')} {step <= 3 ? `· ${step}/3` : ''}
+              {t('title')} {step <= 4 ? `· ${step}/4` : ''}
             </span>
             <span className="font-display text-white uppercase" style={{ fontSize: 26, letterSpacing: 1 }}>
-              {step <= 3 ? STEP_TITLES[stepIndex] : t('doneStepLabel')}
+              {step <= 4 ? STEP_TITLES[stepIndex] : t('doneStepLabel')}
             </span>
           </div>
           <Button variant="ghost" iconOnly onClick={handleClose} aria-label={t('close')}>
@@ -278,12 +276,12 @@ export default function ReservationModal() {
           </Button>
         </div>
 
-        {step <= 3 && (
+        {step <= 4 && (
           <div className="flex items-center gap-2" style={{ padding: '16px 32px 0' }}>
-            {[1, 2, 3].map((s) => (
+            {[1, 2, 3, 4].map((s) => (
               <div key={s} className="flex items-center gap-2">
                 <span className="rounded-full" style={{ width: 8, height: 8, background: s <= step ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-dark)', transition: 'background 0.2s' }} />
-                {s < 3 && <span style={{ width: 24, height: 1, background: s < step ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-dark)' }} />}
+                {s < 4 && <span style={{ width: 24, height: 1, background: s < step ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-dark)' }} />}
               </div>
             ))}
           </div>
@@ -297,31 +295,32 @@ export default function ReservationModal() {
           ) : (
             <>
               {step === 1 && (
-                <StepSummaryDate
-                  config={config}
+                <StepOffer config={config} onOfferChosen={handleOfferChosen} />
+              )}
+              {step === 2 && calcInput && offer && (
+                <StepDate
                   calcInput={calcInput}
                   offer={offer}
-                  onOfferChosen={handleOfferChosen}
                   dayType={dayType}
                   date={date}
                   onDate={setDate}
                   activeOffer={activeOffer}
                   dateWarning={dateWarning}
                   availability={availability}
-                  onEditCalculator={handleEditCalculator}
-                  onNext={() => setStep(2)}
-                />
-              )}
-              {step === 2 && effectiveOffer && (
-                <StepContact
-                  contact={contact}
-                  onChange={setContact}
-                  requireClutchzoneAccount
                   onBack={() => setStep(1)}
                   onNext={() => setStep(3)}
                 />
               )}
               {step === 3 && effectiveOffer && (
+                <StepContact
+                  contact={contact}
+                  onChange={setContact}
+                  requireClutchzoneAccount
+                  onBack={() => setStep(2)}
+                  onNext={() => setStep(4)}
+                />
+              )}
+              {step === 4 && effectiveOffer && (
                 <StepPayment
                   offer={effectiveOffer}
                   termsAccepted={termsAccepted}
@@ -334,9 +333,10 @@ export default function ReservationModal() {
                   hoursState={hoursState}
                   hoursMinutes={hoursMinutes}
                   requiredMinutes={requiredMinutes}
+                  onBack={() => setStep(3)}
                 />
               )}
-              {step === 4 && result && (
+              {step === 5 && result && (
                 <StepDone
                   reference={result.reference}
                   stationLabels={result.stationLabels}

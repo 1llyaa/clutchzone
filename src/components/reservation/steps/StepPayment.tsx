@@ -22,9 +22,10 @@ interface Props {
   hoursState: GgLeapHoursState;
   hoursMinutes: number | null;
   requiredMinutes: number | null;
+  onBack: () => void;
 }
 
-export default function StepPayment({ offer, termsAccepted, onToggleConsent, consentError, loading, error, onConfirm, showCreditOption, hoursState, hoursMinutes, requiredMinutes }: Props) {
+export default function StepPayment({ offer, termsAccepted, onToggleConsent, consentError, loading, error, onConfirm, showCreditOption, hoursState, hoursMinutes, requiredMinutes, onBack }: Props) {
   const t = useTranslations('booking');
   const [coinsAmount, setCoinsAmount] = useState(50);
 
@@ -39,6 +40,14 @@ export default function StepPayment({ offer, termsAccepted, onToggleConsent, con
 
   return (
     <div className="flex flex-col gap-4" style={{ marginTop: 8 }}>
+      <button
+        onClick={onBack}
+        className="font-display uppercase rounded-control cursor-pointer self-start"
+        style={{ fontSize: 16, letterSpacing: 2, padding: '11px 24px', background: 'transparent', border: '1.5px solid var(--color-cz-gray-dark)', color: '#888' }}
+      >
+        {t('back')}
+      </button>
+
       <div className="flex justify-between border-b border-cz-gray-dark" style={{ paddingBottom: 12 }}>
         <span className="font-mono text-cz-gray-light uppercase" style={{ ...labelText, letterSpacing: 2 }}>{t('amountDue')}</span>
         <span className="font-display text-white" style={{ fontSize: 28 }}>

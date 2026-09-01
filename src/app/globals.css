@@ -17,9 +17,9 @@
   --color-cz-warning: #eab308;
   --color-cz-danger: #ef4444;
 
-  --font-display: 'Bebas Neue', sans-serif;
-  --font-body: 'Inter', sans-serif;
-  --font-mono: 'Space Mono', monospace;
+  --font-display: 'Archivo', sans-serif;
+  --font-body: 'Archivo', sans-serif;
+  --font-mono: 'Archivo', sans-serif;
 
   --text-label: 1rem;
   --text-secondary: 1.0625rem;
@@ -50,9 +50,79 @@
   --animate-step-in: cz-step-in 220ms cubic-bezier(0.2, 0, 0, 1) both;
 }
 
+/* Google serves Archivo as static instances (normal / semi-expanded / expanded),
+   not a variable file, so `font-stretch: 125%` is what actually selects the
+   expanded cut; `font-variation-settings` is inert here and kept only as a
+   fallback if the variable build is ever served instead. Bebas Neue shipped a
+   single heavy cut so it read bold at 400; Archivo's 400 is a true regular,
+   hence the explicit weights below. */
+.font-display,
+.font-mono {
+  font-stretch: 125%;
+  font-variation-settings: 'wdth' 125;
+}
+
+.font-display {
+  font-weight: 700;
+}
+
+/* 500, not 700: small tracked labels only need a little more presence, and
+   the call sites that pass fontWeight 700 inline rely on out-weighing this. */
+.font-mono {
+  font-weight: 500;
+}
+
+.font-body {
+  font-variation-settings: 'wdth' 100;
+}
+
+/* Hero headline size, per locale.
+   The three lines never wrap (see Hero.tsx), so the longest single line has to
+   fit the text column outright. Archivo expanded-bold runs ~0.86 em/char, so
+   line length drives the cap: cs "E-SPORTOVÁ" is 8.6 em and ua "КІБЕРСПОРТИВНИЙ"
+   is narrower still in Oswald, but en "HEADQUARTERS" (11.0 em) and de
+   "HAUPTQUARTIER" (11.3 em) need roughly a quarter off the size to clear the
+   column. Both steps drop at `lg`, where the two-column split halves the width.
+   Equal specificity here, so the en/de rules must stay after the base ones. */
+:root {
+  --hero-h1: clamp(28px, 8vw, 64px);
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --hero-h1: clamp(40px, 5.2vw, 80px);
+  }
+}
+
+[data-locale="en"],
+[data-locale="de"] {
+  --hero-h1: clamp(21px, 6.8vw, 54px);
+}
+
+@media (min-width: 1024px) {
+  [data-locale="en"],
+  [data-locale="de"] {
+    --hero-h1: clamp(38px, 3.9vw, 60px);
+  }
+}
+
 [data-locale="ua"] {
   --font-display: 'Oswald', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+  --font-body: 'Inter', sans-serif;
+}
+
+[data-locale="ua"] .font-display,
+[data-locale="ua"] .font-mono,
+[data-locale="ua"] .font-body {
+  font-stretch: normal;
+  font-variation-settings: normal;
+}
+
+/* JetBrains Mono is requested as static 400/700, so 500 would just snap to
+   400 anyway. Ask for the cut that actually loads. */
+[data-locale="ua"] .font-mono {
+  font-weight: 400;
 }
 
 @keyframes cz-flicker {
