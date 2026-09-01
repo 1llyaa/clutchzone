@@ -26,6 +26,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # The migrations are written for Supabase, which ships an `auth` schema
+      # that plain postgres:16 does not have — 004 referenced it and the whole
+      # run died there, so this job could never get as far as the migrations a
+      # pull request actually changed. Stubs, not a Supabase emulation: just
+      # enough for the DDL to resolve. Nothing here asserts runtime behaviour,
+      # so auth.uid()/auth.role() returning constants is fine — RLS policies
+      # only need to parse and plan.
+      - name: Stub the Supabase auth schema
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE SCHEMA IF NOT EXISTS auth;
+          CREATE TABLE IF NOT EXISTS auth.users (
+            id    uuid PRIMARY KEY,
+            email text
+          );
+          CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid
+            LANGUAGE sql STABLE AS $$ SELECT NULL::uuid $$;
+          CREATE OR REPLACE FUNCTION auth.role() RETURNS text
+            LANGUAGE sql STABLE AS $$ SELECT 'anon'::text $$;
+          SQL
+
       - name: Apply migrations in order
         env:
           PGPASSWORD: postgres
