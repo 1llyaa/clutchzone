@@ -5,7 +5,7 @@ import { calculatePricing, reservedHoursOnSite } from '@/lib/pricing/engine';
 import type { CalcInput } from '@/lib/pricing/types';
 import { sendBookingNotification, sendBookingConfirmation } from '@/lib/email';
 import { buildCancelUrl } from '@/lib/cancel-token';
-import { getCancellationWindowMinutes } from '@/lib/bookings/cancellation';
+import { getCancellationWindowMinutes, minutesUntil } from '@/lib/bookings/cancellation';
 import { getOnlineHoldMinutes, holdExpiryFrom, releaseExpiredHolds } from '@/lib/bookings/holds';
 import { z } from 'zod';
 
@@ -84,6 +84,10 @@ export async function POST(req: NextRequest) {
   const reservedHours = reservedHoursOnSite(offer, calcInput, dayType);
   const startTime = `${String(data.startHour % 24).padStart(2, '0')}:00`;
   const durationMinutes = reservedHours * 60;
+
+  if (minutesUntil(data.date, startTime) < 0) {
+    return NextResponse.json({ error: 'Tento čas už uplynul.' }, { status: 400 });
+  }
 
   const admin = createAdminClient();
 
