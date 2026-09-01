@@ -106,7 +106,9 @@ export async function POST(req: NextRequest) {
         },
         quantity: l.quantity,
       })),
-      metadata: { kind: 'credit', creditOrderId: order.id, coins: String(coinsAmount) },
+      // locale rides along so the webhook can build the withdrawal link in the
+      // language the customer bought in — credit_orders itself stores no locale.
+      metadata: { kind: 'credit', creditOrderId: order.id, coins: String(coinsAmount), locale },
       success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/${locale}/kredit/success?session_id={CHECKOUT_SESSION_ID}&order=${order.id}`,
       cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/${locale}/kredit/cancelled?order=${order.id}`,
     });

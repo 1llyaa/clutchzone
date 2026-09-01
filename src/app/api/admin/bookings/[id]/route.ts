@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/auth';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { sendPaymentReceiptOnce } from '@/lib/bookings/payment-receipt';
 
 // `id` is normally a booking_group_id (every row in the N-station group
 // gets updated/deleted together) — the `id.eq` fallback covers legacy
@@ -14,7 +15,7 @@ export async function PATCH(
 
   const { id } = await params;
   const body = await request.json();
-  const allowed = ['status'];
+  const allowed = ['status', 'payment_status'];
   const updates = Object.fromEntries(
     Object.entries(body).filter(([k]) => allowed.includes(k))
   );
@@ -24,12 +25,50 @@ export async function PATCH(
     return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
   }
 
+  // Staff marks "zaplatím v klubu" bookings paid once the money is in hand.
+  // This is what decides whether a later cancellation owes credit back
+  // (see creditHoursOwedFor in lib/bookings/cancellation.ts), so it must not
+  // accept anything outside the column's CHECK constraint.
+  const VALID_PAYMENT_STATUSES = ['unpaid', 'paid'];
+  if (
+    'payment_status' in updates &&
+    !VALID_PAYMENT_STATUSES.includes(updates.payment_status as string)
+  ) {
+    return NextResponse.json({ error: 'Invalid payment status' }, { status: 400 });
+  }
+
   const admin = createAdminClient();
-  const { error } = await admin
+
+  // Whether the receipt actually goes out is decided by the claim inside
+  // sendPaymentReceiptOnce, not here: re-sending `paid` on an already-paid
+  // booking, or toggling it off and on, must not mail the customer again.
+  const markingPaid = updates.payment_status === 'paid';
+  if (markingPaid) {
+    // Money in hand settles the booking: an online one stranded at `pending` by
+    // a missed webhook would otherwise be reaped as an expired hold. Only when
+    // the same request isn't already setting a status explicitly.
+    updates.hold_expires_at = null;
+    if (!('status' in updates)) updates.status = 'confirmed';
+  }
+
+  const { data: updated, error } = await admin
     .from('bookings')
     .update(updates)
-    .or(`booking_group_id.eq.${id},id.eq.${id}`);
+    .or(`booking_group_id.eq.${id},id.eq.${id}`)
+    .select('booking_group_id');
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  if (markingPaid) {
+    const groupId = (updated?.[0] as { booking_group_id: string | null } | undefined)
+      ?.booking_group_id;
+    if (groupId) {
+      // Fire-and-forget, and idempotent on its own: staff toggling paid off and
+      // on again must not mail the customer twice.
+      sendPaymentReceiptOnce(groupId).catch((err) =>
+        console.error(`Payment receipt failed for booking group ${groupId}:`, err),
+      );
+    }
+  }
 
   return NextResponse.json({ ok: true });
 }

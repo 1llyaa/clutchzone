@@ -26,6 +26,46 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # The migrations are written for Supabase, which provides three things
+      # plain postgres:16 does not: the `auth` schema, `storage.objects`, and
+      # the `supabase_realtime` publication. 004 hit the first of them and the
+      # run died there, so this job could never reach the migrations a pull
+      # request actually changed — it failed the first time it ever ran.
+      #
+      # Stubs, not a Supabase emulation: enough for the DDL to resolve. This
+      # check asserts that migrations apply in order on a clean database, not
+      # how they behave at runtime, so constant-returning auth functions and an
+      # empty storage.objects are sufficient — RLS policies need only to parse.
+      - name: Stub the Supabase-provided schema
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE SCHEMA IF NOT EXISTS auth;
+          CREATE TABLE IF NOT EXISTS auth.users (
+            id    uuid PRIMARY KEY,
+            email text
+          );
+          CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid
+            LANGUAGE sql STABLE AS $$ SELECT NULL::uuid $$;
+          CREATE OR REPLACE FUNCTION auth.role() RETURNS text
+            LANGUAGE sql STABLE AS $$ SELECT 'anon'::text $$;
+
+          -- Storage bucket policies (005, 006, 013, 014) attach to this table,
+          -- which only exists because Supabase Storage creates it. RLS has to
+          -- be on or CREATE POLICY has nothing to attach to.
+          CREATE SCHEMA IF NOT EXISTS storage;
+          CREATE TABLE IF NOT EXISTS storage.objects (
+            id        uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+            bucket_id text,
+            name      text
+          );
+          ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+
+          -- 009 and 011 add tables to Supabase's realtime publication.
+          CREATE PUBLICATION supabase_realtime;
+          SQL
+
       - name: Apply migrations in order
         env:
           PGPASSWORD: postgres

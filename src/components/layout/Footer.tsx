@@ -123,8 +123,12 @@ export default async function Footer() {
       </div>
       </Reveal>
 
-      {/* Legal */}
-      <Reveal>
+      {/* Legal — deliberately NOT wrapped in <Reveal>. It sits at the very
+          bottom of the document, where Reveal's -10% bottom rootMargin can
+          leave it permanently hidden on client-side navigation, and § 435
+          identification plus the mandatory legal links must never depend on a
+          scroll animation firing. */}
+      <div>
         <div
           className="max-w-[1440px] mx-auto flex flex-wrap items-center justify-between"
           style={{ marginTop: 24, paddingTop: 18, borderTop: '1px solid rgba(255,255,255,0.06)', gap: 16 }}
@@ -132,24 +136,27 @@ export default async function Footer() {
           <span className="font-body text-cz-gray-light" style={{ fontSize: 16 }}>
             {BUSINESS.ownerName} · IČO: {BUSINESS.ico} · {BUSINESS.registeredAddress}
           </span>
-          <div className="flex" style={{ gap: 24 }}>
-            <Link
-              href="/terms"
-              className="font-body font-medium text-cz-white-soft uppercase hover:text-white transition-colors duration-150 no-underline"
-              style={{ fontSize: 16, letterSpacing: 0.5 }}
-            >
-              {t('terms')}
-            </Link>
-            <Link
-              href="/privacy"
-              className="font-body font-medium text-cz-white-soft uppercase hover:text-white transition-colors duration-150 no-underline"
-              style={{ fontSize: 16, letterSpacing: 0.5 }}
-            >
-              {t('privacy')}
-            </Link>
+          <div className="flex flex-wrap" style={{ gap: 24 }}>
+            {[
+              { href: '/terms', label: t('terms') },
+              { href: '/privacy', label: t('privacy') },
+              // Anchors into VOP §11, which is where the complaints procedure
+              // lives — there is no standalone reklamační řád document.
+              { href: '/terms#reklamace', label: t('complaints') },
+              { href: '/cookies', label: t('cookies') },
+            ].map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="font-body font-medium text-cz-white-soft uppercase hover:text-white transition-colors duration-150 no-underline"
+                style={{ fontSize: 16, letterSpacing: 0.5 }}
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
         </div>
-      </Reveal>
+      </div>
     </footer>
   );
 }
