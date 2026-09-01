@@ -2,12 +2,11 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import DatePicker from '@/components/ui/DatePicker';
-import PriceCalculator from '@/components/pricing/PriceCalculator';
 import { nextDatesForDayType } from '@/lib/pricing/dates';
 import { offerDisplayLabel } from '@/lib/pricing/offerLabel';
 import { DAY_ABBR, formatDayTypeLabel, type DayLocale } from '@/lib/pricing/dayLabel';
 import { labelText, secondaryText } from '@/lib/typography';
-import type { CalcInput, DayTypeGroup, Offer, PricingConfig } from '@/lib/pricing/types';
+import type { CalcInput, DayTypeGroup, Offer } from '@/lib/pricing/types';
 
 function formatDateLabel(iso: string): string {
   const d = new Date(iso + 'T12:00:00');
@@ -15,32 +14,28 @@ function formatDateLabel(iso: string): string {
 }
 
 interface Props {
-  config: PricingConfig;
-  calcInput: CalcInput | null;
-  offer: Offer | null;
-  onOfferChosen: (input: CalcInput, offer: Offer) => void;
+  calcInput: CalcInput;
+  offer: Offer;
   dayType: DayTypeGroup | null;
   date: string | null;
   onDate: (d: string) => void;
   activeOffer: Offer | null;
   dateWarning: string | null;
   availability: { available: number; total: number } | null;
-  onEditCalculator: () => void;
+  onBack: () => void;
   onNext: () => void;
 }
 
-export default function StepSummaryDate({
-  config,
+export default function StepDate({
   calcInput,
   offer,
-  onOfferChosen,
   dayType,
   date,
   onDate,
   activeOffer,
   dateWarning,
   availability,
-  onEditCalculator,
+  onBack,
   onNext,
 }: Props) {
   const t = useTranslations('booking');
@@ -48,10 +43,6 @@ export default function StepSummaryDate({
   const rawLocale = useLocale();
   const locale = (['cs', 'en', 'de', 'ua'].includes(rawLocale) ? rawLocale : 'cs') as DayLocale;
   const dayNames = DAY_ABBR[locale];
-
-  if (!calcInput || !offer) {
-    return <PriceCalculator config={config} variant="compact" onOfferChosen={onOfferChosen} />;
-  }
 
   const shownOffer = activeOffer ?? offer;
   const quickDates = dayType ? nextDatesForDayType(dayType, 4) : [];
@@ -77,15 +68,6 @@ export default function StepSummaryDate({
           <span className="font-display" style={{ fontSize: 34, color: '#FFFFFF' }}>
             {shownOffer.totalAmount} <span className="font-mono" style={{ ...secondaryText, letterSpacing: 1.5, color: 'var(--color-cz-white-soft)' }}>KČ</span>
           </span>
-        </div>
-        <div style={{ textAlign: 'right', marginTop: 10 }}>
-          <button
-            onClick={onEditCalculator}
-            className="font-mono"
-            style={{ background: 'transparent', border: 'none', cursor: 'pointer', ...labelText, letterSpacing: 2, color: 'var(--color-cz-orange)', textTransform: 'uppercase' }}
-          >
-            {t('editCalculator')}
-          </button>
         </div>
       </div>
 
@@ -156,26 +138,32 @@ export default function StepSummaryDate({
         </div>
       )}
 
-      <button
-        onClick={onNext}
-        disabled={!canProceed}
-        className="font-display"
-        style={{
-          width: '100%',
-          height: 56,
-          background: canProceed ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-dark)',
-          border: `1.5px solid ${canProceed ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-dark)'}`,
-          borderRadius: 'var(--radius-control)',
-          color: canProceed ? '#FFFFFF' : '#888888',
-          fontSize: 18,
-          letterSpacing: 1.5,
-          lineHeight: 1,
-          cursor: canProceed ? 'pointer' : 'not-allowed',
-          textTransform: 'uppercase',
-        }}
-      >
-        {t('continueToContact')}
-      </button>
+      <div className="flex gap-3">
+        <button
+          onClick={onBack}
+          className="font-display uppercase rounded-control cursor-pointer"
+          style={{ fontSize: 16, letterSpacing: 2, padding: '11px 24px', background: 'transparent', border: '1.5px solid var(--color-cz-gray-dark)', color: '#888' }}
+        >
+          {t('back')}
+        </button>
+        <button
+          onClick={onNext}
+          disabled={!canProceed}
+          className="font-display uppercase rounded-control flex-1"
+          style={{
+            height: 56,
+            background: canProceed ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-dark)',
+            border: `1.5px solid ${canProceed ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-dark)'}`,
+            color: canProceed ? '#FFFFFF' : '#888888',
+            fontSize: 18,
+            letterSpacing: 1.5,
+            lineHeight: 1,
+            cursor: canProceed ? 'pointer' : 'not-allowed',
+          }}
+        >
+          {t('continueToContact')}
+        </button>
+      </div>
     </div>
   );
 }

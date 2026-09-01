@@ -236,6 +236,7 @@
     "errorUnavailable": "Zu dieser Zeit sind alle Stationen belegt. Bitte versuche eine andere Zeit.",
     "errorGeneral": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
     "priceApprox": "Der angezeigte Preis ist ungefähr. Die Zahlung erfolgt vor Ort bei Ankunft im Club.",
+    "stepOfferTitle": "AUSWAHL",
     "stepSummaryTitle": "ÜBERSICHT & DATUM",
     "stepContactTitle": "KONTAKT",
     "stepPaymentTitle": "ZAHLUNG & BESTÄTIGUNG",

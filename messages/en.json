@@ -236,6 +236,7 @@
     "errorUnavailable": "All stations are taken at this time. Please try a different time.",
     "errorGeneral": "Something went wrong. Please try again.",
     "priceApprox": "The displayed price is approximate. Payment is made on-site upon arrival at the club.",
+    "stepOfferTitle": "SELECTION",
     "stepSummaryTitle": "SUMMARY & DATE",
     "stepContactTitle": "CONTACT",
     "stepPaymentTitle": "PAYMENT & CONFIRMATION",
