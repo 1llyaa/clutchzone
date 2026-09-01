@@ -134,9 +134,6 @@ export default function Games({ games }: { games: Game[] }) {
       {/* Heading */}
       <Reveal className="max-w-[1440px] mx-auto flex items-end justify-between pb-8 md:pb-[40px]">
         <div>
-          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}>
-            {t('eyebrow')}
-          </span>
           <h2 className="font-display text-white uppercase" style={{ fontSize: 'clamp(2rem, 5vw, 3.25rem)', letterSpacing: 1.5, lineHeight: 0.98 }}>
             {t('heading')}
           </h2>

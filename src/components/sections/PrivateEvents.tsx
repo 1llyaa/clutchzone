@@ -35,9 +35,6 @@ export default function PrivateEvents({ image }: Props) {
 
         {/* Right — heading + info + CTA */}
         <Reveal delay={70}>
-          <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}>
-            {t('eyebrow')}
-          </span>
           <h2 className="font-display text-white uppercase" style={{ fontSize: 'clamp(2rem, 5vw, 3.25rem)', letterSpacing: 1.5, lineHeight: 0.98, marginBottom: 20 }}>
             {t('heading')}
           </h2>

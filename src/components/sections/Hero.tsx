@@ -58,9 +58,14 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
             </span>
           </div>
 
+          {/* The three <br>-separated lines are the intended composition, so no
+              line may wrap inside itself: without `nowrap` the browser takes the
+              hyphen in "E-SPORTOVÁ" as a break opportunity and splits it. That
+              makes the longest line's width the binding constraint, so the size
+              is per-locale via --hero-h1 (see globals.css). */}
           <h1
             className="font-display text-white uppercase"
-            style={{ fontSize: 'clamp(44px, 7.2vw, 88px)', lineHeight: 0.94, letterSpacing: 1.5 }}
+            style={{ fontSize: 'var(--hero-h1)', lineHeight: 0.94, letterSpacing: 1.5, whiteSpace: 'nowrap' }}
           >
             {t('h1Line1')}
             <br />
@@ -217,9 +222,8 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
         </div>
       </div>
 
-      {/* Scroll indicator — hide on mobile */}
-      <div className="absolute left-1/2 -translate-x-1/2 z-10 hidden md:flex flex-col items-center gap-3" style={{ bottom: 36 }}>
-        <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3 }}>{t('scroll')}</span>
+      {/* Scroll indicator, hidden on mobile */}
+      <div className="absolute left-1/2 -translate-x-1/2 z-10 hidden md:flex flex-col items-center" style={{ bottom: 36 }}>
         <span className="bg-cz-orange animate-scroll-pulse" style={{ width: 1.5, height: 48, display: 'block' }} />
       </div>
     </section>
