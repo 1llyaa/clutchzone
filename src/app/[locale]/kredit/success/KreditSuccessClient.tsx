@@ -93,7 +93,7 @@ export default function KreditSuccessClient() {
                   {status.items.map((i) => (
                     <div key={`${i.station_type}-${i.hours}`} className="flex justify-between border-b border-cz-gray-dark" style={{ paddingBottom: 12 }}>
                       <span className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>{i.station_type.toUpperCase()}</span>
-                      <span className="font-mono text-white" style={{ fontSize: 17, letterSpacing: 1 }}>{i.quantity}× {i.hours}H</span>
+                      <span className="font-mono text-white" style={{ fontSize: 17, letterSpacing: 1 }}>{i.quantity}x {i.hours}H</span>
                     </div>
                   ))}
                   <div className="flex justify-between border-b border-cz-gray-dark" style={{ paddingBottom: 12 }}>

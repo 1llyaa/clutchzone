@@ -61,7 +61,7 @@ export default function WithdrawClient({
   }
 
   const itemsLabel = order.items
-    .map((i) => `${i.quantity}× ${i.hours}H ${i.stationType.toUpperCase()}`)
+    .map((i) => `${i.quantity}x ${i.hours}H ${i.stationType.toUpperCase()}`)
     .join(', ');
 
   const rows: [string, string][] = [

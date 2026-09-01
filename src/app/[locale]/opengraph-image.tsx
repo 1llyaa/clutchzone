@@ -10,8 +10,8 @@ export const revalidate = 3600;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://clutchzone.club';
 const TAGLINE = 'ESPORT CLUB · ČESKÉ BUDĚJOVICE';
 
-async function loadGoogleFont(family: string, weight: number, text: string) {
-  const url = `https://fonts.googleapis.com/css2?family=${family}:wght@${weight}&text=${encodeURIComponent(text)}`;
+async function loadGoogleFont(familyParam: string, text: string) {
+  const url = `https://fonts.googleapis.com/css2?family=${familyParam}&text=${encodeURIComponent(text)}`;
   const css = await (await fetch(url)).text();
   const match = css.match(/src: url\(([^)]+)\) format\('(?:opentype|truetype)'\)/);
   if (match) {
@@ -51,15 +51,15 @@ export default async function OpengraphImage({
   const t = await getTranslations({ locale, namespace: 'hero' });
   const headline = `${t('h1Line1')} ${t('h1Line2')} ${t('h1Line3')}`;
 
-  const [heroImageUrl, bebas, mono] = await Promise.all([
+  const [heroImageUrl, archivoDisplay, archivoMono] = await Promise.all([
     getHeroImageUrl(),
-    loadGoogleFont('Bebas+Neue', 400, `CLUTCH ZONE${headline}`),
-    loadGoogleFont('Space+Mono', 700, TAGLINE),
+    loadGoogleFont('Archivo:wdth,wght@125,400', `CLUTCH ZONE${headline}`),
+    loadGoogleFont('Archivo:wdth,wght@125,700', TAGLINE),
   ]);
 
   const fonts = [
-    bebas && { name: 'Bebas Neue', data: bebas, style: 'normal' as const, weight: 400 as const },
-    mono && { name: 'Space Mono', data: mono, style: 'normal' as const, weight: 700 as const },
+    archivoDisplay && { name: 'Archivo', data: archivoDisplay, style: 'normal' as const, weight: 400 as const },
+    archivoMono && { name: 'Archivo', data: archivoMono, style: 'normal' as const, weight: 700 as const },
   ].filter(Boolean) as { name: string; data: ArrayBuffer; style: 'normal'; weight: 400 | 700 }[];
 
   return new ImageResponse(
@@ -156,7 +156,7 @@ export default async function OpengraphImage({
               </div>
               <span
                 style={{
-                  fontFamily: 'Bebas Neue',
+                  fontFamily: 'Archivo',
                   fontSize: 40,
                   color: '#fff',
                   letterSpacing: 2,
@@ -168,8 +168,9 @@ export default async function OpengraphImage({
 
             <span
               style={{
-                fontFamily: 'Space Mono',
+                fontFamily: 'Archivo',
                 fontSize: 18,
+                fontWeight: 700,
                 color: '#E84A1A',
                 letterSpacing: 4,
                 marginBottom: 32,
@@ -180,7 +181,7 @@ export default async function OpengraphImage({
 
             <span
               style={{
-                fontFamily: 'Bebas Neue',
+                fontFamily: 'Archivo',
                 fontSize: 68,
                 color: '#fff',
                 lineHeight: 1,

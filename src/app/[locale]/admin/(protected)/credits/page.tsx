@@ -33,7 +33,7 @@ async function fetchKreditOrders(admin: ReturnType<typeof createAdminClient>, sh
       customerEmail: o.customer_email,
       customerPhone: o.customer_phone,
       clutchzoneAccount: o.clutchzone_account,
-      description: items.map((i) => `${i.station_type.toUpperCase()} · ${i.quantity}× ${i.hours}h`).join(', '),
+      description: items.map((i) => `${i.station_type.toUpperCase()} · ${i.quantity}x ${i.hours}h`).join(', '),
       amount: o.total_amount,
       paidAt: o.created_at,
       expiresAt: o.expires_at,
@@ -93,7 +93,7 @@ async function fetchBookingCredits(admin: ReturnType<typeof createAdminClient>, 
       customerPhone: first.customer_phone,
       clutchzoneAccount: first.clutchzone_account,
       description: needsCredit
-        ? `${group!.length}× ${first.credit_hours}H (rezervace ${first.date})`
+        ? `${group!.length}x ${first.credit_hours}H (rezervace ${first.date})`
         : `PAS · ${first.date} ${String(first.start_time).slice(0, 5)}`,
       amount: totalAmount,
       paidAt: first.created_at,

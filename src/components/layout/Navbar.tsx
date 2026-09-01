@@ -30,7 +30,7 @@ export default function Navbar() {
 
   return (
     <nav
-      className="sticky top-0 z-50 flex items-center justify-between bg-cz-black px-6 py-5 md:px-16 md:py-7"
+      className="sticky top-0 z-50 flex items-center justify-between bg-cz-black px-6 py-5 md:px-16 md:py-5"
       style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
     >
       <Link href="/" className="no-underline flex items-center" aria-label="Clutch Zone — domů">
@@ -76,7 +76,7 @@ export default function Navbar() {
           ))}
         </div>
 
-        <Button variant="primary" onClick={() => open()}>
+        <Button variant="primary" size="sm" onClick={() => open()}>
           {t('cta')}
         </Button>
       </div>

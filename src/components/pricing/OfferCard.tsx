@@ -101,7 +101,7 @@ export default function OfferCard({
         {offer.breakdown.map((b, i) => (
           <div key={i} style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 16 }}>
             <span className="font-mono" style={{ ...labelText, letterSpacing: 1.5, color: 'var(--color-cz-white-soft)', textTransform: 'uppercase' }}>
-              {b.qty}× {b.label}
+              {b.qty}x {b.label}
             </span>
             <span className="font-body" style={{ fontWeight: 500, fontSize: 16, color: '#FFFFFF', whiteSpace: 'nowrap' }}>
               {b.unitAmount} KČ

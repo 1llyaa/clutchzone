@@ -19,12 +19,6 @@ export default function Features() {
     >
       <div className="max-w-[1440px] mx-auto">
         <Reveal className="mb-8 md:mb-[40px]">
-          <span
-            className="font-mono text-cz-orange uppercase block"
-            style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}
-          >
-            {t('eyebrow')}
-          </span>
           <h2
             className="font-display text-white uppercase"
             style={{ fontSize: 'clamp(2rem, 5vw, 3.25rem)', letterSpacing: 1.5, lineHeight: 0.98 }}

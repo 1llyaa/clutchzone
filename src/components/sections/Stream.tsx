@@ -53,9 +53,6 @@ export default function Stream({ streamUrl }: Props) {
         {/* Section header */}
         <Reveal>
           <div style={{ marginBottom: 48 }}>
-            <span className="font-mono text-cz-orange uppercase block" style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}>
-              {t('eyebrow')}
-            </span>
             <h2
               className="font-display text-white uppercase inline-block border-b-2 border-cz-orange"
               style={{ fontSize: 'clamp(36px, 5vw, 60px)', letterSpacing: 1.5, lineHeight: 0.95, paddingBottom: 14 }}
@@ -90,7 +87,6 @@ export default function Stream({ streamUrl }: Props) {
 
         {/* Channel link */}
         <div className="flex items-center gap-3" style={{ marginTop: 16 }}>
-          <span className="rounded-full bg-cz-orange animate-flicker flex-shrink-0" style={{ width: 9, height: 9 }} />
           <a
             href={`https://twitch.tv/${channel}`}
             target="_blank"

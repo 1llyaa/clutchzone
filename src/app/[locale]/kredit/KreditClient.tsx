@@ -190,7 +190,7 @@ export default function KreditClient({ hourTiers, creditExpiryMonths }: Props) {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {cartLines.map((l) => (
                   <div key={cartKey(l.stationType, l.hours)} className="font-mono" style={{ display: 'flex', justifyContent: 'space-between', gap: 12, ...labelText, letterSpacing: 1, color: 'var(--color-cz-white-soft)', textTransform: 'uppercase' }}>
-                    <span>{l.qty}× {l.hours}H {l.stationType.toUpperCase()}</span>
+                    <span>{l.qty}x {l.hours}H {l.stationType.toUpperCase()}</span>
                     <span>{l.amount * l.qty} KČ</span>
                   </div>
                 ))}
