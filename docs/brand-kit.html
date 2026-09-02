@@ -1,0 +1,774 @@
+<title>Clutch Zone Brand Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,100..900&amp;display=swap">
+<style>
+  /* Clutch Zone is a dark-only brand, so this page deliberately commits to a
+     single theme rather than adapting to the viewer's. Every color is still
+     painted explicitly so it holds on any host background. */
+  :root {
+    --black: #0A0A0A;
+    --black-mid: #111111;
+    --black-light: #1A1A1A;
+    --gray-dark: #2A2A2A;
+    --gray-mid: #555555;
+    --gray-light: #888888;
+    --white: #FFFFFF;
+    --white-soft: #E8E8E8;
+    --orange: #E84A1A;
+    --orange-dark: #B83A12;
+    --orange-glow: #FF6B35;
+    --hairline: rgba(255, 255, 255, 0.06);
+
+    --display: 'Archivo', 'Arial Narrow', sans-serif;
+    --body: 'Archivo', system-ui, sans-serif;
+
+    --radius: 4px;
+    --radius-control: 2px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--black);
+    color: var(--white-soft);
+    font-family: var(--body);
+    font-variation-settings: 'wdth' 100;
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { background: var(--orange); color: #fff; }
+
+  /* Display role: Archivo expanded, bold, uppercase. */
+  .display {
+    font-family: var(--display);
+    font-stretch: 125%;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--white);
+    letter-spacing: 0.5px;
+    line-height: 0.98;
+    text-wrap: balance;
+  }
+
+  /* Label role: Archivo expanded, medium, uppercase, tracked wide. */
+  .label {
+    font-family: var(--display);
+    font-stretch: 125%;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 13px;
+    color: var(--orange);
+    display: block;
+  }
+
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 0 28px; }
+
+  /* ---------- masthead ---------- */
+
+  .masthead {
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--gray-dark);
+    background: var(--black);
+  }
+
+  /* Signature grid overlay. Fixed, non-scrolling, pointer-events none. */
+  .masthead::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px);
+    background-size: 48px 48px;
+    -webkit-mask-image: radial-gradient(ellipse 80% 90% at 30% 30%, #000 30%, transparent 85%);
+    mask-image: radial-gradient(ellipse 80% 90% at 30% 30%, #000 30%, transparent 85%);
+  }
+
+  .masthead::after {
+    content: "";
+    position: absolute;
+    top: -30%;
+    right: -8%;
+    width: 620px;
+    height: 620px;
+    pointer-events: none;
+    background: radial-gradient(circle, rgba(232,74,26,0.15), transparent 62%);
+  }
+
+  .masthead-inner { position: relative; padding: 64px 0 56px; }
+
+  .lockup { display: flex; align-items: center; gap: 14px; margin-bottom: 40px; }
+  .lockup svg { width: 52px; height: 52px; display: block; flex-shrink: 0; }
+  .lockup-name { font-size: 26px; letter-spacing: 2px; }
+  .lockup-sub {
+    font-family: var(--display);
+    font-stretch: 125%;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 13px;
+    color: var(--orange);
+    margin-top: 3px;
+  }
+
+  h1 { font-size: clamp(34px, 5.4vw, 60px); margin: 0 0 20px; }
+
+  .standfirst {
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--white-soft);
+    max-width: 60ch;
+    margin: 0 0 12px;
+  }
+  .standfirst:last-child { margin-bottom: 0; }
+  .standfirst strong { color: var(--white); font-weight: 600; }
+
+  /* ---------- sections ---------- */
+
+  section { padding: 56px 0; border-bottom: 1px solid var(--hairline); }
+  section:last-of-type { border-bottom: 0; }
+
+  h2 {
+    font-family: var(--display);
+    font-stretch: 125%;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--white);
+    font-size: clamp(24px, 3.2vw, 34px);
+    line-height: 1;
+    letter-spacing: 0.5px;
+    margin: 10px 0 8px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--orange);
+    display: inline-block;
+  }
+
+  h3 {
+    font-family: var(--display);
+    font-stretch: 125%;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--white);
+    font-size: 17px;
+    letter-spacing: 0.5px;
+    margin: 28px 0 10px;
+  }
+
+  p { max-width: 68ch; }
+  section > .wrap > p:first-of-type { margin-top: 18px; }
+
+  a { color: var(--orange); text-underline-offset: 3px; }
+  a:focus-visible, .swatch:focus-visible {
+    outline: 2px solid var(--orange-glow);
+    outline-offset: 3px;
+  }
+
+  code {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 0.88em;
+    background: var(--black-light);
+    border: 1px solid var(--gray-dark);
+    border-radius: var(--radius-control);
+    padding: 1px 5px;
+    color: var(--white-soft);
+  }
+
+  pre {
+    background: var(--black-mid);
+    border: 1px solid var(--gray-dark);
+    border-left: 2px solid var(--orange);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    overflow-x: auto;
+    margin: 14px 0 0;
+  }
+  pre code {
+    background: none; border: 0; padding: 0;
+    font-size: 13px; line-height: 1.65; color: var(--white-soft);
+  }
+
+  /* ---------- color ---------- */
+
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .swatch {
+    background: var(--black-mid);
+    border: 1px solid var(--gray-dark);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .swatch-chip { height: 76px; border-bottom: 1px solid var(--gray-dark); }
+  .swatch-meta { padding: 12px 14px 14px; }
+  .swatch-name {
+    font-family: var(--display); font-stretch: 125%; font-weight: 700;
+    text-transform: uppercase; font-size: 12.5px; letter-spacing: 1px;
+    color: var(--white); display: block;
+  }
+  .swatch-hex {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 12.5px; color: var(--white-soft);
+    display: block; margin-top: 5px; text-transform: uppercase;
+  }
+  .swatch-role { font-size: 13px; color: var(--gray-light); display: block; margin-top: 6px; line-height: 1.45; }
+
+  /* ---------- specimens ---------- */
+
+  .specimen {
+    background: var(--black-mid);
+    border: 1px solid var(--gray-dark);
+    border-radius: var(--radius);
+    padding: 24px 26px;
+    margin-top: 16px;
+  }
+  .specimen-line { color: var(--white); margin-bottom: 12px; }
+  .specimen-note {
+    font-size: 13.5px; color: var(--gray-light);
+    padding-top: 14px; margin-top: 4px; border-top: 1px solid var(--hairline);
+  }
+  .specimen-note code { font-size: 12.5px; }
+
+  /* ---------- tables ---------- */
+
+  .table-scroll { overflow-x: auto; margin-top: 18px; }
+  table { border-collapse: collapse; width: 100%; min-width: 520px; font-size: 14.5px; }
+  th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--hairline); vertical-align: top; }
+  th {
+    font-family: var(--display); font-stretch: 125%; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 1.5px; font-size: 12px;
+    color: var(--gray-light); border-bottom: 1px solid var(--gray-dark);
+    white-space: nowrap;
+  }
+  td { color: var(--white-soft); }
+  td:first-child { color: var(--white); }
+  td code { white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* ---------- rules ---------- */
+
+  .rules { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 22px; }
+  @media (max-width: 700px) { .rules { grid-template-columns: 1fr; } }
+
+  .rule-col {
+    background: var(--black-mid);
+    border: 1px solid var(--gray-dark);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+  }
+  .rule-col.do { border-top: 2px solid var(--orange); }
+  .rule-col.dont { border-top: 2px solid var(--gray-mid); }
+  .rule-head {
+    font-family: var(--display); font-stretch: 125%; font-weight: 700;
+    text-transform: uppercase; font-size: 14px; letter-spacing: 1.5px;
+    color: var(--white); margin-bottom: 12px;
+  }
+  .rule-col ul { margin: 0; padding-left: 18px; }
+  .rule-col li { margin-bottom: 9px; font-size: 14.5px; line-height: 1.55; color: var(--white-soft); }
+  .rule-col li:last-child { margin-bottom: 0; }
+
+  /* ---------- canvas presets ---------- */
+
+  .canvases { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; margin-top: 22px; }
+  .canvas {
+    background: var(--black-mid);
+    border: 1px solid var(--gray-dark);
+    border-radius: var(--radius);
+    padding: 18px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .canvas-shape {
+    border: 1px solid var(--orange);
+    background: rgba(232,74,26,0.07);
+    border-radius: 2px;
+    width: 100%;
+    align-self: center;
+  }
+  .canvas-name {
+    font-family: var(--display); font-stretch: 125%; font-weight: 700;
+    text-transform: uppercase; font-size: 13px; letter-spacing: 1px; color: var(--white);
+  }
+  .canvas-dim {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 12.5px; color: var(--orange); font-variant-numeric: tabular-nums;
+  }
+  .canvas-note { font-size: 12.5px; color: var(--gray-light); line-height: 1.45; }
+
+  footer {
+    padding: 40px 0 64px;
+    border-top: 1px solid var(--gray-dark);
+    color: var(--gray-mid);
+    font-size: 13px;
+  }
+  footer p { max-width: 68ch; }
+
+  /* Bracket demo */
+  .bracket-demo {
+    position: relative;
+    background: var(--black-mid);
+    border: 1px solid var(--gray-dark);
+    border-radius: var(--radius);
+    padding: 40px 44px;
+    margin-top: 16px;
+    text-align: center;
+  }
+  .bracket-demo span.corner {
+    position: absolute; width: 26px; height: 26px;
+  }
+  .bracket-demo .tl { top: 10px; left: 10px; border-top: 2px solid var(--orange); border-left: 2px solid var(--orange); }
+  .bracket-demo .br { bottom: 10px; right: 10px; border-bottom: 2px solid var(--orange); border-right: 2px solid var(--orange); }
+</style>
+
+<header class="masthead">
+  <div class="wrap masthead-inner">
+    <div class="lockup">
+      <!-- Logo: concentric filled rings, orange core, on a near-black rounded tile. -->
+      <svg viewBox="0 0 100 100" aria-label="Clutch Zone logo" role="img">
+        <rect x="0" y="0" width="100" height="100" rx="14" fill="#0A0A0A"/>
+        <rect x="1" y="1" width="98" height="98" rx="13" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="0.6"/>
+        <circle cx="50" cy="50" r="40" fill="#E8E5DC"/>
+        <circle cx="50" cy="50" r="32" fill="#141414"/>
+        <circle cx="50" cy="50" r="24" fill="#E8E5DC"/>
+        <circle cx="50" cy="50" r="16" fill="#141414"/>
+        <circle cx="50" cy="50" r="9" fill="#E84A1A"/>
+      </svg>
+      <div>
+        <div class="display lockup-name">Clutch Zone</div>
+        <div class="lockup-sub">Esport Club &middot; ČB</div>
+      </div>
+    </div>
+
+    <h1 class="display">Brand kit for generated artwork</h1>
+    <p class="standfirst">Everything needed to produce on-brand Instagram posts, stories, posters and price cards for Clutch Zone, an esport gaming club in České Budějovice.</p>
+    <p class="standfirst"><strong>This page is the single source of truth.</strong> Paste it, or its URL, into a design tool as project context. Every value below is taken from the live site's <code>globals.css</code>, so artwork and web stay in step.</p>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <span class="label">The brand</span>
+    <h2>Who this is for</h2>
+    <div class="table-scroll">
+      <table>
+        <tbody>
+          <tr><td>Business</td><td>Esport gaming club and venue. PC stations, PS5 lounge, tournaments, private events.</td></tr>
+          <tr><td>Location</td><td>Krajinská 244/17, 370 01 České Budějovice, Czech Republic.</td></tr>
+          <tr><td>Audience</td><td>Czech and Slovak gamers, roughly 16 to 35. Locals booking a real venue, not an online product.</td></tr>
+          <tr><td>Tagline</td><td>Tvoje nová e-sportová základna</td></tr>
+          <tr><td>Tone</td><td>Competitive, bold, direct. Premium sports brand meeting esport underground. Confident without shouting.</td></tr>
+          <tr><td>Languages</td><td>Czech is primary. The site also ships English, German and Ukrainian.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="label">Color</span>
+    <h2>Palette</h2>
+    <p>Near-black ground, one orange accent, a narrow grey ramp. There is no second accent hue. Semantic colors are for status only and never decorate.</p>
+
+    <h3>Core</h3>
+    <div class="swatches">
+      <div class="swatch">
+        <div class="swatch-chip" style="background:#E84A1A"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Orange</span><span class="swatch-hex">#E84A1A</span>
+          <span class="swatch-role">The single accent. CTAs, active state, hairline rules, key numbers.</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background:#B83A12"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Orange Dark</span><span class="swatch-hex">#B83A12</span>
+          <span class="swatch-role">Hover and pressed only. Never a fill on its own.</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background:#FF6B35"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Orange Glow</span><span class="swatch-hex">#FF6B35</span>
+          <span class="swatch-role">Glow and focus ring. Not for text or large fills.</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background:#0A0A0A; border-bottom-color:#2A2A2A"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Black</span><span class="swatch-hex">#0A0A0A</span>
+          <span class="swatch-role">Primary ground. The default background of every layout.</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background:#111111"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Black Mid</span><span class="swatch-hex">#111111</span>
+          <span class="swatch-role">Cards and panels sitting on the ground.</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background:#1A1A1A"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Black Light</span><span class="swatch-hex">#1A1A1A</span>
+          <span class="swatch-role">Nested surfaces, inputs, code blocks.</span>
+        </div>
+      </div>
+    </div>
+
+    <h3>Line and text</h3>
+    <div class="swatches">
+      <div class="swatch">
+        <div class="swatch-chip" style="background:#2A2A2A"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Gray Dark</span><span class="swatch-hex">#2A2A2A</span>
+          <span class="swatch-role">Borders and dividers.</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background:#555555"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Gray Mid</span><span class="swatch-hex">#555555</span>
+          <span class="swatch-role">Muted text. Too dark for body copy on black.</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background:#888888"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Gray Light</span><span class="swatch-hex">#888888</span>
+          <span class="swatch-role">Secondary and supporting text.</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background:#E8E8E8"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">White Soft</span><span class="swatch-hex">#E8E8E8</span>
+          <span class="swatch-role">Body copy. Softer than pure white, easier on a dark ground.</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background:#FFFFFF"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">White</span><span class="swatch-hex">#FFFFFF</span>
+          <span class="swatch-role">Headlines and display type only.</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background:repeating-linear-gradient(45deg,#0A0A0A,#0A0A0A 6px,#151515 6px,#151515 12px)"></div>
+        <div class="swatch-meta">
+          <span class="swatch-name">Hairline</span><span class="swatch-hex">rgba(255,255,255,.06)</span>
+          <span class="swatch-role">Section rules and the grid overlay.</span>
+        </div>
+      </div>
+    </div>
+
+    <h3>Status</h3>
+    <div class="swatches">
+      <div class="swatch">
+        <div class="swatch-chip" style="background:#22c55e"></div>
+        <div class="swatch-meta"><span class="swatch-name">Success</span><span class="swatch-hex">#22C55E</span><span class="swatch-role">Confirmed, paid, available.</span></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background:#eab308"></div>
+        <div class="swatch-meta"><span class="swatch-name">Warning</span><span class="swatch-hex">#EAB308</span><span class="swatch-role">Pending, expiring.</span></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background:#ef4444"></div>
+        <div class="swatch-meta"><span class="swatch-name">Danger</span><span class="swatch-hex">#EF4444</span><span class="swatch-role">Cancelled, failed, full.</span></div>
+      </div>
+    </div>
+
+    <h3>Rules</h3>
+    <div class="rules">
+      <div class="rule-col do">
+        <div class="rule-head">Do</div>
+        <ul>
+          <li>Keep orange rare. Two or three accents per layout is the ceiling.</li>
+          <li>Layer surfaces in order: black, then black-mid, then black-light.</li>
+          <li>Use white for display type, white-soft for reading copy.</li>
+          <li>Hold text contrast at WCAG AA or better.</li>
+        </ul>
+      </div>
+      <div class="rule-col dont">
+        <div class="rule-head">Don't</div>
+        <ul>
+          <li>No second accent hue. No purple, teal, or blue anywhere.</li>
+          <li>No orange text on an orange fill, no white on white.</li>
+          <li>No gradients except the one orange radial glow, at 0.15 opacity or less.</li>
+          <li>No color outside this palette, including in photography treatments.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="label">Type</span>
+    <h2>One family, three roles</h2>
+    <p>The brand runs entirely on <strong>Archivo</strong>. Hierarchy comes from width and weight rather than a second typeface. Load it once and every role is covered.</p>
+
+    <pre><code>&lt;link rel="preconnect" href="https://fonts.googleapis.com"&gt;
+&lt;link rel="preconnect" href="https://fonts.gstatic.com" crossorigin&gt;
+&lt;link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,100..900&amp;display=swap"&gt;</code></pre>
+
+    <div class="specimen">
+      <div class="specimen-line display" style="font-size:clamp(28px,4.4vw,44px)">Tvoje nová e-sportová základna</div>
+      <div class="specimen-note"><strong style="color:var(--white)">Display.</strong> <code>font-stretch: 125%</code>, weight <code>700</code>, uppercase, white. Headlines, price amounts, CTA labels, stat numbers.</div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-line" style="font-family:var(--display); font-stretch:125%; font-weight:500; text-transform:uppercase; letter-spacing:3px; font-size:14px; color:var(--orange); margin-bottom:14px;">Nadcházející turnaje</div>
+      <div class="specimen-note"><strong style="color:var(--white)">Label.</strong> <code>font-stretch: 125%</code>, weight <code>500</code>, uppercase, tracked 2 to 4px, orange or gray-light. Eyebrows, stat labels, tags, technical detail. Sizes 11 to 14px.</div>
+    </div>
+
+    <div class="specimen">
+      <div class="specimen-line" style="font-variation-settings:'wdth' 100; font-weight:400; font-size:17px; line-height:1.7; color:var(--white-soft); text-transform:none; letter-spacing:0;">Od příležitostného hraní s přáteli až po vyhrocené turnaje: čekají na tebe našlapané herní stanice, PS5 a skvělá komunita.</div>
+      <div class="specimen-note"><strong style="color:var(--white)">Body.</strong> <code>font-variation-settings: 'wdth' 100</code>, weight <code>400</code> or <code>500</code>, sentence case, white-soft. Never below 14px.</div>
+    </div>
+
+    <h3>Sizes</h3>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Role</th><th>Web token</th><th>Web</th><th>Social artwork</th></tr></thead>
+        <tbody>
+          <tr><td>Hero headline</td><td><code>--text-display-hero</code></td><td class="num">96px</td><td class="num">110 to 150px</td></tr>
+          <tr><td>Section heading</td><td><code>--text-display-section</code></td><td class="num">64px</td><td class="num">72 to 96px</td></tr>
+          <tr><td>Subsection</td><td><code>--text-display-subsection</code></td><td class="num">40px</td><td class="num">48 to 64px</td></tr>
+          <tr><td>Card title</td><td><code>--text-display-card</code></td><td class="num">32px</td><td class="num">36 to 44px</td></tr>
+          <tr><td>Lead</td><td><code>--text-lead</code></td><td class="num">22px</td><td class="num">28 to 34px</td></tr>
+          <tr><td>Body</td><td><code>--text-body</code></td><td class="num">19px</td><td class="num">24 to 30px</td></tr>
+          <tr><td>Secondary</td><td><code>--text-secondary</code></td><td class="num">17px</td><td class="num">20 to 24px</td></tr>
+          <tr><td>Label</td><td><code>--text-label</code></td><td class="num">16px</td><td class="num">18 to 22px</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:16px; font-size:14.5px; color:var(--gray-light)">Social sizes run larger because artwork is viewed small. Treat them as starting points, not limits.</p>
+
+    <h3>Fitting headlines</h3>
+    <p>Archivo at width 125 and weight 700 measures roughly <strong>0.86 em per uppercase character</strong>. That is close to double a condensed face, so a headline that fits in a comp using Oswald or Bebas will overflow here.</p>
+    <p>Estimate the width of a line before committing to a size: <code>characters &times; 0.86 &times; font-size</code>. A 12 character word at 100px needs about 1030px, which will not fit inside a 1080px canvas once margins are counted. Either shorten the line or drop the size.</p>
+
+    <h3>Cyrillic</h3>
+    <p>Archivo's Latin coverage is what the brand is built on. For Ukrainian, the site swaps display and label to <strong>Oswald</strong> and body to <strong>Inter</strong>. Match that in artwork rather than letting Archivo fall back silently.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="label">Form</span>
+    <h2>Shape, space and depth</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Property</th><th>Value</th><th>Applies to</th></tr></thead>
+        <tbody>
+          <tr><td>Corner radius</td><td><code>4px</code></td><td>Cards, panels, images. The default.</td></tr>
+          <tr><td>Control radius</td><td><code>2px</code></td><td>Buttons, inputs, tags, badges.</td></tr>
+          <tr><td>Max radius</td><td><code>4px</code></td><td>Nothing is rounder. No pills, no circles except the logo core and status dots.</td></tr>
+          <tr><td>Base grid</td><td><code>8px</code></td><td>All spacing is a multiple of 8.</td></tr>
+          <tr><td>Section padding</td><td><code>≥ 24px</code> / <code>≥ 64px</code></td><td>Mobile, then desktop and artwork.</td></tr>
+          <tr><td>Border</td><td><code>1px #2A2A2A</code></td><td>Cards and dividers.</td></tr>
+          <tr><td>Accent rule</td><td><code>2px #E84A1A</code></td><td>One per layout. Heading underline or panel top edge.</td></tr>
+          <tr><td>CTA glow</td><td><code>0 0 18px rgba(232,74,26,.35)</code></td><td>Primary button hover only.</td></tr>
+          <tr><td>Ambient glow</td><td><code>0 0 60px rgba(232,74,26,.08)</code></td><td>Behind a focal element.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:18px">Edges stay sharp. There are no soft drop shadows in this brand: depth comes from the surface ramp and a 1px border, not blur.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="label">Graphic language</span>
+    <h2>Signature devices</h2>
+    <p>Four devices carry the brand. Use one or two per layout. Using all four at once reads as noise.</p>
+
+    <h3>1. Grid overlay</h3>
+    <p>A 48px technical grid behind hero and poster backgrounds, masked so it fades out. This is the most recognisable element of the brand.</p>
+    <pre><code>background-image:
+  linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px);
+background-size: 48px 48px;
+mask-image: radial-gradient(ellipse 90% 80% at 70% 35%, #000 30%, transparent 85%);</code></pre>
+
+    <h3>2. Orange radial glow</h3>
+    <p>One warm bloom, usually top right, behind the subject. Never more than one, never above 0.15 opacity.</p>
+    <pre><code>background: radial-gradient(circle, rgba(232,74,26,0.15), transparent 62%);
+width: 760px; height: 760px;</code></pre>
+
+    <h3>3. Corner brackets</h3>
+    <p>Thin orange brackets on two opposing corners to frame a price, a score, or a featured item. Two corners, never four.</p>
+    <div class="bracket-demo">
+      <span class="corner tl"></span>
+      <span class="corner br"></span>
+      <div class="display" style="font-size:40px">285 Kč</div>
+    </div>
+
+    <h3>4. Accent underline</h3>
+    <p>A 2px orange rule under one heading per layout, or along the top edge of a single panel. It marks the one thing that matters most.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="label">Logo</span>
+    <h2>The mark</h2>
+    <p>A filled target: alternating cream and near-black concentric rings with a solid orange core, on a near-black rounded tile. The rings are <strong>thick filled bands, not thin strokes</strong>. Paste this SVG rather than redrawing it.</p>
+    <pre><code>&lt;svg viewBox="0 0 100 100"&gt;
+  &lt;rect x="0" y="0" width="100" height="100" rx="14" fill="#0A0A0A"/&gt;
+  &lt;rect x="1" y="1" width="98" height="98" rx="13" fill="none"
+        stroke="rgba(255,255,255,0.08)" stroke-width="0.6"/&gt;
+  &lt;circle cx="50" cy="50" r="40" fill="#E8E5DC"/&gt;
+  &lt;circle cx="50" cy="50" r="32" fill="#141414"/&gt;
+  &lt;circle cx="50" cy="50" r="24" fill="#E8E5DC"/&gt;
+  &lt;circle cx="50" cy="50" r="16" fill="#141414"/&gt;
+  &lt;circle cx="50" cy="50" r="9"  fill="#E84A1A"/&gt;
+&lt;/svg&gt;</code></pre>
+    <div class="rules">
+      <div class="rule-col do">
+        <div class="rule-head">Do</div>
+        <ul>
+          <li>Pair the mark with the wordmark set in display type, tracked 2px.</li>
+          <li>Add the subtitle "ESPORT CLUB &middot; ČB" in label style, orange.</li>
+          <li>Keep clear space of at least half the tile width on every side.</li>
+          <li>Minimum size 32px. Below that the inner rings close up.</li>
+        </ul>
+      </div>
+      <div class="rule-col dont">
+        <div class="rule-head">Don't</div>
+        <ul>
+          <li>Never recolor the rings or the core.</li>
+          <li>Never place the mark on an orange or light background.</li>
+          <li>Never stretch, rotate, or add effects to it.</li>
+          <li>Never rebuild it as thin concentric outlines.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="label">Voice</span>
+    <h2>Writing the copy</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Rule</th><th>Detail</th></tr></thead>
+        <tbody>
+          <tr><td>Language</td><td>Czech for local artwork. Informal "ty", the way players speak to each other.</td></tr>
+          <tr><td>Headlines</td><td>Always uppercase, always display type. Short. Two or three words per line.</td></tr>
+          <tr><td>Register</td><td>Direct and confident. No filler, no hype adjectives, no exclamation marks in running text.</td></tr>
+          <tr><td>Calls to action</td><td>Active verbs: REZERVOVAT, HRÁT TEĎ, ZOBRAZIT CENÍK, PŘIHLÁSIT SE. One intent per label.</td></tr>
+          <tr><td>Prices</td><td>Amount then "Kč", no decimals unless genuinely needed. Example: <span class="num">285 Kč</span>.</td></tr>
+          <tr><td>Times</td><td>24 hour clock. Ranges use a hyphen: <span class="num">14:00-17:00</span>.</td></tr>
+          <tr><td>Dashes</td><td>Use a plain hyphen. No em dash and no en dash anywhere in visible copy.</td></tr>
+          <tr><td>Multiplication</td><td>Write a plain letter x, not the &times; sign. It reads better in tracked uppercase.</td></tr>
+          <tr><td>Eyebrows</td><td>Sparingly. If every block has a small label above it, they stop meaning anything.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="label">Canvases</span>
+    <h2>Artwork presets</h2>
+    <div class="canvases">
+      <div class="canvas">
+        <div class="canvas-shape" style="aspect-ratio:1/1"></div>
+        <div><div class="canvas-name">Instagram Post</div><div class="canvas-dim">1080 &times; 1080</div></div>
+        <div class="canvas-note">Square. Keep the subject centred, margins 80px or more.</div>
+      </div>
+      <div class="canvas">
+        <div class="canvas-shape" style="aspect-ratio:1080/1920"></div>
+        <div><div class="canvas-name">Instagram Story</div><div class="canvas-dim">1080 &times; 1920</div></div>
+        <div class="canvas-note">Keep all text and logos clear of the top and bottom 250px, where the app draws its own UI.</div>
+      </div>
+      <div class="canvas">
+        <div class="canvas-shape" style="aspect-ratio:1080/1350"></div>
+        <div><div class="canvas-name">Portrait Post</div><div class="canvas-dim">1080 &times; 1350</div></div>
+        <div class="canvas-note">The 4:5 feed format. Best for tournament posters.</div>
+      </div>
+      <div class="canvas">
+        <div class="canvas-shape" style="aspect-ratio:1123/794"></div>
+        <div><div class="canvas-name">Price Card</div><div class="canvas-dim">1123 &times; 794</div></div>
+        <div class="canvas-note">A4 landscape at 96dpi, for print and in-venue display.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="label">Copy and paste</span>
+    <h2>Starter tokens</h2>
+    <p>Drop this into any new artboard to inherit the whole system.</p>
+    <pre><code>:root {
+  --cz-orange:       #E84A1A;
+  --cz-orange-dark:  #B83A12;
+  --cz-orange-glow:  #FF6B35;
+  --cz-black:        #0A0A0A;
+  --cz-black-mid:    #111111;
+  --cz-black-light:  #1A1A1A;
+  --cz-gray-dark:    #2A2A2A;
+  --cz-gray-mid:     #555555;
+  --cz-gray-light:   #888888;
+  --cz-white:        #FFFFFF;
+  --cz-white-soft:   #E8E8E8;
+  --cz-success:      #22C55E;
+  --cz-warning:      #EAB308;
+  --cz-danger:       #EF4444;
+  --cz-hairline:     rgba(255,255,255,0.06);
+  --cz-radius:       4px;
+  --cz-radius-ctl:   2px;
+}
+
+/* Display: headlines, prices, CTA labels, stat numbers */
+.cz-display {
+  font-family: 'Archivo', sans-serif;
+  font-stretch: 125%;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 0.98;
+  color: var(--cz-white);
+}
+
+/* Label: eyebrows, tags, technical detail */
+.cz-label {
+  font-family: 'Archivo', sans-serif;
+  font-stretch: 125%;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--cz-orange);
+}
+
+/* Body: everything you actually read */
+.cz-body {
+  font-family: 'Archivo', sans-serif;
+  font-variation-settings: 'wdth' 100;
+  font-weight: 400;
+  line-height: 1.7;
+  color: var(--cz-white-soft);
+}</code></pre>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Clutch Zone brand kit. Values mirror <code>src/app/globals.css</code> in the site repository; if the two ever disagree, the stylesheet wins and this page should be corrected.</p>
+  </div>
+</footer>

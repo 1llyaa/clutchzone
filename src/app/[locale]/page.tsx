@@ -5,6 +5,7 @@ import Hero from '@/components/sections/Hero';
 import Features from '@/components/sections/Features';
 import PriceCalculator from '@/components/pricing/PriceCalculator';
 import { getPricingConfig } from '@/lib/pricing/config-server';
+import { minEffectiveHourly } from '@/lib/pricing/engine';
 import Stream from '@/components/sections/Stream';
 import Tournaments from '@/components/sections/Tournaments';
 import Games from '@/components/sections/Games';
@@ -94,7 +95,10 @@ export default async function HomePage() {
     fetchStationAvailability(),
   ]);
 
-  const pcHourPrice = pricingConfig.hourTiers.find((t) => t.stationType === 'pc' && t.hours === 1)?.amount;
+  // The hero stat is labelled "od / hodina", so it has to be the cheapest
+  // hour we sell, not the 1h PC tier — that tier is the most expensive rate
+  // on the ceník, which made the "od" claim read backwards.
+  const fromHourPrice = minEffectiveHourly(pricingConfig);
 
   return (
     <>
@@ -104,7 +108,7 @@ export default async function HomePage() {
           heroImage={siteSettings.hero_image}
           stationsFree={availability.free}
           stationsTotal={availability.total}
-          pcHourPrice={pcHourPrice}
+          fromHourPrice={fromHourPrice}
         />
         <Features />
         <Games games={games} />

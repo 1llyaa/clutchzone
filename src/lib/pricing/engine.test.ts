@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { deriveDayTypes } from './dayTypes';
-import { buildOffers, cheapestCombo, rankOffers } from './engine';
+import { buildOffers, cheapestCombo, minEffectiveHourly, rankOffers } from './engine';
 import { buildFixtureConfig, hourTiersFixture, openingHoursFixture, timePassesFixture } from './fixtures';
 import type { CalcInput } from './types';
 
@@ -118,4 +118,44 @@ test('overflow past closing time is never blocked — hours become credit', () =
   assert.equal(result.recommended.kind, 'hours');
   assert.equal(result.recommended.fitsClosingTime, false);
   assert.equal(result.recommended.hoursCovered, 8);
+});
+
+// The hero's "od / hodina" stat — regression guard for the stat that used to
+// read the 1h PC tier (75), the most expensive rate on the ceník.
+test('minEffectiveHourly: cheapest hour on the ceník is the happy-hours pass', () => {
+  // 165 Kč flat over the 14:00–17:00 window = 55 Kč/h, under every tier.
+  assert.equal(minEffectiveHourly(config), 55);
+});
+
+test('minEffectiveHourly: beats the cheapest hour tier', () => {
+  const cheapestTier = Math.min(...hourTiersFixture.filter((t) => t.isActive).map((t) => t.amount / t.hours));
+  assert.equal(cheapestTier, 66); // pc 10h — 660/10
+  assert.ok(minEffectiveHourly(config)! < cheapestTier);
+});
+
+test('minEffectiveHourly: falls back to hour tiers when no pass is active', () => {
+  const noPasses = { ...config, timePasses: [], dayTypes: deriveDayTypes(openingHoursFixture, []) };
+  assert.equal(minEffectiveHourly(noPasses), 66); // pc 10h
+});
+
+test('minEffectiveHourly: ignores inactive tiers and passes', () => {
+  const allOff = {
+    ...config,
+    hourTiers: hourTiersFixture.map((t) => ({ ...t, isActive: false })),
+    timePasses: timePassesFixture.map((p) => ({ ...p, isActive: false })),
+  };
+  assert.equal(minEffectiveHourly(allOff), null);
+});
+
+test('minEffectiveHourly: a per_hour pass is priced at its own rate', () => {
+  const passes = [{ ...timePassesFixture[0], priceMode: 'per_hour' as const, amount: 40 }];
+  const cfg = { ...config, timePasses: passes, dayTypes: deriveDayTypes(openingHoursFixture, passes) };
+  assert.equal(minEffectiveHourly(cfg), 40);
+});
+
+test('minEffectiveHourly: maxHours shortens pass coverage and raises its rate', () => {
+  // Same 165 Kč, but capped to 1h of coverage — 165/h, so the tiers win.
+  const passes = [{ ...timePassesFixture[0], maxHours: 1 }];
+  const cfg = { ...config, timePasses: passes, dayTypes: deriveDayTypes(openingHoursFixture, passes) };
+  assert.equal(minEffectiveHourly(cfg), 66); // pc 10h tier
 });

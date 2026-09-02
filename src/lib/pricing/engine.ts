@@ -237,3 +237,50 @@ export function rankOffers(offers: Offer[]): OfferResult | null {
 export function calculatePricing(input: CalcInput, config: PricingConfig, locale: 'cs' | 'en' = 'cs'): OfferResult | null {
   return rankOffers(buildOffers(input, config, locale));
 }
+
+/**
+ * Best hourly rate anywhere in the ceník — what the marketing "od X Kč /
+ * hodina" claim refers to. Every active hour tier and time pass is a
+ * candidate, because passes routinely undercut the tiers (a flat pass
+ * spread over its whole window is the cheapest hour we sell).
+ *
+ * A pass is priced at its best case: the full window, since that is the
+ * coverage a guest starting at windowStart actually gets. Closing time
+ * still caps it — a window reaching past close is never sold in full — so
+ * the rate is one a guest can really book, not a paper minimum.
+ *
+ * Returns null when nothing is active, so callers can fall back rather
+ * than advertise 0.
+ */
+export function minEffectiveHourly(config: PricingConfig): number | null {
+  const rates: number[] = [];
+
+  for (const tier of config.hourTiers) {
+    if (!tier.isActive || tier.hours <= 0) continue;
+    rates.push(tier.amount / tier.hours);
+  }
+
+  for (const pass of config.timePasses) {
+    if (!pass.isActive) continue;
+    const windowStart = parseTimeToHours(pass.windowStart);
+    const windowEnd = parseTimeToHours(pass.windowEnd) + (pass.crossesMidnight ? 24 : 0);
+
+    // The pass is only sellable on days it is valid, and only up to that
+    // day's close — so take the most generous of those days.
+    let coverage = 0;
+    for (const dayType of config.dayTypes) {
+      if (!dayType.passIds.includes(pass.id)) continue;
+      const closeHour = dayTypeCloseHour(dayType);
+      if (!closeHour) continue;
+      const maxHoursEnd = pass.maxHours != null ? windowStart + pass.maxHours : Infinity;
+      coverage = Math.max(coverage, Math.min(windowEnd, closeHour, maxHoursEnd) - windowStart);
+    }
+    if (coverage <= 0) continue;
+
+    const unitPrice = pass.priceMode === 'flat' ? pass.amount : coverage * pass.amount;
+    rates.push(unitPrice / coverage);
+  }
+
+  if (!rates.length) return null;
+  return Math.round(Math.min(...rates));
+}

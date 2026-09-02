@@ -21,9 +21,14 @@ interface Props {
   locale: 'cs' | 'en' | 'de' | 'ua';
   defaultCountry?: CountryCode;
   placeholder?: string;
+  error?: string;
+  onBlur?: () => void;
+  onCountryChange?: (code: CountryCode) => void;
 }
 
-export default function PhoneField({ label, value, onChange, locale, defaultCountry = 'CZ', placeholder }: Props) {
+export default function PhoneField({
+  label, value, onChange, locale, defaultCountry = 'CZ', placeholder, error, onBlur, onCountryChange,
+}: Props) {
   const [country, setCountry] = useState<CountryCode>(defaultCountry);
   const [national, setNational] = useState('');
   const [open, setOpen] = useState(false);
@@ -31,15 +36,20 @@ export default function PhoneField({ label, value, onChange, locale, defaultCoun
   const ref = useRef<HTMLDivElement>(null);
   const hydrated = useRef(false);
 
+  // Only burn the one-shot guard once a value actually parses, so a parent that
+  // fills `value` in asynchronously still gets its country picked up.
   useEffect(() => {
     if (hydrated.current || !value) return;
-    hydrated.current = true;
     const parsed = parsePhoneNumberFromString(value);
-    if (parsed?.country) {
-      setCountry(parsed.country);
-      setNational(parsed.formatNational());
-    }
+    if (!parsed?.country) return;
+    hydrated.current = true;
+    setCountry(parsed.country);
+    setNational(parsed.formatNational());
   }, [value]);
+
+  useEffect(() => {
+    onCountryChange?.(country);
+  }, [country, onCountryChange]);
 
   useEffect(() => {
     if (!open) return;
@@ -75,9 +85,32 @@ export default function PhoneField({ label, value, onChange, locale, defaultCoun
   }
 
   function handleNationalChange(raw: string) {
+    // A pasted or typed international number already carries its own country code;
+    // running it through commit() would prepend the selected dial code a second time.
+    const international = raw.trim().startsWith('00') ? `+${raw.trim().slice(2)}` : raw.trim();
+    if (international.startsWith('+')) {
+      const typing = new AsYouType();
+      const formatted = typing.input(international);
+      const detected = typing.getCountry();
+      if (detected) setCountry(detected);
+      setNational(formatted);
+      onChange(`+${formatted.replace(/\D/g, '')}`);
+      return;
+    }
     const formatted = new AsYouType(country).input(raw);
     setNational(formatted);
     commit(country, formatted);
+  }
+
+  // Once the field is left, collapse whatever was typed back into the national
+  // form so the dial-code button and the input stop showing the country twice.
+  function handleBlur() {
+    const parsed = parsePhoneNumberFromString(value);
+    if (parsed?.country) {
+      setCountry(parsed.country);
+      setNational(parsed.formatNational());
+    }
+    onBlur?.();
   }
 
   function selectCountry(code: CountryCode) {
@@ -97,7 +130,11 @@ export default function PhoneField({ label, value, onChange, locale, defaultCoun
       <div
         ref={ref}
         className="bg-cz-black rounded-cz"
-        style={{ position: 'relative', display: 'flex', border: '1px solid var(--color-cz-gray-dark)' }}
+        style={{
+          position: 'relative',
+          display: 'flex',
+          border: `1px solid ${error ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-dark)'}`,
+        }}
       >
         <button
           type="button"
@@ -125,6 +162,8 @@ export default function PhoneField({ label, value, onChange, locale, defaultCoun
           value={national}
           placeholder={placeholder}
           onChange={(e) => handleNationalChange(e.target.value)}
+          onBlur={handleBlur}
+          aria-invalid={error ? true : undefined}
           className="text-white font-body placeholder:text-cz-gray-light outline-none"
           style={{ flex: 1, minWidth: 0, background: 'transparent', border: 'none', padding: '12px 16px', ...bodyText }}
         />
@@ -189,6 +228,11 @@ export default function PhoneField({ label, value, onChange, locale, defaultCoun
           </div>
         )}
       </div>
+      {error && (
+        <p className="font-body text-cz-orange" style={{ ...secondaryText, marginTop: 6 }}>
+          {error}
+        </p>
+      )}
     </div>
   );
 }
