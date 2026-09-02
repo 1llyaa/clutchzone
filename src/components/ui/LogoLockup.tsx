@@ -1,4 +1,4 @@
-import Logo from './Logo';
+import Image from 'next/image';
 
 interface LogoLockupProps {
   size?: number;
@@ -8,7 +8,14 @@ interface LogoLockupProps {
 export default function LogoLockup({ size = 44, subtitle = 'ESPORT CLUB · ČB' }: LogoLockupProps) {
   return (
     <div className="flex items-center gap-[14px]">
-      <Logo size={size} />
+      <Image
+        src="/logo.png"
+        alt=""
+        width={size}
+        height={size}
+        priority
+        style={{ flexShrink: 0, display: 'block' }}
+      />
       <div className="flex flex-col leading-none">
         <span
           className="font-display text-white uppercase"

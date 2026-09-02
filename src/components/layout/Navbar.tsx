@@ -38,7 +38,7 @@ export default function Navbar() {
       </Link>
 
       {/* Desktop nav */}
-      <div className="hidden md:flex items-center gap-10">
+      <div className="hidden min-[1580px]:flex items-center gap-10">
         {links.map((link) =>
           isHome ? (
             <a
@@ -83,7 +83,7 @@ export default function Navbar() {
 
       {/* Mobile hamburger */}
       <button
-        className="md:hidden flex flex-col justify-center gap-[5px] bg-transparent border-none cursor-pointer"
+        className="min-[1580px]:hidden flex flex-col justify-center gap-[5px] bg-transparent border-none cursor-pointer"
         style={{ width: 44, height: 44, padding: '10px 9px' }}
         onClick={() => setMenuOpen((o) => !o)}
         aria-label="Toggle menu"
@@ -115,7 +115,7 @@ export default function Navbar() {
       {/* Mobile menu */}
       {menuOpen && (
         <div
-          className="absolute top-full left-0 right-0 bg-cz-black-mid md:hidden flex flex-col animate-menu-in"
+          className="absolute top-full left-0 right-0 bg-cz-black-mid min-[1580px]:hidden flex flex-col animate-menu-in"
           style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '20px 24px' }}
         >
           {links.map((link) =>
