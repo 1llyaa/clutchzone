@@ -9,10 +9,10 @@ interface Props {
   heroImage?: string;
   stationsFree?: number;
   stationsTotal?: number;
-  pcHourPrice?: number;
+  fromHourPrice?: number | null;
 }
 
-export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPrice }: Props) {
+export default function Hero({ heroImage, stationsFree, stationsTotal, fromHourPrice }: Props) {
   const t = useTranslations('hero');
   const { open } = useReservation();
 
@@ -69,7 +69,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
           >
             {t('h1Line1')}
             <br />
-            {t('h1Line2')}
+            <span className="text-cz-orange">{t('h1Line2')}</span>
             <br />
             <span className="relative inline-block" style={{ paddingBottom: 10 }}>
               {t('h1Line3')}
@@ -107,7 +107,7 @@ export default function Hero({ heroImage, stationsFree, stationsTotal, pcHourPri
           >
             {[
               { value: stationsTotal != null ? String(stationsTotal) : t('stat1Value'), label: t('stat1Label') },
-              { value: pcHourPrice != null ? `${pcHourPrice} Kč` : t('stat2Value'), label: t('stat2Label') },
+              { value: fromHourPrice != null ? `${fromHourPrice} Kč` : t('stat2Value'), label: t('stat2Label') },
               { value: t('stat3Value'), label: t('stat3Label') },
             ].map((stat) => (
               <div key={stat.label}>
