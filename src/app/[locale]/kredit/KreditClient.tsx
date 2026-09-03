@@ -37,6 +37,7 @@ export default function KreditClient({ hourTiers, creditExpiryMonths }: Props) {
   const t = useTranslations('kredit');
   const tc = useTranslations('calculator');
   const locale = useLocale();
+  const tcom = useTranslations('common');
   const [tab, setTab] = useState<StationType>('pc');
   const [cart, setCart] = useState<Record<string, number>>({});
   const [contact, setContact] = useState<Contact>(EMPTY_CONTACT);
@@ -161,7 +162,7 @@ export default function KreditClient({ hourTiers, creditExpiryMonths }: Props) {
                         variant="ghost"
                         iconOnly
                         onClick={() => setQty(tab, tier.hours, qty - 1)}
-                        aria-label={locale === 'en' ? 'Decrease quantity' : 'Snížit počet'}
+                        aria-label={tcom('decreaseQty')}
                       >
                         <Minus weight="bold" size={16} />
                       </Button>
@@ -170,7 +171,7 @@ export default function KreditClient({ hourTiers, creditExpiryMonths }: Props) {
                         variant="ghost"
                         iconOnly
                         onClick={() => setQty(tab, tier.hours, qty + 1)}
-                        aria-label={locale === 'en' ? 'Increase quantity' : 'Zvýšit počet'}
+                        aria-label={tcom('increaseQty')}
                       >
                         <Plus weight="bold" size={16} />
                       </Button>

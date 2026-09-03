@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createStripeClient } from '@/lib/stripe';
 import { getOnlineHoldMinutes } from '@/lib/bookings/holds';
+import { getServerTranslator } from '@/lib/i18n/server';
 
 // Must match i18n/routing.ts — `de` and `ua` used to fall through to Czech
 // success/cancel pages.
@@ -15,24 +16,31 @@ export async function POST(
   const { id: groupId } = await params;
   const admin = createAdminClient();
 
+  // Read before the first early return: every error below is rendered to the
+  // customer, so the locale has to be known by then.
+  const body = await request.json().catch(() => ({}));
+  const requestedLocale = body?.locale;
+  const locale = VALID_LOCALES.includes(requestedLocale) ? requestedLocale : DEFAULT_LOCALE;
+  const t = await getServerTranslator(locale, 'errors');
+
   const { data: rows, error: bookingErr } = await admin
     .from('bookings')
     .select('id, reference, total_price, payment_status, status, hold_expires_at')
     .eq('booking_group_id', groupId);
 
   if (bookingErr || !rows?.length) {
-    return NextResponse.json({ error: 'Rezervace nenalezena' }, { status: 404 });
+    return NextResponse.json({ error: t('bookingNotFound') }, { status: 404 });
   }
 
   if (rows.some((r) => r.payment_status === 'paid')) {
-    return NextResponse.json({ error: 'Rezervace je již zaplacena' }, { status: 409 });
+    return NextResponse.json({ error: t('alreadyPaid') }, { status: 409 });
   }
 
   // The hold lapsed (or the customer cancelled) — the slot may already belong
   // to someone else, so taking money for it now would double-book.
   if (rows.every((r) => r.status === 'cancelled')) {
     return NextResponse.json(
-      { error: 'Rezervace už není platná — vytvoř prosím novou.' },
+      { error: t('bookingNoLongerValid') },
       { status: 409 },
     );
   }
@@ -46,10 +54,6 @@ export async function POST(
     .single();
 
   const coinsAmount = setting?.value ? parseInt(setting.value, 10) : 50;
-
-  const body = await request.json().catch(() => ({}));
-  const requestedLocale = body?.locale;
-  const locale = VALID_LOCALES.includes(requestedLocale) ? requestedLocale : DEFAULT_LOCALE;
 
   // Stripe rejects an `expires_at` under 30 minutes out, and the timestamp is
   // computed before the round trip, so the window is opened from *now* with a
@@ -99,6 +103,6 @@ export async function POST(
 
     return NextResponse.json({ url: session.url });
   } catch {
-    return NextResponse.json({ error: 'Chyba při vytváření platby' }, { status: 500 });
+    return NextResponse.json({ error: t('paymentCreateFailed') }, { status: 500 });
   }
 }

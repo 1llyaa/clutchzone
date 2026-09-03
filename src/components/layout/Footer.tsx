@@ -5,19 +5,19 @@ import Reveal from '@/components/ui/Reveal';
 import { BUSINESS } from '@/lib/business';
 import { getPricingConfig } from '@/lib/pricing/config-server';
 
-const DAY_NAMES_CS = ['NEDĚLE', 'PONDĚLÍ', 'ÚTERÝ', 'STŘEDA', 'ČTVRTEK', 'PÁTEK', 'SOBOTA'];
-
 function formatClose(time: string): string {
   return time.slice(0, 5) === '24:00' ? '00:00' : time.slice(0, 5);
 }
 
 export default async function Footer() {
   const t = await getTranslations('footer');
+  const tc = await getTranslations('common');
+  const tw = await getTranslations('weekdays');
   const config = await getPricingConfig();
 
   const closedLabel = config.openingHours
     .filter((d) => d.isClosed)
-    .map((d) => DAY_NAMES_CS[d.dayOfWeek])
+    .map((d) => tw(`day${d.dayOfWeek}` as 'day0'))
     .join(', ');
 
   const hours = [
@@ -41,7 +41,7 @@ export default async function Footer() {
           href="/"
           className="no-underline flex items-center"
           style={{ gap: 12 }}
-          aria-label="Clutch Zone — domů"
+          aria-label={tc('homeAria')}
         >
           <Logo size={34} />
           <div className="flex flex-col" style={{ lineHeight: 1 }}>

@@ -74,7 +74,7 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
         {tournaments.length === 0 ? (
           <Reveal>
             <div className="font-mono text-cz-gray-light uppercase text-center border-t border-cz-gray-dark" style={{ padding: '40px 0', fontSize: 16, letterSpacing: 3 }}>
-              ŽÁDNÉ NADCHÁZEJÍCÍ TURNAJE
+              {t('none')}
             </div>
           </Reveal>
         ) : (
@@ -127,7 +127,7 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
                         onClick={() => !isFull && setSelected(row)}
                         disabled={isFull}
                       >
-                        {isFull ? 'PLNÝ' : t('cta')}
+                        {isFull ? t('full') : t('cta')}
                       </Button>
                     </div>
                   </div>
@@ -175,7 +175,7 @@ export default function Tournaments({ tournaments }: { tournaments: Tournament[]
                         onClick={() => !isFull && setSelected(row)}
                         disabled={isFull}
                       >
-                        {isFull ? 'PLNÝ' : t('cta')}
+                        {isFull ? t('full') : t('cta')}
                       </Button>
                     </div>
                   </div>

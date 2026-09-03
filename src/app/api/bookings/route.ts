@@ -8,6 +8,7 @@ import { buildCancelUrl } from '@/lib/cancel-token';
 import { getCancellationWindowMinutes, minutesUntil } from '@/lib/bookings/cancellation';
 import { getOnlineHoldMinutes, holdExpiryFrom, releaseExpiredHolds } from '@/lib/bookings/holds';
 import { z } from 'zod';
+import { getServerTranslator } from '@/lib/i18n/server';
 
 const BookingSchema = z.object({
   stationType: z.enum(['pc', 'ps5']),
@@ -40,13 +41,16 @@ function generateReference(): string {
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const parsed = BookingSchema.safeParse(body);
+  // The locale is read off the raw body: a schema failure is exactly the case
+  // where parsed.data does not exist yet, and that error still has to be legible.
+  const t = await getServerTranslator(body?.locale, 'errors');
   if (!parsed.success) {
-    return NextResponse.json({ error: 'Neplatné údaje', details: parsed.error.flatten() }, { status: 400 });
+    return NextResponse.json({ error: t('invalidData'), details: parsed.error.flatten() }, { status: 400 });
   }
   const data = parsed.data;
 
   if (!data.termsAccepted) {
-    return NextResponse.json({ error: 'Bez souhlasu s podmínkami nemůžeme rezervaci dokončit.' }, { status: 400 });
+    return NextResponse.json({ error: t('termsRequiredBooking') }, { status: 400 });
   }
 
   // Revalidate everything server-side over the SAME engine + live DB data —
@@ -55,7 +59,7 @@ export async function POST(req: NextRequest) {
   const dow = new Date(data.date + 'T12:00:00').getDay();
   const dayType = config.dayTypes.find((g) => g.days.includes(dow));
   if (!dayType) {
-    return NextResponse.json({ error: 'V tento den je zavřeno' }, { status: 400 });
+    return NextResponse.json({ error: t('closedThatDay') }, { status: 400 });
   }
 
   const calcInput: CalcInput = {
@@ -70,13 +74,13 @@ export async function POST(req: NextRequest) {
 
   if (!offer) {
     return NextResponse.json(
-      { error: 'Tahle nabídka už neplatí, ceník se mezitím změnil.', currentOffer: result?.recommended ?? null },
+      { error: t('offerExpired'), currentOffer: result?.recommended ?? null },
       { status: 409 },
     );
   }
   if (offer.totalAmount !== data.expectedAmount) {
     return NextResponse.json(
-      { error: 'Cena se mezitím změnila.', currentAmount: offer.totalAmount },
+      { error: t('priceChanged'), currentAmount: offer.totalAmount },
       { status: 409 },
     );
   }
@@ -86,7 +90,7 @@ export async function POST(req: NextRequest) {
   const durationMinutes = reservedHours * 60;
 
   if (minutesUntil(data.date, startTime) < 0) {
-    return NextResponse.json({ error: 'Tento čas už uplynul.' }, { status: 400 });
+    return NextResponse.json({ error: t('timePassed') }, { status: 400 });
   }
 
   const admin = createAdminClient();
@@ -98,7 +102,7 @@ export async function POST(req: NextRequest) {
     .eq('is_active', true);
 
   if (stErr || !stations?.length) {
-    return NextResponse.json({ error: 'Žádné stanice nejsou k dispozici' }, { status: 503 });
+    return NextResponse.json({ error: t('noStations') }, { status: 503 });
   }
 
   // Lapsed online holds must free their slot before we decide what is taken,
@@ -127,7 +131,7 @@ export async function POST(req: NextRequest) {
   const free = stations.filter((s) => !occupiedIds.has(s.id));
   if (free.length < data.stationsCount) {
     return NextResponse.json(
-      { error: `Jen ${free.length} ${free.length === 1 ? 'stanice je volná' : 'stanic je volných'} v tomto čase.`, available: free.length },
+      { error: t('onlySomeFree', { count: free.length }), available: free.length },
       { status: 409 },
     );
   }
@@ -190,9 +194,9 @@ export async function POST(req: NextRequest) {
 
   if (insertErr) {
     if (insertErr.code === '23P01') {
-      return NextResponse.json({ error: 'Někdo tě právě předběhl, zkus to prosím znovu.' }, { status: 409 });
+      return NextResponse.json({ error: t('raceLost') }, { status: 409 });
     }
-    return NextResponse.json({ error: 'Chyba při vytváření rezervace' }, { status: 500 });
+    return NextResponse.json({ error: t('bookingCreateFailed') }, { status: 500 });
   }
 
   const stationLabels = chosen.map((s) => s.label);
@@ -226,6 +230,7 @@ export async function POST(req: NextRequest) {
     cancellationWindowMinutes,
     paymentMethod: data.paymentMethod,
     holdMinutes: isOnline ? holdMinutes : undefined,
+    locale: data.locale,
   };
   // Staff is only told about an online booking once it is paid (the webhook
   // sends it), the same way credit orders work — an unpaid hold may evaporate

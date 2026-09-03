@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import { BUSINESS } from '@/lib/business';
+import { getServerTranslator, resolveLocale } from '@/lib/i18n/server';
 
 interface BookingEmailData {
   reference: string;
@@ -30,6 +31,8 @@ interface BookingEmailData {
   paymentMethod?: 'online' | 'onsite';
   /** Minutes an unpaid online booking holds its slot — online path only. */
   holdMinutes?: number;
+  /** Language the customer booked in. Staff mail stays Czech regardless. */
+  locale?: string;
 }
 
 /** Data for the payment receipt, which is only ever sent once money arrived. */
@@ -47,6 +50,7 @@ interface BookingReceiptEmailData {
   paidVia: 'card' | 'onsite';
   cancelUrl?: string | null;
   cancellationWindowMinutes?: number;
+  locale?: string;
 }
 
 // Escape user-supplied values before interpolating into email HTML.
@@ -168,6 +172,9 @@ export async function sendBookingConfirmation(b: BookingEmailData): Promise<void
   const transport = getTransport();
   if (!transport) return;
 
+  const locale = resolveLocale(b.locale);
+  const t = await getServerTranslator(locale, 'email');
+
   const endMin = (() => {
     const [h, m] = b.startTime.split(':').map(Number);
     const total = h * 60 + m + b.durationMinutes;
@@ -181,32 +188,31 @@ export async function sendBookingConfirmation(b: BookingEmailData): Promise<void
   const holdMinutes = b.holdMinutes ?? 30;
 
   const rows: [string, string][] = [
-    ['Stanice', b.stationLabel],
-    ['Nabídka', b.offerLabel ?? '—'],
-    ['Datum', b.date],
-    ['Čas', `${b.startTime} – ${endMin}`],
+    [t('labels.station'), b.stationLabel],
+    [t('labels.offer'), b.offerLabel ?? '—'],
+    [t('labels.date'), formatDate(b.date, locale)],
+    [t('labels.time'), `${b.startTime} – ${endMin}`],
     // Showing a price to someone paying with banked hours reads as money owed.
     b.paysWithCredit
-      ? ['Platba', 'Hodinami z účtu — nic neplatíš']
+      ? [t('labels.payment'), t('booking.payWithCredit')]
       : awaitingCardPayment
-        ? ['K zaplacení', `${b.totalPrice} Kč — kartou`]
-        : ['Zaplatíš na místě', `${b.totalPrice} Kč`],
+        ? [t('labels.toPay'), t('booking.toPayCard', { amount: b.totalPrice })]
+        : [t('labels.payOnSite'), t('booking.amountPlain', { amount: b.totalPrice })],
   ];
 
-  const heading = awaitingCardPayment ? 'Rezervace čeká na platbu' : 'Rezervace potvrzena';
+  const heading = awaitingCardPayment ? t('booking.headingAwaitingPayment') : t('booking.headingConfirmed');
 
   // An unpaid card booking must not be told the price is binding as though the
   // reservation were settled — it may still lapse.
   const arrivalNote = b.paysWithCredit
-    ? 'Přijďte 10 minut před začátkem a ukažte referenční kód na recepci. Nic neplatíte — hodiny se strhnou z účtu až podle odehraného času.'
+    ? t('booking.arrivalCredit')
     : awaitingCardPayment
-      ? 'Po zaplacení přijďte 10 minut před začátkem a ukažte referenční kód na recepci.'
-      : 'Přijďte 10 minut před začátkem a ukažte referenční kód na recepci. Cena uvedená výše je závazná a zaplatíte ji na recepci.';
+      ? t('booking.arrivalAwaiting')
+      : t('booking.arrivalOnsite');
 
   const pendingNote = awaitingCardPayment
     ? `<p style="margin:0 0 20px;padding:12px 14px;background:rgba(232,74,26,0.08);border:1px solid rgba(232,74,26,0.25);color:#ff8a5c;font-size:13px;line-height:1.6">
-        Rezervace ti drží místo ${holdMinutes} minut. Pokud do té doby platba nedorazí, automaticky propadne
-        a stanice se uvolní. Po zaplacení ti přijde potvrzení o platbě.
+        ${escapeHtml(t('booking.holdNote', { minutes: holdMinutes }))}
       </p>`
     : '';
 
@@ -216,8 +222,7 @@ export async function sendBookingConfirmation(b: BookingEmailData): Promise<void
   const creditNote =
     b.isCredit && !b.paysWithCredit
       ? `<p style="margin:0 0 20px;padding:12px 14px;background:rgba(232,74,26,0.08);border:1px solid rgba(232,74,26,0.25);color:#ff8a5c;font-size:13px;line-height:1.6">
-        Hodiny ti připíšeme na Clutchzone account při první návštěvě — ukaž tenhle kód na recepci.
-        Platnost ${b.creditExpiryMonths ?? 3} měsíce od nákupu.
+        ${escapeHtml(t('booking.creditNote', { months: b.creditExpiryMonths ?? 3 }))}
       </p>`
       : '';
 
@@ -230,15 +235,15 @@ export async function sendBookingConfirmation(b: BookingEmailData): Promise<void
   // actually applies.
   const cancelNote = b.cancelUrl
     ? `<p style="margin:20px 0 0;padding-top:16px;border-top:1px solid #2a2a2a;color:#888;font-size:13px;line-height:1.6">
-        Nemůžeš dorazit? Rezervaci zrušíš bezplatně do ${cancelWindow} minut před začátkem.<br>
-        <a href="${escapeHtml(b.cancelUrl)}" style="color:#E84A1A">Zrušit rezervaci →</a>
+        ${escapeHtml(t('booking.cancelNote', { minutes: cancelWindow }))}<br>
+        <a href="${escapeHtml(b.cancelUrl)}" style="color:#E84A1A">${escapeHtml(t('booking.cancelLink'))}</a>
       </p>`
     : '';
 
   const html = `
     <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#111;color:#e8e8e8;padding:32px;border-top:3px solid #E84A1A">
-      <h2 style="margin:0 0 4px;color:#fff;text-transform:uppercase;letter-spacing:2px">${heading}</h2>
-      <p style="margin:0 0 24px;color:#888;font-size:13px">Díky za rezervaci v Clutch Zone, ${escapeHtml(b.customerName)}!</p>
+      <h2 style="margin:0 0 4px;color:#fff;text-transform:uppercase;letter-spacing:2px">${escapeHtml(heading)}</h2>
+      <p style="margin:0 0 24px;color:#888;font-size:13px">${escapeHtml(t('booking.intro', { name: b.customerName }))}</p>
       <div style="text-align:center;margin:0 0 24px">
         <span style="display:inline-block;font-size:32px;letter-spacing:4px;color:#fff;border:1px solid #E84A1A;padding:12px 32px;background:rgba(232,74,26,0.08)">${b.reference}</span>
       </div>
@@ -262,9 +267,9 @@ export async function sendBookingConfirmation(b: BookingEmailData): Promise<void
     await transport.sendMail({
       from: process.env.SMTP_FROM ?? process.env.SMTP_USER,
       to: b.customerEmail,
-      subject: `${heading} ${b.reference} · Clutch Zone · ${b.date} ${b.startTime}`,
+      subject: t('booking.subject', { heading, reference: b.reference, date: formatDate(b.date, locale), time: b.startTime }),
       html,
-      text: `${heading}: ${b.reference}\n${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\n${awaitingCardPayment ? `Rezervace ti drží místo ${holdMinutes} minut. Pokud platba nedorazí, propadne.\n` : ''}${arrivalNote}${b.isCredit && !b.paysWithCredit ? `\nHodiny ti připíšeme na Clutchzone account při první návštěvě.` : ''}${b.cancelUrl ? `\nZrušit rezervaci (bezplatně do ${cancelWindow} minut před začátkem): ${b.cancelUrl}` : ''}${legalFooterText()}`.trim(),
+      text: `${heading}: ${b.reference}\n${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\n${awaitingCardPayment ? `${t('booking.holdNoteText', { minutes: holdMinutes })}\n` : ''}${arrivalNote}${b.isCredit && !b.paysWithCredit ? `\n${t('booking.creditNoteText')}` : ''}${b.cancelUrl ? `\n${t('booking.cancelLinkText', { minutes: cancelWindow })}: ${b.cancelUrl}` : ''}${legalFooterText()}`.trim(),
     });
   } catch (err) {
     console.error('Booking confirmation email failed:', err);
@@ -286,35 +291,43 @@ export async function sendBookingPaymentReceipt(b: BookingReceiptEmailData): Pro
   const transport = getTransport();
   if (!transport) return;
 
+  const locale = resolveLocale(b.locale);
+  const t = await getServerTranslator(locale, 'email');
+
   const endMin = (() => {
     const [h, m] = b.startTime.split(':').map(Number);
     const total = h * 60 + m + b.durationMinutes;
     return `${String(Math.floor(total / 60) % 24).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
   })();
 
-  const paidOn = new Date().toLocaleDateString('cs-CZ', { timeZone: 'Europe/Prague' });
+  const paidOn = new Date().toLocaleDateString(INTL_TAG[locale] ?? INTL_TAG.cs, { timeZone: 'Europe/Prague' });
 
   const rows: [string, string][] = [
-    ['Datum platby', paidOn],
-    ['Zaplaceno', `${b.amountPaid} Kč`],
-    ['Způsob platby', b.paidVia === 'card' ? 'Platební kartou online' : 'Na místě v klubu'],
-    ['Služba', b.offerLabel ? `${b.offerLabel} — ${b.stationLabel}` : `Herní rezervace — ${b.stationLabel}`],
-    ['Termín', `${b.date}, ${b.startTime} – ${endMin}`],
-    ['Reference', b.reference],
+    [t('labels.paymentDate'), paidOn],
+    [t('labels.paidAmount'), t('booking.amountPlain', { amount: b.amountPaid })],
+    [t('labels.paymentMethod'), b.paidVia === 'card' ? t('receipt.methodCard') : t('receipt.methodOnsite')],
+    [
+      t('labels.service'),
+      b.offerLabel
+        ? t('receipt.serviceWithOffer', { offer: b.offerLabel, station: b.stationLabel })
+        : t('receipt.serviceDefault', { station: b.stationLabel }),
+    ],
+    [t('labels.term'), `${formatDate(b.date, locale)}, ${b.startTime} – ${endMin}`],
+    [t('labels.reference'), b.reference],
   ];
 
   const cancelWindow = b.cancellationWindowMinutes ?? 15;
   const cancelNote = b.cancelUrl
     ? `<p style="margin:20px 0 0;padding-top:16px;border-top:1px solid #2a2a2a;color:#888;font-size:13px;line-height:1.6">
-        Nemůžeš dorazit? Rezervaci zrušíš bezplatně do ${cancelWindow} minut před začátkem.<br>
-        <a href="${escapeHtml(b.cancelUrl)}" style="color:#E84A1A">Zrušit rezervaci →</a>
+        ${escapeHtml(t('booking.cancelNote', { minutes: cancelWindow }))}<br>
+        <a href="${escapeHtml(b.cancelUrl)}" style="color:#E84A1A">${escapeHtml(t('booking.cancelLink'))}</a>
       </p>`
     : '';
 
   const html = `
     <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#111;color:#e8e8e8;padding:32px;border-top:3px solid #E84A1A">
-      <h2 style="margin:0 0 4px;color:#fff;text-transform:uppercase;letter-spacing:2px">Platba přijata</h2>
-      <p style="margin:0 0 24px;color:#888;font-size:13px">Díky, ${escapeHtml(b.customerName)} — rezervace je zaplacená a potvrzená.</p>
+      <h2 style="margin:0 0 4px;color:#fff;text-transform:uppercase;letter-spacing:2px">${escapeHtml(t('receipt.heading'))}</h2>
+      <p style="margin:0 0 24px;color:#888;font-size:13px">${escapeHtml(t('receipt.intro', { name: b.customerName }))}</p>
       <div style="text-align:center;margin:0 0 24px">
         <span style="display:inline-block;font-size:32px;letter-spacing:4px;color:#fff;border:1px solid #E84A1A;padding:12px 32px;background:rgba(232,74,26,0.08)">${b.reference}</span>
       </div>
@@ -326,7 +339,7 @@ export async function sendBookingPaymentReceipt(b: BookingReceiptEmailData): Pro
           </tr>`).join('')}
       </table>
       <p style="margin:24px 0 0;color:#888;font-size:13px;line-height:1.6">
-        Tento e-mail slouží jako doklad o zakoupení. Přijďte 10 minut před začátkem a ukažte referenční kód na recepci.
+        ${escapeHtml(t('receipt.docNote'))}
       </p>
       ${cancelNote}
       ${legalFooter()}
@@ -336,9 +349,9 @@ export async function sendBookingPaymentReceipt(b: BookingReceiptEmailData): Pro
     await transport.sendMail({
       from: process.env.SMTP_FROM ?? process.env.SMTP_USER,
       to: b.customerEmail,
-      subject: `Platba přijata ${b.reference} · Clutch Zone · ${b.amountPaid} Kč`,
+      subject: t('receipt.subject', { reference: b.reference, amount: b.amountPaid }),
       html,
-      text: `Platba přijata: ${b.reference}\n${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\nTento e-mail slouží jako doklad o zakoupení.${b.cancelUrl ? `\nZrušit rezervaci (bezplatně do ${cancelWindow} minut před začátkem): ${b.cancelUrl}` : ''}${legalFooterText()}`,
+      text: `${t('receipt.heading')}: ${b.reference}\n${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\n${t('receipt.docNoteText')}${b.cancelUrl ? `\n${t('booking.cancelLinkText', { minutes: cancelWindow })}: ${b.cancelUrl}` : ''}${legalFooterText()}`,
     });
   } catch (err) {
     console.error('Booking payment receipt email failed:', err);
@@ -455,11 +468,24 @@ interface CreditOrderEmailData {
   items: { stationType: 'pc' | 'ps5'; hours: number; quantity: number }[];
   /** Signed 14-day withdrawal link (VOP §11.3) — omitted if unsigned. */
   withdrawUrl?: string | null;
+  locale?: string;
 }
 
 function formatCzechDate(iso: string): string {
   const [y, m, d] = iso.split('-');
   return `${Number(d)}. ${Number(m)}. ${y}`;
+}
+
+// Customer mail is dated in the reader's own convention; staff mail keeps the
+// Czech one above, since the club reads it.
+// `ua` is our routing segment; the BCP 47 tag for Ukrainian is `uk`.
+const INTL_TAG: Record<string, string> = { cs: 'cs-CZ', en: 'en-GB', de: 'de-DE', ua: 'uk-UA' };
+
+function formatDate(iso: string, locale: string): string {
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Intl.DateTimeFormat(INTL_TAG[locale] ?? INTL_TAG.cs, {
+    day: 'numeric', month: 'numeric', year: 'numeric', timeZone: 'Europe/Prague',
+  }).format(new Date(Date.UTC(y, m - 1, d, 12)));
 }
 
 // Admin notification — fires only once the order is actually paid (spec §11.3:
@@ -515,11 +541,17 @@ export async function sendCreditPurchaseConfirmation(o: CreditOrderEmailData): P
   const transport = getTransport();
   if (!transport) return;
 
-  const itemsRows: [string, string][] = o.items.map((i) => [`${i.stationType.toUpperCase()} hodiny`, `${i.quantity}× ${i.hours}H`]);
+  const locale = resolveLocale(o.locale);
+  const t = await getServerTranslator(locale, 'email');
+
+  const itemsRows: [string, string][] = o.items.map((i) => [
+    t('credit.hoursRow', { station: i.stationType.toUpperCase() }),
+    `${i.quantity}× ${i.hours}H`,
+  ]);
   const rows: [string, string][] = [
     ...itemsRows,
-    ['Celkem', `${o.totalAmount} Kč`],
-    ['Platnost do', formatCzechDate(o.expiresAt)],
+    [t('labels.total'), t('booking.amountPlain', { amount: o.totalAmount })],
+    [t('labels.validUntil'), formatDate(o.expiresAt, locale)],
   ];
 
   // § 1829 obč. zák. requires an easily accessible way to withdraw within 14
@@ -527,16 +559,15 @@ export async function sendCreditPurchaseConfirmation(o: CreditOrderEmailData): P
   // just a form to print out.
   const withdrawNote = o.withdrawUrl
     ? `<p style="margin:20px 0 0;padding-top:16px;border-top:1px solid #2a2a2a;color:#888;font-size:13px;line-height:1.6">
-        Rozmyslel sis to? Od nákupu můžeš do 14 dnů odstoupit, pokud hodiny ještě nebyly čerpány —
-        peníze ti vrátíme zpět na kartu.<br>
-        <a href="${escapeHtml(o.withdrawUrl)}" style="color:#E84A1A">Odstoupit od smlouvy →</a>
+        ${escapeHtml(t('credit.withdrawNote'))}<br>
+        <a href="${escapeHtml(o.withdrawUrl)}" style="color:#E84A1A">${escapeHtml(t('credit.withdrawLink'))}</a>
       </p>`
     : '';
 
   const html = `
     <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#111;color:#e8e8e8;padding:32px;border-top:3px solid #E84A1A">
-      <h2 style="margin:0 0 4px;color:#fff;text-transform:uppercase;letter-spacing:2px">Nákup kreditu potvrzen</h2>
-      <p style="margin:0 0 24px;color:#888;font-size:13px">Díky za nákup v Clutch Zone, ${escapeHtml(o.customerName)}!</p>
+      <h2 style="margin:0 0 4px;color:#fff;text-transform:uppercase;letter-spacing:2px">${escapeHtml(t('credit.heading'))}</h2>
+      <p style="margin:0 0 24px;color:#888;font-size:13px">${escapeHtml(t('credit.intro', { name: o.customerName }))}</p>
       <div style="text-align:center;margin:0 0 24px">
         <span style="display:inline-block;font-size:32px;letter-spacing:4px;color:#fff;border:1px solid #E84A1A;padding:12px 32px;background:rgba(232,74,26,0.08)">${o.reference}</span>
       </div>
@@ -548,8 +579,7 @@ export async function sendCreditPurchaseConfirmation(o: CreditOrderEmailData): P
           </tr>`).join('')}
       </table>
       <p style="margin:24px 0 0;padding:12px 14px;background:rgba(232,74,26,0.08);border:1px solid rgba(232,74,26,0.25);color:#ff8a5c;font-size:13px;line-height:1.6">
-        Hodiny ti připíšeme na Clutchzone account při první návštěvě — ukaž tenhle kód na recepci.
-        Nevyužité hodiny po ${formatCzechDate(o.expiresAt)} propadají.
+        ${escapeHtml(t('credit.creditNote', { date: formatDate(o.expiresAt, locale) }))}
       </p>
       ${withdrawNote}
       ${legalFooter()}
@@ -559,9 +589,9 @@ export async function sendCreditPurchaseConfirmation(o: CreditOrderEmailData): P
     await transport.sendMail({
       from: process.env.SMTP_FROM ?? process.env.SMTP_USER,
       to: o.customerEmail,
-      subject: `Nákup kreditu potvrzen ${o.reference} · Clutch Zone`,
+      subject: t('credit.subject', { reference: o.reference }),
       html,
-      text: `Nákup kreditu potvrzen: ${o.reference}\n${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\nHodiny ti připíšeme na Clutchzone account při první návštěvě — ukaž tenhle kód na recepci.${o.withdrawUrl ? `\nOdstoupení od smlouvy do 14 dnů: ${o.withdrawUrl}` : ''}${legalFooterText()}`,
+      text: `${t('credit.heading')}: ${o.reference}\n${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\n${t('credit.creditNoteText')}${o.withdrawUrl ? `\n${t('credit.withdrawLinkText')}: ${o.withdrawUrl}` : ''}${legalFooterText()}`,
     });
   } catch (err) {
     console.error('Credit purchase confirmation email failed:', err);
@@ -575,6 +605,7 @@ interface TournamentEmailData {
   captainName: string;
   captainEmail: string;
   captainDiscord?: string;
+  locale?: string;
 }
 
 // Admin notification — a new team just registered for a tournament.
@@ -626,12 +657,24 @@ export async function sendTournamentRegistrationReceived(t: TournamentEmailData)
   const transport = getTransport();
   if (!transport) return;
 
+  const locale = resolveLocale(t.locale);
+  const m = await getServerTranslator(locale, 'email');
+
+  // Values are escaped before interpolation, so the bold markup around the team
+  // and tournament survives ICU substitution without opening an injection hole.
+  const intro = m('tournamentReceived.intro', {
+    captain: escapeHtml(t.captainName),
+    team: `<strong style="color:#fff">${escapeHtml(t.teamName)}</strong>`,
+    tournament: `<strong style="color:#fff">${escapeHtml(t.tournamentTitle)}</strong>`,
+    date: escapeHtml(t.tournamentDate),
+  });
+
   const html = `
     <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#111;color:#e8e8e8;padding:32px;border-top:3px solid #E84A1A">
-      <h2 style="margin:0 0 4px;color:#fff;text-transform:uppercase;letter-spacing:2px">Registrace přijata</h2>
-      <p style="margin:0 0 24px;color:#888;font-size:13px">Ahoj ${escapeHtml(t.captainName)}, tým <strong style="color:#fff">${escapeHtml(t.teamName)}</strong> je přihlášen na turnaj <strong style="color:#fff">${escapeHtml(t.tournamentTitle)}</strong> (${escapeHtml(t.tournamentDate)}).</p>
+      <h2 style="margin:0 0 4px;color:#fff;text-transform:uppercase;letter-spacing:2px">${escapeHtml(m('tournamentReceived.heading'))}</h2>
+      <p style="margin:0 0 24px;color:#888;font-size:13px">${intro}</p>
       <p style="margin:0;color:#888;font-size:13px;line-height:1.6">
-        Registrace teď čeká na potvrzení organizátorem. Jakmile ji potvrdíme, přijde ti další e-mail.
+        ${escapeHtml(m('tournamentReceived.body'))}
       </p>
       ${legalFooter()}
     </div>`;
@@ -640,9 +683,9 @@ export async function sendTournamentRegistrationReceived(t: TournamentEmailData)
     await transport.sendMail({
       from: process.env.SMTP_FROM ?? process.env.SMTP_USER,
       to: t.captainEmail,
-      subject: `Registrace přijata · ${t.tournamentTitle}`,
+      subject: m('tournamentReceived.subject', { tournament: t.tournamentTitle }),
       html,
-      text: `Tým ${t.teamName} je přihlášen na turnaj ${t.tournamentTitle} (${t.tournamentDate}). Registrace čeká na potvrzení organizátorem.${legalFooterText()}`,
+      text: `${m('tournamentReceived.text', { team: t.teamName, tournament: t.tournamentTitle, date: t.tournamentDate })}${legalFooterText()}`,
     });
   } catch (err) {
     console.error('Tournament registration received email failed:', err);
@@ -654,15 +697,21 @@ export async function sendTournamentParticipationConfirmed(t: TournamentEmailDat
   const transport = getTransport();
   if (!transport) return;
 
+  const locale = resolveLocale(t.locale);
+  const m = await getServerTranslator(locale, 'email');
+
   const html = `
     <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#111;color:#e8e8e8;padding:32px;border-top:3px solid #E84A1A">
-      <h2 style="margin:0 0 4px;color:#fff;text-transform:uppercase;letter-spacing:2px">Účast potvrzena</h2>
-      <p style="margin:0 0 24px;color:#888;font-size:13px">Ahoj ${escapeHtml(t.captainName)}!</p>
+      <h2 style="margin:0 0 4px;color:#fff;text-transform:uppercase;letter-spacing:2px">${escapeHtml(m('tournamentConfirmed.heading'))}</h2>
+      <p style="margin:0 0 24px;color:#888;font-size:13px">${escapeHtml(m('tournamentConfirmed.intro', { captain: t.captainName }))}</p>
       <div style="text-align:center;margin:0 0 24px">
         <span style="display:inline-block;font-size:20px;letter-spacing:1px;color:#fff;border:1px solid #E84A1A;padding:14px 28px;background:rgba(232,74,26,0.08);text-transform:uppercase">${escapeHtml(t.teamName)}</span>
       </div>
       <p style="margin:0 0 16px;color:#e8e8e8;font-size:14px;line-height:1.6">
-        Vaše účast na turnaji <strong>${escapeHtml(t.tournamentTitle)}</strong> (${escapeHtml(t.tournamentDate)}) je potvrzena. Uvidíme se na místě!
+        ${m('tournamentConfirmed.body', {
+          tournament: `<strong>${escapeHtml(t.tournamentTitle)}</strong>`,
+          date: escapeHtml(t.tournamentDate),
+        })}
       </p>
       ${legalFooter()}
     </div>`;
@@ -671,9 +720,9 @@ export async function sendTournamentParticipationConfirmed(t: TournamentEmailDat
     await transport.sendMail({
       from: process.env.SMTP_FROM ?? process.env.SMTP_USER,
       to: t.captainEmail,
-      subject: `Účast potvrzena · ${t.tournamentTitle}`,
+      subject: m('tournamentConfirmed.subject', { tournament: t.tournamentTitle }),
       html,
-      text: `Účast týmu ${t.teamName} na turnaji ${t.tournamentTitle} (${t.tournamentDate}) je potvrzena.${legalFooterText()}`,
+      text: `${m('tournamentConfirmed.text', { team: t.teamName, tournament: t.tournamentTitle, date: t.tournamentDate })}${legalFooterText()}`,
     });
   } catch (err) {
     console.error('Tournament participation confirmed email failed:', err);

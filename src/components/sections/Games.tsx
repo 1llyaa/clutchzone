@@ -106,6 +106,7 @@ function GameCard({ game }: { game: Game }) {
 
 export default function Games({ games }: { games: Game[] }) {
   const t = useTranslations('games');
+  const tc = useTranslations('common');
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canLeft,  setCanLeft]  = useState(false);
   const [canRight, setCanRight] = useState(true);
@@ -146,7 +147,7 @@ export default function Games({ games }: { games: Game[] }) {
             iconOnly
             onClick={() => scroll('left')}
             disabled={!canLeft}
-            aria-label="Předchozí"
+            aria-label={tc('prev')}
           >
             <CaretLeft size={20} weight="bold" />
           </Button>
@@ -155,7 +156,7 @@ export default function Games({ games }: { games: Game[] }) {
             iconOnly
             onClick={() => scroll('right')}
             disabled={!canRight}
-            aria-label="Další"
+            aria-label={tc('next')}
           >
             <CaretRight size={20} weight="bold" />
           </Button>

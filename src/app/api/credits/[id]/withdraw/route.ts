@@ -4,6 +4,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { verifyToken } from '@/lib/cancel-token';
 import { refundPaymentIntent } from '@/lib/stripe';
 import { loadOrderForWithdrawal } from '@/lib/credits/withdrawal';
+import { getServerTranslator } from '@/lib/i18n/server';
 
 const QuerySchema = z.object({
   token: z.string().min(1),
@@ -19,18 +20,19 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     token: url.searchParams.get('token') ?? body.token,
     exp: url.searchParams.get('exp') ?? body.exp,
   });
+  const t = await getServerTranslator(body?.locale, 'errors');
   if (!parsed.success) {
-    return NextResponse.json({ error: 'Neplatný odkaz.' }, { status: 400 });
+    return NextResponse.json({ error: t('invalidLink') }, { status: 400 });
   }
 
   const valid = await verifyToken('credit-withdraw', orderId, parsed.data.exp, parsed.data.token);
   if (!valid) {
-    return NextResponse.json({ error: 'Odkaz je neplatný nebo vypršel.' }, { status: 403 });
+    return NextResponse.json({ error: t('linkExpired') }, { status: 403 });
   }
 
   const order = await loadOrderForWithdrawal(orderId);
   if (!order) {
-    return NextResponse.json({ error: 'Objednávka nenalezena.' }, { status: 404 });
+    return NextResponse.json({ error: t('orderNotFoundDot') }, { status: 404 });
   }
   if (order.alreadyWithdrawn) {
     return NextResponse.json({ status: 'already_withdrawn' });
@@ -39,17 +41,17 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json(
       {
         error: order.alreadyFulfilled
-          ? 'Hodiny už byly připsány na účet — odstoupení prosím vyřešte s obsluhou.'
+          ? t('withdrawHoursCredited')
           : !order.withinWindow
-            ? 'Čtrnáctidenní lhůta pro odstoupení už uplynula.'
-            : 'Od této objednávky nelze odstoupit online.',
+            ? t('withdrawWindowOver')
+            : t('withdrawNotOnline'),
       },
       { status: 409 },
     );
   }
   if (!order.paymentIntentId) {
     return NextResponse.json(
-      { error: 'K objednávce chybí platební údaj — kontaktujte nás prosím e-mailem.' },
+      { error: t('withdrawNoPayment') },
       { status: 409 },
     );
   }
@@ -66,7 +68,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     .select('id');
 
   if (claimErr) {
-    return NextResponse.json({ error: 'Odstoupení se nepodařilo zpracovat.' }, { status: 500 });
+    return NextResponse.json({ error: t('withdrawFailed') }, { status: 500 });
   }
   if (!claimed?.length) {
     return NextResponse.json({ status: 'already_withdrawn' });
@@ -97,7 +99,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       {
         status: 'withdrawn',
         refundStatus: 'failed',
-        error: 'Odstoupení jsme zaznamenali, ale vrácení platby se nezdařilo. Ozveme se vám.',
+        error: t('withdrawRefundFailed'),
       },
       { status: 202 },
     );

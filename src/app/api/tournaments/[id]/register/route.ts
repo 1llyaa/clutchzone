@@ -9,6 +9,9 @@ const schema = z.object({
   captain_email:   z.string().email(),
   captain_discord: z.string().max(100).optional(),
   player_names:    z.array(z.string().max(100)).optional(),
+  // Language the captain registered in — the "registration received" mail goes
+  // back in it. Not persisted, so the later confirmation mail falls back to cs.
+  locale:          z.enum(['cs', 'en', 'de', 'ua']).optional(),
 });
 
 export async function POST(
@@ -93,6 +96,7 @@ export async function POST(
     captainName: parsed.data.captain_name,
     captainEmail: parsed.data.captain_email,
     captainDiscord: parsed.data.captain_discord,
+    locale: parsed.data.locale,
   };
   sendTournamentRegistrationNotification(tournamentEmailData).catch(() => {});
   sendTournamentRegistrationReceived(tournamentEmailData).catch(() => {});

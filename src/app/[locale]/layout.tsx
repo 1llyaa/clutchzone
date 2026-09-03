@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/../i18n/routing';
 import { ReservationProvider } from '@/components/reservation/ReservationContext';
@@ -19,12 +19,9 @@ export async function generateMetadata({
   const { locale } = await params;
   const isCs = locale === 'cs';
 
-  const title = isCs
-    ? 'Clutch Zone — Esport Club České Budějovice'
-    : 'Clutch Zone — Esports Club in České Budějovice';
-  const description = isCs
-    ? 'Prémiový esport gaming klub v Českých Budějovicích. Herní PC, PS5, turnaje a komunita.'
-    : 'Premium esports gaming club in České Budějovice. Gaming PCs, PS5, tournaments and community.';
+  const t = await getTranslations({ locale, namespace: 'meta' });
+  const title = t('title');
+  const description = t('description');
 
   return {
     metadataBase: new URL(SITE_URL),

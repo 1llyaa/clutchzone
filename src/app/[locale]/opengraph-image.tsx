@@ -2,13 +2,15 @@ import { ImageResponse } from 'next/og';
 import { getTranslations } from 'next-intl/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 
+// Next reads this at module scope, before any locale is known — the localized
+// alt is set per request below via generateImageMetadata-free fallback.
 export const alt = 'Clutch Zone — Esport Club České Budějovice';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 export const revalidate = 3600;
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://clutchzone.club';
-const TAGLINE = 'ESPORT CLUB · ČESKÉ BUDĚJOVICE';
+
 
 async function loadGoogleFont(familyParam: string, text: string) {
   const url = `https://fonts.googleapis.com/css2?family=${familyParam}&text=${encodeURIComponent(text)}`;
@@ -49,6 +51,8 @@ export default async function OpengraphImage({
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'hero' });
+  const tm = await getTranslations({ locale, namespace: 'meta' });
+  const TAGLINE = tm('ogTagline');
   const headline = `${t('h1Line1')} ${t('h1Line2')} ${t('h1Line3')}`;
 
   const [heroImageUrl, archivoDisplay, archivoMono] = await Promise.all([

@@ -6,11 +6,19 @@ import { verifyToken } from '@/lib/cancel-token';
 import { loadOrderForWithdrawal, WITHDRAWAL_WINDOW_DAYS } from '@/lib/credits/withdrawal';
 import WithdrawClient from './WithdrawClient';
 
-export const metadata: Metadata = {
-  title: 'Odstoupení od smlouvy — Clutch Zone',
-  // Signed, per-customer link — must never be indexed.
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'meta' });
+  return {
+    title: t('withdrawTitle'),
+    // Signed, per-customer link — must never be indexed.
+    robots: { index: false, follow: false },
+  };
+}
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
