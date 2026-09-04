@@ -389,15 +389,6 @@
     "withdrawTitle": "Odstoupení od smlouvy — Clutch Zone",
     "addressLocality": "České Budějovice"
   },
-  "maintenance": {
-    "eyebrow": "Probíhá údržba",
-    "title": "Brzy zpět",
-    "body": "Připravujeme něco nového. Web je momentálně dostupný jen pro tým.",
-    "username": "Uživatel",
-    "password": "Heslo",
-    "submit": "Vstoupit",
-    "error": "Špatné přihlašovací údaje"
-  },
   "weekdays": {
     "day0": "NEDĚLE",
     "day1": "PONDĚLÍ",
