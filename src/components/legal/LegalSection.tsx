@@ -29,6 +29,55 @@ function Block({ block }: { block: LegalBlock }) {
           ))}
         </ol>
       );
+    case 'table':
+      return (
+        // The cookie table is wider than the reading column on a phone, so it
+        // scrolls inside its own box rather than pushing the page sideways.
+        <div style={{ marginTop: 16, overflowX: 'auto' }}>
+          <table style={{ borderCollapse: 'collapse', minWidth: 520, width: '100%' }}>
+            <thead>
+              <tr>
+                {block.head.map((cell, i) => (
+                  <th
+                    key={i}
+                    className="font-mono text-cz-orange uppercase"
+                    style={{
+                      fontSize: 14,
+                      letterSpacing: 1,
+                      textAlign: 'left',
+                      padding: '10px 14px',
+                      borderBottom: '1px solid var(--color-cz-gray-dark)',
+                      verticalAlign: 'top',
+                    }}
+                  >
+                    {cell}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {block.rows.map((row, i) => (
+                <tr key={i}>
+                  {row.map((cell, j) => (
+                    <td
+                      key={j}
+                      style={{
+                        fontSize: 17,
+                        lineHeight: 1.6,
+                        padding: '12px 14px',
+                        borderBottom: '1px solid var(--color-cz-gray-dark)',
+                        verticalAlign: 'top',
+                      }}
+                    >
+                      {cell}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
     case 'link': {
       // Split on the {link} placeholder so the label renders as an anchor
       // in the middle of the sentence without dangerouslySetInnerHTML.

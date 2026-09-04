@@ -72,15 +72,14 @@ function escapeHtml(s: string): string {
  * money changed hands. Goes on customer-facing mail only; staff already know
  * who they work for.
  *
- * Reads BUSINESS rather than hardcoding, so the open questions about the
- * address and the .cz/.club e-mail (docs/legal-review-notes.md section B)
- * resolve in one place.
+ * Reads BUSINESS rather than hardcoding, so the seat, venue address and e-mail
+ * resolve in one place — they now match the operator's legal documents.
  */
 const LEGAL_IDENTITY_LINE = `${BUSINESS.ownerName} · IČO: ${BUSINESS.ico} · ${BUSINESS.registeredAddress} · ${BUSINESS.email}`;
 
-// Deliberately just the identity, no legal-form sentence: which register the
-// operator is entered in is still an open question with their lawyer
-// (docs/legal-review-notes.md section B) and is not ours to assert.
+// Deliberately just the identity, no legal-form sentence: the terms name the
+// register (trade register, Magistrát města České Budějovice), but spelling it
+// out in every e-mail footer buys nothing § 435 asks for.
 function legalFooter(): string {
   return `<p style="margin:28px 0 0;padding-top:16px;border-top:1px solid #2a2a2a;color:#666;font-size:11px;line-height:1.6">
         ${escapeHtml(LEGAL_IDENTITY_LINE)}
