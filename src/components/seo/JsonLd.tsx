@@ -1,3 +1,5 @@
+import { getTranslations } from 'next-intl/server';
+
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://clutchzone.club';
 
 // Fill these once real business data is available — see project README/SEO notes.
@@ -14,10 +16,11 @@ const OPENING_HOURS = [
   { dayOfWeek: ['Friday', 'Saturday'], opens: '14:00', closes: '04:00' },
 ];
 
-export default function JsonLd({ locale }: { locale: string }) {
+export default async function JsonLd({ locale }: { locale: string }) {
+  const t = await getTranslations({ locale, namespace: 'meta' });
   const address: Record<string, string> = {
     '@type': 'PostalAddress',
-    addressLocality: 'České Budějovice',
+    addressLocality: t('addressLocality'),
     addressCountry: 'CZ',
   };
   if (STREET_ADDRESS) address.streetAddress = STREET_ADDRESS;
@@ -30,10 +33,7 @@ export default function JsonLd({ locale }: { locale: string }) {
     '@type': ['LocalBusiness', 'SportsActivityLocation'],
     '@id': `${SITE_URL}/#business`,
     name: 'Clutch Zone',
-    description:
-      locale === 'cs'
-        ? 'Prémiový esport gaming klub v Českých Budějovicích. Herní PC, PS5, turnaje a komunita.'
-        : 'Premium esports gaming club in České Budějovice. Gaming PCs, PS5, tournaments and community.',
+    description: t('description'),
     url: SITE_URL,
     image: `${SITE_URL}/${locale}/opengraph-image`,
     address,

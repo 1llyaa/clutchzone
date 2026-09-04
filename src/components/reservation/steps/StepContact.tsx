@@ -114,7 +114,7 @@ export default function StepContact({ contact, onChange, requireClutchzoneAccoun
         label={t('nameField')}
         value={contact.name}
         onChange={(v) => set({ name: v })}
-        placeholder="Jan Novák"
+        placeholder={t('namePlaceholder')}
         error={nameError}
         onBlur={() => setTouchedName(true)}
       />
@@ -183,7 +183,7 @@ export default function StepContact({ contact, onChange, requireClutchzoneAccoun
         </div>
       )}
 
-      <Field label={t('discordField')} value={contact.discord} onChange={(v) => set({ discord: v })} placeholder="uživatel#0000" required={false} optionalHint={t('optionalHint')} />
+      <Field label={t('discordField')} value={contact.discord} onChange={(v) => set({ discord: v })} placeholder={t('discordPlaceholder')} required={false} optionalHint={t('optionalHint')} />
 
       <div className="flex gap-3" style={{ marginTop: 4 }}>
         <button

@@ -8,6 +8,7 @@ import {
   cancellationSettlementFor,
 } from '@/lib/bookings/cancellation';
 import { sendCancellationNotification } from '@/lib/email';
+import { getServerTranslator } from '@/lib/i18n/server';
 
 const QuerySchema = z.object({
   token: z.string().min(1),
@@ -27,19 +28,22 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     exp: url.searchParams.get('exp') ?? body.exp,
     refundRequested: body.refundRequested,
   });
+  // The cancellation link is opened in the language it was mailed in; the page
+  // posting here passes that along so the failure reads the same way.
+  const t = await getServerTranslator(body?.locale, 'errors');
   if (!parsed.success) {
-    return NextResponse.json({ error: 'Neplatný odkaz.' }, { status: 400 });
+    return NextResponse.json({ error: t('invalidLink') }, { status: 400 });
   }
 
   // Re-verified here rather than trusting the page that rendered the button.
   const valid = await verifyToken('booking-cancel', groupId, parsed.data.exp, parsed.data.token);
   if (!valid) {
-    return NextResponse.json({ error: 'Odkaz je neplatný nebo vypršel.' }, { status: 403 });
+    return NextResponse.json({ error: t('linkExpired') }, { status: 403 });
   }
 
   const booking = await loadBookingForCancellation(groupId);
   if (!booking) {
-    return NextResponse.json({ error: 'Rezervace nenalezena.' }, { status: 404 });
+    return NextResponse.json({ error: t('bookingNotFoundDot') }, { status: 404 });
   }
 
   // Idempotent: a double-clicked link, or a race with an admin cancelling the
@@ -67,7 +71,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     .select('id');
 
   if (updateErr) {
-    return NextResponse.json({ error: 'Rezervaci se nepodařilo zrušit.' }, { status: 500 });
+    return NextResponse.json({ error: t('cancelFailed') }, { status: 500 });
   }
   // Zero rows means an admin cancelled it between our read and this write.
   if (!updated?.length) {

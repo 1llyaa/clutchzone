@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { X, Check } from '@phosphor-icons/react';
 import Button from '@/components/ui/Button';
 
@@ -28,6 +28,7 @@ const EMPTY = {
 
 export default function TournamentRegisterModal({ tournament, onClose }: Props) {
   const t = useTranslations('tournamentReg');
+  const locale = useLocale();
   const [form, setForm]       = useState(EMPTY);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone]       = useState(false);
@@ -72,6 +73,7 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
         captain_email:   form.captain_email,
         captain_discord: form.captain_discord || undefined,
         player_names:    player_names.length > 0 ? player_names : undefined,
+        locale,
       }),
     });
 
@@ -123,7 +125,7 @@ export default function TournamentRegisterModal({ tournament, onClose }: Props) 
               {tournament.title}
             </div>
             <div className="font-mono text-cz-gray-light" style={{ fontSize: 16, marginTop: 4 }}>
-              {tournament.game} · {slotsLeft} {slotsLeft === 1 ? 'místo' : 'míst'} zbývá
+              {tournament.game} · {t('slotsLeft', { count: slotsLeft })}
             </div>
           </div>
           <Button variant="ghost" iconOnly onClick={onClose} aria-label={t('close')}>

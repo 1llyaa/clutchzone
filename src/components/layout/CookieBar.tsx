@@ -39,7 +39,7 @@ export default function CookieBar() {
         style={{ fontSize: 19, lineHeight: 1.6, maxWidth: 640, margin: 0 }}
       >
         {t('text')}{' '}
-        <Link href="/privacy#cookies" className="text-cz-orange hover:underline">
+        <Link href="/cookies" className="text-cz-orange hover:underline">
           {t('link')}
         </Link>
       </p>

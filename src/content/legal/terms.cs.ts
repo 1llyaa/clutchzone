@@ -1,17 +1,20 @@
-// Obchodní podmínky — CS is the authoritative, binding version and is
-// reproduced here VERBATIM from the operator's supplied document.
+// Všeobecné obchodní podmínky — CS is the authoritative, binding version and
+// is reproduced here VERBATIM from the operator's supplied document.
 //
-// Do not "fix" this text. Wording, numbering (including the duplicated 3.4.1),
-// addresses and contact details are reproduced exactly as supplied. Anything
-// believed to be wrong or missing belongs in docs/legal-review-notes.md, which
-// is written for the operator to forward to their lawyer — not silently
-// corrected here.
+// Do not "fix" this text. Wording, numbering, addresses and contact details are
+// reproduced exactly as supplied. Anything believed to be wrong or missing
+// belongs in the operator's separate legal review notes, kept outside this repo
+// for them to forward to their lawyer — not silently corrected here.
+//
+// The single exception: 14.8 as supplied read "3.9. 2027", a year after
+// publication. The operator confirmed on 4. 9. 2026 that this was a typo and
+// asked for 03.09.2026. That is the only edit to the supplied wording.
 import type { LegalDocument } from './types';
 
 export const TERMS_CS: LegalDocument = {
-  version: '2026-08-30',
+  version: '2026-09-03',
   eyebrow: '// PRÁVNÍ INFORMACE',
-  title: 'Obchodní podmínky',
+  title: 'Všeobecné obchodní podmínky',
   sections: [
     {
       id: 'uvodni-ustanoveni',
@@ -19,7 +22,7 @@ export const TERMS_CS: LegalDocument = {
       body: [
         {
           type: 'p',
-          text: '1.1. Tyto všeobecné obchodní podmínky (dále jen „VOP“) upravují práva a povinnosti mezi společností Martin Mašek., se sídlem Václava Volfa 1337/37, IČO:23095571, zapsanou v obchodním rejstříku vedeném Městským soudem v Českých Budějovicích, dále jen „provozovatel“), a zákazníkem při rezervaci a využívání služeb herních center Clutch Zone.',
+          text: '1.1. Tyto všeobecné obchodní podmínky (dále jen „VOP“) upravují práva a povinnosti mezi panem Martinem Maškem, fyzickou osobou podnikající na základě živnostenského oprávnění, se sídlem Václava Volfa 1337/37, 370 05 České Budějovice, IČO: 23095571, zapsaným v živnostenském rejstříku vedeném Magistrátem města České Budějovice (dále jen „provozovatel“), a zákazníkem při rezervaci a využívání služeb herních center Clutch Zone.',
         },
         {
           type: 'p',
@@ -37,6 +40,10 @@ export const TERMS_CS: LegalDocument = {
           type: 'p',
           text: '1.5. Ujednání uvedená u konkrétní nabídky, balíčku, turnaje, voucheru nebo promo akce mají přednost před obecnými ustanoveními těchto VOP.',
         },
+        {
+          type: 'p',
+          text: '1.6. Spotřebitelem se pro účely těchto VOP rozumí každý člověk, který mimo rámec své podnikatelské činnosti nebo mimo rámec samostatného výkonu svého povolání uzavírá smlouvu s provozovatelem nebo s ním jinak jedná. Ustanovení těchto VOP, která se výslovně týkají spotřebitele, se na ostatní zákazníky nepoužijí.',
+        },
       ],
     },
     {
@@ -47,9 +54,11 @@ export const TERMS_CS: LegalDocument = {
         {
           type: 'ul',
           items: [
-            'Martin Mašek',
-            'Sídlo: Václava Volfa 1337/37',
+            'Martin Mašek, fyzická osoba podnikající na základě živnostenského oprávnění',
+            'Sídlo: Václava Volfa 1337/37, 370 05 České Budějovice',
             'IČO: 23095571',
+            'Zapsán v živnostenském rejstříku vedeném Magistrátem města České Budějovice',
+            'E-mail: info@clutchzone.club',
             'Web: https://clutchzone.club',
           ],
         },
@@ -58,7 +67,7 @@ export const TERMS_CS: LegalDocument = {
           type: 'ul',
           items: [
             'Clutch Zone',
-            'Adresa: Krajinská 2381/17',
+            'Adresa: Krajinská 2381/17, České Budějovice',
             'Telefon: +420 733 104 289',
             'E-mail: info@clutchzone.club',
           ],
@@ -84,11 +93,11 @@ export const TERMS_CS: LegalDocument = {
         { type: 'p', text: '3.4. Zrušení rezervace zákazníkem:' },
         {
           type: 'p',
-          text: '3.4.1 Včasné zrušení (více než 15 minut předem): Zákazník může rezervaci bezplatně zrušit nejpozději 15 minut před jejím plánovaným začátkem. Uhrazená částka je v takovém případě zákazníkovi vrácena ve formě kreditu do jeho uživatelského účtu v rezervačním systému (případně zpět na platební kartu, pokud o to písemně požádá).',
+          text: '3.4.1. Včasné zrušení (více než 15 minut předem): Zákazník může rezervaci bezplatně zrušit nejpozději 15 minut před jejím plánovaným začátkem, a to zejména prostřednictvím odkazu v potvrzovacím e-mailu. Uhrazená částka je v takovém případě zákazníkovi vrácena ve formě kreditu do jeho uživatelského účtu v rezervačním systému (případně zpět na platební kartu, pokud o to písemně požádá).',
         },
         {
           type: 'p',
-          text: '3.4.1. Pozdní zrušení a nedostavení se (méně než 15 minut předem): Pokud zákazník zruší rezervaci méně než 15 minut před jejím začátkem nebo se v čase rezervace nedostaví, rezervace propadá a provozovatel je oprávněn ponechat si 100 % uhrazené částky jako storno poplatek za blokaci herního místa.',
+          text: '3.4.2. Pozdní zrušení a nedostavení se (méně než 15 minut předem): Pokud zákazník zruší rezervaci méně než 15 minut před jejím začátkem nebo se v čase rezervace nedostaví, rezervace propadá a provozovatel je oprávněn ponechat si 100 % uhrazené částky jako storno poplatek za blokaci herního místa.',
         },
         {
           type: 'p',
@@ -96,7 +105,11 @@ export const TERMS_CS: LegalDocument = {
         },
         {
           type: 'p',
-          text: '3.6. Provozovatel si vyhrazuje právo rezervaci zrušit nebo změnit z technických, provozních nebo bezpečnostních důvodů. V takovém případě bude zákazníkovi nabídnout náhradní termín nebo vrácena platba v plné výši.',
+          text: '3.6. Provozovatel si vyhrazuje právo rezervaci zrušit nebo změnit z technických, provozních nebo bezpečnostních důvodů. V takovém případě bude zákazníkovi nabídnut náhradní termín nebo vrácena platba v plné výši.',
+        },
+        {
+          type: 'p',
+          text: '3.7. Rezervace herního místa na konkrétní datum a čas je smlouvou o využití volného času poskytovaném v určeném termínu. Spotřebiteli u ní nevzniká právo odstoupit od smlouvy ve lhůtě 14 dnů; blíže viz čl. 12 těchto VOP.',
         },
       ],
     },
@@ -110,7 +123,7 @@ export const TERMS_CS: LegalDocument = {
         },
         {
           type: 'p',
-          text: '4.2. Platba za služby probíhá zpravidla na pobočce v hotovosti, platební kartou nebo jiným způsobem povoleným provozovatelem.',
+          text: '4.2. Platba za služby probíhá zpravidla na pobočce v hotovosti, platební kartou nebo jiným způsobem povoleným provozovatelem, případně předem online prostřednictvím platební brány.',
         },
         {
           type: 'p',
@@ -128,6 +141,10 @@ export const TERMS_CS: LegalDocument = {
           type: 'p',
           text: '4.6. Provozovatel vystaví zákazníkovi daňový doklad nebo účtenku v souladu s platnými právními předpisy.',
         },
+        {
+          type: 'p',
+          text: '4.7. Informuje-li provozovatel o slevě z ceny služby nebo zboží, uvede zároveň nejnižší cenu, za kterou danou službu nebo zboží nabízel v době 30 dnů před poskytnutím slevy. Byla-li služba nebo zboží uvedeno na trh v době kratší než 30 dnů, uvede provozovatel nejnižší cenu od okamžiku uvedení na trh.',
+        },
       ],
     },
     {
@@ -140,11 +157,11 @@ export const TERMS_CS: LegalDocument = {
         },
         {
           type: 'p',
-          text: '5.2. Nevyužité hodiny po uplynutí doby platnosti propadají, pokud není u konkrétní nabídky uvedeno jinak.',
+          text: '5.2. Nevyužité hodiny po uplynutí doby platnosti propadají, pokud není u konkrétní nabídky uvedeno jinak. Tímto ustanovením není dotčeno právo spotřebitele odstoupit od smlouvy podle čl. 12 těchto VOP.',
         },
         {
           type: 'p',
-          text: '5.3. Bonusové hodiny, promo hodiny a jiné zvýhodněné kredity nejsou směnitelné za hotovost a nelze je vyplatit zpět, není-li výslovně uvedeno jinak.',
+          text: '5.3. Bonusové hodiny, promo hodiny a jiné zvýhodněné kredity poskytnuté bezúplatně nad rámec zaplacené ceny nejsou směnitelné za hotovost a nelze je vyplatit zpět, není-li výslovně uvedeno jinak.',
         },
         {
           type: 'p',
@@ -156,7 +173,7 @@ export const TERMS_CS: LegalDocument = {
         },
         {
           type: 'p',
-          text: '5.6. Po uplynutí platnosti dárkového poukazu nelze požadovat jeho prodloužení, výměnu za hotovost ani jiné plnění, pokud se provozovatel se zákazníkem nedohodne jinak.',
+          text: '5.6. Po uplynutí platnosti dárkového poukazu nelze požadovat jeho prodloužení, výměnu za hotovost ani jiné plnění, pokud se provozovatel se zákazníkem nedohodne jinak. Právo spotřebitele odstoupit od smlouvy o koupi dárkového poukazu ve lhůtě podle čl. 12 tím není dotčeno.',
         },
       ],
     },
@@ -180,11 +197,15 @@ export const TERMS_CS: LegalDocument = {
           type: 'p',
           text: '6.4. Provozovatel si vyhrazuje právo turnaj zrušit, přesunout nebo změnit jeho formát z organizačních, technických nebo bezpečnostních důvodů. V takovém případě budou zákazníci informováni o dalším postupu.',
         },
+        {
+          type: 'p',
+          text: '6.5. Turnaj konaný v určeném termínu je akcí volného času ve smyslu čl. 12.2 těchto VOP; právo odstoupit od smlouvy ve lhůtě 14 dnů se na přihlášku na turnaj neuplatní. Zruší-li turnaj provozovatel, vrací se startovné v plné výši.',
+        },
       ],
     },
     {
       id: 'pravidla-vyuzivani',
-      title: '7. Pravidla využívání služeb a prostor MVP Esports',
+      title: '7. Pravidla využívání služeb a prostor Clutch Zone',
       body: [
         {
           type: 'p',
@@ -240,7 +261,7 @@ export const TERMS_CS: LegalDocument = {
       body: [
         {
           type: 'p',
-          text: '9.1. V prostorách centra je povoleno konzumovat pouze jídlo a nápoje zakoupené v dané pobočce MVP ESports. Konzumace vlastního jídla a nápojů není povolena, pokud personál neurčí jinak.',
+          text: '9.1. V prostorách centra je povoleno konzumovat pouze jídlo a nápoje zakoupené v dané pobočce Clutch Zone. Konzumace vlastního jídla a nápojů není povolena, pokud personál neurčí jinak.',
         },
         {
           type: 'p',
@@ -278,7 +299,7 @@ export const TERMS_CS: LegalDocument = {
         },
         {
           type: 'p',
-          text: '10.4. Provozovatel neodpovídá za výpadky, omezení nebo chyby způsobené poskytovateli internetu, dodavateli software, herními platformami, externím rezervačním systémem, vyšší mocí nebo jinými okolnostmi mimo přímou kontrolu provozovatele.',
+          text: '10.4. Provozovatel neodpovídá za výpadky, omezení nebo chyby způsobené poskytovateli internetu, dodavateli software, herními platformami, externím rezervačním systémem, vyšší mocí nebo jinými okolnostmi mimo přímou kontrolu provozovatele. Tím není dotčena odpovědnost provozovatele za řádné poskytnutí zaplacené služby vůči spotřebiteli podle čl. 11.',
         },
       ],
     },
@@ -297,40 +318,152 @@ export const TERMS_CS: LegalDocument = {
         },
         {
           type: 'p',
-          text: '11.3. Reklamace lze řešit osobně na pobočce nebo e-mailem na kontakt příslušné pobočky.',
+          text: '11.3. Reklamaci lze uplatnit osobně na pobočce nebo e-mailem na adresu info@clutchzone.club.',
+        },
+        {
+          type: 'p',
+          text: '11.4. Provozovatel vydá spotřebiteli písemné potvrzení o tom, kdy reklamaci uplatnil, co je jejím obsahem a jaký způsob vyřízení požaduje.',
+        },
+        {
+          type: 'p',
+          text: '11.5. Provozovatel rozhodne o reklamaci ihned, ve složitých případech do tří pracovních dnů. Do této lhůty se nezapočítává doba přiměřená podle druhu služby potřebná k odbornému posouzení vady. Reklamaci včetně odstranění vady provozovatel vyřídí nejpozději do 30 dnů ode dne jejího uplatnění, pokud se se spotřebitelem nedohodne na delší lhůtě. Marné uplynutí této lhůty se považuje za podstatné porušení smlouvy.',
+        },
+        {
+          type: 'p',
+          text: '11.6. Po vyřízení reklamace vydá provozovatel spotřebiteli potvrzení o datu a způsobu vyřízení reklamace, případně písemné odůvodnění jejího zamítnutí.',
+        },
+      ],
+    },
+    {
+      // The credit-purchase confirmation e-mail links here (/terms#odstoupeni).
+      id: 'odstoupeni',
+      title: '12. Odstoupení od smlouvy uzavřené na dálku',
+      body: [
+        {
+          type: 'p',
+          text: '12.1. Tento článek se vztahuje pouze na spotřebitele, který uzavřel smlouvu s provozovatelem distančním způsobem, tedy zejména prostřednictvím webových stránek nebo rezervačního systému.',
+        },
+        {
+          type: 'p',
+          text: '12.2. Rezervace herního místa, herního zařízení, bootcamp zóny nebo účast na turnaji na konkrétní datum a čas je smlouvou o využití volného času, kterou provozovatel poskytuje v určeném termínu. Podle § 1837 písm. j) občanského zákoníku proto spotřebitel nemá právo od takové smlouvy odstoupit ve lhůtě 14 dnů. Storno podmínky se řídí čl. 3.4 těchto VOP.',
+        },
+        {
+          type: 'p',
+          text: '12.3. U nákupu herních hodin, kreditu, balíčků, permanentek a dárkových poukazů, které nejsou vázány na konkrétní datum a čas poskytnutí služby, má spotřebitel právo odstoupit od smlouvy bez udání důvodu ve lhůtě 14 dnů ode dne uzavření smlouvy.',
+        },
+        {
+          type: 'p',
+          text: '12.4. Pro odstoupení od smlouvy podle čl. 12.3 může spotřebitel využít:',
+        },
+        {
+          type: 'ul',
+          items: [
+            'a) tlačítko pro odstoupení od smlouvy dostupné v potvrzovacím e-mailu o nákupu a na webových stránkách provozovatele,',
+            'b) vzorový formulář pro odstoupení od smlouvy, který tvoří přílohu č. 1 těchto VOP, nebo',
+            'c) jakékoli jiné jednoznačné prohlášení zaslané na e-mailovou adresu nebo na adresu sídla provozovatele.',
+          ],
+        },
+        {
+          type: 'p',
+          text: 'Lhůta pro odstoupení je zachována, pokud spotřebitel odešle odstoupení nejpozději poslední den lhůty.',
+        },
+        {
+          type: 'p',
+          text: '12.5. Provozovatel potvrdí spotřebiteli přijetí odstoupení bez zbytečného odkladu v textové podobě.',
+        },
+        {
+          type: 'p',
+          text: '12.6. Odstoupí-li spotřebitel od smlouvy, vrátí mu provozovatel bez zbytečného odkladu, nejpozději do 14 dnů od odstoupení, všechny peněžní prostředky, které od něj na základě smlouvy přijal, a to stejným způsobem, jakým je přijal, nedohodnou-li se jinak.',
+        },
+        {
+          type: 'p',
+          text: '12.7. Požádal-li spotřebitel výslovně o zahájení poskytování služby před uplynutím lhůty pro odstoupení a byla-li služba do okamžiku odstoupení zčásti čerpána, uhradí spotřebitel provozovateli poměrnou část ceny odpovídající rozsahu již poskytnutého plnění. Byla-li služba poskytnuta v plném rozsahu, právo na odstoupení podle § 1837 písm. a) občanského zákoníku zaniká.',
+        },
+        {
+          type: 'p',
+          text: '12.8. Nákupem kreditu se pro účely čl. 12.7 rozumí čerpáním kredit, který již byl spotřebitelem využit k úhradě konkrétní služby.',
         },
       ],
     },
     {
       id: 'ochrana-osobnich-udaju',
-      title: '12. Ochrana osobních údajů',
+      title: '13. Ochrana osobních údajů',
       body: [
         {
           type: 'p',
-          text: '12.1. Informace o zpracování osobních údajů zákazníků jsou uvedeny v samostatném dokumentu „Ochrana osobních údajů“ dostupném na webových stránkách provozovatele.',
+          text: '13.1. Informace o zpracování osobních údajů zákazníků jsou uvedeny v samostatném dokumentu „Ochrana osobních údajů“ dostupném na webových stránkách provozovatele.',
         },
         {
           type: 'p',
-          text: '12.2. Informace o cookies jsou uvedeny v samostatném dokumentu „Nastavení cookies“.',
+          text: '13.2. Informace o cookies a o nastavení souhlasu jsou uvedeny v samostatném dokumentu „Nastavení cookies“ dostupném na webových stránkách provozovatele na adrese https://clutchzone.club/cookies.',
         },
       ],
     },
     {
       id: 'zaverecna-ustanoveni',
-      title: '13. Závěrečná ustanovení',
+      title: '14. Závěrečná ustanovení',
       body: [
-        { type: 'p', text: '13.1. Tyto VOP se řídí právním řádem České republiky.' },
+        { type: 'p', text: '14.1. Tyto VOP se řídí právním řádem České republiky.' },
         {
           type: 'p',
-          text: '13.2. Pokud je některé ustanovení těchto VOP neplatné nebo neúčinné, nemá to vliv na platnost a účinnost ostatních ustanovení.',
+          text: '14.2. Pokud je některé ustanovení těchto VOP neplatné nebo neúčinné, nemá to vliv na platnost a účinnost ostatních ustanovení.',
         },
         {
           type: 'p',
-          text: '13.3. Provozovatel je oprávněn tyto VOP měnit. Nové znění VOP je účinné ode dne jeho zveřejnění na webových stránkách, pokud není uvedeno jinak.',
+          text: '14.3. Provozovatel je oprávněn tyto VOP měnit. Nové znění VOP je účinné ode dne jeho zveřejnění na webových stránkách, pokud není uvedeno jinak. Pro již uzavřené smlouvy platí znění VOP účinné v den uzavření smlouvy.',
         },
         {
           type: 'p',
-          text: '13.4. Tyto VOP jsou dostupné na webových stránkách https://clutchzone.club.',
+          text: '14.4. Dozor nad dodržováním povinností podle zákona č. 634/1992 Sb., o ochraně spotřebitele, vykonává Česká obchodní inspekce.',
+        },
+        {
+          type: 'p',
+          text: '14.5. K mimosoudnímu řešení spotřebitelských sporů ze smlouvy uzavřené mezi provozovatelem a spotřebitelem je příslušná Česká obchodní inspekce, se sídlem Štěpánská 796/44, 110 00 Praha 1, internetová adresa: https://www.coi.cz. Spotřebitel může tento postup využít v případě, že se s provozovatelem nepodaří vyřešit spor přímo. Právo obrátit se na soud tím není dotčeno.',
+        },
+        {
+          type: 'p',
+          text: '14.6. Tyto VOP jsou dostupné na webových stránkách https://clutchzone.club',
+        },
+        {
+          type: 'p',
+          text: '14.7. Tyto VOP jsou zveřejněny v české, anglické, německé a ukrajinské jazykové verzi. V případě rozporu mezi jazykovými verzemi je rozhodující česká verze.',
+        },
+        { type: 'p', text: '14.8. Tyto VOP nabývají účinnosti dne 03.09.2026.' },
+      ],
+    },
+    {
+      id: 'vzorovy-formular',
+      title: 'Příloha č. 1 — Vzorový formulář pro odstoupení od smlouvy',
+      body: [
+        {
+          type: 'p',
+          text: '(Vyplňte tento formulář a odešlete jej zpět pouze v případě, že chcete odstoupit od smlouvy.)',
+        },
+        { type: 'p', text: 'Adresát:' },
+        {
+          type: 'ul',
+          items: [
+            'Martin Mašek, Václava Volfa 1337/37, 370 05 České Budějovice, IČO: 23095571',
+            'E-mail: info@clutchzone.club',
+          ],
+        },
+        {
+          type: 'p',
+          text: 'Oznamuji, že tímto odstupuji od smlouvy o poskytnutí těchto služeb / o koupi tohoto zboží:',
+        },
+        {
+          type: 'ul',
+          items: [
+            '……………………………………………………………………………………………………',
+            'Datum objednání / datum obdržení: ……………………………………………………………',
+            'Číslo objednávky: ………………………………………………………………………………',
+            'Jméno a příjmení spotřebitele: …………………………………………………………………',
+            'Adresa spotřebitele: ……………………………………………………………………………',
+            'E-mail spotřebitele: ……………………………………………………………………………',
+            'Číslo účtu / karty pro vrácení platby: …………………………………………………………',
+            'Podpis spotřebitele (pouze pokud je formulář zasílán v listinné podobě): ……………………',
+            'Datum: …………………………………………………',
+          ],
         },
       ],
     },

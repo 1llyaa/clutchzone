@@ -6,15 +6,13 @@
 // discrepancy, the Czech wording prevails.
 //
 // The Czech source is reproduced verbatim from the operator's document,
-// including apparent errors (for example the "České BUdějovice" spelling in
-// section 1 and the addresses as supplied). Those oddities were preserved here
-// intentionally — do not "fix" them.
+// including the addresses as supplied. Do not "fix" them.
 //
 // Pending owner review — not yet signed off by the operator or a translator.
 import type { LegalDocument } from './types';
 
 export const PRIVACY_EN: LegalDocument = {
-  version: '2026-08-30',
+  version: '2026-09-03',
   eyebrow: '// LEGAL',
   title: 'Personal data protection',
   sections: [
@@ -26,9 +24,10 @@ export const PRIVACY_EN: LegalDocument = {
         {
           type: 'ul',
           items: [
-            'Martin Mašek',
-            'Registered office: Václava Volfa 1337/37, 37005 České Budějovice',
+            'Martin Mašek, a natural person doing business on the basis of a trade licence',
+            'Registered office: Václava Volfa 1337/37, 370 05 České Budějovice',
             'Company ID (IČO): 23095571',
+            'Entered in the trade register maintained by the Municipal Authority of the City of České Budějovice',
             'Web: https://clutchzone.club',
           ],
         },
@@ -37,7 +36,7 @@ export const PRIVACY_EN: LegalDocument = {
           type: 'ul',
           items: [
             'Clutch Zone',
-            'Krajinská 2381/17, 37001, České BUdějovice',
+            'Krajinská 2381/17, 370 01 České Budějovice',
             'Phone: +420 733 104 289',
             'E-mail: info@clutchzone.club',
           ],
@@ -155,7 +154,7 @@ export const PRIVACY_EN: LegalDocument = {
             'accounting and tax documents are retained for the period laid down by legal regulations;',
             'communication data is retained for the period needed to handle the request and subsequently for the period necessary to protect the operator’s rights;',
             'marketing data is processed until consent is withdrawn or until it is no longer needed;',
-            'cookies are retained according to the settings of the individual cookies and consents.',
+            'cookies are retained according to the settings of the individual cookies and consents — see the “Cookie settings” document.',
           ],
         },
       ],
@@ -209,7 +208,7 @@ export const PRIVACY_EN: LegalDocument = {
       body: [
         {
           type: 'p',
-          text: 'Information about the use of cookies is set out in a separate document, “Cookie settings”.',
+          text: 'Information about the use of cookies is set out in the separate document “Cookie settings” available on the operator’s website at https://clutchzone.club/cookies.',
         },
       ],
     },
@@ -219,7 +218,7 @@ export const PRIVACY_EN: LegalDocument = {
       body: [
         {
           type: 'p',
-          text: 'We may update this document from time to time. The current wording is always available on the website https://clutchzone.club',
+          text: 'We may update this document from time to time. The current wording is always available on the website https://clutchzone.club.',
         },
       ],
     },

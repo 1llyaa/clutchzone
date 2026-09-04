@@ -8,11 +8,11 @@
     "cta": "REZERVOVAT"
   },
   "hero": {
-    "eyebrow": "ČESKÉ BUDĚJOVICE, KRAJINSKÁ 244/17, 37001",
+    "eyebrow": "ČESKÉ BUDĚJOVICE, KRAJINSKÁ 2381/17, 37001",
     "h1Line1": "TVOJE NOVÁ",
     "h1Line2": "E-SPORTOVÁ",
     "h1Line3": "ZÁKLADNA",
-    "subhead": "Zažij e-sport na vlastní kůži. Od příležitostného hraní s přáteli až po vyhrocené turnaje: čekají na tebe našlapané herní stanice, PS5 a skvělá komunita.",
+    "subhead": "Herna v centru Budějovic. Přijď si zahrát s partou po škole nebo trénovat na turnaj. Stanice jsou stejné, rozdíl je jen v tom, jak moc to myslíš vážně.",
     "ctaPrimary": "REZERVOVAT MÍSTO",
     "ctaSecondary": "ZOBRAZIT CENÍK",
     "stat1Value": "12",
@@ -30,13 +30,13 @@
     "card1desc": "RTX 5060 Ti, 240Hz monitory. Žádné kompromisy.",
     "card2no": "02",
     "card2title": "PS5 LOUNGE",
-    "card2desc": "Pohodlné zóny s velkými TV pro konzolové hraní ve dvou i v partě.",
+    "card2desc": "PS5 lounge s velkoplošnými TV. Pro dva i pro celou partu.",
     "card3no": "03",
     "card3title": "TURNAJE",
-    "card3desc": "Pravidelné CS2, Valorant a FIFA turnaje s hodnotnými cenami.",
+    "card3desc": "Pravidelné turnaje ve všech oblíbených E-sportových titulech.",
     "card4no": "04",
     "card4title": "KOMUNITA",
-    "card4desc": "Místo, kde najdeš spoluhráče, tým i lidi se stejnou vášní."
+    "card4desc": "Místo, kde najdeš spoluhráče, tým a hlavně lidi se stejnou vášní."
   },
   "stream": {
     "heading": "SLEDUJ NÁS LIVE"
@@ -50,7 +50,9 @@
     "detailTitle": "DETAIL TURNAJE",
     "noDescription": "K tomuto turnaji zatím není žádný popis.",
     "detailCta": "PŘIHLÁSIT SE",
-    "close": "ZAVŘÍT"
+    "close": "ZAVŘÍT",
+    "none": "ŽÁDNÉ NADCHÁZEJÍCÍ TURNAJE",
+    "full": "PLNÝ"
   },
   "tournamentReg": {
     "title": "REGISTRACE NA TURNAJ",
@@ -69,7 +71,8 @@
     "captainPlaceholder": "Jan Novák",
     "emailPlaceholder": "jan@email.cz",
     "discordPlaceholder": "username",
-    "playersPlaceholder": "Jan Novák\nPetr Svoboda\n..."
+    "playersPlaceholder": "Jan Novák\nPetr Svoboda\n...",
+    "slotsLeft": "{count, plural, one {zbývá # místo} few {zbývají # místa} other {zbývá # míst}}"
   },
   "games": {
     "heading": "CO U NÁS HRAJEŠ"
@@ -88,11 +91,11 @@
     "heading": "NAPIŠ NÁM",
     "subtext": "Máš otázku, zájem o skupinovou rezervaci nebo chceš vědět víc o turnajích? Ozvi se nám — odpovídáme do 24 hodin.",
     "locationLabel": "ADRESA",
-    "locationValue": "Krajinská 244/17, České Budějovice 37001",
+    "locationValue": "Krajinská 2381/17, České Budějovice 37001",
     "hoursLabel": "OTEVÍRACÍ DOBA",
     "hoursValue": "Út–Čt, Ne: 14:00–00:00 · Pá–So: 14:00–04:00",
     "emailLabel": "E-MAIL",
-    "emailValue": "info@clutchzone.cz",
+    "emailValue": "info@clutchzone.club",
     "name": "JMÉNO A PŘÍJMENÍ",
     "email": "E-MAIL",
     "message": "ZPRÁVA",
@@ -106,7 +109,7 @@
   },
   "ctaBand": {
     "eyebrow": "PŘIPRAVEN HRÁT?",
-    "heading": "REZERVUJ SVOJI STANICI JEŠTĚ DNES",
+    "heading": "REZERVUJ SVŮJ FLEK JEŠTĚ DNES",
     "primary": "REZERVOVAT MÍSTO",
     "secondary": "NAPSAT NÁM"
   },
@@ -210,13 +213,15 @@
     "creditNoteTitle": "HODINY ZŮSTÁVAJÍ",
     "creditNoteBody": "Platnost {months} měsíce od nákupu. Připíšeme ti je na Clutchzone account při první návštěvě — ukaž tenhle kód na recepci.",
     "confirmationSentNote": "Potvrzení jsme poslali na tvůj e-mail. Přijď 10 minut před začátkem a ukaž referenční kód na recepci.",
-    "loadingPricing": "Načítám ceník…"
+    "loadingPricing": "Načítám ceník…",
+    "namePlaceholder": "Jan Novák",
+    "discordPlaceholder": "uživatel#0000"
   },
   "ggleap": {
     "checking": "Ověřuji účet…",
     "hours": "Na účtu ggLeap máš {hours}.",
     "notEnough": "Na celou rezervaci to nestačí",
-    "notFound": "Tuhle přezdívku jsme v ggLeap nenašli — zkontroluj ji, nebo pokračuj v platbě.",
+    "notFound": "Tuhle přezdívku jsme v databázi bohužel nenašli — zkontroluj ji, nebo pokračuj v platbě.",
     "unavailable": "Zůstatek hodin se nám teď nepodařilo ověřit."
   },
   "calculator": {
@@ -335,7 +340,7 @@
     "cancelled": "Rezervace byla zrušena. Herní místo je uvolněné.",
     "alreadyCancelled": "Tato rezervace už byla zrušena dříve.",
     "creditNote": "Na váš účet vám připíšeme {hours} h — stačí říct na recepci při další návštěvě.",
-    "creditUnrecordedNote": "Rezervace je zrušená, ale vrácení kreditu se nepodařilo automaticky zaznamenat. Ozvěte se nám prosím na info@clutchzone.cz a kredit vám připíšeme ručně.",
+    "creditUnrecordedNote": "Rezervace je zrušená, ale vrácení kreditu se nepodařilo automaticky zaznamenat. Ozvěte se nám prosím na info@clutchzone.club a kredit vám připíšeme ručně.",
     "refundRequestedNote": "Vaši žádost o vrácení částky na platební kartu jsme zaznamenali. Vyřídíme ji do 14 dnů.",
     "genericError": "Něco se pokazilo. Zkuste to prosím znovu nebo nám zavolejte.",
     "invalidTitle": "Neplatný odkaz",
@@ -367,5 +372,145 @@
     "notFoundTitle": "Objednávka nenalezena",
     "notFoundBody": "Tuto objednávku se nám nepodařilo najít. Zkontrolujte prosím odkaz v e-mailu nebo nás kontaktujte.",
     "complaintsLink": "Reklamační řád a podmínky odstoupení →"
+  },
+  "common": {
+    "close": "Zavřít",
+    "prev": "Předchozí",
+    "next": "Další",
+    "homeAria": "Clutch Zone — domů",
+    "decreaseQty": "Snížit počet",
+    "increaseQty": "Zvýšit počet"
+  },
+  "meta": {
+    "title": "Clutch Zone — Esport Club České Budějovice",
+    "description": "Prémiový esport gaming klub v Českých Budějovicích. Herní PC, PS5, turnaje a komunita.",
+    "ogAlt": "Clutch Zone — Esport Club České Budějovice",
+    "ogTagline": "ESPORT CLUB · ČESKÉ BUDĚJOVICE",
+    "withdrawTitle": "Odstoupení od smlouvy — Clutch Zone",
+    "addressLocality": "České Budějovice"
+  },
+  "maintenance": {
+    "eyebrow": "Probíhá údržba",
+    "title": "Brzy zpět",
+    "body": "Připravujeme něco nového. Web je momentálně dostupný jen pro tým.",
+    "username": "Uživatel",
+    "password": "Heslo",
+    "submit": "Vstoupit",
+    "error": "Špatné přihlašovací údaje"
+  },
+  "weekdays": {
+    "day0": "NEDĚLE",
+    "day1": "PONDĚLÍ",
+    "day2": "ÚTERÝ",
+    "day3": "STŘEDA",
+    "day4": "ČTVRTEK",
+    "day5": "PÁTEK",
+    "day6": "SOBOTA"
+  },
+  "errors": {
+    "invalidData": "Neplatné údaje",
+    "termsRequiredBooking": "Bez souhlasu s podmínkami nemůžeme rezervaci dokončit.",
+    "termsRequiredCredit": "Bez souhlasu s podmínkami nemůžeme nákup dokončit.",
+    "closedThatDay": "V tento den je zavřeno",
+    "offerExpired": "Tahle nabídka už neplatí, ceník se mezitím změnil.",
+    "priceChanged": "Cena se mezitím změnila.",
+    "timePassed": "Tento čas už uplynul.",
+    "noStations": "Žádné stanice nejsou k dispozici",
+    "onlySomeFree": "{count, plural, one {Jen # stanice je volná v tomto čase.} few {Jen # stanice jsou volné v tomto čase.} other {Jen # stanic je volných v tomto čase.}}",
+    "raceLost": "Někdo tě právě předběhl, zkus to prosím znovu.",
+    "bookingCreateFailed": "Chyba při vytváření rezervace",
+    "alreadyPaid": "Rezervace je již zaplacena",
+    "bookingNoLongerValid": "Rezervace už není platná — vytvoř prosím novou.",
+    "paymentCreateFailed": "Chyba při vytváření platby",
+    "tooManyRequests": "Příliš mnoho dotazů",
+    "tierGone": "Cenovka {hours}H pro {station} už neexistuje",
+    "orderCreateFailed": "Chyba při vytváření objednávky",
+    "orderNotFound": "Objednávka nenalezena",
+    "orderNotFoundDot": "Objednávka nenalezena.",
+    "invalidLink": "Neplatný odkaz.",
+    "linkExpired": "Odkaz je neplatný nebo vypršel.",
+    "cancelFailed": "Rezervaci se nepodařilo zrušit.",
+    "withdrawHoursCredited": "Hodiny už byly připsány na účet — odstoupení prosím vyřešte s obsluhou.",
+    "withdrawWindowOver": "Čtrnáctidenní lhůta pro odstoupení už uplynula.",
+    "withdrawNotOnline": "Od této objednávky nelze odstoupit online.",
+    "withdrawNoPayment": "K objednávce chybí platební údaj — kontaktujte nás prosím e-mailem.",
+    "withdrawFailed": "Odstoupení se nepodařilo zpracovat.",
+    "withdrawRefundFailed": "Odstoupení jsme zaznamenali, ale vrácení platby se nezdařilo. Ozveme se vám.",
+    "bookingNotFoundDot": "Rezervace nenalezena.",
+    "bookingNotFound": "Rezervace nenalezena"
+  },
+  "email": {
+    "labels": {
+      "station": "Stanice",
+      "offer": "Nabídka",
+      "date": "Datum",
+      "time": "Čas",
+      "payment": "Platba",
+      "toPay": "K zaplacení",
+      "payOnSite": "Zaplatíš na místě",
+      "reference": "Reference",
+      "paymentDate": "Datum platby",
+      "paidAmount": "Zaplaceno",
+      "paymentMethod": "Způsob platby",
+      "service": "Služba",
+      "term": "Termín",
+      "total": "Celkem",
+      "validUntil": "Platnost do"
+    },
+    "booking": {
+      "headingConfirmed": "Rezervace potvrzena",
+      "headingAwaitingPayment": "Rezervace čeká na platbu",
+      "intro": "Díky za rezervaci v Clutch Zone, {name}!",
+      "payWithCredit": "Hodinami z účtu — nic neplatíš",
+      "toPayCard": "{amount} Kč — kartou",
+      "amountPlain": "{amount} Kč",
+      "arrivalCredit": "Přijďte 10 minut před začátkem a ukažte referenční kód na recepci. Nic neplatíte — hodiny se strhnou z účtu až podle odehraného času.",
+      "arrivalAwaiting": "Po zaplacení přijďte 10 minut před začátkem a ukažte referenční kód na recepci.",
+      "arrivalOnsite": "Přijďte 10 minut před začátkem a ukažte referenční kód na recepci. Cena uvedená výše je závazná a zaplatíte ji na recepci.",
+      "holdNote": "Rezervace ti drží místo {minutes} minut. Pokud do té doby platba nedorazí, automaticky propadne a stanice se uvolní. Po zaplacení ti přijde potvrzení o platbě.",
+      "holdNoteText": "Rezervace ti drží místo {minutes} minut. Pokud platba nedorazí, propadne.",
+      "creditNote": "Hodiny ti připíšeme na Clutchzone account při první návštěvě — ukaž tenhle kód na recepci. Platnost {months} měsíce od nákupu.",
+      "creditNoteText": "Hodiny ti připíšeme na Clutchzone account při první návštěvě.",
+      "cancelNote": "Nemůžeš dorazit? Rezervaci zrušíš bezplatně do {minutes} minut před začátkem.",
+      "cancelLink": "Zrušit rezervaci →",
+      "cancelLinkText": "Zrušit rezervaci (bezplatně do {minutes} minut před začátkem)",
+      "subject": "{heading} {reference} · Clutch Zone · {date} {time}"
+    },
+    "receipt": {
+      "heading": "Platba přijata",
+      "intro": "Díky, {name} — rezervace je zaplacená a potvrzená.",
+      "methodCard": "Platební kartou online",
+      "methodOnsite": "Na místě v klubu",
+      "serviceWithOffer": "{offer} — {station}",
+      "serviceDefault": "Herní rezervace — {station}",
+      "docNote": "Tento e-mail slouží jako doklad o zakoupení. Přijďte 10 minut před začátkem a ukažte referenční kód na recepci.",
+      "docNoteText": "Tento e-mail slouží jako doklad o zakoupení.",
+      "subject": "Platba přijata {reference} · Clutch Zone · {amount} Kč"
+    },
+    "credit": {
+      "heading": "Nákup kreditu potvrzen",
+      "intro": "Díky za nákup v Clutch Zone, {name}!",
+      "hoursRow": "{station} hodiny",
+      "creditNote": "Hodiny ti připíšeme na Clutchzone account při první návštěvě — ukaž tenhle kód na recepci. Nevyužité hodiny po {date} propadají.",
+      "creditNoteText": "Hodiny ti připíšeme na Clutchzone account při první návštěvě — ukaž tenhle kód na recepci.",
+      "withdrawNote": "Rozmyslel sis to? Od nákupu můžeš do 14 dnů odstoupit, pokud hodiny ještě nebyly čerpány — peníze ti vrátíme zpět na kartu.",
+      "withdrawLink": "Odstoupit od smlouvy →",
+      "withdrawLinkText": "Odstoupení od smlouvy do 14 dnů",
+      "subject": "Nákup kreditu potvrzen {reference} · Clutch Zone"
+    },
+    "tournamentReceived": {
+      "heading": "Registrace přijata",
+      "intro": "Ahoj {captain}, tým {team} je přihlášen na turnaj {tournament} ({date}).",
+      "body": "Registrace teď čeká na potvrzení organizátorem. Jakmile ji potvrdíme, přijde ti další e-mail.",
+      "subject": "Registrace přijata · {tournament}",
+      "text": "Tým {team} je přihlášen na turnaj {tournament} ({date}). Registrace čeká na potvrzení organizátorem."
+    },
+    "tournamentConfirmed": {
+      "heading": "Účast potvrzena",
+      "intro": "Ahoj {captain}!",
+      "body": "Vaše účast na turnaji {tournament} ({date}) je potvrzena. Uvidíme se na místě!",
+      "subject": "Účast potvrzena · {tournament}",
+      "text": "Účast týmu {team} na turnaji {tournament} ({date}) je potvrzena."
+    }
   }
 }

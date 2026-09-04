@@ -63,6 +63,7 @@ function MobileGallery({ images }: { images: GalleryImage[] }) {
 
 // ─── Desktop Carousel ─────────────────────────────────────────────────────────
 function Carousel({ images }: { images: GalleryImage[] }) {
+  const tc = useTranslations('common');
   const [idx, setIdx] = useState(0);
 
   const prev = useCallback(() => setIdx((i) => (i - 1 + images.length) % images.length), [images.length]);
@@ -95,10 +96,10 @@ function Carousel({ images }: { images: GalleryImage[] }) {
 
       {images.length > 1 && (
         <>
-          <Button variant="ghost" iconOnly onClick={prev} aria-label="Předchozí" className="absolute left-6 top-1/2 -translate-y-1/2">
+          <Button variant="ghost" iconOnly onClick={prev} aria-label={tc('prev')} className="absolute left-6 top-1/2 -translate-y-1/2">
             <CaretLeft size={20} weight="bold" />
           </Button>
-          <Button variant="ghost" iconOnly onClick={next} aria-label="Další" className="absolute right-6 top-1/2 -translate-y-1/2">
+          <Button variant="ghost" iconOnly onClick={next} aria-label={tc('next')} className="absolute right-6 top-1/2 -translate-y-1/2">
             <CaretRight size={20} weight="bold" />
           </Button>
           <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2">

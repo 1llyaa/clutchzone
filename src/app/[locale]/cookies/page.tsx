@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import LegalSection from '@/components/legal/LegalSection';
@@ -12,8 +11,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'cookies' });
-  const title = `${t('heading')} — Clutch Zone`;
+  const title = `${getLegalDocument('cookies', locale).title} — Clutch Zone`;
   return {
     title,
     alternates: { canonical: `/${locale}/cookies` },
@@ -27,12 +25,10 @@ export default async function CookiesPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'cookies' });
 
-  // The explanatory text is the cookies section of the privacy policy — kept
-  // in one place so the two pages can't drift apart.
-  const privacy = getLegalDocument('privacy', locale);
-  const cookiesSection = privacy.sections.find((s) => s.id === 'cookies');
+  // "Nastavení cookies" is a legal document in its own right — the terms and
+  // the privacy policy both point here for it.
+  const doc = getLegalDocument('cookies', locale);
 
   return (
     <>
@@ -43,18 +39,20 @@ export default async function CookiesPage({
             className="font-mono text-cz-orange uppercase block"
             style={{ fontSize: 16, letterSpacing: 4, marginBottom: 10 }}
           >
-            {privacy.eyebrow}
+            {doc.eyebrow}
           </span>
           <h1
             className="font-display text-white uppercase"
             style={{ fontSize: 'clamp(32px, 5vw, 52px)', letterSpacing: 1.5, lineHeight: 0.95 }}
           >
-            {t('heading')}
+            {doc.title}
           </h1>
 
           <CookieSettingsClient />
 
-          {cookiesSection && <LegalSection section={cookiesSection} />}
+          {doc.sections.map((section) => (
+            <LegalSection key={section.id} section={section} />
+          ))}
         </div>
       </main>
       <Footer />

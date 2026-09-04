@@ -24,6 +24,7 @@ interface Props {
 
 export default function TournamentDetailModal({ tournament, onClose, onRegister }: Props) {
   const t = useTranslations('tournaments');
+  const tc = useTranslations('common');
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -67,7 +68,7 @@ export default function TournamentDetailModal({ tournament, onClose, onRegister 
               {tournament.game} · {formatDate(tournament.date)}
             </div>
           </div>
-          <Button variant="ghost" iconOnly onClick={onClose} aria-label="Zavřít">
+          <Button variant="ghost" iconOnly onClick={onClose} aria-label={tc('close')}>
             <X size={20} weight="bold" />
           </Button>
         </div>
@@ -99,7 +100,7 @@ export default function TournamentDetailModal({ tournament, onClose, onRegister 
 
           <div className="flex gap-3">
             <Button type="button" onClick={() => onRegister(tournament)} disabled={isFull} size="sm" className="flex-1">
-              {isFull ? 'PLNÝ' : t('detailCta')}
+              {isFull ? t('full') : t('detailCta')}
             </Button>
             <Button variant="ghost" size="sm" onClick={onClose}>
               {t('close')}

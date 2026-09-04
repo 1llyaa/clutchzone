@@ -95,6 +95,7 @@ async function handleCreditPaid(
     clutchzoneAccount: order.clutchzone_account,
     items: (items ?? []).map((i) => ({ stationType: i.station_type as 'pc' | 'ps5', hours: i.hours, quantity: i.quantity })),
     withdrawUrl,
+    locale,
   };
   sendCreditOrderNotification(emailData).catch(() => {});
   sendCreditPurchaseConfirmation(emailData).catch(() => {});

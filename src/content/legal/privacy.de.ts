@@ -6,17 +6,15 @@
 // Abweichungen hat der tschechische Wortlaut Vorrang.
 //
 // Der tschechische Ausgangstext ist wortwörtlich aus dem Dokument des
-// Betreibers übernommen, einschließlich augenscheinlicher Fehler (etwa die
-// Schreibweise „České BUdějovice“ in Abschnitt 1 sowie die Anschriften in der
-// gelieferten Form). Diese Auffälligkeiten wurden hier bewusst beibehalten und
-// dürfen nicht „korrigiert“ werden.
+// Betreibers übernommen, einschließlich der Anschriften in der gelieferten
+// Form. Diese dürfen nicht „korrigiert“ werden.
 //
 // Steht noch zur Prüfung durch den Betreiber aus — bislang weder vom Betreiber
 // noch von einem Übersetzer freigegeben.
 import type { LegalDocument } from './types';
 
 export const PRIVACY_DE: LegalDocument = {
-  version: '2026-08-30',
+  version: '2026-09-03',
   eyebrow: '// RECHTLICHE HINWEISE',
   title: 'Schutz personenbezogener Daten',
   sections: [
@@ -28,18 +26,19 @@ export const PRIVACY_DE: LegalDocument = {
         {
           type: 'ul',
           items: [
-            'Martin Mašek',
-            'Sitz: Václava Volfa 1337/37, 37005 České Budějovice',
+            'Martin Mašek, natürliche Person, tätig auf Grundlage einer Gewerbeberechtigung',
+            'Sitz: Václava Volfa 1337/37, 370 05 České Budějovice',
             'Identifikationsnummer (IČO): 23095571',
+            'Eingetragen im Gewerberegister, geführt vom Magistrat der Stadt České Budějovice',
             'Web: https://clutchzone.club',
           ],
         },
-        { type: 'p', text: 'Kontakte der Filialen:' },
+        { type: 'p', text: 'Kontakte der Filiale:' },
         {
           type: 'ul',
           items: [
             'Clutch Zone',
-            'Krajinská 2381/17, 37001, České BUdějovice',
+            'Krajinská 2381/17, 370 01 České Budějovice',
             'Telefon: +420 733 104 289',
             'E-Mail: info@clutchzone.club',
           ],
@@ -157,7 +156,7 @@ export const PRIVACY_DE: LegalDocument = {
             'Buchhaltungs- und Steuerbelege bewahren wir für die durch Rechtsvorschriften festgelegte Dauer auf;',
             'Daten aus der Kommunikation bewahren wir für die zur Erledigung des Anliegens erforderliche Dauer und anschließend für die zum Schutz der Rechte des Betreibers erforderliche Dauer auf;',
             'Marketingdaten verarbeiten wir bis zum Widerruf der Einwilligung oder bis zu dem Zeitpunkt, zu dem sie nicht mehr benötigt werden;',
-            'Cookies werden gemäß den Einstellungen der einzelnen Cookies und Einwilligungen aufbewahrt.',
+            'Cookies werden gemäß den Einstellungen der einzelnen Cookies und Einwilligungen aufbewahrt — siehe das Dokument „Cookie-Einstellungen“.',
           ],
         },
       ],
@@ -211,7 +210,7 @@ export const PRIVACY_DE: LegalDocument = {
       body: [
         {
           type: 'p',
-          text: 'Informationen über die Verwendung von Cookies sind in einem gesonderten Dokument „Cookie-Einstellungen“ angegeben.',
+          text: 'Informationen über die Verwendung von Cookies sind im gesonderten Dokument „Cookie-Einstellungen“ angegeben, das auf der Website des Betreibers unter https://clutchzone.club/cookies verfügbar ist.',
         },
       ],
     },
@@ -221,7 +220,7 @@ export const PRIVACY_DE: LegalDocument = {
       body: [
         {
           type: 'p',
-          text: 'Wir können dieses Dokument fortlaufend aktualisieren. Die aktuelle Fassung ist stets auf der Website https://clutchzone.club verfügbar',
+          text: 'Wir können dieses Dokument fortlaufend aktualisieren. Die aktuelle Fassung ist stets auf der Website https://clutchzone.club verfügbar.',
         },
       ],
     },

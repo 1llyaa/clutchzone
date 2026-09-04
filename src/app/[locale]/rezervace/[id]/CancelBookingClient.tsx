@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/navigation';
 import Button from '@/components/ui/Button';
 import type { CancellationSettlement } from '@/lib/bookings/cancellation';
@@ -43,6 +43,7 @@ export default function CancelBookingClient({
   exp: number;
 }) {
   const t = useTranslations('cancel');
+  const locale = useLocale();
   const [outcome, setOutcome] = useState<Outcome | null>(
     booking.alreadyCancelled ? { status: 'already_cancelled', creditHours: 0 } : null,
   );
@@ -87,7 +88,7 @@ export default function CancelBookingClient({
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ refundRequested: refundRequested && willEarnCredit }),
+          body: JSON.stringify({ refundRequested: refundRequested && willEarnCredit, locale }),
         },
       );
       const data = await res.json();

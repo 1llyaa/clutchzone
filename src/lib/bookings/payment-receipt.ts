@@ -126,6 +126,7 @@ export async function sendPaymentReceiptOnce(
     paidVia: first.payment_method === 'online' ? 'card' : 'onsite',
     cancelUrl,
     cancellationWindowMinutes,
+    locale: opts.locale,
   });
 
   if (opts.notifyAdmin) {

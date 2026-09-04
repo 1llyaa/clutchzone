@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { getServerTranslator } from '@/lib/i18n/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createStripeClient } from '@/lib/stripe';
 import { getPricingConfig } from '@/lib/pricing/config-server';
@@ -29,14 +30,17 @@ function generateReference(): string {
 }
 
 export async function POST(req: NextRequest) {
-  const parsed = CreditOrderSchema.safeParse(await req.json().catch(() => null));
+  const body = await req.json().catch(() => null);
+  const parsed = CreditOrderSchema.safeParse(body);
+  // Off the raw body: a schema failure has no parsed.data to read the locale from.
+  const t = await getServerTranslator(body?.locale, 'errors');
   if (!parsed.success) {
-    return NextResponse.json({ error: 'Neplatné údaje', details: parsed.error.flatten() }, { status: 400 });
+    return NextResponse.json({ error: t('invalidData'), details: parsed.error.flatten() }, { status: 400 });
   }
   const data = parsed.data;
 
   if (!data.termsAccepted) {
-    return NextResponse.json({ error: 'Bez souhlasu s podmínkami nemůžeme nákup dokončit.' }, { status: 400 });
+    return NextResponse.json({ error: t('termsRequiredCredit') }, { status: 400 });
   }
 
   const config = await getPricingConfig();
@@ -46,7 +50,7 @@ export async function POST(req: NextRequest) {
   for (const item of data.items) {
     const tier = config.hourTiers.find((t) => t.isActive && t.stationType === item.stationType && t.hours === item.hours);
     if (!tier) {
-      return NextResponse.json({ error: `Cenovka ${item.hours}H pro ${item.stationType.toUpperCase()} už neexistuje` }, { status: 409 });
+      return NextResponse.json({ error: t('tierGone', { hours: item.hours, station: item.stationType.toUpperCase() }) }, { status: 409 });
     }
     lines.push({ stationType: item.stationType, hours: item.hours, quantity: item.quantity, unitAmount: tier.amount });
   }
@@ -78,14 +82,14 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (orderErr || !order) {
-    return NextResponse.json({ error: 'Chyba při vytváření objednávky' }, { status: 500 });
+    return NextResponse.json({ error: t('orderCreateFailed') }, { status: 500 });
   }
 
   const { error: itemsErr } = await admin.from('credit_order_items').insert(
     lines.map((l) => ({ order_id: order.id, station_type: l.stationType, hours: l.hours, unit_amount: l.unitAmount, quantity: l.quantity })),
   );
   if (itemsErr) {
-    return NextResponse.json({ error: 'Chyba při vytváření objednávky' }, { status: 500 });
+    return NextResponse.json({ error: t('orderCreateFailed') }, { status: 500 });
   }
 
   const { data: coinsSetting } = await admin.from('site_settings').select('value').eq('key', 'pay_now_coins_amount').single();
@@ -117,6 +121,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ id: order.id, reference, url: session.url });
   } catch {
-    return NextResponse.json({ error: 'Chyba při vytváření platby' }, { status: 500 });
+    return NextResponse.json({ error: t('paymentCreateFailed') }, { status: 500 });
   }
 }

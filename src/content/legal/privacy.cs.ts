@@ -2,12 +2,12 @@
 // here VERBATIM from the operator's supplied document.
 //
 // Do not "fix" this text. Anything believed to be wrong or missing belongs in
-// docs/legal-review-notes.md for the operator's lawyer — not silently
-// corrected here.
+// the operator's separate legal review notes, kept outside this repo for their
+// lawyer — not silently corrected here.
 import type { LegalDocument } from './types';
 
 export const PRIVACY_CS: LegalDocument = {
-  version: '2026-08-30',
+  version: '2026-09-03',
   eyebrow: '// PRÁVNÍ INFORMACE',
   title: 'Ochrana osobních údajů',
   sections: [
@@ -19,18 +19,19 @@ export const PRIVACY_CS: LegalDocument = {
         {
           type: 'ul',
           items: [
-            'Martin Mašek',
-            'Sídlo: Václava Volfa 1337/37, 37005 České Budějovice',
+            'Martin Mašek, fyzická osoba podnikající na základě živnostenského oprávnění',
+            'Sídlo: Václava Volfa 1337/37, 370 05 České Budějovice',
             'IČO: 23095571',
+            'Zapsán v živnostenském rejstříku vedeném Magistrátem města České Budějovice',
             'Web: https://clutchzone.club',
           ],
         },
-        { type: 'p', text: 'Kontakty poboček:' },
+        { type: 'p', text: 'Kontakty pobočky:' },
         {
           type: 'ul',
           items: [
             'Clutch Zone',
-            'Krajinská 2381/17, 37001, České BUdějovice',
+            'Krajinská 2381/17, 370 01 České Budějovice',
             'Telefon: +420 733 104 289',
             'E-mail: info@clutchzone.club',
           ],
@@ -148,7 +149,7 @@ export const PRIVACY_CS: LegalDocument = {
             'účetní a daňové doklady uchováváme po dobu stanovenou právními předpisy;',
             'údaje z komunikace uchováváme po dobu potřebnou k vyřízení požadavku a následně po dobu nezbytnou k ochraně práv provozovatele;',
             'marketingové údaje zpracováváme do odvolání souhlasu nebo do doby, kdy již nejsou potřebné;',
-            'cookies jsou uchovávány podle nastavení jednotlivých cookies a souhlasů.',
+            'cookies jsou uchovávány podle nastavení jednotlivých cookies a souhlasů — viz dokument „Nastavení cookies“.',
           ],
         },
       ],
@@ -195,14 +196,13 @@ export const PRIVACY_CS: LegalDocument = {
       ],
     },
     {
-      // The /cookies settings page renders this section beneath the consent
-      // controls — keep this id.
+      // The cookie bar and the footer link here (/privacy#cookies) — keep this id.
       id: 'cookies',
       title: '9. Cookies',
       body: [
         {
           type: 'p',
-          text: 'Informace o používání cookies jsou uvedeny v samostatném dokumentu „Nastavení cookies“.',
+          text: 'Informace o používání cookies jsou uvedeny v samostatném dokumentu „Nastavení cookies“ dostupném na webových stránkách provozovatele na adrese https://clutchzone.club/cookies.',
         },
       ],
     },
@@ -212,7 +212,7 @@ export const PRIVACY_CS: LegalDocument = {
       body: [
         {
           type: 'p',
-          text: 'Tento dokument můžeme průběžně aktualizovat. Aktuální znění je vždy dostupné na webových stránkách https://clutchzone.club',
+          text: 'Tento dokument můžeme průběžně aktualizovat. Aktuální znění je vždy dostupné na webových stránkách https://clutchzone.club.',
         },
       ],
     },

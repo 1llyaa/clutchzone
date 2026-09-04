@@ -11,11 +11,17 @@ import { PRIVACY_EN } from './privacy.en';
 import { PRIVACY_DE } from './privacy.de';
 import { PRIVACY_UA } from './privacy.ua';
 
-export type LegalDocId = 'terms' | 'privacy';
+import { COOKIES_CS } from './cookies.cs';
+import { COOKIES_EN } from './cookies.en';
+import { COOKIES_DE } from './cookies.de';
+import { COOKIES_UA } from './cookies.ua';
+
+export type LegalDocId = 'terms' | 'privacy' | 'cookies';
 
 const DOCS: Record<LegalDocId, Record<string, LegalDocument>> = {
   terms: { cs: TERMS_CS, en: TERMS_EN, de: TERMS_DE, ua: TERMS_UA },
   privacy: { cs: PRIVACY_CS, en: PRIVACY_EN, de: PRIVACY_DE, ua: PRIVACY_UA },
+  cookies: { cs: COOKIES_CS, en: COOKIES_EN, de: COOKIES_DE, ua: COOKIES_UA },
 };
 
 /**

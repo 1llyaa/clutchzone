@@ -11,7 +11,10 @@ export type LegalBlock =
   | { type: 'ol'; items: string[] }
   // Renders as a paragraph with one inline link. `text` must contain the
   // `{link}` placeholder exactly once — that's where `label` gets linked.
-  | { type: 'link'; text: string; href: string; label: string };
+  | { type: 'link'; text: string; href: string; label: string }
+  // The cookie document lists what is stored as a table; every row must have
+  // the same number of cells as `head`.
+  | { type: 'table'; head: string[]; rows: string[][] };
 
 export type LegalSection = {
   /** Stable anchor id — deep links (e.g. /privacy#cookies) rely on these. */

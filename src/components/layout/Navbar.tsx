@@ -9,6 +9,7 @@ import { useReservation } from '@/components/reservation/ReservationContext';
 
 export default function Navbar() {
   const t = useTranslations('nav');
+  const tc = useTranslations('common');
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
@@ -33,7 +34,7 @@ export default function Navbar() {
       className="sticky top-0 z-50 flex items-center justify-between bg-cz-black px-6 py-5 md:px-16 md:py-5"
       style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
     >
-      <Link href="/" className="no-underline flex items-center" aria-label="Clutch Zone — domů">
+      <Link href="/" className="no-underline flex items-center" aria-label={tc('homeAria')}>
         <LogoLockup size={36} />
       </Link>
 

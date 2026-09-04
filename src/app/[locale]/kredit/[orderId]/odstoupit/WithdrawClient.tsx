@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/navigation';
 import Button from '@/components/ui/Button';
 
@@ -29,6 +29,7 @@ export default function WithdrawClient({
   exp: number;
 }) {
   const t = useTranslations('withdraw');
+  const locale = useLocale();
   const [done, setDone] = useState<'withdrawn' | 'already_withdrawn' | null>(
     order.alreadyWithdrawn ? 'already_withdrawn' : null,
   );
@@ -42,7 +43,7 @@ export default function WithdrawClient({
     try {
       const res = await fetch(
         `/api/credits/${order.id}/withdraw?token=${encodeURIComponent(token)}&exp=${exp}`,
-        { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' },
+        { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ locale }) },
       );
       const data = await res.json();
       // 202 = withdrawal recorded but the Stripe refund itself failed; staff
