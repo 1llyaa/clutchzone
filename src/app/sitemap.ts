@@ -8,16 +8,21 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://clutchzone.club';
 // so it has to be the date of the last significant change to the page's content
 // — not the moment the sitemap happened to be generated. Bump a date by hand
 // when the main content, structured data or links of that page actually change;
-// a dependency bump or a translation-file edit does not count.
+// a dependency bump does not count.
+//
+// Check the page's *content*, not its route folder. The legal text lives in
+// src/content/legal/{terms,privacy}.<locale>.ts and the home page's copy in
+// src/components/sections/ — editing the route's page.tsx is usually plumbing,
+// and dating from it reports the content as older than it is.
 const PAGES: {
   path: string;
   priority: number;
   changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'];
   lastModified: string;
 }[] = [
-  { path: '', priority: 1, changeFrequency: 'daily', lastModified: '2026-09-02' },
-  { path: '/terms', priority: 0.3, changeFrequency: 'yearly', lastModified: '2026-08-31' },
-  { path: '/privacy', priority: 0.3, changeFrequency: 'yearly', lastModified: '2026-08-31' },
+  { path: '', priority: 1, changeFrequency: 'daily', lastModified: '2026-09-03' },
+  { path: '/terms', priority: 0.3, changeFrequency: 'yearly', lastModified: '2026-09-04' },
+  { path: '/privacy', priority: 0.3, changeFrequency: 'yearly', lastModified: '2026-09-04' },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
