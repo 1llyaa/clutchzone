@@ -3,6 +3,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/../i18n/routing';
+import { hreflangFor, ogLocaleFor, resolveLocale } from '@/lib/i18n/locales';
 import { ReservationProvider } from '@/components/reservation/ReservationContext';
 import ReservationModal from '@/components/reservation/ReservationModal';
 import JsonLd from '@/components/seo/JsonLd';
@@ -17,7 +18,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const isCs = locale === 'cs';
+  const appLocale = resolveLocale(locale);
 
   const t = await getTranslations({ locale, namespace: 'meta' });
   const title = t('title');
@@ -29,13 +30,16 @@ export async function generateMetadata({
     description,
     alternates: {
       canonical: `/${locale}`,
-      languages: { cs: '/cs', en: '/en', 'x-default': '/cs' },
+      languages: {
+        ...Object.fromEntries(routing.locales.map((l) => [hreflangFor(l), `/${l}`])),
+        'x-default': `/${routing.defaultLocale}`,
+      },
     },
     openGraph: {
       title,
       description,
       type: 'website',
-      locale: isCs ? 'cs_CZ' : 'en_US',
+      locale: ogLocaleFor(appLocale),
       url: `/${locale}`,
       siteName: 'Clutch Zone',
     },
@@ -64,7 +68,7 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} data-locale={locale}>
+    <html lang={hreflangFor(resolveLocale(locale))} data-locale={locale}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

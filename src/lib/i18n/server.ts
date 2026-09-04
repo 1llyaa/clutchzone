@@ -1,13 +1,8 @@
 import { createTranslator } from 'next-intl';
-import { routing } from '@/../i18n/routing';
+import { resolveLocale } from './locales';
 
-export type AppLocale = (typeof routing.locales)[number];
-
-export function resolveLocale(value: unknown): AppLocale {
-  return routing.locales.includes(value as AppLocale)
-    ? (value as AppLocale)
-    : routing.defaultLocale;
-}
+export type { AppLocale } from './locales';
+export { resolveLocale } from './locales';
 
 // next-intl's getTranslations() needs a request scope. Route handlers have one,
 // but Stripe webhooks and the fire-and-forget mailers do not — they run after

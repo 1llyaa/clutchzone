@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { routing } from '@/../i18n/routing';
+import { hreflangFor } from '@/lib/i18n/locales';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://clutchzone.club';
 
@@ -18,7 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: locale === routing.defaultLocale ? priority : priority * 0.9,
       alternates: {
         languages: Object.fromEntries(
-          routing.locales.map((l) => [l, `${SITE_URL}/${l}${path}`]),
+          routing.locales.map((l) => [hreflangFor(l), `${SITE_URL}/${l}${path}`]),
         ),
       },
     })),
