@@ -1,33 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 import { routing } from '../i18n/routing';
-import { MAINTENANCE_COOKIE, expectedMaintenanceToken, resolveOrigin } from '@/lib/maintenance';
+import { credentialsMatch, maintenanceEnabled, parseBasicAuth } from '@/lib/maintenance';
 
 const intlMiddleware = createMiddleware(routing);
 
+function unauthorized(): NextResponse {
+  return new NextResponse('Authentication required.', {
+    status: 401,
+    headers: {
+      'WWW-Authenticate': 'Basic realm="Clutch Zone", charset="UTF-8"',
+      'Cache-Control': 'no-store',
+      'X-Robots-Tag': 'noindex, nofollow',
+      'Content-Type': 'text/plain; charset=utf-8',
+    },
+  });
+}
+
 export default async function middleware(request: NextRequest) {
-  const response = intlMiddleware(request);
-
-  if (process.env.MAINTENANCE_MODE === 'true') {
-    const pathname = request.nextUrl.pathname;
-    const isRedirect = response.status === 307 || response.status === 308;
-    const isMaintenancePage = pathname.includes('/maintenance');
-    const isOgImage = pathname.endsWith('/opengraph-image');
-
-    if (!isRedirect && !isMaintenancePage && !isOgImage) {
-      const expected = await expectedMaintenanceToken();
-      const cookie = request.cookies.get(MAINTENANCE_COOKIE)?.value;
-
-      if (!expected || cookie !== expected) {
-        const locale = pathname.split('/')[1] || routing.defaultLocale;
-        const url = new URL(`/${locale}/maintenance`, resolveOrigin(request));
-        url.searchParams.set('from', pathname);
-        return NextResponse.redirect(url);
-      }
+  // Auth runs before locale negotiation: while the gate is up every path
+  // answers 401, so there is no page for a crawler to index and no redirect
+  // chain to keep exceptions for.
+  if (maintenanceEnabled()) {
+    const credentials = parseBasicAuth(request.headers.get('authorization'));
+    if (!credentials || !(await credentialsMatch(credentials.user, credentials.pass))) {
+      return unauthorized();
     }
   }
 
-  return response;
+  return intlMiddleware(request);
 }
 
 export const config = {
