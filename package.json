@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "sitemap": "node --import tsx scripts/generate-sitemap.ts",
     "test": "node --import tsx --test \"src/**/*.test.ts\"",
     "check:secrets": "node scripts/check-secrets.mjs",
     "i18n:export": "node scripts/i18n-export.mjs",
