@@ -32,7 +32,11 @@ export default function CookieBar() {
       role="dialog"
       aria-label={t('heading')}
       className="fixed bottom-0 left-0 right-0 z-[100] bg-cz-black-mid flex flex-wrap items-center justify-between"
-      style={{ borderTop: '1px solid var(--color-cz-gray-dark)', padding: '16px 24px', gap: 16 }}
+      style={{
+        borderTop: '1px solid var(--color-cz-gray-dark)',
+        padding: '16px clamp(16px, 4vw, 24px)',
+        gap: 16,
+      }}
     >
       <p
         className="font-body text-cz-gray-light"
@@ -43,7 +47,12 @@ export default function CookieBar() {
           {t('link')}
         </Link>
       </p>
-      <div className="flex flex-shrink-0" style={{ gap: 12 }}>
+      {/* Below `sm` the two buttons stack and each takes the full bar width:
+          side by side they need ~426px (cs) to ~472px (de), which no phone has,
+          and a shrink-0 row of `flex-1` buttons would overflow the viewport and
+          wrap the longer label onto a second line. Stacked they stay one line
+          each and stay identical in width, as the variant note above requires. */}
+      <div className="flex flex-col w-full sm:flex-row sm:w-auto sm:flex-shrink-0" style={{ gap: 12 }}>
         <Button
           type="button"
           variant="ghost"

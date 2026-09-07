@@ -72,9 +72,20 @@ export default function CtaBand() {
           >
             {t('eyebrow')}
           </span>
+          {/* The heading wraps, so only its longest word has to fit the card.
+              At ~0.86 em/char in Archivo expanded-bold that is 6.9 em for the
+              8-char worst case (cs "REZERVUJ", ua "ЗАБРОНЮЙ" — narrower in Oswald).
+              Mobile content width is the viewport less 48px of section padding
+              and 48px of card padding, so 9.5vw keeps that word inside it down
+              to a 320px screen. */}
           <h2
             className="font-display text-white uppercase"
-            style={{ fontSize: 60, letterSpacing: 1.5, lineHeight: 0.98, margin: '16px 0 28px' }}
+            style={{
+              fontSize: 'clamp(28px, 9.5vw, 60px)',
+              letterSpacing: 1.5,
+              lineHeight: 0.98,
+              margin: '16px 0 28px',
+            }}
           >
             {t('heading')}
           </h2>
