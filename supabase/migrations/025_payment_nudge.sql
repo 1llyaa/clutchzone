@@ -58,14 +58,64 @@ CREATE EXTENSION IF NOT EXISTS pg_net;
 SELECT cron.unschedule('payment-nudge')
 WHERE EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'payment-nudge');
 
--- The shared secret is read from Supabase Vault at run time and is *never*
--- written into migration SQL — migrations are committed to the repo and
--- scripts/check-secrets.mjs runs in CI. Creating the two Vault entries is a
--- manual deploy step.
+-- ============================================================
+-- Where the job gets its secret and its target URL.
 --
--- The WHERE clause makes a missing entry a silent no-op rather than a failed
--- HTTP call logged once a minute forever: until the Vault is populated the job
--- runs and does nothing.
+-- The shared secret is never written into migration SQL — migrations are
+-- committed to the repo and scripts/check-secrets.mjs runs in CI — so the job
+-- reads it at run time. Where from depends on the deployment:
+--
+--   Hosted Supabase   — Vault (`vault.decrypted_secrets`), encrypted at rest.
+--   Self-hosted       — the Vault extension is often absent, and Postgres
+--                       cannot read the container's environment from SQL at
+--                       all, so database-level settings stand in:
+--                         ALTER DATABASE <db> SET app.cron_secret = '…';
+--                         ALTER DATABASE <db> SET app.site_url   = '…';
+--
+-- Vault wins when present. The lookup lives in a function rather than inline in
+-- the job because `vault.decrypted_secrets` cannot even be *mentioned* in SQL
+-- on an instance without the extension — the statement fails to parse, and the
+-- job would error every single minute. to_regclass + EXECUTE defers that to run
+-- time, so one command works on both.
+-- ============================================================
+
+CREATE OR REPLACE FUNCTION public.payment_nudge_config()
+RETURNS TABLE (secret text, site_url text)
+LANGUAGE plpgsql
+-- Deliberately SECURITY INVOKER: this returns a credential, and a definer-rights
+-- function handing it to any caller would be a privilege-escalation footgun.
+-- pg_cron runs the job as the role that scheduled it, which can read the Vault.
+SET search_path = ''
+AS $fn$
+BEGIN
+  secret := NULL;
+  site_url := NULL;
+
+  IF to_regclass('vault.decrypted_secrets') IS NOT NULL THEN
+    EXECUTE $q$
+      SELECT
+        (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'cron_secret'),
+        (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'site_url')
+    $q$ INTO secret, site_url;
+  END IF;
+
+  -- nullif so an empty setting counts as absent rather than as a blank secret.
+  IF secret IS NULL THEN
+    secret := nullif(current_setting('app.cron_secret', true), '');
+  END IF;
+  IF site_url IS NULL THEN
+    site_url := nullif(current_setting('app.site_url', true), '');
+  END IF;
+
+  RETURN NEXT;
+END;
+$fn$;
+
+REVOKE ALL ON FUNCTION public.payment_nudge_config() FROM PUBLIC;
+
+-- The WHERE clause makes missing configuration a silent no-op rather than a
+-- failed HTTP call logged once a minute forever: until the secret and URL are
+-- in place the job runs and does nothing.
 SELECT cron.schedule(
   'payment-nudge',
   '* * * * *',
@@ -79,11 +129,9 @@ SELECT cron.schedule(
     body    := '{}'::jsonb,
     timeout_milliseconds := 20000
   )
-  FROM (
-    SELECT
-      (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'cron_secret') AS secret,
-      (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'site_url')    AS site_url
-  ) v
+  -- Schema-qualified: pg_cron runs the job on its own search_path,
+  -- which is not guaranteed to include public.
+  FROM public.payment_nudge_config() v
   WHERE v.secret IS NOT NULL AND v.site_url IS NOT NULL;
   $job$
 );
