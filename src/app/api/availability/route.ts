@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { releaseExpiredHolds } from '@/lib/bookings/holds';
+import { occupiedStationIds, parseTimeToMinutes } from '@/lib/bookings/occupancy';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
@@ -32,34 +33,17 @@ export async function GET(req: NextRequest) {
   // cron, so the reap happens here, before the occupancy read.
   await releaseExpiredHolds();
 
-  // Fetch all non-cancelled bookings for this date+stations, check overlap in JS
-  const { data: bookings, error: bErr2 } = await supabase
-    .from('bookings')
-    .select('station_id, start_time, duration_minutes')
-    .in('station_id', stationIds)
-    .neq('status', 'cancelled')
-    .eq('date', date);
-
-  if (bErr2) {
-    return NextResponse.json({ error: 'DB error' }, { status: 500 });
-  }
-
-  // Parse our desired range in minutes from midnight
-  const [sh, sm] = startTime.split(':').map(Number);
-  const ourStart = sh * 60 + sm;
+  // Occupancy is bookings *and* admin blocks — a blocked station is out of
+  // circulation for the window even though no customer is attached to it.
+  const ourStart = parseTimeToMinutes(startTime);
   const ourEnd = ourStart + durationMinutes;
 
-  // Find which stations are occupied during our time window
-  const occupiedIds = new Set<string>();
-  for (const b of bookings ?? []) {
-    const [bh, bm] = (b.start_time as string).split(':').map(Number);
-    const bStart = bh * 60 + bm;
-    const bEnd = bStart + b.duration_minutes;
-    // Overlap check: intervals [ourStart, ourEnd) and [bStart, bEnd) overlap if bStart < ourEnd && bEnd > ourStart
-    if (bStart < ourEnd && bEnd > ourStart) {
-      occupiedIds.add(b.station_id);
-    }
-  }
+  const occupiedIds = await occupiedStationIds(supabase, {
+    date,
+    stationIds,
+    startMinutes: ourStart,
+    endMinutes: ourEnd,
+  });
 
   const available = stationIds.filter((id) => !occupiedIds.has(id));
 

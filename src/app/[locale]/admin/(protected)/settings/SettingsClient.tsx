@@ -6,6 +6,7 @@ import { createBrowserClient } from '@supabase/ssr';
 import Image from 'next/image';
 import Button from '@/components/ui/Button';
 import AdminPageContainer from '@/components/admin/AdminPageContainer';
+import { toMapView } from '@/lib/maps/view';
 
 interface Profile {
   id: string;
@@ -61,6 +62,11 @@ export default function SettingsClient({
   const [streamVisible, setStreamVisible] = useState(siteSettings.stream_visible === 'true');
   const [savingStream, setSavingStream]   = useState(false);
   const [streamMsg, setStreamMsg]         = useState('');
+
+  const [mapEmbedUrl, setMapEmbedUrl]     = useState(siteSettings.map_embed_url ?? '');
+  const [mapVisible, setMapVisible]       = useState(siteSettings.map_visible === 'true');
+  const [savingMap, setSavingMap]         = useState(false);
+  const [mapMsg, setMapMsg]               = useState('');
 
   const [coinsAmount, setCoinsAmount]     = useState(siteSettings.pay_now_coins_amount ?? '50');
   const [savingCoins, setSavingCoins]     = useState(false);
@@ -165,6 +171,35 @@ export default function SettingsClient({
     const res = await updateSetting('pay_now_coins_amount', coinsAmount);
     setSavingCoins(false);
     setCoinsMsg(res ? 'Uloženo' : 'Chyba při ukládání');
+    startTransition(() => router.refresh());
+  }
+
+  async function handleMapSave() {
+    setSavingMap(true);
+    setMapMsg('');
+
+    // The PATCH route validates this too — checking here only saves a round
+    // trip and names the problem before the admin hits save.
+    if (mapEmbedUrl.trim() && !toMapView(mapEmbedUrl)) {
+      setSavingMap(false);
+      setMapMsg('Chyba: z odkazu nejde přečíst souřadnice. Otevřete místo v Google Maps a zkopírujte adresu z prohlížeče.');
+      return;
+    }
+
+    const [urlOk, visOk] = await Promise.all([
+      updateSetting('map_embed_url', mapEmbedUrl),
+      updateSetting('map_visible', String(mapVisible)),
+    ]);
+
+    setSavingMap(false);
+    setMapMsg(urlOk && visOk ? 'Uloženo' : 'Chyba při ukládání');
+    startTransition(() => router.refresh());
+  }
+
+  async function toggleMapVisible() {
+    const next = !mapVisible;
+    setMapVisible(next);
+    await updateSetting('map_visible', String(next));
     startTransition(() => router.refresh());
   }
 
@@ -409,6 +444,102 @@ export default function SettingsClient({
                 style={{ fontSize: 17, color: streamMsg.startsWith('Chyba') ? 'var(--color-cz-danger)' : 'var(--color-cz-success)' }}
               >
                 {streamMsg}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Map settings */}
+      <div style={{ marginBottom: 48 }}>
+        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 20 }}>
+          MAPA
+        </div>
+
+        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid var(--color-cz-gray-dark)', padding: 24 }}>
+          <div className="flex flex-col gap-5">
+            {/* Toggle */}
+            <div className="flex items-center justify-between">
+              <span className="font-body text-cz-gray-light" style={{ fontSize: 17 }}>
+                Zobrazit mapu na hlavní stránce
+              </span>
+              <button
+                onClick={toggleMapVisible}
+                className="font-mono uppercase rounded-control transition-colors"
+                style={{
+                  fontSize: 16,
+                  letterSpacing: 1,
+                  padding: '4px 12px',
+                  color: mapVisible ? 'var(--color-cz-success)' : 'var(--color-cz-danger)',
+                  background: mapVisible
+                    ? 'color-mix(in srgb, var(--color-cz-success) 12.5%, transparent)'
+                    : 'color-mix(in srgb, var(--color-cz-danger) 12.5%, transparent)',
+                }}
+              >
+                {mapVisible ? 'AKTIVNÍ' : 'SKRYTÝ'}
+              </button>
+            </div>
+
+            {/* URL input */}
+            <div className="flex flex-col gap-2">
+              <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
+                POLOHA — ODKAZ Z GOOGLE MAPS NEBO SOUŘADNICE
+              </label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="text"
+                  value={mapEmbedUrl}
+                  onChange={(e) => setMapEmbedUrl(e.target.value)}
+                  placeholder="https://www.google.com/maps/@48.9744,14.4744,17z"
+                  className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange flex-1 min-w-0"
+                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
+                />
+                <Button onClick={handleMapSave} disabled={savingMap} size="sm" className="flex-shrink-0">
+                  {savingMap ? '...' : 'ULOŽIT'}
+                </Button>
+              </div>
+              <p className="font-mono text-cz-gray-light" style={{ fontSize: 17, letterSpacing: 1 }}>
+                Najděte místo v Google Maps a zkopírujte adresu z prohlížeče — vytáhneme z ní souřadnice a přiblížení.
+                Můžete zadat i souřadnice ručně ve tvaru 48.9744, 14.4744. Odkaz na „Moje mapy“ (mid=…) nefunguje,
+                protože neobsahuje polohu.
+              </p>
+            </div>
+
+            {/* What was actually understood. A wrong pin is otherwise only
+                discoverable by loading the homepage and squinting at it. */}
+            {mapEmbedUrl.trim() && (() => {
+              const view = toMapView(mapEmbedUrl);
+              if (!view) {
+                return (
+                  <p className="font-mono" style={{ fontSize: 17, color: 'var(--color-cz-danger)' }}>
+                    Z tohoto odkazu nejde přečíst poloha
+                  </p>
+                );
+              }
+              return (
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="font-mono" style={{ fontSize: 17, color: 'var(--color-cz-success)' }}>
+                    {view.lat}, {view.lng} · přiblížení {view.zoom}
+                  </span>
+                  <a
+                    href={`https://www.openstreetmap.org/?mlat=${view.lat}&mlon=${view.lng}#map=${view.zoom}/${view.lat}/${view.lng}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-cz-orange uppercase hover:underline"
+                    style={{ fontSize: 16, letterSpacing: 2 }}
+                  >
+                    OVĚŘIT POLOHU →
+                  </a>
+                </div>
+              );
+            })()}
+
+            {mapMsg && (
+              <p
+                className="font-mono"
+                style={{ fontSize: 17, color: mapMsg.startsWith('Chyba') ? 'var(--color-cz-danger)' : 'var(--color-cz-success)' }}
+              >
+                {mapMsg}
               </p>
             )}
           </div>

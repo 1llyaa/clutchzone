@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/auth';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { toMapView } from '@/lib/maps/view';
 
 export async function GET() {
   const profile = await requireAdmin();
@@ -26,9 +27,23 @@ export async function PATCH(request: NextRequest) {
   const body = await request.json();
   const { key, value } = body;
 
-  const ALLOWED_KEYS = ['hero_image', 'stream_url', 'stream_visible', 'pay_now_coins_amount', 'private_events_image'];
+  const ALLOWED_KEYS = [
+    'hero_image', 'stream_url', 'stream_visible', 'pay_now_coins_amount',
+    'private_events_image', 'map_embed_url', 'map_visible',
+  ];
   if (!key || !ALLOWED_KEYS.includes(key) || typeof value !== 'string' || value.length > 2000) {
     return NextResponse.json({ error: 'Invalid key or value' }, { status: 400 });
+  }
+
+  // Validated here and not only in the client: the map centre is read back
+  // out of this row on every homepage render, and a value nothing can parse
+  // would silently hide the section with no clue why. An empty value clears
+  // the map deliberately.
+  if (key === 'map_embed_url' && value.trim() && !toMapView(value)) {
+    return NextResponse.json(
+      { error: 'Nepodařilo se z odkazu přečíst souřadnice' },
+      { status: 400 },
+    );
   }
 
   const admin = createAdminClient();

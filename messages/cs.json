@@ -80,6 +80,10 @@
   "gallery": {
     "heading": "NAŠE HERNA"
   },
+  "sponsors": {
+    "eyebrow": "// PARTNEŘI A SPONZOŘI",
+    "heading": "HRAJEME S NIMI"
+  },
   "privateEvents": {
     "heading": "TEAMBUILDING & OSLAVY",
     "subtext": "Naše herna je k dispozici i pro firemní teambuildingy, narozeninové oslavy a jiné privátní akce. Domluvíme se na míru — počet stanic, délku i program.",
@@ -106,6 +110,12 @@
     "success": "Zpráva odeslána! Ozve se ti brzy.",
     "sendAnother": "NAPSAT DALŠÍ ZPRÁVU",
     "errorGeneral": "Něco se pokazilo. Zkuste to znovu."
+  },
+  "map": {
+    "label": "Mapa — Clutch Zone, Krajinská 2381/17, České Budějovice",
+    "scrollHintWindows": "Pro přiblížení podržte Ctrl a otáčejte kolečkem",
+    "scrollHintMac": "Pro přiblížení podržte ⌘ a otáčejte kolečkem",
+    "touchHint": "Mapou pohnete dvěma prsty"
   },
   "ctaBand": {
     "eyebrow": "PŘIPRAVEN HRÁT?",
@@ -477,6 +487,14 @@
       "docNote": "Tento e-mail slouží jako doklad o zakoupení. Přijďte 10 minut před začátkem a ukažte referenční kód na recepci.",
       "docNoteText": "Tento e-mail slouží jako doklad o zakoupení.",
       "subject": "Platba přijata {reference} · Clutch Zone · {amount} Kč"
+    },
+    "nudge": {
+      "heading": "Dokonči platbu",
+      "intro": "{name}, tvoje rezervace na tebe pořád čeká — platba zatím nedorazila.",
+      "payButton": "Zaplatit rezervaci →",
+      "payLinkText": "Zaplatit rezervaci",
+      "holdNote": "Místo ti držíme do {time}. Pokud platba do té doby nedorazí, rezervace propadne a stanice se vrátí do prodeje. Další e-mail už ti neposíláme.",
+      "subject": "Dokonči platbu {reference} · Clutch Zone · drženo do {time}"
     },
     "credit": {
       "heading": "Nákup kreditu potvrzen",

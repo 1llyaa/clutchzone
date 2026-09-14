@@ -80,6 +80,10 @@
   "gallery": {
     "heading": "UNSER VENUE"
   },
+  "sponsors": {
+    "eyebrow": "// PARTNER UND SPONSOREN",
+    "heading": "WIR SPIELEN MIT IHNEN"
+  },
   "privateEvents": {
     "heading": "TEAMBUILDING & PARTYS",
     "subtext": "Unser Venue steht auch für Firmen-Teambuildings, Geburtstagspartys und andere private Anlässe zur Verfügung. Wir passen alles an dich an — Anzahl der Stationen, Dauer und Programm.",
@@ -106,6 +110,12 @@
     "success": "Nachricht gesendet! Wir melden uns bald bei dir.",
     "sendAnother": "WEITERE NACHRICHT SENDEN",
     "errorGeneral": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
+  },
+  "map": {
+    "label": "Karte — Clutch Zone, Krajinská 2381/17, České Budějovice",
+    "scrollHintWindows": "Zum Zoomen Strg gedrückt halten und scrollen",
+    "scrollHintMac": "Zum Zoomen ⌘ gedrückt halten und scrollen",
+    "touchHint": "Karte mit zwei Fingern bewegen"
   },
   "ctaBand": {
     "eyebrow": "BEREIT ZU SPIELEN?",
@@ -477,6 +487,14 @@
       "docNote": "Tento e-mail slouží jako doklad o zakoupení. Přijďte 10 minut před začátkem a ukažte referenční kód na recepci.",
       "docNoteText": "Tento e-mail slouží jako doklad o zakoupení.",
       "subject": "Platba přijata {reference} · Clutch Zone · {amount} Kč"
+    },
+    "nudge": {
+      "heading": "Zahlung abschließen",
+      "intro": "{name}, deine Reservierung wartet noch — die Zahlung ist bisher nicht eingegangen.",
+      "payButton": "Reservierung bezahlen →",
+      "payLinkText": "Reservierung bezahlen",
+      "holdNote": "Wir halten deinen Platz bis {time}. Geht die Zahlung bis dahin nicht ein, verfällt die Reservierung und die Station geht zurück in den Verkauf. Eine weitere E-Mail dazu senden wir nicht.",
+      "subject": "Zahlung abschließen {reference} · Clutch Zone · gehalten bis {time}"
     },
     "credit": {
       "heading": "Nákup kreditu potvrzen",

@@ -91,6 +91,10 @@ export async function POST(
         payment_method: 'online',
         stripe_checkout_session_id: session.id,
         hold_expires_at: holdExpiresAt,
+        // When the customer actually opened Checkout, for the 15-minute nudge.
+        // Re-stamped on every call on purpose: this route mints a fresh session
+        // each time, so the nudge must count from the newest one and link to it.
+        checkout_started_at: new Date().toISOString(),
       })
       .eq('booking_group_id', groupId);
 

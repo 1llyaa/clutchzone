@@ -7,6 +7,7 @@ import { sendBookingNotification, sendBookingConfirmation } from '@/lib/email';
 import { buildCancelUrl } from '@/lib/cancel-token';
 import { getCancellationWindowMinutes, minutesUntil } from '@/lib/bookings/cancellation';
 import { getOnlineHoldMinutes, holdExpiryFrom, releaseExpiredHolds } from '@/lib/bookings/holds';
+import { occupiedStationIds, parseTimeToMinutes } from '@/lib/bookings/occupancy';
 import { z } from 'zod';
 import { getServerTranslator } from '@/lib/i18n/server';
 
@@ -109,24 +110,18 @@ export async function POST(req: NextRequest) {
   // otherwise an abandoned checkout keeps blocking the station.
   await releaseExpiredHolds();
 
-  const { data: existing } = await admin
-    .from('bookings')
-    .select('station_id, start_time, duration_minutes')
-    .in('station_id', stations.map((s) => s.id))
-    .neq('status', 'cancelled')
-    .eq('date', data.date);
-
-  const [sh, sm] = startTime.split(':').map(Number);
-  const ourStart = sh * 60 + sm;
+  // A station an admin has blocked is never offered to a customer, and the
+  // "only N free" count below has to agree — otherwise the request is refused
+  // by the cross-table trigger with a race error it never actually lost.
+  const ourStart = parseTimeToMinutes(startTime);
   const ourEnd = ourStart + durationMinutes;
 
-  const occupiedIds = new Set<string>();
-  for (const b of existing ?? []) {
-    const [bh, bm] = (b.start_time as string).split(':').map(Number);
-    const bStart = bh * 60 + bm;
-    const bEnd = bStart + b.duration_minutes;
-    if (bStart < ourEnd && bEnd > ourStart) occupiedIds.add(b.station_id);
-  }
+  const occupiedIds = await occupiedStationIds(admin, {
+    date: data.date,
+    stationIds: stations.map((s) => s.id),
+    startMinutes: ourStart,
+    endMinutes: ourEnd,
+  });
 
   const free = stations.filter((s) => !occupiedIds.has(s.id));
   if (free.length < data.stationsCount) {

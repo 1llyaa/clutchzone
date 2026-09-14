@@ -3,6 +3,7 @@
 import { useMemo, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { X, Coins } from '@phosphor-icons/react';
+import { parseTimeToMinutes, rangesOverlap } from '@/lib/bookings/occupancy';
 import Button from '@/components/ui/Button';
 import DatePicker from '@/components/ui/DatePicker';
 import AdminPageContainer from '@/components/admin/AdminPageContainer';
@@ -39,16 +40,45 @@ function PAYMENT_COLOR(b: PaymentFields): string {
   if (b.pays_with_credit) return 'var(--color-cz-gray-light)';
   return b.payment_status === 'paid' ? 'var(--color-cz-success)' : 'var(--color-cz-warning)';
 }
+// A block is yellow, a real booking orange: staff must be able to tell at a
+// glance whether a station is taken by a customer or taken out of circulation
+// by them. Semantic status colours are already the admin system per AGENTS.md.
 const TILE_BG: Record<string, string> = {
   free:     '#1a1a1a',
   occupied: 'rgba(232,74,26,0.15)',
+  blocked:  'color-mix(in srgb, var(--color-cz-warning) 15%, transparent)',
   inactive: '#0f0f0f',
 };
 const TILE_BORDER: Record<string, string> = {
   free:     'var(--color-cz-gray-dark)',
   occupied: 'var(--color-cz-orange)',
+  blocked:  'var(--color-cz-warning)',
   inactive: '#1a1a1a',
 };
+const TILE_LABEL: Record<string, string> = {
+  free:     'VOLNÉ',
+  occupied: 'OBSAZENO',
+  blocked:  'BLOKOVÁNO',
+  inactive: 'INACTIVE',
+};
+const TILE_TEXT: Record<string, string> = {
+  free:     'var(--color-cz-gray-light)',
+  occupied: 'var(--color-cz-orange)',
+  blocked:  'var(--color-cz-warning)',
+  inactive: 'var(--color-cz-gray-light)',
+};
+
+/** Durations a walk-in or a repair realistically takes. */
+const BLOCK_DURATIONS: [number, string][] = [
+  [30,  '30 MIN'],
+  [60,  '1 H'],
+  [90,  '1,5 H'],
+  [120, '2 H'],
+  [180, '3 H'],
+  [240, '4 H'],
+  [360, '6 H'],
+  [600, '10 H'],
+];
 
 interface Booking {
   id: string;
@@ -104,6 +134,84 @@ interface Station {
   is_active: boolean;
 }
 
+interface StationBlock {
+  id: string;
+  block_group_id: string;
+  station_id: string;
+  date: string;
+  start_time: string;
+  duration_minutes: number;
+  note: string | null;
+}
+
+/** Minutes from midnight back to a HH:MM label, wrapping past midnight. */
+function minutesToLabel(min: number): string {
+  const h = Math.floor(min / 60) % 24;
+  const m = min % 60;
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+}
+
+function StationTile({
+  station,
+  state,
+  selected,
+  padding,
+  onSelect,
+  onOpenBlock,
+}: {
+  station: Station;
+  state: string;
+  selected: boolean;
+  padding: string;
+  onSelect: () => void;
+  onOpenBlock: () => void;
+}) {
+  // A booked or deactivated station is not actionable: blocks exist to take a
+  // *free* station out of circulation, and a booked one is already out.
+  const interactive = state === 'free' || state === 'blocked';
+
+  const style: React.CSSProperties = {
+    padding,
+    background: TILE_BG[state],
+    border: `1px solid ${TILE_BORDER[state]}`,
+    outline: selected ? '1.5px solid var(--color-cz-orange)' : 'none',
+    outlineOffset: 1,
+  };
+
+  const content = (
+    <>
+      <span className="font-mono text-white" style={{ fontSize: 17, letterSpacing: 1 }}>{station.label}</span>
+      <span
+        className="font-mono uppercase"
+        style={{ fontSize: 16, letterSpacing: 1, marginTop: 3, color: TILE_TEXT[state] }}
+      >
+        {TILE_LABEL[state]}
+      </span>
+    </>
+  );
+
+  if (!interactive) {
+    return (
+      <div className="rounded-control flex flex-col items-center justify-center" style={style}>
+        {content}
+      </div>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={state === 'blocked' ? onOpenBlock : onSelect}
+      aria-pressed={state === 'free' ? selected : undefined}
+      aria-label={`${station.label} — ${TILE_LABEL[state]}`}
+      className="rounded-control flex flex-col items-center justify-center cursor-pointer transition-[filter] duration-150 ease-out hover:brightness-125"
+      style={style}
+    >
+      {content}
+    </button>
+  );
+}
+
 function variantLabel(b: Booking, passNameById: Record<string, string>): string {
   if (b.offer_kind === 'pass') return (b.time_pass_id && passNameById[b.time_pass_id]) || 'Pas';
   if (b.offer_kind === 'hours_upsell') return 'Hodiny (navíc)';
@@ -148,13 +256,17 @@ function groupBookings(bookings: Booking[], passNameById: Record<string, string>
 export default function BookingsClient({
   bookings,
   stations,
+  blocks,
   passNameById,
+  defaultStartTime,
   from,
   to,
 }: {
   bookings: Booking[];
   stations: Station[];
+  blocks: StationBlock[];
   passNameById: Record<string, string>;
+  defaultStartTime: string;
   from: string;
   to: string;
 }) {
@@ -166,13 +278,55 @@ export default function BookingsClient({
   const [localFrom, setLocalFrom] = useState(from);
   const [localTo,   setLocalTo]   = useState(to);
 
+  // ── Station block composer ─────────────────────────────────────────────────
+  const [pickedStations, setPickedStations] = useState<string[]>([]);
+  const [blockStart, setBlockStart]         = useState(defaultStartTime);
+  const [blockDuration, setBlockDuration]   = useState(60);
+  const [blockNote, setBlockNote]           = useState('');
+  const [blockSaving, setBlockSaving]       = useState(false);
+  const [blockError, setBlockError]         = useState<string | null>(null);
+  const [blockClashes, setBlockClashes]     = useState<string[]>([]);
+  const [openBlock, setOpenBlock]           = useState<StationBlock | null>(null);
+  const [releasing, setReleasing]           = useState(false);
+
   const isSingleDay = from === to;
 
   const grouped = useMemo(() => groupBookings(bookings, passNameById), [bookings, passNameById]);
 
-  const occupiedIds = new Set(
-    bookings.filter((b) => b.status !== 'cancelled').map((b) => b.station_id)
-  );
+  const windowStart = parseTimeToMinutes(blockStart);
+  const windowEnd = windowStart + blockDuration;
+
+  // Occupancy is per time window, not per day.
+  //
+  // The grid used to read OBSAZENO if a station had any non-cancelled booking
+  // anywhere on the date, ignoring time entirely. A block *is* a time window,
+  // so a grid that cannot express "free at 14:00, taken at 19:00" would have
+  // staff blocking against a display that does not match what they are
+  // blocking. The composer's start time and duration therefore drive the grid.
+  const occupiedIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const b of bookings) {
+      if (b.date !== from || b.status === 'cancelled') continue;
+      const start = parseTimeToMinutes(b.start_time);
+      if (rangesOverlap(windowStart, windowEnd, start, start + b.duration_minutes)) {
+        ids.add(b.station_id);
+      }
+    }
+    return ids;
+  }, [bookings, from, windowStart, windowEnd]);
+
+  /** Station id → the block covering the selected window, if any. */
+  const blockByStation = useMemo(() => {
+    const map = new Map<string, StationBlock>();
+    for (const bl of blocks) {
+      if (bl.date !== from) continue;
+      const start = parseTimeToMinutes(bl.start_time);
+      if (rangesOverlap(windowStart, windowEnd, start, start + bl.duration_minutes)) {
+        map.set(bl.station_id, bl);
+      }
+    }
+    return map;
+  }, [blocks, from, windowStart, windowEnd]);
 
   function applyRange(newFrom: string, newTo: string) {
     const safeFrom = newFrom;
@@ -229,14 +383,65 @@ export default function BookingsClient({
     startTransition(() => router.refresh());
   }
 
+  function toggleStation(id: string) {
+    setBlockError(null);
+    setBlockClashes([]);
+    setPickedStations((prev) =>
+      prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id],
+    );
+  }
+
+  async function submitBlock() {
+    if (!pickedStations.length) return;
+    setBlockSaving(true);
+    setBlockError(null);
+    setBlockClashes([]);
+
+    const res = await fetch('/api/admin/station-blocks', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        stationIds: pickedStations,
+        date: from,
+        startTime: blockStart,
+        durationMinutes: blockDuration,
+        note: blockNote.trim() || undefined,
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    setBlockSaving(false);
+
+    if (!res.ok) {
+      setBlockError(data.error ?? 'Blokaci se nepodařilo uložit');
+      setBlockClashes(Array.isArray(data.stations) ? data.stations : []);
+      return;
+    }
+
+    setPickedStations([]);
+    setBlockNote('');
+    startTransition(() => router.refresh());
+  }
+
+  async function releaseBlock(block: StationBlock) {
+    if (!confirm('Opravdu uvolnit blokaci? Stanice se vrátí do prodeje.')) return;
+    setReleasing(true);
+    await fetch(`/api/admin/station-blocks/${block.block_group_id}`, { method: 'DELETE' });
+    setReleasing(false);
+    setOpenBlock(null);
+    startTransition(() => router.refresh());
+  }
+
   const pcStations  = stations.filter((s) => s.type === 'pc');
   const ps5Stations = stations.filter((s) => s.type === 'ps5');
 
-  function tileState(station: Station) {
+  function tileState(station: Station): string {
     if (!station.is_active) return 'inactive';
+    if (blockByStation.has(station.id)) return 'blocked';
     if (occupiedIds.has(station.id)) return 'occupied';
     return 'free';
   }
+
+  const windowLabel = `${blockStart}–${minutesToLabel(windowEnd)}`;
 
   const rangeLabel = isSingleDay
     ? new Date(from).toLocaleDateString('cs-CZ', { weekday: 'long', day: 'numeric', month: 'long' }).toUpperCase()
@@ -290,46 +495,139 @@ export default function BookingsClient({
       {/* Station grid — only meaningful for a single day */}
       {isSingleDay && (
         <div style={{ marginBottom: 40 }}>
+          {/* Window controls. These drive the grid, so they are always visible:
+              the tiles below show occupancy for this window, not for the whole
+              day, and staff must be able to move the window before picking
+              anything. Note and BLOKOVAT appear once something is picked. */}
+          <div
+            className="bg-cz-black-mid rounded-cz flex flex-wrap items-end gap-4"
+            style={{ border: '1px solid var(--color-cz-gray-dark)', padding: 16, marginBottom: 16 }}
+          >
+            <div className="flex flex-col gap-1">
+              <label
+                htmlFor="block-start"
+                className="font-mono text-cz-gray-light uppercase"
+                style={{ fontSize: 16, letterSpacing: 2 }}
+              >
+                OD
+              </label>
+              <input
+                id="block-start"
+                type="time"
+                step={900}
+                value={blockStart}
+                onChange={(e) => setBlockStart(e.target.value || '00:00')}
+                className="bg-cz-black text-white font-mono rounded-control focus:outline-none focus:border-cz-orange"
+                style={{ padding: '8px 12px', fontSize: 17, border: '1px solid var(--color-cz-gray-dark)' }}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label
+                htmlFor="block-duration"
+                className="font-mono text-cz-gray-light uppercase"
+                style={{ fontSize: 16, letterSpacing: 2 }}
+              >
+                DÉLKA
+              </label>
+              <select
+                id="block-duration"
+                value={blockDuration}
+                onChange={(e) => setBlockDuration(Number(e.target.value))}
+                className="bg-cz-black text-white font-mono rounded-control focus:outline-none focus:border-cz-orange"
+                style={{ padding: '8px 12px', fontSize: 17, border: '1px solid var(--color-cz-gray-dark)' }}
+              >
+                {BLOCK_DURATIONS.map(([minutes, label]) => (
+                  <option key={minutes} value={minutes}>{label}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, paddingBottom: 10 }}>
+              OBSAZENOST {windowLabel}
+            </div>
+
+            {pickedStations.length > 0 && (
+              <>
+                <div className="flex flex-col gap-1 flex-1" style={{ minWidth: 200 }}>
+                  <label
+                    htmlFor="block-note"
+                    className="font-mono text-cz-gray-light uppercase"
+                    style={{ fontSize: 16, letterSpacing: 2 }}
+                  >
+                    POZNÁMKA (NEPOVINNÁ)
+                  </label>
+                  <input
+                    id="block-note"
+                    type="text"
+                    value={blockNote}
+                    onChange={(e) => setBlockNote(e.target.value)}
+                    maxLength={500}
+                    placeholder="Výměna GPU, walk-in…"
+                    className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange w-full"
+                    style={{ padding: '8px 12px', fontSize: 17, border: '1px solid var(--color-cz-gray-dark)' }}
+                  />
+                </div>
+
+                <div className="flex items-center gap-3" style={{ paddingBottom: 1 }}>
+                  <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
+                    {pickedStations.length} VYBRÁNO
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => { setPickedStations([]); setBlockError(null); setBlockClashes([]); }}
+                    className="font-mono text-cz-gray-light uppercase hover:text-white transition-colors"
+                    style={{ fontSize: 16, letterSpacing: 2 }}
+                  >
+                    ZRUŠIT VÝBĚR
+                  </button>
+                  <Button onClick={submitBlock} disabled={blockSaving} size="sm">
+                    {blockSaving ? '...' : 'BLOKOVAT'}
+                  </Button>
+                </div>
+              </>
+            )}
+
+            {blockError && (
+              <div className="w-full font-mono" style={{ fontSize: 17, color: 'var(--color-cz-danger)' }}>
+                {blockError}
+                {blockClashes.length > 0 && `: ${blockClashes.join(', ')}`}
+              </div>
+            )}
+          </div>
+
           <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 12 }}>
             PC STANICE
           </div>
           <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(10, 1fr)', marginBottom: 16 }}>
-            {pcStations.map((s) => {
-              const state = tileState(s);
-              return (
-                <div
-                  key={s.id}
-                  className="rounded-control flex flex-col items-center justify-center"
-                  style={{ padding: '10px 4px', background: TILE_BG[state], border: `1px solid ${TILE_BORDER[state]}` }}
-                >
-                  <span className="font-mono text-white" style={{ fontSize: 17, letterSpacing: 1 }}>{s.label}</span>
-                  <span className="font-mono uppercase" style={{ fontSize: 16, letterSpacing: 1, marginTop: 3, color: state === 'occupied' ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-light)' }}>
-                    {state === 'occupied' ? 'OBSAZENO' : state === 'inactive' ? 'INACTIVE' : 'VOLNÉ'}
-                  </span>
-                </div>
-              );
-            })}
+            {pcStations.map((s) => (
+              <StationTile
+                key={s.id}
+                station={s}
+                state={tileState(s)}
+                selected={pickedStations.includes(s.id)}
+                padding="10px 4px"
+                onSelect={() => toggleStation(s.id)}
+                onOpenBlock={() => setOpenBlock(blockByStation.get(s.id) ?? null)}
+              />
+            ))}
           </div>
 
           <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 12 }}>
             PS5 STANICE
           </div>
           <div className="flex gap-2">
-            {ps5Stations.map((s) => {
-              const state = tileState(s);
-              return (
-                <div
-                  key={s.id}
-                  className="rounded-control flex flex-col items-center justify-center"
-                  style={{ padding: '10px 20px', background: TILE_BG[state], border: `1px solid ${TILE_BORDER[state]}` }}
-                >
-                  <span className="font-mono text-white" style={{ fontSize: 17, letterSpacing: 1 }}>{s.label}</span>
-                  <span className="font-mono uppercase" style={{ fontSize: 16, letterSpacing: 1, marginTop: 3, color: state === 'occupied' ? 'var(--color-cz-orange)' : 'var(--color-cz-gray-light)' }}>
-                    {state === 'occupied' ? 'OBSAZENO' : 'VOLNÉ'}
-                  </span>
-                </div>
-              );
-            })}
+            {ps5Stations.map((s) => (
+              <StationTile
+                key={s.id}
+                station={s}
+                state={tileState(s)}
+                selected={pickedStations.includes(s.id)}
+                padding="10px 20px"
+                onSelect={() => toggleStation(s.id)}
+                onOpenBlock={() => setOpenBlock(blockByStation.get(s.id) ?? null)}
+              />
+            ))}
           </div>
         </div>
       )}
@@ -529,6 +827,76 @@ export default function BookingsClient({
           </div>
         </div>
       )}
+      {/* Block release panel. A block carries no customer and no money, so
+          this deliberately shares nothing with the booking detail panel — it
+          shows the window, the staff note, and the one action there is. */}
+      {openBlock && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{ background: 'rgba(0,0,0,0.6)', padding: 16 }}
+          onClick={() => setOpenBlock(null)}
+        >
+          <div
+            className="bg-cz-black-mid rounded-cz w-full"
+            style={{ maxWidth: 'min(400px, 92vw)', border: '1px solid var(--color-cz-gray-dark)' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="flex items-center justify-between"
+              style={{ padding: '20px 24px', borderBottom: '1px solid var(--color-cz-gray-dark)' }}
+            >
+              <div>
+                <div className="font-mono uppercase" style={{ fontSize: 16, letterSpacing: 2, color: 'var(--color-cz-warning)' }}>
+                  BLOKOVÁNO
+                </div>
+                <div className="font-display text-white uppercase" style={{ fontSize: 20 }}>
+                  {stations.find((s) => s.id === openBlock.station_id)?.label ?? 'STANICE'}
+                </div>
+              </div>
+              <button
+                onClick={() => setOpenBlock(null)}
+                aria-label="Zavřít"
+                className="text-cz-gray-light hover:text-white transition-colors"
+              >
+                <X size={18} weight="bold" />
+              </button>
+            </div>
+
+            <div style={{ padding: 24 }}>
+              {[
+                ['Datum', new Date(openBlock.date).toLocaleDateString('cs-CZ')],
+                [
+                  'Čas',
+                  `${openBlock.start_time.slice(0, 5)}–${minutesToLabel(
+                    parseTimeToMinutes(openBlock.start_time) + openBlock.duration_minutes,
+                  )}`,
+                ],
+                ['Poznámka', openBlock.note || '—'],
+              ].map(([label, value]) => (
+                <div key={label} style={{ marginBottom: 16 }}>
+                  <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, marginBottom: 4 }}>
+                    {label}
+                  </div>
+                  <div className="font-body text-white" style={{ fontSize: 17 }}>{value}</div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ padding: '0 24px 24px' }}>
+              <Button
+                onClick={() => releaseBlock(openBlock)}
+                disabled={releasing}
+                variant="ghost"
+                size="sm"
+                className="w-full"
+              >
+                {releasing ? '...' : 'UVOLNIT'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </AdminPageContainer>
   );
 }

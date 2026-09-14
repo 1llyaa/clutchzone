@@ -12,6 +12,7 @@ const NAV = [
   { href: '/admin/credits',     label: 'KREDITY',    badge: true },
   { href: '/admin/tournaments', label: 'TURNAJE' },
   { href: '/admin/gallery',     label: 'GALERIE' },
+  { href: '/admin/sponsors',    label: 'SPONZOŘI' },
   { href: '/admin/games',       label: 'HRY' },
   { href: '/admin/pricing',     label: 'CENÍK',      ownerOnly: true },
   { href: '/admin/messages',    label: 'ZPRÁVY' },
