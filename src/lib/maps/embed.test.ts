@@ -18,6 +18,65 @@ test('a snippet using single quotes works too', () => {
   assert.equal(toEmbedUrl(`<iframe src='${EMBED}' width='600'></iframe>`), EMBED);
 });
 
+test('a My Maps embed passes through, account index and all', () => {
+  // The real URL that broke this: /maps/d/u/2/embed, not /maps/embed. The
+  // `u/2` is the signed-in Google account index and shows up whenever the
+  // admin is logged into more than one account.
+  const myMaps =
+    'https://www.google.com/maps/d/u/2/embed?mid=1FHt7foDxfct5PujnpLdeQYpZrOkgVyw&ehbc=2E312F';
+  assert.equal(toEmbedUrl(myMaps), myMaps);
+});
+
+test('a My Maps embed without an account index passes through', () => {
+  const myMaps = 'https://www.google.com/maps/d/embed?mid=abc123';
+  assert.equal(toEmbedUrl(myMaps), myMaps);
+});
+
+test('a My Maps <iframe> snippet yields its src untouched', () => {
+  const myMaps =
+    'https://www.google.com/maps/d/u/2/embed?mid=1FHt7foDxfct5PujnpLdeQYpZrOkgVyw&ehbc=2E312F';
+  assert.equal(
+    toEmbedUrl(`<iframe src="${myMaps}" width="640" height="480"></iframe>`),
+    myMaps,
+  );
+});
+
+test('a My Maps viewer link is converted to the embed path', () => {
+  // /maps/d/viewer is the share link. Google refuses to frame it, so passing
+  // it through unchanged would render nothing.
+  assert.equal(
+    toEmbedUrl('https://www.google.com/maps/d/viewer?mid=abc123&usp=sharing'),
+    'https://www.google.com/maps/d/embed?mid=abc123',
+  );
+});
+
+test('a My Maps edit link is converted to the embed path', () => {
+  // The editor URL — what is in the address bar while building the map, and
+  // the easiest thing to copy by mistake. It demands a logged-in owner and
+  // cannot be framed at all.
+  assert.equal(
+    toEmbedUrl('https://www.google.com/maps/d/u/1/edit?mid=1AnB1hHvl0oiV_aKcgnroRfQxsWtpnJA&usp=sharing'),
+    'https://www.google.com/maps/d/embed?mid=1AnB1hHvl0oiV_aKcgnroRfQxsWtpnJA',
+  );
+});
+
+test('converting drops the account index but keeps the background colour', () => {
+  // A public map needs no account index, and keeping it would make the embed
+  // depend on which Google account the visitor is signed into.
+  assert.equal(
+    toEmbedUrl('https://www.google.com/maps/d/u/2/edit?mid=abc123&ehbc=2E312F'),
+    'https://www.google.com/maps/d/embed?mid=abc123&ehbc=2E312F',
+  );
+});
+
+test('a My Maps URL with no map id is rejected', () => {
+  assert.equal(toEmbedUrl('https://www.google.com/maps/d/u/1/edit'), null);
+});
+
+test('an embed path on a non-Google host is still rejected', () => {
+  assert.equal(toEmbedUrl('https://evil.example.com/maps/d/u/2/embed?mid=x'), null);
+});
+
 test('a plain address is wrapped as a q= embed', () => {
   assert.equal(
     toEmbedUrl('Krajinská 2381/17, České Budějovice 37001'),
