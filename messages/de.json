@@ -80,6 +80,10 @@
   "gallery": {
     "heading": "UNSER VENUE"
   },
+  "sponsors": {
+    "eyebrow": "// PARTNER UND SPONSOREN",
+    "heading": "WIR SPIELEN MIT IHNEN"
+  },
   "privateEvents": {
     "heading": "TEAMBUILDING & PARTYS",
     "subtext": "Unser Venue steht auch für Firmen-Teambuildings, Geburtstagspartys und andere private Anlässe zur Verfügung. Wir passen alles an dich an — Anzahl der Stationen, Dauer und Programm.",
@@ -106,6 +110,12 @@
     "success": "Nachricht gesendet! Wir melden uns bald bei dir.",
     "sendAnother": "WEITERE NACHRICHT SENDEN",
     "errorGeneral": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
+  },
+  "map": {
+    "heading": "SO FINDEST DU UNS",
+    "placeholderText": "DIE KARTE LÄDT VON GOOGLE MAPS UND SETZT DABEI COOKIES",
+    "showButton": "KARTE ANZEIGEN",
+    "iframeTitle": "Karte — Clutch Zone, Krajinská 2381/17, České Budějovice"
   },
   "ctaBand": {
     "eyebrow": "BEREIT ZU SPIELEN?",

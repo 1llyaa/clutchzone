@@ -6,6 +6,7 @@ import { createBrowserClient } from '@supabase/ssr';
 import Image from 'next/image';
 import Button from '@/components/ui/Button';
 import AdminPageContainer from '@/components/admin/AdminPageContainer';
+import { toEmbedUrl } from '@/lib/maps/embed';
 
 interface Profile {
   id: string;
@@ -61,6 +62,11 @@ export default function SettingsClient({
   const [streamVisible, setStreamVisible] = useState(siteSettings.stream_visible === 'true');
   const [savingStream, setSavingStream]   = useState(false);
   const [streamMsg, setStreamMsg]         = useState('');
+
+  const [mapEmbedUrl, setMapEmbedUrl]     = useState(siteSettings.map_embed_url ?? '');
+  const [mapVisible, setMapVisible]       = useState(siteSettings.map_visible === 'true');
+  const [savingMap, setSavingMap]         = useState(false);
+  const [mapMsg, setMapMsg]               = useState('');
 
   const [coinsAmount, setCoinsAmount]     = useState(siteSettings.pay_now_coins_amount ?? '50');
   const [savingCoins, setSavingCoins]     = useState(false);
@@ -165,6 +171,35 @@ export default function SettingsClient({
     const res = await updateSetting('pay_now_coins_amount', coinsAmount);
     setSavingCoins(false);
     setCoinsMsg(res ? 'Uloženo' : 'Chyba při ukládání');
+    startTransition(() => router.refresh());
+  }
+
+  async function handleMapSave() {
+    setSavingMap(true);
+    setMapMsg('');
+
+    // The same allowlist runs in the PATCH route — this only saves a round
+    // trip and gives the admin the reason before they hit save.
+    if (mapEmbedUrl.trim() && !toEmbedUrl(mapEmbedUrl)) {
+      setSavingMap(false);
+      setMapMsg('Chyba: odkaz musí vést na Google Maps');
+      return;
+    }
+
+    const [urlOk, visOk] = await Promise.all([
+      updateSetting('map_embed_url', mapEmbedUrl),
+      updateSetting('map_visible', String(mapVisible)),
+    ]);
+
+    setSavingMap(false);
+    setMapMsg(urlOk && visOk ? 'Uloženo' : 'Chyba při ukládání');
+    startTransition(() => router.refresh());
+  }
+
+  async function toggleMapVisible() {
+    const next = !mapVisible;
+    setMapVisible(next);
+    await updateSetting('map_visible', String(next));
     startTransition(() => router.refresh());
   }
 
@@ -409,6 +444,83 @@ export default function SettingsClient({
                 style={{ fontSize: 17, color: streamMsg.startsWith('Chyba') ? 'var(--color-cz-danger)' : 'var(--color-cz-success)' }}
               >
                 {streamMsg}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Map settings */}
+      <div style={{ marginBottom: 48 }}>
+        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 20 }}>
+          MAPA
+        </div>
+
+        <div className="bg-cz-black-mid rounded-cz overflow-hidden" style={{ border: '1px solid var(--color-cz-gray-dark)', padding: 24 }}>
+          <div className="flex flex-col gap-5">
+            {/* Toggle */}
+            <div className="flex items-center justify-between">
+              <span className="font-body text-cz-gray-light" style={{ fontSize: 17 }}>
+                Zobrazit mapu na hlavní stránce
+              </span>
+              <button
+                onClick={toggleMapVisible}
+                className="font-mono uppercase rounded-control transition-colors"
+                style={{
+                  fontSize: 16,
+                  letterSpacing: 1,
+                  padding: '4px 12px',
+                  color: mapVisible ? 'var(--color-cz-success)' : 'var(--color-cz-danger)',
+                  background: mapVisible
+                    ? 'color-mix(in srgb, var(--color-cz-success) 12.5%, transparent)'
+                    : 'color-mix(in srgb, var(--color-cz-danger) 12.5%, transparent)',
+                }}
+              >
+                {mapVisible ? 'AKTIVNÍ' : 'SKRYTÝ'}
+              </button>
+            </div>
+
+            {/* URL input */}
+            <div className="flex flex-col gap-2">
+              <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
+                GOOGLE MAPS — ADRESA, ODKAZ NEBO CELÝ IFRAME
+              </label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="text"
+                  value={mapEmbedUrl}
+                  onChange={(e) => setMapEmbedUrl(e.target.value)}
+                  placeholder="Krajinská 2381/17, České Budějovice"
+                  className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange flex-1 min-w-0"
+                  style={{ padding: '10px 14px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
+                />
+                <Button onClick={handleMapSave} disabled={savingMap} size="sm" className="flex-shrink-0">
+                  {savingMap ? '...' : 'ULOŽIT'}
+                </Button>
+              </div>
+              <p className="font-mono text-cz-gray-light" style={{ fontSize: 17, letterSpacing: 1 }}>
+                Vložte adresu, odkaz na Google Maps, nebo celý kód z „Sdílet → Vložit mapu“. Jiné než Google odkazy systém odmítne.
+              </p>
+            </div>
+
+            {/* Live preview — the only way to tell a wrong pin from a right one */}
+            {toEmbedUrl(mapEmbedUrl) && (
+              <div className="rounded-cz overflow-hidden" style={{ border: '1px solid var(--color-cz-gray-dark)' }}>
+                <iframe
+                  src={toEmbedUrl(mapEmbedUrl)!}
+                  title="Náhled mapy"
+                  loading="lazy"
+                  style={{ width: '100%', height: 240, border: 'none', display: 'block' }}
+                />
+              </div>
+            )}
+
+            {mapMsg && (
+              <p
+                className="font-mono"
+                style={{ fontSize: 17, color: mapMsg.startsWith('Chyba') ? 'var(--color-cz-danger)' : 'var(--color-cz-success)' }}
+              >
+                {mapMsg}
               </p>
             )}
           </div>

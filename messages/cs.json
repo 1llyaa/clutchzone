@@ -80,6 +80,10 @@
   "gallery": {
     "heading": "NAŠE HERNA"
   },
+  "sponsors": {
+    "eyebrow": "// PARTNEŘI A SPONZOŘI",
+    "heading": "HRAJEME S NIMI"
+  },
   "privateEvents": {
     "heading": "TEAMBUILDING & OSLAVY",
     "subtext": "Naše herna je k dispozici i pro firemní teambuildingy, narozeninové oslavy a jiné privátní akce. Domluvíme se na míru — počet stanic, délku i program.",
@@ -106,6 +110,12 @@
     "success": "Zpráva odeslána! Ozve se ti brzy.",
     "sendAnother": "NAPSAT DALŠÍ ZPRÁVU",
     "errorGeneral": "Něco se pokazilo. Zkuste to znovu."
+  },
+  "map": {
+    "heading": "KDE NÁS NAJDEŠ",
+    "placeholderText": "MAPA SE NAČÍTÁ Z GOOGLE MAPS, KTERÉ PŘITOM NASTAVÍ COOKIES",
+    "showButton": "ZOBRAZIT MAPU",
+    "iframeTitle": "Mapa — Clutch Zone, Krajinská 2381/17, České Budějovice"
   },
   "ctaBand": {
     "eyebrow": "PŘIPRAVEN HRÁT?",

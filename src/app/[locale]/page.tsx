@@ -12,7 +12,9 @@ import Games from '@/components/sections/Games';
 import Gallery from '@/components/sections/Gallery';
 import PrivateEvents from '@/components/sections/PrivateEvents';
 import Contact from '@/components/sections/Contact';
+import Sponsors from '@/components/sections/Sponsors';
 import CtaBand from '@/components/sections/CtaBand';
+import MapSection from '@/components/sections/MapSection';
 
 // Always render fresh — prices, tournaments, and the station counter
 // come from the DB and must not be frozen at build time.
@@ -76,24 +78,40 @@ async function fetchStationAvailability() {
   return { total, free: total - occupied };
 }
 
+async function fetchSponsors() {
+  const admin = createAdminClient();
+  const { data } = await admin
+    .from('sponsors')
+    .select('id, url, name, website_url')
+    .eq('is_active', true)
+    .order('sort_order')
+    .order('created_at');
+  return data ?? [];
+}
+
 async function fetchSiteSettings() {
   const admin = createAdminClient();
   const { data } = await admin
     .from('site_settings')
     .select('key, value')
-    .in('key', ['hero_image', 'stream_url', 'stream_visible', 'private_events_image']);
+    .in('key', [
+      'hero_image', 'stream_url', 'stream_visible', 'private_events_image',
+      'map_embed_url', 'map_visible',
+    ]);
   return Object.fromEntries((data ?? []).map((r) => [r.key, r.value])) as Record<string, string>;
 }
 
 export default async function HomePage() {
-  const [tournaments, gallery, games, pricingConfig, siteSettings, availability] = await Promise.all([
-    fetchTournaments(),
-    fetchGallery(),
-    fetchGames(),
-    getPricingConfig(),
-    fetchSiteSettings(),
-    fetchStationAvailability(),
-  ]);
+  const [tournaments, gallery, games, pricingConfig, siteSettings, availability, sponsors] =
+    await Promise.all([
+      fetchTournaments(),
+      fetchGallery(),
+      fetchGames(),
+      getPricingConfig(),
+      fetchSiteSettings(),
+      fetchStationAvailability(),
+      fetchSponsors(),
+    ]);
 
   // The hero stat is labelled "od / hodina", so it has to be the cheapest
   // hour we sell, not the 1h PC tier — that tier is the most expensive rate
@@ -120,7 +138,13 @@ export default async function HomePage() {
         <Gallery images={gallery.images} displayType={gallery.displayType} />
         <PrivateEvents image={siteSettings.private_events_image} />
         <Contact />
+        <Sponsors sponsors={sponsors} />
         <CtaBand />
+        {/* Last inside <main> so the map band sits directly above the footer. */}
+        <MapSection
+          embedUrl={siteSettings.map_embed_url ?? ''}
+          visible={siteSettings.map_visible === 'true'}
+        />
       </main>
       <Footer />
     </>
