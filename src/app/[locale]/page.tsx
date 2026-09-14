@@ -6,6 +6,7 @@ import Features from '@/components/sections/Features';
 import PriceCalculator from '@/components/pricing/PriceCalculator';
 import { getPricingConfig } from '@/lib/pricing/config-server';
 import { minEffectiveHourly } from '@/lib/pricing/engine';
+import { occupiedStationIds } from '@/lib/bookings/occupancy';
 import Stream from '@/components/sections/Stream';
 import Tournaments from '@/components/sections/Tournaments';
 import Games from '@/components/sections/Games';
@@ -58,24 +59,48 @@ async function fetchGames() {
 
 async function fetchStationAvailability() {
   const admin = createAdminClient();
-  const now = new Date();
-  const today = now.toISOString().split('T')[0];
-  const currentTime = now.toTimeString().slice(0, 5);
 
-  const [stationsRes, bookingsRes] = await Promise.all([
-    admin.from('stations').select('id').eq('is_active', true),
-    admin
-      .from('bookings')
-      .select('station_id')
-      .eq('date', today)
-      .neq('status', 'cancelled')
-      .lte('start_time', currentTime)
-      .gt('end_time', currentTime),
-  ]);
+  // This used to filter on `end_time`, a column migration 003 dropped in
+  // favour of duration_minutes. PostgREST rejected the whole query, `data`
+  // came back null, `occupied` was therefore always 0, and the hero counter
+  // claimed every station was free no matter how full the club was.
+  //
+  // It also mixed zones: a UTC calendar date against the server's local
+  // clock. The club is in Europe/Prague and bookings are stored as a naive
+  // local date + time, so both halves have to be resolved there.
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/Prague',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  }).formatToParts(new Date());
+  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? '00';
 
-  const total = stationsRes.data?.length ?? 0;
-  const occupied = new Set((bookingsRes.data ?? []).map((b) => b.station_id)).size;
-  return { total, free: total - occupied };
+  const today = `${get('year')}-${get('month')}-${get('day')}`;
+  const nowMinutes = Number(get('hour')) * 60 + Number(get('minute'));
+
+  const { data: stations } = await admin
+    .from('stations')
+    .select('id')
+    .eq('is_active', true);
+
+  const stationIds = (stations ?? []).map((s) => s.id);
+  if (!stationIds.length) return { total: 0, free: 0 };
+
+  // A one-minute window: the hero says what is busy *right now*, not what is
+  // booked at some point today. Going through the shared helper also means an
+  // admin block counts as occupied here, the same as everywhere else.
+  const occupied = await occupiedStationIds(admin, {
+    date: today,
+    stationIds,
+    startMinutes: nowMinutes,
+    endMinutes: nowMinutes + 1,
+  });
+
+  return { total: stationIds.length, free: stationIds.length - occupied.size };
 }
 
 async function fetchSponsors() {
