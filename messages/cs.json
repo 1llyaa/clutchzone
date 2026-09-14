@@ -478,6 +478,14 @@
       "docNoteText": "Tento e-mail slouží jako doklad o zakoupení.",
       "subject": "Platba přijata {reference} · Clutch Zone · {amount} Kč"
     },
+    "nudge": {
+      "heading": "Dokonči platbu",
+      "intro": "{name}, tvoje rezervace na tebe pořád čeká — platba zatím nedorazila.",
+      "payButton": "Zaplatit rezervaci →",
+      "payLinkText": "Zaplatit rezervaci",
+      "holdNote": "Místo ti držíme do {time}. Pokud platba do té doby nedorazí, rezervace propadne a stanice se vrátí do prodeje. Další e-mail už ti neposíláme.",
+      "subject": "Dokonči platbu {reference} · Clutch Zone · drženo do {time}"
+    },
     "credit": {
       "heading": "Nákup kreditu potvrzen",
       "intro": "Díky za nákup v Clutch Zone, {name}!",

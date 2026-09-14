@@ -478,6 +478,14 @@
       "docNoteText": "Tento e-mail slouží jako doklad o zakoupení.",
       "subject": "Platba přijata {reference} · Clutch Zone · {amount} Kč"
     },
+    "nudge": {
+      "heading": "Finish your payment",
+      "intro": "{name}, your booking is still waiting — the payment has not arrived yet.",
+      "payButton": "Pay for the booking →",
+      "payLinkText": "Pay for the booking",
+      "holdNote": "We are holding your spot until {time}. If the payment does not arrive by then, the booking expires and the station goes back on sale. We will not e-mail you about it again.",
+      "subject": "Finish your payment {reference} · Clutch Zone · held until {time}"
+    },
     "credit": {
       "heading": "Nákup kreditu potvrzen",
       "intro": "Díky za nákup v Clutch Zone, {name}!",

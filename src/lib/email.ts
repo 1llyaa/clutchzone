@@ -53,6 +53,28 @@ interface BookingReceiptEmailData {
   locale?: string;
 }
 
+/**
+ * Data for the 15-minute nudge on an abandoned Stripe Checkout. Everything
+ * here describes a booking that is still held and still payable — there is
+ * deliberately no "cancelled"/"expired" shape, because at minute 15 neither
+ * is true.
+ */
+interface PaymentNudgeEmailData {
+  reference: string;
+  stationLabel: string;
+  customerName: string;
+  customerEmail: string;
+  date: string;
+  startTime: string;
+  durationMinutes: number;
+  amountDue: number;
+  /** URL of the *original* Stripe session — same expiry, no hold extension. */
+  payUrl: string;
+  /** ISO instant the hold lapses, rendered as HH:MM Europe/Prague. */
+  holdExpiresAt: string;
+  locale?: string;
+}
+
 // Escape user-supplied values before interpolating into email HTML.
 // Booking fields come from the public POST /api/bookings endpoint and
 // are only length-validated, so raw markup would otherwise render in
@@ -354,6 +376,85 @@ export async function sendBookingPaymentReceipt(b: BookingReceiptEmailData): Pro
     });
   } catch (err) {
     console.error('Booking payment receipt email failed:', err);
+  }
+}
+
+/**
+ * Nudge for a checkout the customer opened and walked away from.
+ *
+ * Sent once, ~15 minutes after the click, while the Stripe session is still
+ * open and the slot is still held for roughly another 18 minutes. It links
+ * back to the *same* session rather than minting a new one, so it neither
+ * extends the hold nor changes what the customer owes.
+ *
+ * It must never say the booking has been cancelled or deleted — at minute 15
+ * neither has happened. The closing line is the only "we will not write
+ * again" the customer gets, and it is honest: there is no second e-mail in
+ * this design.
+ */
+export async function sendPaymentNudge(b: PaymentNudgeEmailData): Promise<void> {
+  const transport = getTransport();
+  if (!transport) return;
+
+  const locale = resolveLocale(b.locale);
+  const t = await getServerTranslator(locale, 'email');
+
+  const endMin = (() => {
+    const [h, m] = b.startTime.split(':').map(Number);
+    const total = h * 60 + m + b.durationMinutes;
+    return `${String(Math.floor(total / 60) % 24).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+  })();
+
+  // The club is in Europe/Prague; the customer reads a wall-clock time, so the
+  // server's own zone must not leak into it.
+  const heldUntil = new Date(b.holdExpiresAt).toLocaleTimeString(INTL_TAG[locale] ?? INTL_TAG.cs, {
+    timeZone: 'Europe/Prague',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+
+  const rows: [string, string][] = [
+    [t('labels.station'), b.stationLabel],
+    [t('labels.date'), formatDate(b.date, locale)],
+    [t('labels.time'), `${b.startTime} – ${endMin}`],
+    [t('labels.toPay'), t('booking.amountPlain', { amount: b.amountDue })],
+    [t('labels.reference'), b.reference],
+  ];
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#111;color:#e8e8e8;padding:32px;border-top:3px solid #E84A1A">
+      <h2 style="margin:0 0 4px;color:#fff;text-transform:uppercase;letter-spacing:2px">${escapeHtml(t('nudge.heading'))}</h2>
+      <p style="margin:0 0 24px;color:#888;font-size:13px">${escapeHtml(t('nudge.intro', { name: b.customerName }))}</p>
+      <div style="text-align:center;margin:0 0 24px">
+        <span style="display:inline-block;font-size:32px;letter-spacing:4px;color:#fff;border:1px solid #E84A1A;padding:12px 32px;background:rgba(232,74,26,0.08)">${b.reference}</span>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:14px">
+        ${rows.map(([k, v]) => `
+          <tr>
+            <td style="padding:8px 0;color:#888;border-bottom:1px solid #2a2a2a;width:130px">${k}</td>
+            <td style="padding:8px 0;color:#fff;border-bottom:1px solid #2a2a2a"><strong>${escapeHtml(v)}</strong></td>
+          </tr>`).join('')}
+      </table>
+      <p style="margin:24px 0 0;text-align:center">
+        <a href="${escapeHtml(b.payUrl)}" style="display:inline-block;background:#E84A1A;color:#fff;text-decoration:none;padding:14px 32px;font-size:16px;letter-spacing:1.5px;text-transform:uppercase">${escapeHtml(t('nudge.payButton'))}</a>
+      </p>
+      <p style="margin:24px 0 0;color:#888;font-size:13px;line-height:1.6">
+        ${escapeHtml(t('nudge.holdNote', { time: heldUntil }))}
+      </p>
+      ${legalFooter()}
+    </div>`;
+
+  try {
+    await transport.sendMail({
+      from: process.env.SMTP_FROM ?? process.env.SMTP_USER,
+      to: b.customerEmail,
+      subject: t('nudge.subject', { reference: b.reference, time: heldUntil }),
+      html,
+      text: `${t('nudge.heading')}: ${b.reference}\n${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\n${t('nudge.payLinkText')}: ${b.payUrl}\n${t('nudge.holdNote', { time: heldUntil })}${legalFooterText()}`,
+    });
+  } catch (err) {
+    console.error('Payment nudge email failed:', err);
   }
 }
 
