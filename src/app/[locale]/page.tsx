@@ -165,9 +165,12 @@ export default async function HomePage() {
         <Contact />
         <Sponsors sponsors={sponsors} />
         <CtaBand />
-        {/* Last inside <main> so the map band sits directly above the footer. */}
+        {/* Last inside <main> so the map band sits directly above the footer.
+            `map_embed_url` is a historical key name: it now holds a pasted
+            Google Maps link that the coordinates are read out of, not an
+            iframe URL. Renaming it would cost a migration for no behaviour. */}
         <MapSection
-          embedUrl={siteSettings.map_embed_url ?? ''}
+          location={siteSettings.map_embed_url ?? ''}
           visible={siteSettings.map_visible === 'true'}
         />
       </main>

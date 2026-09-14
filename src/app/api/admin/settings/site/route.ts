@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/auth';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { toEmbedUrl } from '@/lib/maps/embed';
+import { toMapView } from '@/lib/maps/view';
 
 export async function GET() {
   const profile = await requireAdmin();
@@ -35,13 +35,13 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid key or value' }, { status: 400 });
   }
 
-  // The Google-host allowlist has to run here, not only in the client and the
-  // section: this endpoint writes whatever it is given straight into an
-  // iframe src on the homepage, so without it the settings form becomes an
-  // arbitrary-iframe injection point. An empty value clears the map.
-  if (key === 'map_embed_url' && value.trim() && !toEmbedUrl(value)) {
+  // Validated here and not only in the client: the map centre is read back
+  // out of this row on every homepage render, and a value nothing can parse
+  // would silently hide the section with no clue why. An empty value clears
+  // the map deliberately.
+  if (key === 'map_embed_url' && value.trim() && !toMapView(value)) {
     return NextResponse.json(
-      { error: 'Odkaz musí vést na Google Maps' },
+      { error: 'Nepodařilo se z odkazu přečíst souřadnice' },
       { status: 400 },
     );
   }

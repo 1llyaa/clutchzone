@@ -6,7 +6,7 @@ import { createBrowserClient } from '@supabase/ssr';
 import Image from 'next/image';
 import Button from '@/components/ui/Button';
 import AdminPageContainer from '@/components/admin/AdminPageContainer';
-import { toEmbedUrl } from '@/lib/maps/embed';
+import { toMapView } from '@/lib/maps/view';
 
 interface Profile {
   id: string;
@@ -178,11 +178,11 @@ export default function SettingsClient({
     setSavingMap(true);
     setMapMsg('');
 
-    // The same allowlist runs in the PATCH route — this only saves a round
-    // trip and gives the admin the reason before they hit save.
-    if (mapEmbedUrl.trim() && !toEmbedUrl(mapEmbedUrl)) {
+    // The PATCH route validates this too — checking here only saves a round
+    // trip and names the problem before the admin hits save.
+    if (mapEmbedUrl.trim() && !toMapView(mapEmbedUrl)) {
       setSavingMap(false);
-      setMapMsg('Chyba: odkaz musí vést na Google Maps');
+      setMapMsg('Chyba: z odkazu nejde přečíst souřadnice. Otevřete místo v Google Maps a zkopírujte adresu z prohlížeče.');
       return;
     }
 
@@ -483,14 +483,14 @@ export default function SettingsClient({
             {/* URL input */}
             <div className="flex flex-col gap-2">
               <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
-                GOOGLE MAPS — ADRESA, ODKAZ NEBO CELÝ IFRAME
+                POLOHA — ODKAZ Z GOOGLE MAPS NEBO SOUŘADNICE
               </label>
               <div className="flex items-center gap-3">
                 <input
                   type="text"
                   value={mapEmbedUrl}
                   onChange={(e) => setMapEmbedUrl(e.target.value)}
-                  placeholder="Krajinská 2381/17, České Budějovice"
+                  placeholder="https://www.google.com/maps/@48.9744,14.4744,17z"
                   className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange flex-1 min-w-0"
                   style={{ padding: '10px 14px', fontSize: 19, border: '1px solid var(--color-cz-gray-dark)' }}
                 />
@@ -499,21 +499,40 @@ export default function SettingsClient({
                 </Button>
               </div>
               <p className="font-mono text-cz-gray-light" style={{ fontSize: 17, letterSpacing: 1 }}>
-                Vložte adresu, odkaz na Google Maps, nebo celý kód z „Sdílet → Vložit mapu“. Jiné než Google odkazy systém odmítne.
+                Najděte místo v Google Maps a zkopírujte adresu z prohlížeče — vytáhneme z ní souřadnice a přiblížení.
+                Můžete zadat i souřadnice ručně ve tvaru 48.9744, 14.4744. Odkaz na „Moje mapy“ (mid=…) nefunguje,
+                protože neobsahuje polohu.
               </p>
             </div>
 
-            {/* Live preview — the only way to tell a wrong pin from a right one */}
-            {toEmbedUrl(mapEmbedUrl) && (
-              <div className="rounded-cz overflow-hidden" style={{ border: '1px solid var(--color-cz-gray-dark)' }}>
-                <iframe
-                  src={toEmbedUrl(mapEmbedUrl)!}
-                  title="Náhled mapy"
-                  loading="lazy"
-                  style={{ width: '100%', height: 240, border: 'none', display: 'block' }}
-                />
-              </div>
-            )}
+            {/* What was actually understood. A wrong pin is otherwise only
+                discoverable by loading the homepage and squinting at it. */}
+            {mapEmbedUrl.trim() && (() => {
+              const view = toMapView(mapEmbedUrl);
+              if (!view) {
+                return (
+                  <p className="font-mono" style={{ fontSize: 17, color: 'var(--color-cz-danger)' }}>
+                    Z tohoto odkazu nejde přečíst poloha
+                  </p>
+                );
+              }
+              return (
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="font-mono" style={{ fontSize: 17, color: 'var(--color-cz-success)' }}>
+                    {view.lat}, {view.lng} · přiblížení {view.zoom}
+                  </span>
+                  <a
+                    href={`https://www.openstreetmap.org/?mlat=${view.lat}&mlon=${view.lng}#map=${view.zoom}/${view.lat}/${view.lng}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-cz-orange uppercase hover:underline"
+                    style={{ fontSize: 16, letterSpacing: 2 }}
+                  >
+                    OVĚŘIT POLOHU →
+                  </a>
+                </div>
+              );
+            })()}
 
             {mapMsg && (
               <p

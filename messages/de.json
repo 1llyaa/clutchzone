@@ -112,10 +112,10 @@
     "errorGeneral": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
   },
   "map": {
-    "heading": "SO FINDEST DU UNS",
-    "placeholderText": "DIE KARTE LÄDT VON GOOGLE MAPS UND SETZT DABEI COOKIES",
-    "showButton": "KARTE ANZEIGEN",
-    "iframeTitle": "Karte — Clutch Zone, Krajinská 2381/17, České Budějovice"
+    "label": "Karte — Clutch Zone, Krajinská 2381/17, České Budějovice",
+    "scrollHintWindows": "Zum Zoomen Strg gedrückt halten und scrollen",
+    "scrollHintMac": "Zum Zoomen ⌘ gedrückt halten und scrollen",
+    "touchHint": "Karte mit zwei Fingern bewegen"
   },
   "ctaBand": {
     "eyebrow": "BEREIT ZU SPIELEN?",
