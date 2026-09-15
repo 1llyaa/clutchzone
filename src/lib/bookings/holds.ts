@@ -56,3 +56,31 @@ export async function releaseExpiredHolds(): Promise<void> {
     console.error('Failed to release expired booking holds:', error);
   }
 }
+
+/**
+ * How far a re-opened checkout may push a hold.
+ *
+ * The checkout route mints a fresh Stripe session on every call and stamps a
+ * new expiry with it, which let anyone keep a slot reserved forever by
+ * re-calling it — the lazy reaper only ever compared against a moving target.
+ * The ceiling is computed once from the booking's creation time, so repeated
+ * calls converge on it instead of walking it forward.
+ */
+export function cappedHoldExpiry(
+  current: string | null,
+  proposed: string,
+  ceiling: string,
+): string {
+  const ceilingMs = Date.parse(ceiling);
+  const proposedMs = Math.min(Date.parse(proposed), ceilingMs);
+  if (!current) return new Date(proposedMs).toISOString();
+
+  // A hold must never shorten: the customer may already be mid-payment.
+  const currentMs = Date.parse(current);
+  return new Date(Math.max(currentMs, proposedMs)).toISOString();
+}
+
+/** The furthest a hold may ever run: two full hold windows from booking time. */
+export function holdCeilingFrom(createdAt: string, holdMinutes: number): string {
+  return new Date(Date.parse(createdAt) + holdMinutes * 2 * 60_000).toISOString();
+}
