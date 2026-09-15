@@ -30,6 +30,11 @@ export async function POST(request: NextRequest) {
     message: parsed.data.message,
   });
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    // Detail to the log, not to the caller: PostgREST messages name tables,
+    // columns and constraints, which is a free schema map for an anonymous one.
+    console.error('Contact message insert failed:', error);
+    return NextResponse.json({ error: 'Zprávu se nepodařilo odeslat' }, { status: 500 });
+  }
   return NextResponse.json({ ok: true }, { status: 201 });
 }

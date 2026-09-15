@@ -92,7 +92,8 @@ export async function POST(
       .update({ filled_slots: tournament.filled_slots })
       .eq('id', id)
       .eq('filled_slots', tournament.filled_slots + 1);
-    return NextResponse.json({ error: insErr.message }, { status: 500 });
+    console.error(`Tournament registration insert failed for tournament ${id}:`, insErr);
+    return NextResponse.json({ error: 'Registraci se nepodařilo uložit' }, { status: 500 });
   }
 
   const tournamentEmailData = {
