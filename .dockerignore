@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.local.example
+.git
+.github
+.next
+node_modules
+docs
+*.xlsx
+*.tsbuildinfo
+.DS_Store
+.claude
+.agents
+.vscode
