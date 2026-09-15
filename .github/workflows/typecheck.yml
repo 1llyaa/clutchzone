@@ -2,9 +2,12 @@ name: Typecheck
 
 on:
   pull_request:
-    branches: [main, dev]
+    branches: [main]
   push:
-    branches: [main, dev]
+    branches: [main]
+
+permissions:
+  contents: read
 
 jobs:
   tsc:

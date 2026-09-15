@@ -2,9 +2,12 @@ name: Migration check
 
 on:
   pull_request:
-    branches: [main, dev]
+    branches: [main]
     paths:
       - "supabase/migrations/**"
+
+permissions:
+  contents: read
 
 jobs:
   apply-migrations:
