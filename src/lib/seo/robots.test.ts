@@ -30,7 +30,20 @@ test('the api prefix is disallowed at the root, not behind a locale', () => {
 // The origin tracks NEXT_PUBLIC_SITE_URL like the rest of the app (so a staging
 // deploy advertises itself, not production), which means only the shape is
 // fixed here — the value differs per environment.
-test('the sitemap reference is an absolute url at /sitemap.xml', () => {
+test('the sitemap reference is an absolute url at /sitemap_index.xml', () => {
   const sitemap = robots().sitemap as string;
-  assert.match(sitemap, /^https?:\/\/[^/]+\/sitemap\.xml$/);
+  assert.match(sitemap, /^https?:\/\/[^/]+\/sitemap_index\.xml$/);
+});
+
+// `/*/rezervace` without the trailing slash also swallowed the /<locale>/rezervace
+// listing page — the site's main conversion page — rather than only the
+// per-reservation pages below it. Same for /kredit.
+test('the reservation and credit listing pages stay crawlable', () => {
+  const disallow = [(robots().rules as { disallow?: string | string[] }[])[0].disallow ?? []].flat();
+  for (const pattern of disallow) {
+    assert.notEqual(pattern, '/*/rezervace');
+    assert.notEqual(pattern, '/*/kredit');
+  }
+  assert.ok(disallow.includes('/*/rezervace/'));
+  assert.ok(disallow.includes('/*/kredit/'));
 });

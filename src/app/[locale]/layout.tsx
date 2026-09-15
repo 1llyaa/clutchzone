@@ -4,6 +4,7 @@ import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/../i18n/routing';
 import { hreflangFor, ogLocaleFor, resolveLocale } from '@/lib/i18n/locales';
+import { alternatesFor } from '@/lib/seo/alternates';
 import { ReservationProvider } from '@/components/reservation/ReservationContext';
 import ReservationModal from '@/components/reservation/ReservationModal';
 import JsonLd from '@/components/seo/JsonLd';
@@ -28,13 +29,7 @@ export async function generateMetadata({
     metadataBase: new URL(SITE_URL),
     title,
     description,
-    alternates: {
-      canonical: `/${locale}`,
-      languages: {
-        ...Object.fromEntries(routing.locales.map((l) => [hreflangFor(l), `/${l}`])),
-        'x-default': `/${routing.defaultLocale}`,
-      },
-    },
+    alternates: alternatesFor(locale),
     openGraph: {
       title,
       description,

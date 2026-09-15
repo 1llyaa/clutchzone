@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { alternatesFor } from '@/lib/seo/alternates';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import LegalSection from '@/components/legal/LegalSection';
@@ -14,7 +15,7 @@ export async function generateMetadata({
   const title = `${getLegalDocument('cookies', locale).title} — Clutch Zone`;
   return {
     title,
-    alternates: { canonical: `/${locale}/cookies` },
+    alternates: alternatesFor(locale, '/cookies'),
     openGraph: { title, url: `/${locale}/cookies` },
   };
 }
