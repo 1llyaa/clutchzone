@@ -15,9 +15,12 @@ const DISALLOW = [
   '/*/booking',
   '/*/bookings',
   // Per-reservation and per-order pages (/*/rezervace/<id>, /*/kredit/<orderId>)
-  // are as user-specific as /bookings and have nothing to index.
-  '/*/rezervace',
-  '/*/kredit',
+  // are as user-specific as /bookings and have nothing to index. The trailing
+  // slash matters: without it these patterns also blocked the /*/rezervace and
+  // /*/kredit listing pages, which are the two main conversion pages and carry
+  // nothing user-specific.
+  '/*/rezervace/',
+  '/*/kredit/',
 ];
 
 // Named explicitly per the site owner's request to keep the door open for AI
@@ -42,7 +45,7 @@ export default function robots(): MetadataRoute.Robots {
       { userAgent: '*', allow: '/', disallow: DISALLOW },
       ...AI_USER_AGENTS.map((userAgent) => ({ userAgent, allow: '/', disallow: DISALLOW })),
     ],
-    sitemap: `${SITE_URL}/sitemap.xml`,
+    sitemap: `${SITE_URL}/sitemap_index.xml`,
     host: SITE_URL,
   };
 }

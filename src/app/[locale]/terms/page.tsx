@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { alternatesFor } from '@/lib/seo/alternates';
 import LegalPage from '@/components/legal/LegalPage';
 import { getLegalDocument } from '@/content/legal';
 
@@ -11,7 +12,7 @@ export async function generateMetadata({
   const title = `${getLegalDocument('terms', locale).title} — Clutch Zone`;
   return {
     title,
-    alternates: { canonical: `/${locale}/terms` },
+    alternates: alternatesFor(locale, '/terms'),
     openGraph: { title, url: `/${locale}/terms` },
   };
 }
