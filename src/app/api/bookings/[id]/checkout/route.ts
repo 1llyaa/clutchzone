@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createStripeClient } from '@/lib/stripe';
-import { getOnlineHoldMinutes } from '@/lib/bookings/holds';
+import { cappedHoldExpiry, getOnlineHoldMinutes, holdCeilingFrom } from '@/lib/bookings/holds';
 import { getServerTranslator } from '@/lib/i18n/server';
 
 // Must match i18n/routing.ts — `de` and `ua` used to fall through to Czech
@@ -25,7 +25,7 @@ export async function POST(
 
   const { data: rows, error: bookingErr } = await admin
     .from('bookings')
-    .select('id, reference, total_price, payment_status, status, hold_expires_at')
+    .select('id, reference, total_price, payment_status, status, hold_expires_at, created_at, stripe_checkout_session_id')
     .eq('booking_group_id', groupId);
 
   if (bookingErr || !rows?.length) {
@@ -66,6 +66,23 @@ export async function POST(
 
   try {
     const stripe = createStripeClient();
+
+    // A session Stripe still reports as `open` is still payable, so there is no
+    // reason to mint a second one — and minting one is exactly what let a caller
+    // walk the hold forward indefinitely.
+    const existingId = rows[0].stripe_checkout_session_id;
+    if (existingId) {
+      try {
+        const existing = await stripe.checkout.sessions.retrieve(existingId);
+        if (existing.status === 'open' && existing.url) {
+          return NextResponse.json({ url: existing.url });
+        }
+      } catch {
+        // Session unknown to Stripe (rotated keys, very old row) — fall through
+        // and mint a replacement.
+      }
+    }
+
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       currency: 'czk',
@@ -85,15 +102,18 @@ export async function POST(
       cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/${locale}/booking/cancelled?booking=${groupId}`,
     });
 
+    const ceiling = holdCeilingFrom(rows[0].created_at, holdMinutes);
+    const cappedHold = cappedHoldExpiry(rows[0].hold_expires_at, holdExpiresAt, ceiling);
+
     const { error: updateErr } = await admin
       .from('bookings')
       .update({
         payment_method: 'online',
         stripe_checkout_session_id: session.id,
-        hold_expires_at: holdExpiresAt,
+        hold_expires_at: cappedHold,
         // When the customer actually opened Checkout, for the 15-minute nudge.
-        // Re-stamped on every call on purpose: this route mints a fresh session
-        // each time, so the nudge must count from the newest one and link to it.
+        // Only reached when a new session is minted; a reused open session
+        // returns above and keeps the stamp of the session it belongs to.
         checkout_started_at: new Date().toISOString(),
       })
       .eq('booking_group_id', groupId);

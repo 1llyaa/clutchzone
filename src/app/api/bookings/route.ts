@@ -10,6 +10,7 @@ import { getOnlineHoldMinutes, holdExpiryFrom, releaseExpiredHolds } from '@/lib
 import { occupiedStationIds, parseTimeToMinutes } from '@/lib/bookings/occupancy';
 import { z } from 'zod';
 import { getServerTranslator } from '@/lib/i18n/server';
+import { checkLimit, clientKey } from '@/lib/rate-limit';
 
 const BookingSchema = z.object({
   stationType: z.enum(['pc', 'ps5']),
@@ -21,13 +22,13 @@ const BookingSchema = z.object({
   offerId: z.string().min(1),
   expectedAmount: z.number().int().min(0),
   termsAccepted: z.boolean(),
-  clutchzoneAccount: z.string().trim().optional(),
+  clutchzoneAccount: z.string().trim().max(64).optional(),
   paymentMethod: z.enum(['online', 'onsite']),
   paysWithCredit: z.boolean().optional().default(false),
-  customerName: z.string().min(2),
+  customerName: z.string().min(2).max(100),
   customerEmail: z.string().email(),
-  customerPhone: z.string().min(9),
-  customerDiscord: z.string().optional(),
+  customerPhone: z.string().min(9).max(32),
+  customerDiscord: z.string().max(64).optional(),
   // Locale of the cancellation link in the confirmation email.
   locale: z.enum(['cs', 'en', 'de', 'ua']).optional().default('cs'),
 });
@@ -48,6 +49,11 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json({ error: t('invalidData'), details: parsed.error.flatten() }, { status: 400 });
   }
+
+  if (!checkLimit('bookings', clientKey(req), 5, 10 * 60_000)) {
+    return NextResponse.json({ error: 'Příliš mnoho požadavků' }, { status: 429 });
+  }
+
   const data = parsed.data;
 
   if (!data.termsAccepted) {

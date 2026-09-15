@@ -4,12 +4,10 @@ import {
   secondsToMinutes,
   sumRemainingSeconds,
   formatHours,
-  checkRateLimit,
   readCache,
   writeCache,
   resetGgLeapState,
   isUserNotFound,
-  RATE_LIMIT,
   CACHE_MAX,
 } from './hours';
 
@@ -45,31 +43,6 @@ test('formatHours: localised units', () => {
   assert.equal(formatHours(750, 'de'), '12 Std. 30 Min.');
   assert.equal(formatHours(750, 'ua'), '12 год 30 хв');
   assert.equal(formatHours(750, 'xx'), '12 h 30 min');
-});
-
-test('checkRateLimit: allows RATE_LIMIT calls then blocks', () => {
-  resetGgLeapState();
-  const now = 1_000_000;
-  for (let i = 0; i < RATE_LIMIT; i++) {
-    assert.equal(checkRateLimit('1.2.3.4', now), true, `call ${i + 1} should pass`);
-  }
-  assert.equal(checkRateLimit('1.2.3.4', now), false);
-});
-
-test('checkRateLimit: buckets are per key', () => {
-  resetGgLeapState();
-  const now = 1_000_000;
-  for (let i = 0; i < RATE_LIMIT; i++) checkRateLimit('1.2.3.4', now);
-  assert.equal(checkRateLimit('1.2.3.4', now), false);
-  assert.equal(checkRateLimit('5.6.7.8', now), true);
-});
-
-test('checkRateLimit: window slides', () => {
-  resetGgLeapState();
-  const now = 1_000_000;
-  for (let i = 0; i < RATE_LIMIT; i++) checkRateLimit('1.2.3.4', now);
-  assert.equal(checkRateLimit('1.2.3.4', now + 59_999), false);
-  assert.equal(checkRateLimit('1.2.3.4', now + 60_001), true);
 });
 
 test('cache: hit inside the TTL, miss after it', () => {

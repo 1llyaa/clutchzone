@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/auth';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { isSafeExternalUrl } from '@/lib/validation/url';
 
 export async function PATCH(
   request: NextRequest,
@@ -19,6 +20,10 @@ export async function PATCH(
   }
   if (Object.keys(update).length === 0) {
     return NextResponse.json({ error: 'No valid fields' }, { status: 400 });
+  }
+  if ('website_url' in update && update.website_url !== null
+      && !isSafeExternalUrl(update.website_url)) {
+    return NextResponse.json({ error: 'Invalid website URL' }, { status: 400 });
   }
 
   const admin = createAdminClient();

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/auth';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { sendPaymentReceiptOnce } from '@/lib/bookings/payment-receipt';
+import { isUuid } from '@/lib/validation/identifier';
 
 // `id` is normally a booking_group_id (every row in the N-station group
 // gets updated/deleted together) — the `id.eq` fallback covers legacy
@@ -14,6 +15,10 @@ export async function PATCH(
   if (!profile) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const { id } = await params;
+  if (!isUuid(id)) {
+    return NextResponse.json({ error: 'Invalid booking id' }, { status: 400 });
+  }
+
   const body = await request.json();
   const allowed = ['status', 'payment_status'];
   const updates = Object.fromEntries(
@@ -81,6 +86,10 @@ export async function DELETE(
   if (!profile) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const { id } = await params;
+  if (!isUuid(id)) {
+    return NextResponse.json({ error: 'Invalid booking id' }, { status: 400 });
+  }
+
   const admin = createAdminClient();
   const { error } = await admin
     .from('bookings')

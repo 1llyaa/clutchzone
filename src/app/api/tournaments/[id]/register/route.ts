@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { sendTournamentRegistrationNotification, sendTournamentRegistrationReceived } from '@/lib/email';
+import { checkLimit, clientKey } from '@/lib/rate-limit';
 
 const schema = z.object({
   team_name:       z.string().min(1).max(100),
@@ -26,6 +27,11 @@ export async function POST(
   if (!parsed.success) {
     return NextResponse.json({ error: 'Invalid data', details: parsed.error.flatten() }, { status: 400 });
   }
+
+  if (!checkLimit('tournament-register', clientKey(request), 3, 10 * 60_000)) {
+    return NextResponse.json({ error: 'Příliš mnoho požadavků' }, { status: 429 });
+  }
+
 
   const admin = createAdminClient();
 
@@ -86,7 +92,8 @@ export async function POST(
       .update({ filled_slots: tournament.filled_slots })
       .eq('id', id)
       .eq('filled_slots', tournament.filled_slots + 1);
-    return NextResponse.json({ error: insErr.message }, { status: 500 });
+    console.error(`Tournament registration insert failed for tournament ${id}:`, insErr);
+    return NextResponse.json({ error: 'Registraci se nepodařilo uložit' }, { status: 500 });
   }
 
   const tournamentEmailData = {

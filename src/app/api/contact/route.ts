@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { checkLimit, clientKey } from '@/lib/rate-limit';
 
 const schema = z.object({
   name:    z.string().min(1).max(100),
@@ -17,6 +18,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
   }
 
+  if (!checkLimit('contact', clientKey(request), 3, 10 * 60_000)) {
+    return NextResponse.json({ error: 'Příliš mnoho požadavků' }, { status: 429 });
+  }
+
+
   const admin = createAdminClient();
   const { error } = await admin.from('contact_messages').insert({
     name:    parsed.data.name,
@@ -24,6 +30,11 @@ export async function POST(request: NextRequest) {
     message: parsed.data.message,
   });
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    // Detail to the log, not to the caller: PostgREST messages name tables,
+    // columns and constraints, which is a free schema map for an anonymous one.
+    console.error('Contact message insert failed:', error);
+    return NextResponse.json({ error: 'Zprávu se nepodařilo odeslat' }, { status: 500 });
+  }
   return NextResponse.json({ ok: true }, { status: 201 });
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/auth';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { isSafeExternalUrl, storageHosts } from '@/lib/validation/url';
 
 export async function GET() {
   const profile = await requireAdmin();
@@ -24,6 +25,11 @@ export async function POST(request: NextRequest) {
 
   const { url, storage_path, caption } = await request.json();
   if (!url || !storage_path) return NextResponse.json({ error: 'url and storage_path required' }, { status: 400 });
+
+  const hosts = storageHosts();
+  if (!isSafeExternalUrl(url, hosts.length ? { allowHosts: hosts } : undefined)) {
+    return NextResponse.json({ error: 'Invalid image URL' }, { status: 400 });
+  }
 
   const admin = createAdminClient();
   const { data: maxRow } = await admin

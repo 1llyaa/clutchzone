@@ -8,8 +8,8 @@ Next.js 15 (App Router) + React 19 + TypeScript, Tailwind CSS v4 (`@theme` token
 
 ## Git workflow
 
-- **New feature work bases off `origin/DEV` and pushes to `origin/DEV`, not `main`.** `main` is the deployed/stable line; `DEV` is the active integration branch.
-- Fetch `DEV` before branching. Push finished work back to `DEV` (fast-forward branch push or merge) — never straight to `main`.
+- **New feature work branches off `main` and returns through a pull request into `main`.** The `DEV` integration branch was retired; there is one long-lived line now.
+- Fetch `main` before branching. Never push straight to `main` — open a pull request so the Build, Lint, Typecheck and Migration check workflows run.
 - Don't create ad-hoc long-lived worktree branches off `main`.
 - Delete feature branches once merged (locally and on `origin`) instead of letting them pile up — drift between stale branches has caused real merge pain here (144-conflict reconciliation, once).
 

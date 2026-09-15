@@ -19,7 +19,7 @@
     "@supabase/supabase-js": "^2.108.2",
     "libphonenumber-js": "^1.13.11",
     "maplibre-gl": "^4.7.1",
-    "next": "^15.3.3",
+    "next": "^15.5.25",
     "next-intl": "^3.26.5",
     "nodemailer": "^9.0.3",
     "react": "^19.0.0",
