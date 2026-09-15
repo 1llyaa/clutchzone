@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation';
+import { requireAdmin } from '@/lib/admin/auth';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { getLocale } from 'next-intl/server';
 import { ArrowRight } from '@phosphor-icons/react/dist/ssr';
@@ -53,6 +55,12 @@ const STATUS_COLOR: Record<string, string> = {
 };
 
 export default async function AdminDashboard() {
+  // Checked here as well as in layout.tsx: a layout is not a security
+  // boundary — Next renders pages and layouts independently, so a page that
+  // relies on its layout alone can be reached on its own.
+  const profile = await requireAdmin();
+  if (!profile) redirect(`/${await getLocale()}/admin/login`);
+
   const [stats, locale] = await Promise.all([fetchStats(), getLocale()]);
 
   const cards: StatCard[] = [
