@@ -67,6 +67,32 @@ jobs:
 
           -- 009 and 011 add tables to Supabase's realtime publication.
           CREATE PUBLICATION supabase_realtime;
+
+          -- 025 schedules the payment nudge with pg_cron and calls it through
+          -- pg_net. Neither extension exists on plain postgres:16, and unlike
+          -- the stubs above they cannot be faked by CREATE EXTENSION at all --
+          -- there is no control file to load. The apply step below comments
+          -- those two lines out; these stubs stand in for what they would have
+          -- provided, so the statements that use them still have to parse.
+          CREATE SCHEMA IF NOT EXISTS cron;
+          CREATE TABLE IF NOT EXISTS cron.job (
+            jobid    bigserial PRIMARY KEY,
+            jobname  text,
+            schedule text,
+            command  text
+          );
+          CREATE OR REPLACE FUNCTION cron.schedule(job_name text, schedule text, command text)
+            RETURNS bigint LANGUAGE sql AS $$
+              INSERT INTO cron.job (jobname, schedule, command)
+              VALUES (job_name, schedule, command)
+              RETURNING jobid
+            $$;
+          CREATE OR REPLACE FUNCTION cron.unschedule(job_name text)
+            RETURNS boolean LANGUAGE sql AS $$
+              DELETE FROM cron.job WHERE jobname = job_name;
+              SELECT true;
+            $$;
+          CREATE SCHEMA IF NOT EXISTS net;
           SQL
 
       - name: Apply migrations in order
@@ -75,5 +101,12 @@ jobs:
         run: |
           for f in supabase/migrations/*.sql; do
             echo "Applying $f"
-            psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1 -f "$f"
+            # pg_cron and pg_net are Supabase-provided and have no control file
+            # here, so CREATE EXTENSION aborts the run before it reaches the
+            # migrations a pull request actually changed. Comment those two
+            # lines out and let the stubbed cron API above carry the rest; what
+            # this job asserts is that the DDL applies in order, not that the
+            # scheduler runs.
+            sed -E 's/^CREATE EXTENSION IF NOT EXISTS (pg_cron|pg_net);/-- CI stub: &/' "$f" \
+              | psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1
           done
