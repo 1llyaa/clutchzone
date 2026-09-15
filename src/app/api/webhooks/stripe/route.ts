@@ -114,8 +114,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
-  if (event.type === 'checkout.session.completed') {
+  if (event.type === 'checkout.session.completed'
+      || event.type === 'checkout.session.async_payment_succeeded') {
     const session = event.data.object; // Stripe.Checkout.Session
+
+    // `completed` fires for delayed-notification methods before the money
+    // settles. Promoting the booking then would confirm a slot and mail a
+    // receipt for a payment that can still fail. The async success event above
+    // brings those back here once the money is actually in.
+    if (session.payment_status !== 'paid') {
+      return NextResponse.json({ received: true });
+    }
+
     const parsedCoins = parseInt(session.metadata?.coins ?? '0', 10);
     const coins = Number.isFinite(parsedCoins) ? parsedCoins : 0;
     const paymentIntentId = typeof session.payment_intent === 'string' ? session.payment_intent : session.payment_intent?.id;
