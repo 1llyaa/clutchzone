@@ -35,6 +35,9 @@ const PUBLIC_TABLES = new Set([
   'gallery_config',
   'games',
   'tournaments',
+  // Homepage carousel content, public by design — 026 added the table and the
+  // anon-readable policy together but not this classification.
+  'sponsors',
 ]);
 
 /** Values shorter than this are too generic to grep for without false hits. */
