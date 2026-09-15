@@ -36,3 +36,22 @@ export function isSafeExternalUrl(
 
   return parsed.protocol === 'http:' || parsed.protocol === 'https:';
 }
+
+/**
+ * The hostnames this deployment's own storage serves from.
+ *
+ * Read from the environment rather than hardcoded so dev and production each
+ * validate against their own Supabase host. Empty when the variable is unset
+ * or unparseable, in which case callers fall back to the scheme check alone —
+ * a narrower check than nothing, and the tooling contexts where the variable
+ * is missing do not write rows.
+ */
+export function storageHosts(): string[] {
+  const hosts: string[] = [];
+  try {
+    hosts.push(new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!).hostname);
+  } catch {
+    /* unset in some tooling contexts; fall through to no allowlist */
+  }
+  return hosts;
+}
