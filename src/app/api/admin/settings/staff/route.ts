@@ -21,5 +21,19 @@ export async function POST(request: NextRequest) {
   });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // Explicit, because migration 027 removes the trigger that used to create
+  // this row for every auth user. Granting staff is now a deliberate act by an
+  // owner rather than a side effect of existing. Upsert so this is safe to
+  // deploy both before and after that migration lands.
+  if (data.user) {
+    const { error: profileError } = await admin
+      .from('profiles')
+      .upsert({ id: data.user.id, email, role: 'staff' }, { onConflict: 'id' });
+    if (profileError) {
+      return NextResponse.json({ error: profileError.message }, { status: 500 });
+    }
+  }
+
   return NextResponse.json({ id: data.user?.id }, { status: 201 });
 }
