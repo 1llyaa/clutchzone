@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { checkLimit, clientKey } from '@/lib/rate-limit';
 
 const schema = z.object({
   name:    z.string().min(1).max(100),
@@ -16,6 +17,11 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
   }
+
+  if (!checkLimit('contact', clientKey(request), 3, 10 * 60_000)) {
+    return NextResponse.json({ error: 'Příliš mnoho požadavků' }, { status: 429 });
+  }
+
 
   const admin = createAdminClient();
   const { error } = await admin.from('contact_messages').insert({

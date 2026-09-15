@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { lookupUser } from '@/lib/ggleap/client';
-import { checkRateLimit, readCache, writeCache } from '@/lib/ggleap/hours';
+import { readCache, writeCache } from '@/lib/ggleap/hours';
+import { checkLimit, clientKey } from '@/lib/rate-limit';
 
 /**
  * Public ggLeap hours lookup for the checkout flows.
@@ -18,19 +19,13 @@ const HoursSchema = z.object({
 
 type PublicResult = { status: 'ok'; minutes: number } | { status: 'not_found' } | { status: 'unavailable' };
 
-function clientKey(req: NextRequest): string {
-  const forwarded = req.headers.get('x-forwarded-for');
-  if (forwarded) return forwarded.split(',')[0].trim();
-  return req.headers.get('x-real-ip') ?? 'unknown';
-}
-
 export async function POST(req: NextRequest) {
   const parsed = HoursSchema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) {
     return NextResponse.json({ error: 'Neplatné údaje', details: parsed.error.flatten() }, { status: 400 });
   }
 
-  if (!checkRateLimit(clientKey(req))) {
+  if (!checkLimit('ggleap', clientKey(req), 10, 60_000)) {
     return NextResponse.json({ error: 'Příliš mnoho dotazů' }, { status: 429 });
   }
 

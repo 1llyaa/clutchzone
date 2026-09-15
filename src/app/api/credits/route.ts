@@ -4,6 +4,7 @@ import { getServerTranslator } from '@/lib/i18n/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createStripeClient } from '@/lib/stripe';
 import { getPricingConfig } from '@/lib/pricing/config-server';
+import { checkLimit, clientKey } from '@/lib/rate-limit';
 
 const VALID_LOCALES = ['cs', 'en'];
 const DEFAULT_LOCALE = 'cs';
@@ -14,10 +15,10 @@ const CreditOrderSchema = z.object({
     hours: z.number().int().positive(),
     quantity: z.number().int().min(1).max(20),
   })).min(1),
-  customerName: z.string().min(2),
+  customerName: z.string().min(2).max(100),
   customerEmail: z.string().email(),
-  customerPhone: z.string().min(9),
-  clutchzoneAccount: z.string().trim().optional(),
+  customerPhone: z.string().min(9).max(32),
+  clutchzoneAccount: z.string().trim().max(64).optional(),
   termsAccepted: z.boolean(),
   locale: z.string().optional(),
 });
@@ -37,6 +38,11 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json({ error: t('invalidData'), details: parsed.error.flatten() }, { status: 400 });
   }
+
+  if (!checkLimit('credits', clientKey(req), 5, 10 * 60_000)) {
+    return NextResponse.json({ error: 'Příliš mnoho požadavků' }, { status: 429 });
+  }
+
   const data = parsed.data;
 
   if (!data.termsAccepted) {

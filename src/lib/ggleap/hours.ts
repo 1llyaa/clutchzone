@@ -5,10 +5,6 @@
  * be unit-tested — the networking lives in `./client`.
  */
 
-/** Max lookups a single IP may make per `RATE_WINDOW_MS`. */
-export const RATE_LIMIT = 10;
-const RATE_WINDOW_MS = 60_000;
-
 /** How long a nickname's lookup result is reused before ggLeap is asked again. */
 const CACHE_TTL_MS = 60_000;
 /** Hard cap on cached nicknames; the oldest entry is dropped past this. */
@@ -71,26 +67,10 @@ export function formatHours(minutes: number, locale: string): string {
 }
 
 // Module-scope state. The app ships as a single `output: 'standalone'` container,
-// so one process holds all traffic. If it is ever scaled horizontally both the
-// limit and the cache become per-instance — acceptable for a read-only lookup,
-// but worth swapping for a shared store at that point.
-const rateBuckets = new Map<string, number[]>();
+// so one process holds all traffic. If it is ever scaled horizontally the cache
+// becomes per-instance — acceptable for a read-only lookup, but worth swapping
+// for a shared store at that point. Rate limiting now lives in lib/rate-limit.
 const cache = new Map<string, { value: unknown; expiresAt: number }>();
-
-/** Returns true when the call is allowed, false when the key is over its limit. */
-export function checkRateLimit(key: string, now: number = Date.now()): boolean {
-  const cutoff = now - RATE_WINDOW_MS;
-  const recent = (rateBuckets.get(key) ?? []).filter((t) => t > cutoff);
-
-  if (recent.length >= RATE_LIMIT) {
-    rateBuckets.set(key, recent);
-    return false;
-  }
-
-  recent.push(now);
-  rateBuckets.set(key, recent);
-  return true;
-}
 
 export function readCache<T>(key: string, now: number = Date.now()): T | null {
   const hit = cache.get(key);
@@ -111,8 +91,7 @@ export function writeCache(key: string, value: unknown, now: number = Date.now()
   cache.set(key, { value, expiresAt: now + CACHE_TTL_MS });
 }
 
-/** Test-only escape hatch — clears both module caches between cases. */
+/** Test-only escape hatch — clears the module cache between cases. */
 export function resetGgLeapState(): void {
-  rateBuckets.clear();
   cache.clear();
 }
