@@ -103,6 +103,22 @@ interface Booking {
   time_pass_id: string | null;
   offer_kind: string | null;
   stations: { label: string; type: string } | null;
+  station_reassigned_at: string | null;
+  station_reassigned_by: string | null;
+}
+
+/**
+ * One station of a reservation. A group of N shares everything but this —
+ * the customer, the time and the price live on GroupedBooking, and an admin
+ * reassignment moves exactly one of these rows.
+ */
+interface StationRow {
+  id: string;
+  station_id: string;
+  label: string;
+  type: string;
+  reassignedAt: string | null;
+  reassignedByName: string | null;
 }
 
 interface GroupedBooking {
@@ -122,6 +138,7 @@ interface GroupedBooking {
   payment_status: string;
   pays_with_credit: boolean;
   coins_awarded: number;
+  rows: StationRow[];
   stationLabels: string[];
   stationsCount: number;
   variant: string;
@@ -142,6 +159,16 @@ interface StationBlock {
   start_time: string;
   duration_minutes: number;
   note: string | null;
+}
+
+/** One label/value row of the detail panel. */
+function Field({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div style={{ marginBottom: 16 }}>
+      <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, marginBottom: 4 }}>{label}</div>
+      <div className="font-body text-white" style={{ fontSize: 17 }}>{value}</div>
+    </div>
+  );
 }
 
 /** Minutes from midnight back to a HH:MM label, wrapping past midnight. */
@@ -219,7 +246,11 @@ function variantLabel(b: Booking, passNameById: Record<string, string>): string 
   return '—';
 }
 
-function groupBookings(bookings: Booking[], passNameById: Record<string, string>): GroupedBooking[] {
+function groupBookings(
+  bookings: Booking[],
+  passNameById: Record<string, string>,
+  adminNameById: Record<string, string>,
+): GroupedBooking[] {
   const byGroup = new Map<string, Booking[]>();
   for (const b of bookings) {
     const key = b.booking_group_id ?? b.id;
@@ -229,6 +260,16 @@ function groupBookings(bookings: Booking[], passNameById: Record<string, string>
   }
   return [...byGroup.values()].map((rows) => {
     const first = rows[0];
+    // The station rows, kept whole: the detail panel reassigns one at a time
+    // and needs each row's own booking id, not just its label.
+    const stationRows: StationRow[] = rows.map((r) => ({
+      id: r.id,
+      station_id: r.station_id,
+      label: r.stations?.label ?? '—',
+      type: r.stations?.type ?? 'pc',
+      reassignedAt: r.station_reassigned_at,
+      reassignedByName: r.station_reassigned_by ? adminNameById[r.station_reassigned_by] ?? null : null,
+    }));
     return {
       groupKey: first.booking_group_id ?? first.id,
       reference: first.reference,
@@ -246,7 +287,8 @@ function groupBookings(bookings: Booking[], passNameById: Record<string, string>
       payment_status: first.payment_status,
       pays_with_credit: first.pays_with_credit,
       coins_awarded: rows.reduce((sum, r) => sum + (r.coins_awarded ?? 0), 0),
-      stationLabels: rows.map((r) => r.stations?.label).filter((l): l is string => !!l),
+      rows: stationRows,
+      stationLabels: stationRows.map((r) => r.label).filter((l) => l !== '—'),
       stationsCount: first.stations_count ?? rows.length,
       variant: variantLabel(first, passNameById),
     };
@@ -258,6 +300,7 @@ export default function BookingsClient({
   stations,
   blocks,
   passNameById,
+  adminNameById,
   defaultStartTime,
   from,
   to,
@@ -266,15 +309,22 @@ export default function BookingsClient({
   stations: Station[];
   blocks: StationBlock[];
   passNameById: Record<string, string>;
+  adminNameById: Record<string, string>;
   defaultStartTime: string;
   from: string;
   to: string;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [selected, setSelected] = useState<GroupedBooking | null>(null);
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [updating, setUpdating] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  // ── Station reassignment (one row of the group at a time) ─────────────────
+  const [reassignRowId, setReassignRowId]   = useState<string | null>(null);
+  const [reassignTo, setReassignTo]         = useState('');
+  const [reassignSaving, setReassignSaving] = useState(false);
+  const [reassignError, setReassignError]   = useState<string | null>(null);
   const [localFrom, setLocalFrom] = useState(from);
   const [localTo,   setLocalTo]   = useState(to);
 
@@ -291,7 +341,47 @@ export default function BookingsClient({
 
   const isSingleDay = from === to;
 
-  const grouped = useMemo(() => groupBookings(bookings, passNameById), [bookings, passNameById]);
+  const grouped = useMemo(
+    () => groupBookings(bookings, passNameById, adminNameById),
+    [bookings, passNameById, adminNameById],
+  );
+
+  // Re-derived on every render rather than held: after a station change the
+  // panel must show the new station, not the snapshot it was opened with.
+  const selected = useMemo(
+    () => grouped.find((g) => g.groupKey === selectedKey) ?? null,
+    [grouped, selectedKey],
+  );
+
+  const reassignRow = selected?.rows.find((r) => r.id === reassignRowId) ?? null;
+
+  /**
+   * Stations this row could move to: free for its window, in service, and of
+   * the same type. Computed here rather than fetched — the page already holds
+   * every booking and block for the visible range. Stale client data only
+   * costs a 409 from the server, which is the real guard.
+   */
+  const reassignTargets = useMemo(() => {
+    if (!selected || !reassignRow) return [];
+    const start = parseTimeToMinutes(selected.start_time);
+    const end = start + selected.duration_minutes;
+    const busy = new Set<string>();
+    for (const b of bookings) {
+      // The row being moved must not rule out its own station.
+      if (b.id === reassignRow.id) continue;
+      if (b.date !== selected.date || b.status === 'cancelled') continue;
+      const s = parseTimeToMinutes(b.start_time);
+      if (rangesOverlap(start, end, s, s + b.duration_minutes)) busy.add(b.station_id);
+    }
+    for (const bl of blocks) {
+      if (bl.date !== selected.date) continue;
+      const s = parseTimeToMinutes(bl.start_time);
+      if (rangesOverlap(start, end, s, s + bl.duration_minutes)) busy.add(bl.station_id);
+    }
+    return stations.filter(
+      (st) => st.is_active && st.type === reassignRow.type && !busy.has(st.id),
+    );
+  }, [selected, reassignRow, bookings, blocks, stations]);
 
   const windowStart = parseTimeToMinutes(blockStart);
   const windowEnd = windowStart + blockDuration;
@@ -348,6 +438,53 @@ export default function BookingsClient({
     applyRange(localFrom, val);
   }
 
+  function openDetail(groupKey: string) {
+    setSelectedKey(groupKey);
+    closeReassign();
+  }
+
+  function closeDetail() {
+    setSelectedKey(null);
+    closeReassign();
+  }
+
+  function closeReassign() {
+    setReassignRowId(null);
+    setReassignTo('');
+    setReassignError(null);
+  }
+
+  function startReassign(row: StationRow) {
+    setReassignRowId(row.id);
+    setReassignTo('');
+    setReassignError(null);
+  }
+
+  async function submitReassign() {
+    if (!reassignRow || !reassignTo) return;
+    setReassignSaving(true);
+    setReassignError(null);
+
+    // Per-row endpoint: `reassignRow.id` is a bookings.id, unlike the group id
+    // the sibling routes below take.
+    const res = await fetch(`/api/admin/bookings/${reassignRow.id}/station`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ stationId: reassignTo }),
+    });
+    const data = await res.json().catch(() => ({}));
+    setReassignSaving(false);
+
+    if (!res.ok) {
+      setReassignError(data.error ?? 'Stanici se nepodařilo změnit');
+      return;
+    }
+
+    closeReassign();
+    // The panel stays open: `selected` re-derives and shows the new station.
+    startTransition(() => router.refresh());
+  }
+
   async function updateStatus(groupKey: string, status: string) {
     setUpdating(true);
     await fetch(`/api/admin/bookings/${groupKey}`, {
@@ -356,7 +493,7 @@ export default function BookingsClient({
       body: JSON.stringify({ status }),
     });
     setUpdating(false);
-    setSelected(null);
+    closeDetail();
     startTransition(() => router.refresh());
   }
 
@@ -370,7 +507,7 @@ export default function BookingsClient({
       body: JSON.stringify({ payment_status }),
     });
     setUpdating(false);
-    setSelected(null);
+    closeDetail();
     startTransition(() => router.refresh());
   }
 
@@ -379,7 +516,7 @@ export default function BookingsClient({
     setDeleting(true);
     await fetch(`/api/admin/bookings/${groupKey}`, { method: 'DELETE' });
     setDeleting(false);
-    setSelected(null);
+    closeDetail();
     startTransition(() => router.refresh());
   }
 
@@ -707,7 +844,7 @@ export default function BookingsClient({
                     </span>
                   </td>
                   <td style={{ padding: '12px 14px' }}>
-                    <button onClick={() => setSelected(b)} className="font-mono text-cz-orange uppercase hover:underline" style={{ fontSize: 16, letterSpacing: 1 }}>
+                    <button onClick={() => openDetail(b.groupKey)} className="font-mono text-cz-orange uppercase hover:underline" style={{ fontSize: 16, letterSpacing: 1 }}>
                       DETAIL
                     </button>
                   </td>
@@ -720,14 +857,14 @@ export default function BookingsClient({
 
       {/* Detail panel */}
       {selected && (
-        <div className="fixed inset-0 z-50 flex items-center justify-end" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={() => setSelected(null)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-end" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={closeDetail}>
           <div className="bg-cz-black-mid h-full flex flex-col w-full" style={{ maxWidth: 'min(400px, 92vw)', borderLeft: '1px solid var(--color-cz-gray-dark)' }} onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between" style={{ padding: '24px 28px', borderBottom: '1px solid var(--color-cz-gray-dark)' }}>
               <div>
                 <div className="font-mono text-cz-orange" style={{ fontSize: 17 }}>{selected.reference}</div>
                 <div className="font-display text-white uppercase" style={{ fontSize: 20 }}>DETAIL REZERVACE</div>
               </div>
-              <button onClick={() => setSelected(null)} aria-label="Zavřít" className="text-cz-gray-light hover:text-white transition-colors">
+              <button onClick={closeDetail} aria-label="Zavřít" className="text-cz-gray-light hover:text-white transition-colors">
                 <X size={18} weight="bold" />
               </button>
             </div>
@@ -738,7 +875,77 @@ export default function BookingsClient({
                 ['E-mail',    selected.customer_email],
                 ['Telefon',   selected.customer_phone || '—'],
                 ['Discord',   selected.customer_discord || '—'],
-                ['Stanice',   selected.stationLabels.join(', ') || '—'],
+              ].map(([label, value]) => <Field key={label} label={label} value={value} />)}
+
+              {/* Stations, one row each. The customer never picks a station —
+                  the server assigns it at booking time — but staff have to be
+                  able to move someone off a broken PC without rebooking. One
+                  row moves at a time: the rest of an N-station group stays. */}
+              <div style={{ marginBottom: 16 }}>
+                <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, marginBottom: 4 }}>Stanice</div>
+                <div className="flex flex-col gap-2">
+                  {selected.rows.map((row) => (
+                    <div key={row.id}>
+                      {reassignRowId === row.id ? (
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <select
+                            value={reassignTo}
+                            onChange={(e) => setReassignTo(e.target.value)}
+                            disabled={reassignSaving || !reassignTargets.length}
+                            aria-label={`Nová stanice místo ${row.label}`}
+                            className="bg-cz-black text-white font-mono rounded-control focus:outline-none focus:border-cz-orange"
+                            style={{ padding: '6px 10px', fontSize: 17, border: '1px solid var(--color-cz-gray-dark)' }}
+                          >
+                            <option value="">
+                              {reassignTargets.length ? `${row.label} →` : 'ŽÁDNÁ VOLNÁ STANICE'}
+                            </option>
+                            {reassignTargets.map((st) => (
+                              <option key={st.id} value={st.id}>{st.label}</option>
+                            ))}
+                          </select>
+                          <Button size="xs" disabled={reassignSaving || !reassignTo} onClick={submitReassign}>
+                            {reassignSaving ? '...' : 'PŘESUNOUT'}
+                          </Button>
+                          <button
+                            onClick={closeReassign}
+                            disabled={reassignSaving}
+                            className="font-mono text-cz-gray-light uppercase hover:text-white transition-colors disabled:opacity-50"
+                            style={{ fontSize: 16, letterSpacing: 1 }}
+                          >
+                            ZPĚT
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-3">
+                          <span className="font-body text-white" style={{ fontSize: 17 }}>{row.label}</span>
+                          {selected.status !== 'cancelled' && selected.status !== 'completed' && (
+                            <button
+                              onClick={() => startReassign(row)}
+                              className="font-mono text-cz-orange uppercase hover:underline"
+                              style={{ fontSize: 16, letterSpacing: 1 }}
+                            >
+                              ZMĚNIT
+                            </button>
+                          )}
+                        </div>
+                      )}
+                      {row.reassignedAt && (
+                        <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 1, marginTop: 2 }}>
+                          PŘESUNUTO {new Date(row.reassignedAt).toLocaleString('cs-CZ')}
+                          {row.reassignedByName ? ` · ${row.reassignedByName}` : ''}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                {reassignError && (
+                  <div className="font-mono uppercase" style={{ fontSize: 16, letterSpacing: 1, marginTop: 8, color: 'var(--color-cz-danger)' }}>
+                    {reassignError}
+                  </div>
+                )}
+              </div>
+
+              {[
                 ['Počet stanic', String(selected.stationsCount)],
                 ['Varianta',  selected.variant],
                 ['Datum',     new Date(selected.date).toLocaleDateString('cs-CZ')],
@@ -755,12 +962,7 @@ export default function BookingsClient({
                           : 'Online · nezaplaceno')
                     : (selected.payment_status === 'paid' ? 'V klubu · zaplaceno' : 'V klubu · nezaplaceno')],
                 ['Mince k připsání', selected.coins_awarded > 0 ? `${selected.coins_awarded}` : '—'],
-              ].map(([label, value]) => (
-                <div key={label} style={{ marginBottom: 16 }}>
-                  <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, marginBottom: 4 }}>{label}</div>
-                  <div className="font-body text-white" style={{ fontSize: 17 }}>{value}</div>
-                </div>
-              ))}
+              ].map(([label, value]) => <Field key={label} label={label} value={value} />)}
 
               <div style={{ marginBottom: 16 }}>
                 <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, marginBottom: 4 }}>ggLeap účet</div>

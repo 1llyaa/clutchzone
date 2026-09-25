@@ -42,7 +42,7 @@ test('a duration running past midnight still overlaps correctly', () => {
 
 // ─── occupiedStationIds over a stubbed PostgREST client ──────────────────────
 
-type Row = { station_id: string; start_time: string; duration_minutes: number };
+type Row = { id?: string; station_id: string; start_time: string; duration_minutes: number };
 
 /**
  * Minimal stand-in for the PostgREST query builder: every filter returns
@@ -115,4 +115,55 @@ test('a booking outside the window leaves the station free', async () => {
 test('no stations asked for means no queries and no occupancy', async () => {
   const occupied = await occupiedStationIds(stubAdmin({}), { ...WINDOW, stationIds: [] });
   assert.equal(occupied.size, 0);
+});
+
+// ─── excludeBookingIds: the row being reassigned must not block itself ───────
+
+test('an excluded booking does not occupy its own station', async () => {
+  // Admin moving PC-01 -> PC-02 asks whether PC-01 is free. Without the
+  // exclusion the booking under the cursor answers "no" about itself, and
+  // the current station could never be re-offered.
+  const occupied = await occupiedStationIds(
+    stubAdmin({
+      bookings: [{ id: 'bk-1', station_id: 'pc-1', start_time: '14:00:00', duration_minutes: 60 }],
+    }),
+    { ...WINDOW, excludeBookingIds: ['bk-1'] },
+  );
+  assert.equal(occupied.size, 0);
+});
+
+test('a sibling row of the same group still occupies its station', async () => {
+  // A 2-station reservation: moving one row must not free up the other.
+  const occupied = await occupiedStationIds(
+    stubAdmin({
+      bookings: [
+        { id: 'bk-1', station_id: 'pc-1', start_time: '14:00:00', duration_minutes: 60 },
+        { id: 'bk-2', station_id: 'pc-2', start_time: '14:00:00', duration_minutes: 60 },
+      ],
+    }),
+    { ...WINDOW, excludeBookingIds: ['bk-1'] },
+  );
+  assert.deepEqual([...occupied], ['pc-2']);
+});
+
+test('a block is never excluded, even when its id matches an excluded booking', async () => {
+  // The two tables have separate id spaces. Excluding a booking id must not
+  // reach across and free a station an admin has taken out of circulation.
+  const occupied = await occupiedStationIds(
+    stubAdmin({
+      station_blocks: [{ id: 'bk-1', station_id: 'pc-2', start_time: '14:00:00', duration_minutes: 30 }],
+    }),
+    { ...WINDOW, excludeBookingIds: ['bk-1'] },
+  );
+  assert.deepEqual([...occupied], ['pc-2']);
+});
+
+test('omitting excludeBookingIds leaves every caller unchanged', async () => {
+  const occupied = await occupiedStationIds(
+    stubAdmin({
+      bookings: [{ id: 'bk-1', station_id: 'pc-1', start_time: '14:00:00', duration_minutes: 60 }],
+    }),
+    WINDOW,
+  );
+  assert.deepEqual([...occupied], ['pc-1']);
 });

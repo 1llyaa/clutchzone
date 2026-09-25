@@ -7,10 +7,10 @@ import BookingsClient from './BookingsClient';
 async function fetchBookingsData(from: string, to: string) {
   const admin = createAdminClient();
 
-  const [bookingsRes, stationsRes, passesRes, blocksRes, hoursRes] = await Promise.all([
+  const [bookingsRes, stationsRes, passesRes, blocksRes, hoursRes, staffRes] = await Promise.all([
     admin
       .from('bookings')
-      .select('id, reference, customer_name, customer_email, customer_phone, customer_discord, clutchzone_account, date, start_time, duration_minutes, total_price, status, station_id, payment_method, payment_status, pays_with_credit, coins_awarded, booking_group_id, stations_count, time_pass_id, offer_kind, stations(label, type)')
+      .select('id, reference, customer_name, customer_email, customer_phone, customer_discord, clutchzone_account, date, start_time, duration_minutes, total_price, status, station_id, payment_method, payment_status, pays_with_credit, coins_awarded, booking_group_id, stations_count, time_pass_id, offer_kind, station_reassigned_at, station_reassigned_by, stations(label, type)')
       .gte('date', from)
       .lte('date', to)
       .order('date')
@@ -30,9 +30,14 @@ async function fetchBookingsData(from: string, to: string) {
       .order('date')
       .order('start_time'),
     admin.from('opening_hours').select('day_of_week, open_time, is_closed'),
+    admin.from('profiles').select('id, display_name'),
   ]);
 
   const passNameById = Object.fromEntries((passesRes.data ?? []).map((p) => [p.id, p.name_cs]));
+  // Who moved a booking to another station. Only ever read for display.
+  const adminNameById: Record<string, string> = Object.fromEntries(
+    (staffRes.data ?? []).map((p) => [p.id, p.display_name ?? '—']),
+  );
 
   // The block action bar opens on the club's opening time when the admin is
   // looking at a future date, where "now" would be meaningless.
@@ -49,6 +54,7 @@ async function fetchBookingsData(from: string, to: string) {
     stations: stationsRes.data ?? [],
     blocks: blocksRes.data ?? [],
     passNameById,
+    adminNameById,
     openTime,
   };
 }
@@ -82,7 +88,7 @@ export default async function BookingsPage({
   const from = params.from || today;
   const to   = params.to   || from;
 
-  const { bookings, stations, blocks, passNameById, openTime } = await fetchBookingsData(from, to);
+  const { bookings, stations, blocks, passNameById, adminNameById, openTime } = await fetchBookingsData(from, to);
 
   // Computed here rather than in the client: "now" resolved during hydration
   // would not match what the server rendered a moment earlier.
@@ -95,6 +101,7 @@ export default async function BookingsPage({
       stations={stations}
       blocks={blocks}
       passNameById={passNameById}
+      adminNameById={adminNameById}
       defaultStartTime={defaultStartTime}
       from={from}
       to={to}
