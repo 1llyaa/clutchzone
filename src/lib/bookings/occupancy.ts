@@ -38,9 +38,19 @@ interface OccupancyQuery {
   stationIds: string[];
   startMinutes: number;
   endMinutes: number;
+  /**
+   * Booking ids that must not count as occupancy — the rows being moved by an
+   * admin reassignment. A booking otherwise answers "occupied" about its own
+   * station, so its current station could never be offered back to it.
+   *
+   * Bookings only: an admin block is never excluded, and the two tables have
+   * separate id spaces.
+   */
+  excludeBookingIds?: string[];
 }
 
 interface TimedRow {
+  id?: string;
   station_id: string;
   start_time: string;
   duration_minutes: number;
@@ -51,8 +61,10 @@ function collectOverlapping(
   into: Set<string>,
   startMinutes: number,
   endMinutes: number,
+  skipIds?: Set<string>,
 ): void {
   for (const r of rows ?? []) {
+    if (skipIds?.has(r.id ?? '')) continue;
     const start = parseTimeToMinutes(r.start_time);
     if (rangesOverlap(startMinutes, endMinutes, start, start + r.duration_minutes)) {
       into.add(r.station_id);
@@ -71,7 +83,7 @@ function collectOverlapping(
  */
 export async function occupiedStationIds(
   admin: AdminClient,
-  { date, stationIds, startMinutes, endMinutes }: OccupancyQuery,
+  { date, stationIds, startMinutes, endMinutes, excludeBookingIds }: OccupancyQuery,
 ): Promise<Set<string>> {
   const occupied = new Set<string>();
   if (!stationIds.length) return occupied;
@@ -79,7 +91,7 @@ export async function occupiedStationIds(
   const [bookingsRes, blocksRes] = await Promise.all([
     admin
       .from('bookings')
-      .select('station_id, start_time, duration_minutes')
+      .select('id, station_id, start_time, duration_minutes')
       .in('station_id', stationIds)
       .neq('status', 'cancelled')
       .eq('date', date),
@@ -97,7 +109,8 @@ export async function occupiedStationIds(
     console.error('Occupancy read failed for station blocks:', blocksRes.error);
   }
 
-  collectOverlapping(bookingsRes.data, occupied, startMinutes, endMinutes);
+  const skipIds = excludeBookingIds?.length ? new Set(excludeBookingIds) : undefined;
+  collectOverlapping(bookingsRes.data, occupied, startMinutes, endMinutes, skipIds);
   collectOverlapping(blocksRes.data, occupied, startMinutes, endMinutes);
 
   return occupied;
