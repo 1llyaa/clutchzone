@@ -2,12 +2,14 @@
 
 import { useMemo, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { X, Coins } from '@phosphor-icons/react';
-import { parseTimeToMinutes, rangesOverlap } from '@/lib/bookings/occupancy';
+import { X, Coins, CaretLeft, CaretRight } from '@phosphor-icons/react';
+import { addDays, parseTimeToMinutes, rangesOverlap } from '@/lib/bookings/occupancy';
+import { minutesLabel, type OpeningRow } from '@/lib/bookings/timeline';
 import Button from '@/components/ui/Button';
 import DatePicker from '@/components/ui/DatePicker';
 import AdminPageContainer from '@/components/admin/AdminPageContainer';
 import GgLeapHoursCell from '@/components/admin/GgLeapHoursCell';
+import TimelineBoard from './TimelineBoard';
 
 const STATUS_LABEL: Record<string, string> = {
   confirmed: 'Potvrzeno',
@@ -40,51 +42,11 @@ function PAYMENT_COLOR(b: PaymentFields): string {
   if (b.pays_with_credit) return 'var(--color-cz-gray-light)';
   return b.payment_status === 'paid' ? 'var(--color-cz-success)' : 'var(--color-cz-warning)';
 }
-// A block is yellow, a real booking orange: staff must be able to tell at a
-// glance whether a station is taken by a customer or taken out of circulation
-// by them. Semantic status colours are already the admin system per AGENTS.md.
-const TILE_BG: Record<string, string> = {
-  free:     '#1a1a1a',
-  occupied: 'rgba(232,74,26,0.15)',
-  blocked:  'color-mix(in srgb, var(--color-cz-warning) 15%, transparent)',
-  inactive: '#0f0f0f',
-};
-const TILE_BORDER: Record<string, string> = {
-  free:     'var(--color-cz-gray-dark)',
-  occupied: 'var(--color-cz-orange)',
-  blocked:  'var(--color-cz-warning)',
-  inactive: '#1a1a1a',
-};
-const TILE_LABEL: Record<string, string> = {
-  free:     'VOLNÉ',
-  occupied: 'OBSAZENO',
-  blocked:  'BLOKOVÁNO',
-  inactive: 'INACTIVE',
-};
-const TILE_TEXT: Record<string, string> = {
-  free:     'var(--color-cz-gray-light)',
-  occupied: 'var(--color-cz-orange)',
-  blocked:  'var(--color-cz-warning)',
-  inactive: 'var(--color-cz-gray-light)',
-};
-
-/** Durations a walk-in or a repair realistically takes. */
-const BLOCK_DURATIONS: [number, string][] = [
-  [30,  '30 MIN'],
-  [60,  '1 H'],
-  [90,  '1,5 H'],
-  [120, '2 H'],
-  [180, '3 H'],
-  [240, '4 H'],
-  [360, '6 H'],
-  [600, '10 H'],
-];
-
 interface Booking {
   id: string;
   reference: string;
   customer_name: string;
-  customer_email: string;
+  customer_email: string | null;
   customer_phone: string | null;
   customer_discord: string | null;
   clutchzone_account: string | null;
@@ -105,6 +67,10 @@ interface Booking {
   stations: { label: string; type: string } | null;
   station_reassigned_at: string | null;
   station_reassigned_by: string | null;
+  rescheduled_at: string | null;
+  rescheduled_by: string | null;
+  source: string;
+  created_by: string | null;
 }
 
 /**
@@ -125,7 +91,7 @@ interface GroupedBooking {
   groupKey: string;
   reference: string;
   customer_name: string;
-  customer_email: string;
+  customer_email: string | null;
   customer_phone: string | null;
   customer_discord: string | null;
   clutchzone_account: string | null;
@@ -142,6 +108,11 @@ interface GroupedBooking {
   stationLabels: string[];
   stationsCount: number;
   variant: string;
+  /** Admin who entered it; null for a customer's own web booking. */
+  createdByName: string | null;
+  isAdminEntered: boolean;
+  rescheduledAt: string | null;
+  rescheduledByName: string | null;
 }
 
 interface Station {
@@ -171,79 +142,18 @@ function Field({ label, value }: { label: string; value: React.ReactNode }) {
   );
 }
 
-/** Minutes from midnight back to a HH:MM label, wrapping past midnight. */
-function minutesToLabel(min: number): string {
-  const h = Math.floor(min / 60) % 24;
-  const m = min % 60;
-  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-}
-
-function StationTile({
-  station,
-  state,
-  selected,
-  padding,
-  onSelect,
-  onOpenBlock,
-}: {
-  station: Station;
-  state: string;
-  selected: boolean;
-  padding: string;
-  onSelect: () => void;
-  onOpenBlock: () => void;
-}) {
-  // A booked or deactivated station is not actionable: blocks exist to take a
-  // *free* station out of circulation, and a booked one is already out.
-  const interactive = state === 'free' || state === 'blocked';
-
-  const style: React.CSSProperties = {
-    padding,
-    background: TILE_BG[state],
-    border: `1px solid ${TILE_BORDER[state]}`,
-    outline: selected ? '1.5px solid var(--color-cz-orange)' : 'none',
-    outlineOffset: 1,
-  };
-
-  const content = (
-    <>
-      <span className="font-mono text-white" style={{ fontSize: 17, letterSpacing: 1 }}>{station.label}</span>
-      <span
-        className="font-mono uppercase"
-        style={{ fontSize: 16, letterSpacing: 1, marginTop: 3, color: TILE_TEXT[state] }}
-      >
-        {TILE_LABEL[state]}
-      </span>
-    </>
-  );
-
-  if (!interactive) {
-    return (
-      <div className="rounded-control flex flex-col items-center justify-center" style={style}>
-        {content}
-      </div>
-    );
-  }
-
-  return (
-    <button
-      type="button"
-      onClick={state === 'blocked' ? onOpenBlock : onSelect}
-      aria-pressed={state === 'free' ? selected : undefined}
-      aria-label={`${station.label} — ${TILE_LABEL[state]}`}
-      className="rounded-control flex flex-col items-center justify-center cursor-pointer transition-[filter] duration-150 ease-out hover:brightness-125"
-      style={style}
-    >
-      {content}
-    </button>
-  );
-}
-
 function variantLabel(b: Booking, passNameById: Record<string, string>): string {
   if (b.offer_kind === 'pass') return (b.time_pass_id && passNameById[b.time_pass_id]) || 'Pas';
   if (b.offer_kind === 'hours_upsell') return 'Hodiny (navíc)';
   if (b.offer_kind === 'hours') return 'Hodiny';
   return '—';
+}
+
+/** 90 → "1,5 h", 120 → "2 h", 30 → "30 min". */
+function durationLabel(min: number): string {
+  if (min < 60) return `${min} min`;
+  const h = min / 60;
+  return `${Number.isInteger(h) ? h : h.toFixed(1).replace('.', ',')} h`;
 }
 
 function groupBookings(
@@ -291,6 +201,10 @@ function groupBookings(
       stationLabels: stationRows.map((r) => r.label).filter((l) => l !== '—'),
       stationsCount: first.stations_count ?? rows.length,
       variant: variantLabel(first, passNameById),
+      createdByName: first.created_by ? adminNameById[first.created_by] ?? null : null,
+      isAdminEntered: first.source === 'admin',
+      rescheduledAt: first.rescheduled_at,
+      rescheduledByName: first.rescheduled_by ? adminNameById[first.rescheduled_by] ?? null : null,
     };
   });
 }
@@ -301,7 +215,10 @@ export default function BookingsClient({
   blocks,
   passNameById,
   adminNameById,
-  defaultStartTime,
+  opening,
+  view,
+  boardDate,
+  today,
   from,
   to,
 }: {
@@ -310,7 +227,10 @@ export default function BookingsClient({
   blocks: StationBlock[];
   passNameById: Record<string, string>;
   adminNameById: Record<string, string>;
-  defaultStartTime: string;
+  opening: OpeningRow | null;
+  view: 'timeline' | 'list';
+  boardDate: string;
+  today: string;
   from: string;
   to: string;
 }) {
@@ -321,6 +241,7 @@ export default function BookingsClient({
   const [deleting, setDeleting] = useState(false);
 
   // ── Station reassignment (one row of the group at a time) ─────────────────
+  // The keyboard path for what the timeline does by dragging.
   const [reassignRowId, setReassignRowId]   = useState<string | null>(null);
   const [reassignTo, setReassignTo]         = useState('');
   const [reassignSaving, setReassignSaving] = useState(false);
@@ -328,16 +249,8 @@ export default function BookingsClient({
   const [localFrom, setLocalFrom] = useState(from);
   const [localTo,   setLocalTo]   = useState(to);
 
-  // ── Station block composer ─────────────────────────────────────────────────
-  const [pickedStations, setPickedStations] = useState<string[]>([]);
-  const [blockStart, setBlockStart]         = useState(defaultStartTime);
-  const [blockDuration, setBlockDuration]   = useState(60);
-  const [blockNote, setBlockNote]           = useState('');
-  const [blockSaving, setBlockSaving]       = useState(false);
-  const [blockError, setBlockError]         = useState<string | null>(null);
-  const [blockClashes, setBlockClashes]     = useState<string[]>([]);
-  const [openBlock, setOpenBlock]           = useState<StationBlock | null>(null);
-  const [releasing, setReleasing]           = useState(false);
+  const [openBlock, setOpenBlock] = useState<StationBlock | null>(null);
+  const [releasing, setReleasing] = useState(false);
 
   const isSingleDay = from === to;
 
@@ -346,8 +259,8 @@ export default function BookingsClient({
     [bookings, passNameById, adminNameById],
   );
 
-  // Re-derived on every render rather than held: after a station change the
-  // panel must show the new station, not the snapshot it was opened with.
+  // Re-derived on every render rather than held: after a move the panel must
+  // show the new station, not the snapshot it was opened with.
   const selected = useMemo(
     () => grouped.find((g) => g.groupKey === selectedKey) ?? null,
     [grouped, selectedKey],
@@ -357,9 +270,8 @@ export default function BookingsClient({
 
   /**
    * Stations this row could move to: free for its window, in service, and of
-   * the same type. Computed here rather than fetched — the page already holds
-   * every booking and block for the visible range. Stale client data only
-   * costs a 409 from the server, which is the real guard.
+   * the same type. Computed from the data already on the page — stale data
+   * only costs a 409 from the server, which is the real guard.
    */
   const reassignTargets = useMemo(() => {
     if (!selected || !reassignRow) return [];
@@ -383,59 +295,23 @@ export default function BookingsClient({
     );
   }, [selected, reassignRow, bookings, blocks, stations]);
 
-  const windowStart = parseTimeToMinutes(blockStart);
-  const windowEnd = windowStart + blockDuration;
-
-  // Occupancy is per time window, not per day.
-  //
-  // The grid used to read OBSAZENO if a station had any non-cancelled booking
-  // anywhere on the date, ignoring time entirely. A block *is* a time window,
-  // so a grid that cannot express "free at 14:00, taken at 19:00" would have
-  // staff blocking against a display that does not match what they are
-  // blocking. The composer's start time and duration therefore drive the grid.
-  const occupiedIds = useMemo(() => {
-    const ids = new Set<string>();
-    for (const b of bookings) {
-      if (b.date !== from || b.status === 'cancelled') continue;
-      const start = parseTimeToMinutes(b.start_time);
-      if (rangesOverlap(windowStart, windowEnd, start, start + b.duration_minutes)) {
-        ids.add(b.station_id);
-      }
-    }
-    return ids;
-  }, [bookings, from, windowStart, windowEnd]);
-
-  /** Station id → the block covering the selected window, if any. */
-  const blockByStation = useMemo(() => {
-    const map = new Map<string, StationBlock>();
-    for (const bl of blocks) {
-      if (bl.date !== from) continue;
-      const start = parseTimeToMinutes(bl.start_time);
-      if (rangesOverlap(windowStart, windowEnd, start, start + bl.duration_minutes)) {
-        map.set(bl.station_id, bl);
-      }
-    }
-    return map;
-  }, [blocks, from, windowStart, windowEnd]);
-
-  function applyRange(newFrom: string, newTo: string) {
-    const safeFrom = newFrom;
-    const safeTo   = newTo < newFrom ? newFrom : newTo;
-    startTransition(() => {
-      router.push(`?from=${safeFrom}&to=${safeTo}`);
-    });
+  // ── Navigation ────────────────────────────────────────────────────────────
+  function go(query: string) {
+    startTransition(() => router.push(`?${query}`));
   }
+  const goBoard = (date: string) => go(`date=${date}`);
+  const goList = (f: string, t: string) => go(`view=list&from=${f}&to=${t < f ? f : t}`);
 
   function handleFromChange(val: string) {
     setLocalFrom(val);
     const safeTo = localTo < val ? val : localTo;
     setLocalTo(safeTo);
-    applyRange(val, safeTo);
+    goList(val, safeTo);
   }
 
   function handleToChange(val: string) {
     setLocalTo(val);
-    applyRange(localFrom, val);
+    goList(localFrom, val);
   }
 
   function openDetail(groupKey: string) {
@@ -467,10 +343,10 @@ export default function BookingsClient({
 
     // Per-row endpoint: `reassignRow.id` is a bookings.id, unlike the group id
     // the sibling routes below take.
-    const res = await fetch(`/api/admin/bookings/${reassignRow.id}/station`, {
+    const res = await fetch(`/api/admin/bookings/${reassignRow.id}/move`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ stationId: reassignTo }),
+      body: JSON.stringify({ stationId: reassignTo, shiftMinutes: 0 }),
     });
     const data = await res.json().catch(() => ({}));
     setReassignSaving(false);
@@ -520,45 +396,6 @@ export default function BookingsClient({
     startTransition(() => router.refresh());
   }
 
-  function toggleStation(id: string) {
-    setBlockError(null);
-    setBlockClashes([]);
-    setPickedStations((prev) =>
-      prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id],
-    );
-  }
-
-  async function submitBlock() {
-    if (!pickedStations.length) return;
-    setBlockSaving(true);
-    setBlockError(null);
-    setBlockClashes([]);
-
-    const res = await fetch('/api/admin/station-blocks', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        stationIds: pickedStations,
-        date: from,
-        startTime: blockStart,
-        durationMinutes: blockDuration,
-        note: blockNote.trim() || undefined,
-      }),
-    });
-    const data = await res.json().catch(() => ({}));
-    setBlockSaving(false);
-
-    if (!res.ok) {
-      setBlockError(data.error ?? 'Blokaci se nepodařilo uložit');
-      setBlockClashes(Array.isArray(data.stations) ? data.stations : []);
-      return;
-    }
-
-    setPickedStations([]);
-    setBlockNote('');
-    startTransition(() => router.refresh());
-  }
-
   async function releaseBlock(block: StationBlock) {
     if (!confirm('Opravdu uvolnit blokaci? Stanice se vrátí do prodeje.')) return;
     setReleasing(true);
@@ -568,208 +405,130 @@ export default function BookingsClient({
     startTransition(() => router.refresh());
   }
 
-  const pcStations  = stations.filter((s) => s.type === 'pc');
-  const ps5Stations = stations.filter((s) => s.type === 'ps5');
-
-  function tileState(station: Station): string {
-    if (!station.is_active) return 'inactive';
-    if (blockByStation.has(station.id)) return 'blocked';
-    if (occupiedIds.has(station.id)) return 'occupied';
-    return 'free';
-  }
-
-  const windowLabel = `${blockStart}–${minutesToLabel(windowEnd)}`;
-
+  const boardLabel = new Date(boardDate + 'T12:00:00')
+    .toLocaleDateString('cs-CZ', { weekday: 'long', day: 'numeric', month: 'long' })
+    .toUpperCase();
   const rangeLabel = isSingleDay
-    ? new Date(from).toLocaleDateString('cs-CZ', { weekday: 'long', day: 'numeric', month: 'long' }).toUpperCase()
-    : `${new Date(from).toLocaleDateString('cs-CZ')} – ${new Date(to).toLocaleDateString('cs-CZ')}`;
+    ? new Date(from + 'T12:00:00').toLocaleDateString('cs-CZ', { weekday: 'long', day: 'numeric', month: 'long' }).toUpperCase()
+    : `${new Date(from + 'T12:00:00').toLocaleDateString('cs-CZ')} – ${new Date(to + 'T12:00:00').toLocaleDateString('cs-CZ')}`;
+
+  // The board also fetches the next date for tonight's small hours; anything
+  // stored there after tonight's close belongs to tomorrow.
+  const boardCount = useMemo(() => {
+    if (view !== 'timeline') return 0;
+    const nextDate = addDays(boardDate, 1);
+    const cutoff = opening?.crosses_midnight && opening.close_time ? opening.close_time : '00:00';
+    return grouped.filter(
+      (g) => g.status !== 'cancelled' && (g.date === boardDate || (g.date === nextDate && g.start_time < cutoff)),
+    ).length;
+  }, [grouped, view, boardDate, opening]);
+  const listGroups = view === 'list' ? grouped : [];
+
+  const tabClass = (active: boolean) =>
+    `font-mono uppercase transition-colors ${active ? 'text-cz-orange' : 'text-cz-gray-light hover:text-white'}`;
 
   return (
     <AdminPageContainer>
       {/* Header */}
-      <div className="flex items-center justify-between" style={{ marginBottom: 40 }}>
+      <div className="flex flex-wrap items-end justify-between gap-6" style={{ marginBottom: 32 }}>
         <div>
           <h1 className="font-display text-white uppercase" style={{ fontSize: 36, letterSpacing: 2 }}>
             REZERVACE
           </h1>
           <p className="font-mono text-cz-gray-light" style={{ fontSize: 16, letterSpacing: 2, marginTop: 4 }}>
-            {grouped.length} REZERVACÍ · {rangeLabel}
+            {view === 'timeline'
+              ? `${boardCount} REZERVACÍ · ${boardLabel}`
+              : `${listGroups.length} REZERVACÍ · ${rangeLabel}`}
           </p>
+          <div className="flex gap-6" role="tablist" style={{ marginTop: 16 }}>
+            <button
+              role="tab"
+              aria-selected={view === 'timeline'}
+              onClick={() => goBoard(view === 'list' ? from : boardDate)}
+              className={tabClass(view === 'timeline')}
+              style={{ fontSize: 16, letterSpacing: 2 }}
+            >
+              ČASOVÁ OSA
+            </button>
+            <button
+              role="tab"
+              aria-selected={view === 'list'}
+              onClick={() => goList(boardDate, boardDate)}
+              className={tabClass(view === 'list')}
+              style={{ fontSize: 16, letterSpacing: 2 }}
+            >
+              SEZNAM
+            </button>
+          </div>
         </div>
 
-        {/* Date range picker */}
-        <div className="flex items-center gap-3">
-          <div className="flex flex-col gap-1">
-            <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>OD</label>
-            <div className="w-full" style={{ maxWidth: 140 }}>
-              <DatePicker value={localFrom} onChange={handleFromChange} locale="cs" />
+        {view === 'timeline' ? (
+          <div className="flex items-center gap-3" style={{ opacity: isPending ? 0.6 : 1 }}>
+            <Button size="xs" variant="ghost" iconOnly aria-label="Předchozí den" onClick={() => goBoard(addDays(boardDate, -1))}>
+              <CaretLeft size={18} weight="bold" />
+            </Button>
+            <div className="w-full" style={{ maxWidth: 160 }}>
+              <DatePicker value={boardDate} onChange={goBoard} locale="cs" />
             </div>
+            <Button size="xs" variant="ghost" iconOnly aria-label="Další den" onClick={() => goBoard(addDays(boardDate, 1))}>
+              <CaretRight size={18} weight="bold" />
+            </Button>
+            {boardDate !== today && (
+              <button
+                onClick={() => goBoard(today)}
+                className="font-mono text-cz-gray-light uppercase hover:text-white transition-colors"
+                style={{ fontSize: 16, letterSpacing: 2 }}
+              >
+                DNES
+              </button>
+            )}
           </div>
-          <div className="font-mono text-cz-gray-light" style={{ fontSize: 16, marginTop: 16 }}>–</div>
-          <div className="flex flex-col gap-1">
-            <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>DO</label>
-            <div className="w-full" style={{ maxWidth: 140 }}>
-              <DatePicker value={localTo} onChange={handleToChange} min={localFrom} locale="cs" />
+        ) : (
+          <div className="flex items-center gap-3">
+            <div className="flex flex-col gap-1">
+              <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>OD</label>
+              <div className="w-full" style={{ maxWidth: 140 }}>
+                <DatePicker value={localFrom} onChange={handleFromChange} locale="cs" />
+              </div>
             </div>
+            <div className="font-mono text-cz-gray-light" style={{ fontSize: 16, marginTop: 16 }}>–</div>
+            <div className="flex flex-col gap-1">
+              <label className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>DO</label>
+              <div className="w-full" style={{ maxWidth: 140 }}>
+                <DatePicker value={localTo} onChange={handleToChange} min={localFrom} locale="cs" />
+              </div>
+            </div>
+            {!isSingleDay && (
+              <button
+                onClick={() => {
+                  setLocalFrom(today);
+                  setLocalTo(today);
+                  goList(today, today);
+                }}
+                className="font-mono text-cz-gray-light uppercase hover:text-white transition-colors"
+                style={{ fontSize: 16, letterSpacing: 2, marginTop: 16 }}
+              >
+                DNES
+              </button>
+            )}
           </div>
-          {!isSingleDay && (
-            <button
-              onClick={() => {
-                const today = new Date().toISOString().split('T')[0];
-                setLocalFrom(today);
-                setLocalTo(today);
-                applyRange(today, today);
-              }}
-              className="font-mono text-cz-gray-light uppercase hover:text-white transition-colors"
-              style={{ fontSize: 16, letterSpacing: 2, marginTop: 16 }}
-            >
-              DNES
-            </button>
-          )}
-        </div>
+        )}
       </div>
 
-      {/* Station grid — only meaningful for a single day */}
-      {isSingleDay && (
-        <div style={{ marginBottom: 40 }}>
-          {/* Window controls. These drive the grid, so they are always visible:
-              the tiles below show occupancy for this window, not for the whole
-              day, and staff must be able to move the window before picking
-              anything. Note and BLOKOVAT appear once something is picked. */}
-          <div
-            className="bg-cz-black-mid rounded-cz flex flex-wrap items-end gap-4"
-            style={{ border: '1px solid var(--color-cz-gray-dark)', padding: 16, marginBottom: 16 }}
-          >
-            <div className="flex flex-col gap-1">
-              <label
-                htmlFor="block-start"
-                className="font-mono text-cz-gray-light uppercase"
-                style={{ fontSize: 16, letterSpacing: 2 }}
-              >
-                OD
-              </label>
-              <input
-                id="block-start"
-                type="time"
-                step={900}
-                value={blockStart}
-                onChange={(e) => setBlockStart(e.target.value || '00:00')}
-                className="bg-cz-black text-white font-mono rounded-control focus:outline-none focus:border-cz-orange"
-                style={{ padding: '8px 12px', fontSize: 17, border: '1px solid var(--color-cz-gray-dark)' }}
-              />
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <label
-                htmlFor="block-duration"
-                className="font-mono text-cz-gray-light uppercase"
-                style={{ fontSize: 16, letterSpacing: 2 }}
-              >
-                DÉLKA
-              </label>
-              <select
-                id="block-duration"
-                value={blockDuration}
-                onChange={(e) => setBlockDuration(Number(e.target.value))}
-                className="bg-cz-black text-white font-mono rounded-control focus:outline-none focus:border-cz-orange"
-                style={{ padding: '8px 12px', fontSize: 17, border: '1px solid var(--color-cz-gray-dark)' }}
-              >
-                {BLOCK_DURATIONS.map(([minutes, label]) => (
-                  <option key={minutes} value={minutes}>{label}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 2, paddingBottom: 10 }}>
-              OBSAZENOST {windowLabel}
-            </div>
-
-            {pickedStations.length > 0 && (
-              <>
-                <div className="flex flex-col gap-1 flex-1" style={{ minWidth: 200 }}>
-                  <label
-                    htmlFor="block-note"
-                    className="font-mono text-cz-gray-light uppercase"
-                    style={{ fontSize: 16, letterSpacing: 2 }}
-                  >
-                    POZNÁMKA (NEPOVINNÁ)
-                  </label>
-                  <input
-                    id="block-note"
-                    type="text"
-                    value={blockNote}
-                    onChange={(e) => setBlockNote(e.target.value)}
-                    maxLength={500}
-                    placeholder="Výměna GPU, walk-in…"
-                    className="bg-cz-black text-white font-body rounded-control focus:outline-none focus:border-cz-orange w-full"
-                    style={{ padding: '8px 12px', fontSize: 17, border: '1px solid var(--color-cz-gray-dark)' }}
-                  />
-                </div>
-
-                <div className="flex items-center gap-3" style={{ paddingBottom: 1 }}>
-                  <span className="font-mono text-cz-orange uppercase" style={{ fontSize: 16, letterSpacing: 2 }}>
-                    {pickedStations.length} VYBRÁNO
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => { setPickedStations([]); setBlockError(null); setBlockClashes([]); }}
-                    className="font-mono text-cz-gray-light uppercase hover:text-white transition-colors"
-                    style={{ fontSize: 16, letterSpacing: 2 }}
-                  >
-                    ZRUŠIT VÝBĚR
-                  </button>
-                  <Button onClick={submitBlock} disabled={blockSaving} size="sm">
-                    {blockSaving ? '...' : 'BLOKOVAT'}
-                  </Button>
-                </div>
-              </>
-            )}
-
-            {blockError && (
-              <div className="w-full font-mono" style={{ fontSize: 17, color: 'var(--color-cz-danger)' }}>
-                {blockError}
-                {blockClashes.length > 0 && `: ${blockClashes.join(', ')}`}
-              </div>
-            )}
-          </div>
-
-          <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 12 }}>
-            PC STANICE
-          </div>
-          <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(10, 1fr)', marginBottom: 16 }}>
-            {pcStations.map((s) => (
-              <StationTile
-                key={s.id}
-                station={s}
-                state={tileState(s)}
-                selected={pickedStations.includes(s.id)}
-                padding="10px 4px"
-                onSelect={() => toggleStation(s.id)}
-                onOpenBlock={() => setOpenBlock(blockByStation.get(s.id) ?? null)}
-              />
-            ))}
-          </div>
-
-          <div className="font-mono text-cz-gray-light uppercase" style={{ fontSize: 16, letterSpacing: 3, marginBottom: 12 }}>
-            PS5 STANICE
-          </div>
-          <div className="flex gap-2">
-            {ps5Stations.map((s) => (
-              <StationTile
-                key={s.id}
-                station={s}
-                state={tileState(s)}
-                selected={pickedStations.includes(s.id)}
-                padding="10px 20px"
-                onSelect={() => toggleStation(s.id)}
-                onOpenBlock={() => setOpenBlock(blockByStation.get(s.id) ?? null)}
-              />
-            ))}
-          </div>
-        </div>
+      {view === 'timeline' && (
+        <TimelineBoard
+          boardDate={boardDate}
+          stations={stations}
+          bookings={bookings}
+          blocks={blocks}
+          opening={opening}
+          onOpenBooking={openDetail}
+          onOpenBlock={setOpenBlock}
+        />
       )}
 
       {/* Booking table */}
+      {view === 'list' && (
       <div className="bg-cz-black-mid rounded-cz overflow-x-auto" style={{ border: '1px solid var(--color-cz-gray-dark)' }}>
         <table className="w-full">
           <thead>
@@ -786,14 +545,14 @@ export default function BookingsClient({
             </tr>
           </thead>
           <tbody>
-            {grouped.length === 0 ? (
+            {listGroups.length === 0 ? (
               <tr>
                 <td colSpan={isSingleDay ? 12 : 13} className="font-mono text-cz-gray-light text-center" style={{ padding: 40, fontSize: 19 }}>
                   Žádné rezervace pro zvolené období
                 </td>
               </tr>
             ) : (
-              grouped.map((b) => (
+              listGroups.map((b) => (
                 <tr
                   key={b.groupKey}
                   style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', opacity: b.status === 'cancelled' ? 0.45 : 1 }}
@@ -801,7 +560,7 @@ export default function BookingsClient({
                   <td className="font-mono text-cz-orange" style={{ padding: '12px 14px', fontSize: 17 }}>{b.reference}</td>
                   <td className="font-body text-white" style={{ padding: '12px 14px', fontSize: 17 }}>{b.customer_name}</td>
                   <td style={{ padding: '12px 14px' }}>
-                    <div className="font-mono text-cz-gray-light" style={{ fontSize: 17 }}>{b.customer_email}</div>
+                    <div className="font-mono text-cz-gray-light" style={{ fontSize: 17 }}>{b.customer_email ?? '—'}</div>
                     {b.customer_phone && (
                       <div className="font-mono text-cz-gray-light" style={{ fontSize: 17, marginTop: 2 }}>{b.customer_phone}</div>
                     )}
@@ -815,7 +574,7 @@ export default function BookingsClient({
                     </td>
                   )}
                   <td className="font-mono text-white" style={{ padding: '12px 14px', fontSize: 17 }}>{b.start_time?.slice(0, 5)}</td>
-                  <td className="font-mono text-cz-gray-light" style={{ padding: '12px 14px', fontSize: 17 }}>{Math.round(b.duration_minutes / 60)}h</td>
+                  <td className="font-mono text-cz-gray-light" style={{ padding: '12px 14px', fontSize: 17 }}>{durationLabel(b.duration_minutes)}</td>
                   <td className="font-body text-white" style={{ padding: '12px 14px', fontSize: 17 }}>{b.total_price} Kč</td>
                   <td style={{ padding: '12px 14px' }}>
                     <span
@@ -854,6 +613,7 @@ export default function BookingsClient({
           </tbody>
         </table>
       </div>
+      )}
 
       {/* Detail panel */}
       {selected && (
@@ -872,7 +632,7 @@ export default function BookingsClient({
             <div className="flex-1 overflow-auto" style={{ padding: 28 }}>
               {[
                 ['Zákazník',  selected.customer_name],
-                ['E-mail',    selected.customer_email],
+                ['E-mail',    selected.customer_email || '—'],
                 ['Telefon',   selected.customer_phone || '—'],
                 ['Discord',   selected.customer_discord || '—'],
               ].map(([label, value]) => <Field key={label} label={label} value={value} />)}
@@ -949,8 +709,10 @@ export default function BookingsClient({
                 ['Počet stanic', String(selected.stationsCount)],
                 ['Varianta',  selected.variant],
                 ['Datum',     new Date(selected.date).toLocaleDateString('cs-CZ')],
-                ['Čas',       selected.start_time?.slice(0, 5)],
-                ['Délka',     `${Math.round(selected.duration_minutes / 60)} hodin`],
+                ['Čas',       selected.rescheduledAt
+                  ? `${selected.start_time?.slice(0, 5)} · změněno ${new Date(selected.rescheduledAt).toLocaleString('cs-CZ')}${selected.rescheduledByName ? ` · ${selected.rescheduledByName}` : ''}`
+                  : selected.start_time?.slice(0, 5)],
+                ['Délka',     durationLabel(selected.duration_minutes)],
                 ['Celkem',    `${selected.total_price} Kč`],
                 ['Platba', selected.pays_with_credit
                   ? 'Kredit — hodiny z účtu, nic se neplatí'
@@ -962,6 +724,9 @@ export default function BookingsClient({
                           : 'Online · nezaplaceno')
                     : (selected.payment_status === 'paid' ? 'V klubu · zaplaceno' : 'V klubu · nezaplaceno')],
                 ['Mince k připsání', selected.coins_awarded > 0 ? `${selected.coins_awarded}` : '—'],
+                ['Vytvořeno', selected.isAdminEntered
+                  ? `Obsluhou${selected.createdByName ? ` · ${selected.createdByName}` : ''}`
+                  : 'Zákazníkem online'],
               ].map(([label, value]) => <Field key={label} label={label} value={value} />)}
 
               <div style={{ marginBottom: 16 }}>
@@ -1069,7 +834,7 @@ export default function BookingsClient({
                 ['Datum', new Date(openBlock.date).toLocaleDateString('cs-CZ')],
                 [
                   'Čas',
-                  `${openBlock.start_time.slice(0, 5)}–${minutesToLabel(
+                  `${openBlock.start_time.slice(0, 5)}–${minutesLabel(
                     parseTimeToMinutes(openBlock.start_time) + openBlock.duration_minutes,
                   )}`,
                 ],

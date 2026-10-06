@@ -8,6 +8,7 @@ import { buildCancelUrl } from '@/lib/cancel-token';
 import { getCancellationWindowMinutes, minutesUntil } from '@/lib/bookings/cancellation';
 import { getOnlineHoldMinutes, holdExpiryFrom, releaseExpiredHolds } from '@/lib/bookings/holds';
 import { calendarStart, occupiedStationIds } from '@/lib/bookings/occupancy';
+import { generateReference } from '@/lib/bookings/reference';
 import { z } from 'zod';
 import { getServerTranslator } from '@/lib/i18n/server';
 import { checkLimit, clientKey } from '@/lib/rate-limit';
@@ -32,13 +33,6 @@ const BookingSchema = z.object({
   // Locale of the cancellation link in the confirmation email.
   locale: z.enum(['cs', 'en', 'de', 'ua']).optional().default('cs'),
 });
-
-function generateReference(): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let ref = 'CZ-';
-  for (let i = 0; i < 4; i++) ref += chars[Math.floor(Math.random() * chars.length)];
-  return ref;
-}
 
 export async function POST(req: NextRequest) {
   const body = await req.json();

@@ -2,15 +2,18 @@ import { redirect } from 'next/navigation';
 import { getLocale } from 'next-intl/server';
 import { requireAdmin } from '@/lib/admin/auth';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { addDays } from '@/lib/bookings/occupancy';
 import BookingsClient from './BookingsClient';
 
-async function fetchBookingsData(from: string, to: string) {
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+async function fetchBookingsData(from: string, to: string, boardDate: string) {
   const admin = createAdminClient();
 
   const [bookingsRes, stationsRes, passesRes, blocksRes, hoursRes, staffRes] = await Promise.all([
     admin
       .from('bookings')
-      .select('id, reference, customer_name, customer_email, customer_phone, customer_discord, clutchzone_account, date, start_time, duration_minutes, total_price, status, station_id, payment_method, payment_status, pays_with_credit, coins_awarded, booking_group_id, stations_count, time_pass_id, offer_kind, station_reassigned_at, station_reassigned_by, stations(label, type)')
+      .select('id, reference, customer_name, customer_email, customer_phone, customer_discord, clutchzone_account, date, start_time, duration_minutes, total_price, status, station_id, payment_method, payment_status, pays_with_credit, coins_awarded, booking_group_id, stations_count, time_pass_id, offer_kind, station_reassigned_at, station_reassigned_by, rescheduled_at, rescheduled_by, source, created_by, stations(label, type)')
       .gte('date', from)
       .lte('date', to)
       .order('date')
@@ -20,8 +23,8 @@ async function fetchBookingsData(from: string, to: string) {
       .select('id, label, type, is_active')
       .order('label'),
     admin.from('time_passes').select('id, name_cs'),
-    // Admin blocks share the grid with bookings but never the table below it —
-    // a block is not a customer reservation and has no row there.
+    // Admin blocks share the board with bookings but never the list — a block
+    // is not a customer reservation and has no row there.
     admin
       .from('station_blocks')
       .select('id, block_group_id, station_id, date, start_time, duration_minutes, note')
@@ -29,22 +32,18 @@ async function fetchBookingsData(from: string, to: string) {
       .lte('date', to)
       .order('date')
       .order('start_time'),
-    admin.from('opening_hours').select('day_of_week, open_time, is_closed'),
+    admin.from('opening_hours').select('day_of_week, is_closed, open_time, close_time, crosses_midnight'),
     admin.from('profiles').select('id, display_name'),
   ]);
 
   const passNameById = Object.fromEntries((passesRes.data ?? []).map((p) => [p.id, p.name_cs]));
-  // Who moved a booking to another station. Only ever read for display.
+  // Who created or moved a booking. Only ever read for display.
   const adminNameById: Record<string, string> = Object.fromEntries(
     (staffRes.data ?? []).map((p) => [p.id, p.display_name ?? '—']),
   );
 
-  // The block action bar opens on the club's opening time when the admin is
-  // looking at a future date, where "now" would be meaningless.
-  const dow = new Date(from + 'T12:00:00').getDay();
-  const openingRow = (hoursRes.data ?? []).find((r) => r.day_of_week === dow);
-  const openTime: string | null =
-    openingRow && !openingRow.is_closed ? (openingRow.open_time as string)?.slice(0, 5) ?? null : null;
+  const dow = new Date(boardDate + 'T12:00:00').getDay();
+  const opening = (hoursRes.data ?? []).find((r) => r.day_of_week === dow) ?? null;
 
   return {
     bookings: (bookingsRes.data ?? []).map((b) => ({
@@ -55,27 +54,19 @@ async function fetchBookingsData(from: string, to: string) {
     blocks: blocksRes.data ?? [],
     passNameById,
     adminNameById,
-    openTime,
+    opening,
   };
 }
 
-/** Wall-clock HH:MM in Prague, floored to the quarter hour. */
-function pragueNowFloored(): string {
-  const parts = new Intl.DateTimeFormat('en-GB', {
-    timeZone: 'Europe/Prague',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  }).formatToParts(new Date());
-  const get = (t: string) => Number(parts.find((p) => p.type === t)?.value ?? 0);
-  const minute = Math.floor(get('minute') / 15) * 15;
-  return `${String(get('hour')).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+/** Today's date in Prague — the server may run in UTC, which flips at 01:00/02:00. */
+function pragueToday(): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Prague' }).format(new Date());
 }
 
 export default async function BookingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ from?: string; to?: string }>;
+  searchParams: Promise<{ view?: string; date?: string; from?: string; to?: string }>;
 }) {
   const params = await searchParams;
   // Checked here as well as in layout.tsx: a layout is not a security
@@ -84,27 +75,29 @@ export default async function BookingsPage({
   const profile = await requireAdmin();
   if (!profile) redirect(`/${await getLocale()}/admin/login`);
 
-  const today = new Date().toISOString().split('T')[0];
-  const from = params.from || today;
-  const to   = params.to   || from;
+  const today = pragueToday();
+  const valid = (d?: string) => (d && ISO_DATE.test(d) ? d : undefined);
+  const view = params.view === 'list' ? 'list' : 'timeline';
 
-  const { bookings, stations, blocks, passNameById, adminNameById, openTime } = await fetchBookingsData(from, to);
+  // The timeline shows one club day. Its small hours are stored under the
+  // next date, so that date is fetched too. Older links (notifications) carry
+  // ?from=X&to=X and open the board for X.
+  const boardDate = valid(params.date) ?? valid(params.from) ?? today;
+  const from = view === 'list' ? valid(params.from) ?? today : boardDate;
+  const to = view === 'list'
+    ? (() => { const t = valid(params.to) ?? from; return t < from ? from : t; })()
+    : addDays(boardDate, 1);
 
-  // Computed here rather than in the client: "now" resolved during hydration
-  // would not match what the server rendered a moment earlier.
-  const isToday = from === today;
-  const defaultStartTime = isToday ? pragueNowFloored() : openTime ?? '14:00';
+  const data = await fetchBookingsData(from, to, boardDate);
 
   return (
     <BookingsClient
-      bookings={bookings}
-      stations={stations}
-      blocks={blocks}
-      passNameById={passNameById}
-      adminNameById={adminNameById}
-      defaultStartTime={defaultStartTime}
+      {...data}
+      view={view}
+      boardDate={boardDate}
+      today={today}
       from={from}
-      to={to}
+      to={view === 'list' ? to : from}
     />
   );
 }

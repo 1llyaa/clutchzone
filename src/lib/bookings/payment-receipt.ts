@@ -55,8 +55,8 @@ export async function sendPaymentReceiptOnce(
   const first = rows[0] as unknown as {
     reference: string;
     customer_name: string;
-    customer_email: string;
-    customer_phone: string;
+    customer_email: string | null;
+    customer_phone: string | null;
     clutchzone_account: string | null;
     date: string;
     start_time: string;
