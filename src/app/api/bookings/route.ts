@@ -7,7 +7,7 @@ import { sendBookingNotification, sendBookingConfirmation } from '@/lib/email';
 import { buildCancelUrl } from '@/lib/cancel-token';
 import { getCancellationWindowMinutes, minutesUntil } from '@/lib/bookings/cancellation';
 import { getOnlineHoldMinutes, holdExpiryFrom, releaseExpiredHolds } from '@/lib/bookings/holds';
-import { occupiedStationIds, parseTimeToMinutes } from '@/lib/bookings/occupancy';
+import { calendarStart, occupiedStationIds } from '@/lib/bookings/occupancy';
 import { z } from 'zod';
 import { getServerTranslator } from '@/lib/i18n/server';
 import { checkLimit, clientKey } from '@/lib/rate-limit';
@@ -93,10 +93,13 @@ export async function POST(req: NextRequest) {
   }
 
   const reservedHours = reservedHoursOnSite(offer, calcInput, dayType);
-  const startTime = `${String(data.startHour % 24).padStart(2, '0')}:00`;
+  // Pricing works on the evening's day type (Friday 25:00), storage on the
+  // real calendar (Saturday 01:00) — the overlap constraint and every
+  // per-date read compare real dates.
+  const { date: bookingDate, startTime } = calendarStart(data.date, data.startHour);
   const durationMinutes = reservedHours * 60;
 
-  if (minutesUntil(data.date, startTime) < 0) {
+  if (minutesUntil(bookingDate, startTime) < 0) {
     return NextResponse.json({ error: t('timePassed') }, { status: 400 });
   }
 
@@ -119,7 +122,7 @@ export async function POST(req: NextRequest) {
   // A station an admin has blocked is never offered to a customer, and the
   // "only N free" count below has to agree — otherwise the request is refused
   // by the cross-table trigger with a race error it never actually lost.
-  const ourStart = parseTimeToMinutes(startTime);
+  const ourStart = data.startHour * 60;
   const ourEnd = ourStart + durationMinutes;
 
   const occupiedIds = await occupiedStationIds(admin, {
@@ -172,7 +175,7 @@ export async function POST(req: NextRequest) {
     customer_email: data.customerEmail,
     customer_phone: data.customerPhone,
     customer_discord: data.customerDiscord || null,
-    date: data.date,
+    date: bookingDate,
     start_time: startTime,
     duration_minutes: durationMinutes,
     total_price: offer.amountPerStation,
@@ -218,7 +221,7 @@ export async function POST(req: NextRequest) {
     customerName: data.customerName,
     customerEmail: data.customerEmail,
     customerPhone: data.customerPhone,
-    date: data.date,
+    date: bookingDate,
     startTime,
     durationMinutes,
     totalPrice: offer.totalAmount,

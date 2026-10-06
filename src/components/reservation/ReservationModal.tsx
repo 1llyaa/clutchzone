@@ -119,7 +119,9 @@ export default function ReservationModal() {
       return;
     }
     const reservedHours = reservedHoursOnSite(off, calcInput, dt);
-    const startTime = `${String(calcInput.startHour % 24).padStart(2, '0')}:00`;
+    // Hours past midnight stay as 24+ on the evening's date: availability
+    // reads them on the same minute axis as the booking route.
+    const startTime = `${String(calcInput.startHour).padStart(2, '0')}:00`;
     const params = new URLSearchParams({
       date,
       start: startTime,
