@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { occupiedStationIds, parseTimeToMinutes, rangesOverlap } from './occupancy';
+import { addDays, calendarStart, occupiedStationIds, parseTimeToMinutes, rangesOverlap } from './occupancy';
 
 test('a time parses to minutes from midnight, with or without seconds', () => {
   assert.equal(parseTimeToMinutes('00:00'), 0);
@@ -42,7 +42,7 @@ test('a duration running past midnight still overlaps correctly', () => {
 
 // ─── occupiedStationIds over a stubbed PostgREST client ──────────────────────
 
-type Row = { id?: string; station_id: string; start_time: string; duration_minutes: number };
+type Row = { id?: string; date?: string; station_id: string; start_time: string; duration_minutes: number };
 
 /**
  * Minimal stand-in for the PostgREST query builder: every filter returns
@@ -52,7 +52,8 @@ type Row = { id?: string; station_id: string; start_time: string; duration_minut
 function stubAdmin(tables: { bookings?: Row[]; station_blocks?: Row[] }) {
   return {
     from(table: string) {
-      const rows = tables[table as keyof typeof tables] ?? [];
+      // A row without a date sits on the queried day.
+      const rows = (tables[table as keyof typeof tables] ?? []).map((r) => ({ date: '2026-09-14', ...r }));
       const builder = {
         select: () => builder,
         in: () => builder,
@@ -166,4 +167,56 @@ test('omitting excludeBookingIds leaves every caller unchanged', async () => {
     WINDOW,
   );
   assert.deepEqual([...occupied], ['pc-1']);
+});
+
+// ─── After midnight: the minute axis runs across the calendar day ────────────
+
+test('addDays crosses month and year ends', () => {
+  assert.equal(addDays('2026-09-30', 1), '2026-10-01');
+  assert.equal(addDays('2026-12-31', 1), '2027-01-01');
+  assert.equal(addDays('2026-03-01', -1), '2026-02-28');
+  // DST change in Prague (last Sunday of October) must not move the date.
+  assert.equal(addDays('2026-10-24', 1), '2026-10-25');
+  assert.equal(addDays('2026-10-25', 1), '2026-10-26');
+});
+
+test('a club-day hour past midnight lands on the next calendar date', () => {
+  assert.deepEqual(calendarStart('2026-10-09', 14), { date: '2026-10-09', startTime: '14:00' });
+  assert.deepEqual(calendarStart('2026-10-09', 24), { date: '2026-10-10', startTime: '00:00' });
+  assert.deepEqual(calendarStart('2026-10-09', 25), { date: '2026-10-10', startTime: '01:00' });
+});
+
+test('a booking stored under the next day occupies a 24+ window on the evening date', async () => {
+  // Friday 25:00 is stored as Saturday 01:00. Asking about Friday 25:00–26:00
+  // must see it.
+  const occupied = await occupiedStationIds(
+    stubAdmin({
+      bookings: [{ date: '2026-09-15', station_id: 'pc-1', start_time: '01:00:00', duration_minutes: 60 }],
+    }),
+    { ...WINDOW, startMinutes: 1500, endMinutes: 1560 },
+  );
+  assert.deepEqual([...occupied], ['pc-1']);
+});
+
+test('a previous-day booking that runs past midnight occupies the small hours', async () => {
+  // Sunday 22:00 + 4h holds the station until Monday 02:00.
+  const occupied = await occupiedStationIds(
+    stubAdmin({
+      bookings: [{ date: '2026-09-13', station_id: 'pc-2', start_time: '22:00:00', duration_minutes: 240 }],
+    }),
+    { ...WINDOW, startMinutes: 60, endMinutes: 120 },
+  );
+  assert.deepEqual([...occupied], ['pc-2']);
+});
+
+test('the same clock time on a neighbouring day does not collide', async () => {
+  // 14:00 tomorrow is 24 hours away from a 14:00 window today.
+  const occupied = await occupiedStationIds(
+    stubAdmin({
+      bookings: [{ date: '2026-09-15', station_id: 'pc-1', start_time: '14:00:00', duration_minutes: 60 }],
+      station_blocks: [{ date: '2026-09-13', station_id: 'pc-2', start_time: '14:00:00', duration_minutes: 60 }],
+    }),
+    WINDOW,
+  );
+  assert.equal(occupied.size, 0);
 });

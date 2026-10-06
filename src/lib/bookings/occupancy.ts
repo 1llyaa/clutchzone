@@ -33,7 +33,30 @@ export function rangesOverlap(
   return bStartMin < aEndMin && bEndMin > aStartMin;
 }
 
+/** `YYYY-MM-DD` shifted by whole days, in UTC so DST never moves the date. */
+export function addDays(date: string, days: number): string {
+  const [y, m, d] = date.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d + days)).toISOString().slice(0, 10);
+}
+
+/**
+ * Where a club-day start hour lands on the calendar. The pricing calculator
+ * counts hours past midnight as 24, 25, … of the evening's day, but bookings
+ * are stored as a real date + time, so Friday 25:00 is Saturday 01:00.
+ */
+export function calendarStart(date: string, startHour: number): { date: string; startTime: string } {
+  const dayRoll = Math.floor(startHour / 24);
+  return {
+    date: dayRoll ? addDays(date, dayRoll) : date,
+    startTime: `${String(startHour % 24).padStart(2, '0')}:00`,
+  };
+}
+
 interface OccupancyQuery {
+  /**
+   * The day the window is measured from. `startMinutes`/`endMinutes` may run
+   * past 1440 (or below 0) to ask about the small hours of the next day.
+   */
   date: string;
   stationIds: string[];
   startMinutes: number;
@@ -51,6 +74,7 @@ interface OccupancyQuery {
 
 interface TimedRow {
   id?: string;
+  date: string;
   station_id: string;
   start_time: string;
   duration_minutes: number;
@@ -59,13 +83,16 @@ interface TimedRow {
 function collectOverlapping(
   rows: TimedRow[] | null,
   into: Set<string>,
+  dayOffsets: Map<string, number>,
   startMinutes: number,
   endMinutes: number,
   skipIds?: Set<string>,
 ): void {
   for (const r of rows ?? []) {
     if (skipIds?.has(r.id ?? '')) continue;
-    const start = parseTimeToMinutes(r.start_time);
+    const offset = dayOffsets.get(r.date);
+    if (offset === undefined) continue;
+    const start = offset + parseTimeToMinutes(r.start_time);
     if (rangesOverlap(startMinutes, endMinutes, start, start + r.duration_minutes)) {
       into.add(r.station_id);
     }
@@ -75,6 +102,11 @@ function collectOverlapping(
 /**
  * Stations busy in `[startMinutes, endMinutes)` on `date` — the union of
  * non-cancelled bookings and admin blocks.
+ *
+ * Rows from the day before and after are read too and placed on the same
+ * minute axis (-1440 / +1440). A Friday 22:00 + 4h booking still holds the
+ * station at Saturday 01:00, and a Friday-night window of 25:00 has to see
+ * what is stored under Saturday.
  *
  * Returns an empty set on a read error rather than throwing. The callers are
  * an availability counter and a booking pre-check; both have a DB-level
@@ -88,18 +120,25 @@ export async function occupiedStationIds(
   const occupied = new Set<string>();
   if (!stationIds.length) return occupied;
 
+  const dayOffsets = new Map([
+    [addDays(date, -1), -1440],
+    [date, 0],
+    [addDays(date, 1), 1440],
+  ]);
+  const dates = [...dayOffsets.keys()];
+
   const [bookingsRes, blocksRes] = await Promise.all([
     admin
       .from('bookings')
-      .select('id, station_id, start_time, duration_minutes')
+      .select('id, date, station_id, start_time, duration_minutes')
       .in('station_id', stationIds)
       .neq('status', 'cancelled')
-      .eq('date', date),
+      .in('date', dates),
     admin
       .from('station_blocks')
-      .select('station_id, start_time, duration_minutes')
+      .select('date, station_id, start_time, duration_minutes')
       .in('station_id', stationIds)
-      .eq('date', date),
+      .in('date', dates),
   ]);
 
   if (bookingsRes.error) {
@@ -110,8 +149,8 @@ export async function occupiedStationIds(
   }
 
   const skipIds = excludeBookingIds?.length ? new Set(excludeBookingIds) : undefined;
-  collectOverlapping(bookingsRes.data, occupied, startMinutes, endMinutes, skipIds);
-  collectOverlapping(blocksRes.data, occupied, startMinutes, endMinutes);
+  collectOverlapping(bookingsRes.data, occupied, dayOffsets, startMinutes, endMinutes, skipIds);
+  collectOverlapping(blocksRes.data, occupied, dayOffsets, startMinutes, endMinutes);
 
   return occupied;
 }

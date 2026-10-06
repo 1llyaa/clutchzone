@@ -102,11 +102,6 @@ export async function PATCH(
   // Pre-check only, for a legible message. bookings_no_overlap and the
   // cross-table trigger from migration 024 are the real guard and fire on
   // UPDATE just as they do on INSERT.
-  //
-  // Inherited limitation, shared with every other caller: occupancy reads
-  // `.eq('date', date)`, so a booking that started the previous day and runs
-  // past midnight is invisible here. The exclusion constraint still catches
-  // it — the admin gets the generic 409 below rather than the specific one.
   const occupied = await occupiedStationIds(admin, {
     date: booking.date,
     stationIds: [stationId],
