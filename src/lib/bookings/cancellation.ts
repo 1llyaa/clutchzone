@@ -5,7 +5,7 @@ export type CancellableBooking = {
   groupId: string;
   reference: string;
   customerName: string;
-  customerEmail: string;
+  customerEmail: string | null;
   date: string;
   startTime: string;
   durationMinutes: number;
@@ -136,7 +136,7 @@ export async function loadBookingForCancellation(
     booking_group_id: string;
     reference: string;
     customer_name: string;
-    customer_email: string;
+    customer_email: string | null;
     date: string;
     start_time: string;
     duration_minutes: number;

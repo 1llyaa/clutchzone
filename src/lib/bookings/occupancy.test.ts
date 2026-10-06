@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { addDays, calendarStart, occupiedStationIds, parseTimeToMinutes, rangesOverlap } from './occupancy';
+import { addDays, calendarStart, calendarStartMinutes, occupiedStationIds, parseTimeToMinutes, rangesOverlap } from './occupancy';
 
 test('a time parses to minutes from midnight, with or without seconds', () => {
   assert.equal(parseTimeToMinutes('00:00'), 0);
@@ -184,6 +184,11 @@ test('a club-day hour past midnight lands on the next calendar date', () => {
   assert.deepEqual(calendarStart('2026-10-09', 14), { date: '2026-10-09', startTime: '14:00' });
   assert.deepEqual(calendarStart('2026-10-09', 24), { date: '2026-10-10', startTime: '00:00' });
   assert.deepEqual(calendarStart('2026-10-09', 25), { date: '2026-10-10', startTime: '01:00' });
+});
+
+test('a club-day minute past midnight lands on the next calendar date', () => {
+  assert.deepEqual(calendarStartMinutes('2026-10-09', 870), { date: '2026-10-09', startTime: '14:30' });
+  assert.deepEqual(calendarStartMinutes('2026-10-09', 1470), { date: '2026-10-10', startTime: '00:30' });
 });
 
 test('a booking stored under the next day occupies a 24+ window on the evening date', async () => {

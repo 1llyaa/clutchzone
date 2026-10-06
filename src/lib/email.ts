@@ -6,8 +6,9 @@ interface BookingEmailData {
   reference: string;
   stationLabel: string;
   customerName: string;
-  customerEmail: string;
-  customerPhone: string;
+  /** NULL for a walk-in or phone booking staff entered without one. */
+  customerEmail: string | null;
+  customerPhone: string | null;
   date: string;
   startTime: string;
   durationMinutes: number;
@@ -40,7 +41,7 @@ interface BookingReceiptEmailData {
   reference: string;
   stationLabel: string;
   customerName: string;
-  customerEmail: string;
+  customerEmail: string | null;
   date: string;
   startTime: string;
   durationMinutes: number;
@@ -147,8 +148,8 @@ export async function sendBookingNotification(b: BookingEmailData): Promise<void
       ? ['Platba', 'Hodinami z účtu — nevybírat']
       : ['Cena', `${b.totalPrice} Kč`],
     ['Jméno', b.customerName],
-    ['E-mail', b.customerEmail],
-    ['Telefon', b.customerPhone],
+    ['E-mail', b.customerEmail ?? '—'],
+    ['Telefon', b.customerPhone ?? '—'],
     ...(b.clutchzoneAccount ? [['Clutchzone account', b.clutchzoneAccount] as [string, string]] : []),
   ];
 
@@ -191,7 +192,7 @@ export async function sendBookingNotification(b: BookingEmailData): Promise<void
 // Confirmation for the customer — fire-and-forget as well.
 export async function sendBookingConfirmation(b: BookingEmailData): Promise<void> {
   const transport = getTransport();
-  if (!transport) return;
+  if (!transport || !b.customerEmail) return;
 
   const locale = resolveLocale(b.locale);
   const t = await getServerTranslator(locale, 'email');
@@ -310,7 +311,7 @@ export async function sendBookingConfirmation(b: BookingEmailData): Promise<void
  */
 export async function sendBookingPaymentReceipt(b: BookingReceiptEmailData): Promise<void> {
   const transport = getTransport();
-  if (!transport) return;
+  if (!transport || !b.customerEmail) return;
 
   const locale = resolveLocale(b.locale);
   const t = await getServerTranslator(locale, 'email');
@@ -468,7 +469,7 @@ export async function sendPaymentNudge(b: PaymentNudgeEmailData): Promise<void> 
 export async function sendCancellationNotification(c: {
   reference: string;
   customerName: string;
-  customerEmail: string;
+  customerEmail: string | null;
   date: string;
   startTime: string;
   stationLabel: string;
@@ -494,7 +495,7 @@ export async function sendCancellationNotification(c: {
     ['Stanice', c.stationLabel],
     ['Termín', `${c.date} ${c.startTime}`],
     ['Jméno', c.customerName],
-    ['E-mail', c.customerEmail],
+    ['E-mail', c.customerEmail ?? '—'],
   ];
 
   const html = `

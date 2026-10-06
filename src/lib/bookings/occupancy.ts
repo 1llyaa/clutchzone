@@ -45,10 +45,16 @@ export function addDays(date: string, days: number): string {
  * are stored as a real date + time, so Friday 25:00 is Saturday 01:00.
  */
 export function calendarStart(date: string, startHour: number): { date: string; startTime: string } {
-  const dayRoll = Math.floor(startHour / 24);
+  return calendarStartMinutes(date, startHour * 60);
+}
+
+/** Same as calendarStart, for a start given in minutes on the club-day axis. */
+export function calendarStartMinutes(date: string, startMinutes: number): { date: string; startTime: string } {
+  const dayRoll = Math.floor(startMinutes / 1440);
+  const inDay = startMinutes - dayRoll * 1440;
   return {
     date: dayRoll ? addDays(date, dayRoll) : date,
-    startTime: `${String(startHour % 24).padStart(2, '0')}:00`,
+    startTime: `${String(Math.floor(inDay / 60)).padStart(2, '0')}:${String(inDay % 60).padStart(2, '0')}`,
   };
 }
 
